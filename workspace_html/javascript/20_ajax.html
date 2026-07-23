@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+
+        <style>
+
+            .column {
+                display: inline-block;
+                border: 1px solid red;
+                width: 100px;
+
+                text-align: center;
+            }
+
+            .column2 {
+                display: inline-block;
+                border: 1px solid red;
+                width: 100px;
+                height: 50px;
+
+                text-align: center;
+                vertical-align: top;
+            }
+
+        </style>
+
+        <script src="asset/js/20_ajax.js"></script>
+    </head>
+    <body>
+        <!-- AJAX = Asynchronous JavaScript and XML 비동기 통신 -->
+        <button type="button" id="btn1">AJAX 실행</button>
+        <button type="button" id="btn2">19_jason.html</button>
+        <button type="button" id="btn3">날씨예보</button>
+        <button type="button" id="btn4">회원정보</button>
+        <button type="button" id="btn5">fetch</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>시간</th>
+                    <th>온도</th>
+                    <th>습도</th>
+                    <th>강수량</th>
+                </tr>
+            </thead>
+            <tbody id="q2">
+
+            </tbody>
+        </table>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>ZIPCODE</th>
+                    <th>COMPANY</th>
+                </tr>
+            </thead>
+            <tbody id="q3">
+
+            </tbody>
+        </table>
+
+        <div id="output"></div><br>
+        <div id="output_time"></div>
+    </body>
+</html>

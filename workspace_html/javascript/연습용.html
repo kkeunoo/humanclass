@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+
+            * {
+                /* border: 1px solid red; */
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+            }
+
+            .parent {
+                border: 1px solid red;
+                /* width: 100vw;
+                height: 100vh; */
+
+                width: 100vw;
+                height: 100vh;
+                
+                /* position: relative; */
+
+                display: flex;
+                /* justify-content: space-evenly; */
+                /* flex-direction: column; */
+                justify-content: center;
+                align-items: center;
+
+                margin: 0 auto;
+
+            }
+
+            .parent .child {
+                border: 1px solid blue;
+                width: 400px;
+                height: 400px;
+
+                /* position: absolute;
+
+                top: 50%;
+                left: 50%;
+
+                transform: translate(-50%, -50%); */
+
+                text-align: center;
+
+                display: flex;
+                /* justify-content: center; */
+                
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                
+            }
+            
+            .parent .child .LOG .login {
+                width: 310px;
+                height: 50px;
+                
+                cursor: pointer;
+
+                background-color: green;
+                border-radius: 5px;
+                border: 1px solid white;
+
+                font-size: 1.5em;
+                font-weight: bold;
+                color: white;
+                
+                margin: 20px;
+
+            }
+
+            .parent .child .ID .cid {
+                margin: 20px;
+                width: 300px;
+                height: 30px;
+
+            }
+
+            .parent .child .PW .cpw {
+                margin: 20px;
+                width: 300px;
+                height: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="parent">
+            <div class="child">
+                <div class="ID">
+                    <input type="text" placeholder="ID를 반드시 입력하세요*" class="cid">
+                </div>
+                <div class="PW">
+                    <form>
+                        <input type="password" placeholder="PW를 반드시 입력하세요*" class="cpw">
+                    </form>
+                </div>
+                <div class="LOG">
+                        <!-- <a href="https://www.naver.com">
+                            <input type="submit" value="LOGIN" class="btn">
+                        </a> -->
+                    <form method="get" action="/javascript/연습용2.html">
+                        <input type="submit" value="LOGIN" class="login">
+                    </form>
+                </div>
+            </div>
+            <!-- <form method="get" action="/05_table.html">
+            <input type="text" name="query"><br>
+            <input type="submit" value="네이버 검색"><br> -->
+        <!-- </form> -->
+        </div>
+    </body>
+</html>

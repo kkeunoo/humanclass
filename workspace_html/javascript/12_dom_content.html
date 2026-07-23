@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <!-- 있던 글씨의 경우 태그로 감겨진게 없어서, span으로 감싼건 바꾸기 쉬움
+         다만, 원래~부터 전체 다 바꾸는건 div안에 있기에 가능 -->
+        <div id="msg">
+            <span>원래</span> 있던   글씨
+        </div>
+
+        <div id="count">0</div>
+        <div id="clock">시계 로딩 중 . . .</div>
+
+        <div id="log">원래 있던 글씨</div>
+
+        <table border="1">
+            <tbody id="tbody">
+                <!-- js로 구현
+                <tr>
+                    <td>첫째칸</td>
+                </tr> 
+                -->
+            </tbody>
+        </table>
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>제목</th>
+                    <th>작성자</th>
+                </tr>
+            </thead>
+            <tbody id="board">
+
+            </tbody>
+        </table>
+        <hr>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>제목</th>
+                    <th>작성자</th>
+                </tr>
+            </thead>
+            <tbody id="board2">
+
+            </tbody>
+        </table>
+
+        <hr>
+        <div class='quiz q1'>힌트만 달라</div>
+        <hr>
+        <div class='quiz q2'>퀴즈2</div>
+        <div class='quiz q2-1'>퀴즈2-1</div>
+        <div class='quiz q2-2'>퀴즈2-2</div>
+        <div class='quiz q2'>   </div>
+        <div class='quiz q2-1'>퀴즈2-1</div>
+
+        <script>
+            const msg = document.querySelector('#msg')
+            console.log(msg)
+
+            // 태그 안쪽의 글씨들(content)을 가져오는 3가지 방법들
+
+            // textContent , div안에 있는 공백 및 엔터까지 같이 출력됨
+            // content영역의 소스 중에서 'text(글씨)'만 '그대로' 가져옴, 
+            // span이 없는 것 처럼 (tag 빼고)
+            console.log('msg.textContent', msg.textContent)
+
+            // innerText , 브라우저에 보이는 글씨가 그대로 나옴(사용자가 보는)
+            // 브라우저가 보여줄 내용에 대한 계산이 끝나고 실제로 표기하는 text
+            // (space를 아무리 추가해도 축약한 표기로 나오기 때문에 space는 1개)
+            console.log('msg.innerText', msg.innerText)
+
+            // innerHTML , content영역에 있는 tag까지 포함하여 전부 다 가져옴
+            console.log('msg.innerHTML', msg.innerHTML)
+
+            // 위의 것은 변수의 내용을 읽은 것이고,
+            // 이제부터 변수에 값을 담아 content의 내용을 바꿀 수 있음
+            
+            // textContent를 사용하면 space도 들어가지만, 화면상에 표기는 1개로 축약이기에
+            // space는 1개로 보이고 태그는 반영되지 않는 글씨로 들어감
+            // innerText == textContent 바꿀 땐 두개 다 동일함, 가져올때만 다름
+            msg.textContent = '<h1>h1제목</h1>   a   b      c'
+            msg.innerText = '<h1>h1제목</h1>   a   b      c'
+
+            // innerHTML은 안쪽에 그대로 HTML로 인식하도록 넣는것이기 때문에, 태그도 먹힘
+            // 변수이기 때문에 +로 추가할 수 있음
+            msg.innerHTML = '<h1>h1제목</h1>   a   b      c'
+            msg.innerHTML += 'd'
+
+            // 이런 것 처럼 innerHTML로 글쓰기를 눌렀을 때 게시글 추가되게 할 수도 있음
+            // script, javascript, css도 : 추가하면 넣을 수 있음, 다음줄은 ;로 구분
+            msg.innerHTML = '<a href="javascript:alert(1);alert(2);">눌러봐</a>'
+
+            // 밖에 있어도 동작은 하지만, 안에 있으면 지역변수로 무조건 동작하게끔
+            // const count = document.querySelector('#count')
+            setInterval( function() {
+                const count = document.querySelector('#count')
+                // #count라는 id를 가진친구들 가져와서, cnt에 넣고 
+                // 아래 'string' 타입이기 때문에 증가시키기 위해 Number로 치환
+                let cnt = count.textContent
+                // console.log(cnt, typeof cnt)
+
+                cnt = Number(cnt) + 1
+                count.innerText = cnt
+            }, 1000 )
+
+            // #clock에 시간을 "몇 분 몇 초"가 계속 나오게끔 설정
+            
+            // setInterval의 경우 1초(1000)으로 지정했을 때 '그 시간이 지나면' 작동하는 개념
+            // setTimeout도 동일하게, 1초 내에 실행되는 것은 아님
+            setInterval( function() {
+                const clock = document.querySelector('#clock')
+                
+                // 시간은 반복적으로 체크해야 하기 때문에, setInterval 안에 넣음
+                // 밖에 있다고 치면 한 번만 확인해서 반복하지 않기 때문
+                const now = new Date()
+                const hour = now.getHours()
+                const min = now.getMinutes()
+                const sec = now.getSeconds()
+                // 보통 ms까지 체크해서 보여주면 좋음
+                const ms = now.getMilliseconds()
+
+                // console.log(`${min}분 ${sec}초`)
+                const clockNew = `${hour}시 ${min}분 ${sec}초.${ms}(ms)`
+                clock.textContent = clockNew
+
+                // 1000으로 1초를 설정해놓아도 1초마다 동작하지 않을 수 있기에,
+                // 1000ms를 3으로 나누어서 delay가 있을 때 해결할 수 있음
+            },250)
+            // 3초로 해놓고 문자값에 '로딩 중' 같은 걸 넣으면 보기 좋음
+        
+
+            //////////////////
+            // DOM 생성 (createElement, 가상 DOM append를 해야 실체화)
+            //////////////////
+            const div = document.createElement('div') // <div></div>
+            // 주소가 힙 영역에 있는데, 그 사이에 빠르게 값을 찾아오기 때문에 같아보임
+            console.log(div)
+            // <div id="lol"></div>
+            div.setAttribute('id','lol')
+            // <div id="lol">정글차이</div>
+            div.innerText = '정글차이'
+            console.log(div)
+        
+            div.setAttribute('style','color: red;')
+
+            const log = document.querySelector('#log')
+            // append는 마지막 자식 요소로 붙여넣을 수 있음
+            // 글씨도 넣을 수는 있지만 자주 쓰이지 않는다
+            log.append(div)
+            log.append('<h1>abcd</h1>')
+            // 같은 객체는 두 번 사용하면 마지막에 사용한 곳으로 이동됨
+            log.append(div)
+
+            const p = document.createElement('p')
+            p.textContent = 'p태그'
+            
+            //'appendChild' on 'Node': parameter 1 is not of type 'Node'.
+            // appendChild에 글씨를 넣으면 DOM이 아니기에 불가능
+            // 그 외에는 append와 같이 마지막 자식 요소로 추가된다
+            log.appendChild(p)
+            // log.appendChild('<h1>글씨일 뿐</h1>')
+            
+            const p2 = document.createElement('p')
+            p2.textContent = 'p2 log 앞에붙이기'
+            
+            // pre가 들어가면 앞쪽이라는 소리
+            // 첫 번째 자식 요소로 추가할 수 있다
+            log.prepend(p2)
+            
+            // before, after는 형제 요소에 대한 이야기로 앞, 뒤에 넣을 수 있음
+            // before : 이전 형제로 추가
+            // after : 다음 형제로 추가
+            const p3 = document.createElement('p')
+            p3.textContent = 'p3 형제로 넣기'
+            log.before(p3)
+
+            const p4 = document.createElement('p')
+            p4.textContent = 'p4 형제로 넣기'
+            log.after(p4)
+
+            // 문제_tbody안에 tr,td를 넣어라!
+            const tbody = document.querySelector('#tbody')
+            const tr = document.createElement('tr')
+            tbody.append(tr)
+            // console.log(tbody)
+
+            const td = document.createElement('td')
+            tr.append(td)
+            // console.log(tbody)
+            
+            td.innerText = '첫째칸'
+            console.log(tbody)
+
+            const rows = [
+                ['제목1', '작성자1'],
+                ['제목2', '작성자2'],
+                ['제목3', '작성자3'],
+                ['제목4', '작성자4'],
+                ['제목5', '작성자5']
+            ]
+
+            const board = document.querySelector('#board')
+            console.log(board)
+
+            // console.log(rows.length)
+            // console.log(rows[0][1])
+
+            // 문제를 급하게 생각하지 말고 한 단계씩 조립하고 천천히 나아가기!
+            // 우선 rows 배열을 찍어보고, 어느 자리에 어떤 값이 들어가는지 확인하고
+            // javascript도 html을 짜는 것이기 때문에 어떤 구성이 나와야 하는지와
+            // 어떤 값들이 들어가야 하는지를 확인해보아야 함
+            for(let i=0; i<rows.length; i++) {
+                // tr, td를 우선 만들어 놓고 그 다음것을 생각하기
+                const tr_board = document.createElement('tr')
+                const td1_board = document.createElement('td')
+                const td2_board = document.createElement('td')
+
+                // 만들었다면 메인 table tbody에 tr, td를 순차로 넣어야 하기 때문에
+                // tbody의 자식으로 tr, tr의 자식으로 td를 넣어 틀을 완성해줌
+                board.append(tr_board)
+                tr_board.append(td1_board)
+                tr_board.append(td2_board)
+
+                // rows에 있는 배열값을 확인했다면 rows0에 0, 1이 각기 td1, td2에 들어가야 함
+                // 여기서 0-0,1 1-0,1 뒤에 배열 자리는 0,1 두가지이고 rows에 0번이 0~4이기 때문에
+                // tr,td를 만들기 위해 5번 돌린 반복문에서 td값을 넣기 위해 i값을 동일하게 앞에 넣어준다
+                // td1_board.append(rows[i][0])
+                // td2_board.append(rows[i][1])
+                td1_board.innerText = rows[i][0]
+                td2_board.innerText = rows[i][1]
+            }
+
+            // 아래와 같이 innerHTML로 간단하게 사용할 수 있음
+            // const board2 = document.querySelector('#board2')
+            // console.log(board2)
+
+            // let html = ''
+            // for(let i=0; i<rows.length; i++) {
+
+            //     html += `
+            //         <tr>
+            //             <td>${rows[i][0]}</td>
+            //             <td>${rows[i][1]}</td>
+            //         </tr>
+            //     `
+            // }
+            // board2.innerHTML = html
+
+            // 위 방법에서는 error가 나면 멈춰서 밖에 html 추가가 안되는데,
+            // 아래 방법에서는 3번째줄에 error가 나면 2번째줄까진 나오기 때문에 안전
+            // 아래처럼 역순으로(prepend처럼도 사용할 수 있다)
+            const board2 = document.querySelector('#board2')
+            console.log('board2', board2)
+
+            for(let i=0; i<rows.length; i++) {
+                let html = `
+                        <tr>
+                            <td>${rows[i][0]}</td>
+                            <td>${rows[i][1]}</td>
+                        </tr>
+                    `
+                board2.innerHTML = html + board2.innerHTML
+            }
+
+            // const board2 = document.querySelector('#board2')
+            // console.log(board2)
+
+            // for(let i=0; i<rows.length; i++) {
+            //     let html = ''
+            //     for(let j=0; j<rows[i].length; j++) {
+            //         html = `
+            //             <tr>
+            //                 <td>${rows[i][j-1]}</td>
+            //                 <td>${rows[i][j]}</td>
+            //             </tr>
+            //         `
+            //     }
+            //     board2.innerHTML += html
+            // }
+
+            let str = ''
+            for(let i=0; i<5; i++) {
+                // str += i 인데, 이건 str = str + i 였기에 역순으로
+                str = i + str
+            }
+            console.log('str', str)
+
+            // body에 script, style도 직접적으로 넣어 조정할 수 있음
+            // 백틱으로 아예 통으로 넣어 집어넣을 수 있음
+            const body = document.querySelector('body')
+            console.log(body)
+
+            const style = document.createElement('style')
+            style.innerText = `
+                #board {
+                    border: 1px solid red;
+                }
+            `
+            body.append(style)
+            /*
+                <style>
+                    #board {
+                        border: 1px solid red;
+                    }
+                </style>
+            */
+
+            // const script = document.createElement('script')
+            // script.innerText = `
+            //     alert(1)
+            // `
+            // body.append(script)
+
+
+            ////////////////////////////
+            // style
+            ////////////////////////////
+
+            const clock = document.getElementById('clock')
+            clock.style.color = 'red'
+            // 아래처럼 style에 CSS에 직접적으로 주는 경우 -로 연결되는 프로퍼티는
+            // 카멜케이스로 font-size > fontSize 변경해서 사용함
+            clock.style.fontSize = '1.5em'
+
+            console.log(clock.style)
+            console.log(clock.style.color)
+            // 기존 CSS에 있는 값이 아래 출력물에 들어가있지는 않아서 공백으로 나옴("")
+            // 변수에 넣어서 적용한 값만 출력물로 볼 수 있음
+            // javascript 값이 비어있을 때 css를 적용시킴(우선순위)
+            console.log(clock.style.height)
+            clock.style.height = '50px'
+            console.log(clock.style.height)
+
+            let w = window.getComputedStyle(clock, null).getPropertyValue('width')
+            console.log('w', w)
+
+            clock.style.border = '1px solid red'
+
+            // 기존 높이보다 5px 더 크게
+            console.log('------------------------------')
+            // let m = clock.style.height = parseInt(Math.random() * 100) + 'px'
+            clock.style.height = parseInt(Math.random() * 100) + 'px'
+            console.log(clock.style.height)
+            // let n = Number(m.split('px')[0])
+            let n = Number(clock.style.height.split('px')[0])
+            console.log(n+5, typeof n)
+            let t = n+5
+            clock.style.height = t + 'px'
+            console.log(clock.style.height)
+
+            // clock.style.height = parseInt(clock.style.height) + 5 + 'px'
+            // console.log(clock.style.height)
+
+            /* 강사님 자료
+            clock.style.height = parseInt(Math.random() * 100) +'px'
+            console.log(clock.style.height)
+            // 기존 높이보다 5px 크게
+            // 66px + 5 : 66px5
+            // console.log(Number('66px')) // NaN
+            // console.log(parseInt('66px') + 5)
+            clock.style.height = parseInt(clock.style.height) + 5 + 'px'
+            console.log(clock.style.height)
+            */
+
+            console.log('----------문제1----------')
+            // 문제1
+            // <div class='quiz q1'>힌트만 달라</div> : HTML이 있음
+            // 글씨 마지막에 ' 쮸인님~♥' 붙이기
+
+            let Q1_query = document.querySelector('.quiz.q1')
+            // console.log(quiz1)
+            Q1_query.innerText += ' 쮸인님~♥'
+            console.log(Q1_query.innerText)
+
+            console.log('----------문제2----------')
+            // 문제2
+            // 다음 코드 중에서 class q2가 몇개인가? (정답은 2개가 나와야 함)
+            /*
+                <div class='quiz q2'>퀴즈2</div>
+                <div class='quiz q2-1'>퀴즈2-1</div>
+                <div class='quiz q2-2'>퀴즈2-2</div>
+                <div class='quiz q2'></div>
+                <div class='quiz q2-1'>퀴즈2-1</div>
+            */
+    
+            // div중에서 quiz를 포함 한 것을 모두 가져옴
+            let Q2_query = document.querySelectorAll('div.quiz')
+            // console.log(quiz2, typeof quiz2)
+            // 전체 가져온 div 개수와, q2가 들어온 div의 개수 파악 변수 선언
+            let Q2_divCnt = 0
+            let Q2_isCnt = 0
+
+            for(let i=0; i<Q2_query.length; i++) {
+                // isQ2로 배열로 가져온 값에서 'q2 class'가 있을 경우 true 반환
+                let isQ2 = Q2_query[i].classList.contains('q2')
+                Q2_divCnt++ // 총 div개수 확인용
+                
+                // 'q2'라는 class가 있어 true가 반환이 되었을 경우,
+                // 개수를 카운팅하고 알아보기 쉽도록 bg, fontWeight 변경
+                if(isQ2 == true) {
+                    Q2_isCnt++
+                    Q2_query[i].style.background = 'yellow'
+                    Q2_query[i].style.fontWeight = 'bold'
+                }
+            }
+            console.log(`${Q2_divCnt}개 div중, q2포함은 ${Q2_isCnt}개`)
+
+            console.log('----------문제3----------')
+            // 문제3
+            // 위 코드에서 q2를 가지는 태그의 글씨를 출력하시오 (퀴즈2, 엔터)
+
+            // q2를 가지는 태그의 글씨만 필요하기 때문에 console.log로 배열을 보고
+            // 가장 빠르게 접근할 수 있는 경로를 확인하여 selectorall에 입력
+            // let Q3_query = document.querySelectorAll('div.quiz')
+            // console.log(Q3_query)
+            let Q3_query = document.querySelectorAll('div.quiz.q2')
+            // q2가 가지는 태그의 글씨를 저장하기 위한 Q3_str 빈 변수 선언
+            let Q3_str = ''
+            // console.log(Q3_query)
+            for(let i=0; i<Q3_query.length; i++) {
+                // for문으로 q2를 가진 길이만큼 반복을 돌게 하며,
+                // 출력 결과값을 쉽게 알아볼 수 있도록 벡틱으로 각 배열의 값 출력
+                Q3_str += `${i+1}번째 값 : ${Q3_query[i].textContent}\n`
+            }
+            console.log(Q3_str)
+
+            console.log('----------문제4----------')
+            // 문제4
+            // 위 코드 중 글씨가 없는 태그의 내용을 '비어있음' 으로 변경
+
+            // 글씨가 없는 태그를 가져오기 위해 문제에서 예시가 된 HTML상
+            // quiz class를 가진 div를 모두 가져오고 제대로 배열 들어왔는지 확인
+            let Q4_query = document.querySelectorAll('div.quiz')
+            // console.log(quiz4)
+
+            // 전체 div를 검사하기 위해 for문으로 가져온 배열의 길이만큼 돌게함
+            for(let i=0; i<Q4_query.length; i++) {
+                // 각 배열 중에서 innerText로 글씨가 없는 곳을 확인하고,
+                // 다시 innerText로 '비어있음' 으로 글씨를 채워줌
+                // textContent로 했을 땐 공백까지 모두 포함하기 때문에,
+                // 이럴 경우에는 trim()을 이용해서 공백을 제거 후 비교도 가능
+                // if(Q4_query[i].textContent == '') {
+                if(Q4_query[i].innerText == '') {
+                    Q4_query[i].innerText = '비어있음'
+                    Q4_query[i].style.background = 'red'
+                }
+                // 각 div별로 어떤 text가 들어가 있는지 확인하기 위한 출력물
+                console.log(`${i+1}번 div내용 : ${Q4_query[i].innerText}`)
+
+                // 만약 '비어있음'이 들어갔을 때 구분하기 쉽도록 bg 설정
+                // if(Q4_query[i].innerText == '비어있음') {
+                //     // console.log('비어비어')
+                //     Q4_query[i].style.background = 'red'
+                // }
+            }
+
+        </script>
+    </body>
+</html>

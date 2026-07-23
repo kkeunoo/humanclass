@@ -1,0 +1,121 @@
+#div1 {
+    border: 1px solid red;
+}
+
+.block {
+    border: 1px solid red;
+
+    width: 100px;
+    height: 50px;
+    /* 요소의 너비가 최대 크기보다 작은 경우 auto로 정렬이 가능하다 */
+    margin: 10px auto;
+}
+
+.inline {
+    border: 1px solid red;
+
+    /* inline의 특징은 너비,높이가 적용되지 않는다(글씨,그림) 
+    공간이 있으면 옆으로 가지만, 공간이 없으면 아래로 내려감*/
+    width: 200px;
+    height: 100px;
+
+    /* margin/padding은 좌/우는 가능하지만 상/하는 적용되지 않음 */
+    margin: 30px 50px;
+
+    /* border에는 적용되지만 content에는 적용되지 않기때문에 상/하는 주지 않는게 좋음
+    좌/우는 적용이 됨 (실제로 content영역은 밀리지 않은 것, 가짜 border) */
+    padding: 30px 50px;
+
+    /* background-color는 padding영역까지 같이 칠해짐 */
+    background-color: pink;
+
+    /* display:block; */
+}
+
+.parent {
+    border: 1px dotted rgb(255, 0, 255);
+
+    /* inline요소(text 등)은 text-align으로 정렬하며, block요소는 margin: auto로 */
+    /* text-align: center; */
+}
+
+.parent > div {
+    border: 1px solid red;
+    display:inline;
+
+    /* inline요소에 center정렬을 하더라도 이미 content영역이 꽉 차있기 때문에 의미가 없음 
+    (공간이 없어 내부 정렬, 너비 등이 없음)*/
+
+    /* span처럼 inline요소를 써서 한 줄에서 특정 부분만 백그라운드 등 입히고 싶을 때 사용 */
+    text-align: center;
+    width: 100px;
+}
+
+.parent2 {
+    border: 1px dotted rgb(255, 0, 255);
+
+    /* inline요소(text 등)은 text-align으로 정렬하며, block요소는 margin: auto로 */
+    /* inline-block도 inline으로 취급한다 */
+    text-align: center;
+}
+
+/* inline에 block의 볼륨감을 더한 것이며, width,height,margin,padding을 모두 가질 수 있음 */
+.parent2 > div {
+    border: 1px solid red;
+    display:inline-block;
+    
+    width: 100px;
+    height: 50px;
+
+    margin: 30px;
+    /* margin auto는 내 땅 기준으로 보았을 때 inline요소로 땅이 없어 적용 안 됨 */
+    /* margin: 0 auto; */
+
+    padding: 50px;
+}
+
+.parent3 {
+    border: 1px dotted rgb(255, 0, 255);
+    font-size: 0px;
+}
+
+/* 아래처럼 2줄을 적었을 때 맨 아래 줄 내용(baseline)을 기준으로 줄이 맞춰지기 때문에 약간 올라간 모습 */
+/* 아래와 같은 경우 vertical-align으로 정렬을 해줄 수 있다 */
+.parent3 > div {
+    border: 1px solid red;
+    display:inline-block;
+    
+    width: 100px;
+    height: 50px;
+
+    padding: 50px;
+
+    /* vertical은 세로정렬이며 inline에서만 적용 됨(inline, inline-block) */
+    vertical-align: top;
+    
+    /* 4px 공백을 해소하기 위해 부모에 font-size 0을 주고, 하위 자식들에게 별도 font-size를 줌 */
+    font-size: 16px;
+}
+
+/* 이렇게도 4px공백을 해소할 수 있지만 모바일일경우 아래로 내려가서 왼쪽으로 밀리기 때문에 비추천 */
+/* .parent3 > div.right {
+    margin-left: -4px; 
+} */
+
+/* pop-up같은 창을 자바를 이용해 누르면 없어지게끔 할 수 있기도 함 */
+/* 브라우저에서 표시할 내용을 배치할 때 빠짐(주석은 영구제외) */
+.hide {
+    display: none;
+}
+
+.table {
+    display: table;
+}
+.table .td {
+    display: table-cell;
+
+    border: 1px solid red;
+    height: 100px;
+    vertical-align: middle;
+}
+

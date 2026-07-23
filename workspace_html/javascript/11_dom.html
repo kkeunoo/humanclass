@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            /* CSS는 ID가 중복이 되어도 동작시킴 */
+            #view {
+                color: red;
+            }
+
+            div.pizza,
+            div#view.pizza,
+            #view.pizza {
+                font-size: 2em;
+            }
+
+            .blue {
+                color: blue;
+            }
+            .bg-yellow {
+                background-color: yellow;
+            }
+
+        </style>
+    </head>
+    <body>
+        <h1 id="title">DOM연습</h1>
+
+        <div id="view">첫번째 view</div>
+        <div id="view" class="pizza">두번째 view</div>
+
+        <ul id="메뉴">
+            <li class="menu li1">치킨</li>
+            <li class="menu pizza">피자</li>
+            <li class="menu">똠얌꿍</li>
+            <li>집밥</li>
+        </ul>
+
+        <img id="aha" alt="아하모먼트" style="width:100px;" src="https://dcimg1.dcinside.com/viewimage.php?id=3eb4de21e9d73ab360b8dab04785736f&no=24b0d769e1d32ca73dea83fa11d028319fcc22bb8e6c7e0fd5579701e1bff5064abf11cee475015772a7a1d95dc4d48b36830006bde4571f6404873bd4ccabe16cc2ad104c92b6d6893048aa4c604957e0020bd8fb984d5c24a6634e051f98e53e1ad31868124f73b78ea9b7cb&orgExt">
+
+        <div id="div1">div1</div>
+        <div id="div2" class="bg-yellow">div2</div>
+
+        <!-- script가 head영역으로 그대로 올라간다고 하면,
+         로딩이 다 되기 전에 위 head영역이 실행되기 때문에 null값이 반환됨 -->
+        <script>
+            //DOM : Document Object Model (javascript로 수정이 가능)
+            // <h1> 등 태그 자체, 최상위 객체를 가져옴(document)
+            // getElementById 를 제외하고는 모두 배열을 돌려줌
+
+            console.log(document)
+
+            // id속성으로 DOM을 가져오기
+            // html body에 있는 h1이 가져와진 것
+            const title = document.getElementById('title')
+            console.log(title)
+            // [object HTMLHeadingElement] 가 나오는데, heap영역의 주소값이 나옴
+            // javascript는 주소값을 가려서 보여주기 때문에 위 멘트로 나옴
+            console.log(''+title)
+
+            // 아래처럼 없는 id 등 선언되지 않은 것을 불러오면 'null = 주소값이 없다'
+            // undefined처럼 일반적인 값이 없을 때와는 다름
+            // 에드블럭같은 경우 광고값의 id를 불러오고 null이면 광고가 없다? 지워졌다?
+            const title2 = document.getElementById('title2')
+            console.log(title2)
+
+            // javascript는 같은 ID가 있어도 첫번째 나온 DOM만 읽고 나머지는 읽지 않음
+            const view = document.getElementById('view')
+            console.log(view)
+
+            // tag속성으로 DOM을 가져오기
+            // Element's'로 가져오면 유사 배열로 가져오게 됨 (HTMLCollection배열)
+            let divs = document.getElementsByTagName('div')
+            console.log('divs',divs)
+
+            // 선언 된 것이 없을 경우 null이 아닌, length가 0인 빈 배열을 가져옴
+            let divs2 = document.getElementsByTagName('div2')
+            console.log(divs2)
+
+            // 배열이 비어있다고 해도 true(참)으로 판단함
+            if(divs2) {
+                console.log('참')
+            }
+
+            // class로 DOM을 가져오기 (class는 포함 한 정보 모두를 가져옴)
+            // console창에서 div#view, li.menu.li1 등 가장 빠른 경로를 알려줌
+            let menus = document.getElementsByClassName('menu')
+            console.log(menus)
+
+            // ul에 있는 #메뉴 id를 가져오며 다른 dom으로 대체가능
+            // 특정 DOM안에서도 class나 tag를 찾을 수 있다
+            let 메뉴 = document.getElementById('메뉴')
+            // let pizza = 메뉴.getElementsByTagName('li')
+            let pizza = 메뉴.getElementsByClassName('pizza')
+            console.log(pizza)
+
+            // style태그 안에 있는 것을 가져오기 위해 querySelector를 사용함
+            // == CSS선택자를 사용할 수 있고, 하나의 DOM만 돌려줌
+            // 여러개가 있는 경우 첫 번째 DOM, 없는 경우 'null'
+            let view2 = document.querySelector('#view.pizza')
+            console.log(view2)
+
+            // querySelector를 사용해도 같은 #view가 있을 때 첫번째 값만 가져옴
+            // let view3 = document.querySelector('#view')
+            let view3 = document.querySelector('div#view')
+            console.log(view3)
+    
+            // div#view4라는게 없기 때문에 연결이 안 되어 'null'값이 나옴
+            let view4 = document.querySelector('div#view4')
+            console.log(view4)
+
+            // All을 사용하면, 해당 ID또는 Class등 지정 된 것 모두를 가져옴
+            let qsa = document.querySelectorAll('#view')
+            console.log(qsa)
+
+            /////////////////////
+            // 속성
+            /////////////////////
+            let aha = document.querySelector('#aha')
+            console.log(aha)
+
+            // 있느냐 없느냐 할 때 isOOO를 많이 씀
+            // hasAttribute로 속성명이 있는가를 찾을 수 있음
+            // readonly, disabled, required 등 검사할 때 좋음
+            let isSrc = aha.hasAttribute('src')
+            console.log('isSrc : ', isSrc)
+
+            // 속성명 가져오기
+            let src = aha.getAttribute('src')
+            console.log('src : ',src)
+
+            // 없으면 null 반환
+            let src2 = aha.getAttribute('src2')
+            console.log('src : ',src2)
+
+            setTimeout(function() {
+                aha.setAttribute('src','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTfcB1NnULAVwTNt6Oj3pRWq5H_H1Iu5UZNQetJZrTdg&s=10')
+            },1000*2)
+
+            // 속성값이 있으면 바꿔주고, 없다면 해당 태그에 속성을 만들어줌
+            // 바뀌는 값들은 DevTools Elements에서 색이 바뀜
+            aha.setAttribute('human', '교육센터')
+
+            // 속성값 지우기
+            aha.removeAttribute('human')
+            
+            /////////////////////
+            // 클래스 조작
+            /////////////////////
+            let div1 = document.querySelector('#div1')
+            let div2 = document.querySelector('#div2')
+
+            // class를 배열로 돌려줌
+            console.log( '배열',div2.classList )
+
+            // add는 class 추가이지만, 중복으로 추가하지는 않음
+            div1.classList.add('blue')
+            div1.classList.add('blue')
+            
+            // remove는 class 제거이지만, 없어도 에러나지 않음
+            div1.classList.remove('blue')
+            div1.classList.remove('blue')
+            
+            // toggle은 상태를 반전시킬 수 있음
+            // blue가 없으면 켜주고, blue가 있으면 꺼줌
+            div1.classList.toggle('blue')
+            div1.classList.toggle('blue')
+
+            // 해당 class가 있는지 없는지 true/false 값으로 알려줌
+            // blue가 있고 없고에 따라 add/remove도 해볼 수 있음
+            let isBlue = div1.classList.contains('blue')
+            console.log(isBlue)
+
+            div2.classList.add('blue')
+
+            // remove()로 DOM을 지우면 되돌릴 수 없음
+            // 보통은 display:none으로 잠깐 안 보이게 했다가 나오게 함
+            div2.remove()
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        // 한줄 주석
+        /*
+            여러줄 주석
+            범위 주석
+        */
+
+        console.log("hello world")
+        // alert('hello 엔터\n world')
+        // confirm('hello world2')
+        // prompt('hello world3')
+
+        a = 15;
+        console.log(a);
+        console.log(11);
+
+        // 변수
+        // 선언 방법 1
+        var a = 10;
+        console.log('a : '+ a);
+
+        var b = 20;
+        console.log('b :', b);
+
+        a = 30;
+        console.log('a : '+ a);
+
+        // 같은 변수명으로 다시 선언해도 오류가 없다
+        var a = 40;
+        console.log('a : '+ a);
+
+        // 선언 방법 2
+        // 타입 없음
+        c = 50;
+        console.log('c : '+ c);
+
+        // 선언 방법 3
+        let d = 60
+        console.log('d : '+ d);
+
+        // 같은 변수 명으로 다시 선언하는 것을 막아준다
+        // let d = 70
+        d = 65
+        console.log('d : '+ d);
+
+        // 선언 방법 4
+        const e = 70
+        console.log('e : '+ e)
+        // const e = 80
+        // e = 75
+
+        d = '문자'
+        console.log('d : '+ d);
+
+        // const는 
+        // 선언과 동시에 값을 넣어야 한다
+        // const f;
+        // f = 80
+        // console.log('f : '+ f)
+
+
+        // camel case
+        let salesCount = 1;
+        // snake case
+        let sales_count = 1;
+        // kebab case
+        // let font-size = 2;
+
+        // not defined
+        // console.log(z)
+        let y;
+        console.log(y)
+
+        // Infinity
+        console.log( 7 / 0 )
+
+        // NaN : Not a Number
+        console.log( 7 * "문자" )
+
+        console.log(`백틱
+        엔터 가능
+        ${a}
+        `)
+        console.log("a :"+ a)
+        console.log(`a : ${a}`)
+
+        let f = true;
+        let g = false;
+
+        let strA = "10.1"
+        let strB = "10개"
+        console.log( strA + 2 ) // "10.12"
+        let numA = Number(strA) + 2
+        console.log(numA)
+        console.log( Number(strB) )
+
+        numA = parseInt( strA )
+        console.log('numA :', numA)
+        console.log( parseInt(strB) )
+
+        console.log( String(numA) )
+        console.log( ''+numA )
+
+        // 평
+        let py = 3.3
+        // 에이커
+        let acre = 4046.8
+        let 밭 = 10
+        // "단위가 평일 때 : ..."
+        // "단위가 에이커일 때 : ..."
+        console.log("단위가 평일 때 : "+ 밭 * py )
+        console.log("단위가 에이커일 때 : "+ 밭 * acre )
+        // 82제곱미터는 몇 평인가요?
+        console.log( 82 / py )
+
+        a = 10
+        a = a + 1
+
+        let 잔고 = 15000
+        let 번돈 = 100000
+        잔고 = 잔고 + 번돈
+        잔고 += 번돈
+
+        console.log( 7 / 3 )
+        // %는 나머지의 값을 출력하게 하는 것
+        console.log( '나머지 : ', 7 % 3 )
+        console.log( '몫 : ', parseInt(7 / 3) )
+        
+        // `
+        // 9명이 회식을 했고 비용이 100,000원이 나왔다
+        // `
+        
+        console.log( '나머지 : ', 100000 % 9 )
+        console.log( '인당 : ', parseInt(100000 / 9) )
+
+        console.log( '주최자 : ', parseInt(100000 / 9) + (100000 % 9) )
+        // console.log( parseInt(7 / 3 * 10) / 10 )
+
+        // confirm, prompt 등 값을 받아 변수에 넣을 수 있다
+        // let h = confirm('할래말래')
+        // console.log('confirm 결과 : ', h)
+        
+        // prompt는 취소를 눌렀을 때 값이 들어가지 않아 null이 들어간다
+        // let i = prompt('비번을 입력하세요')
+        // console.log('prompt 결과 : ', i, '입니다')
+        // 벡틱 ``로도 쓸 수 있다
+        // console.log(`prompt 결과 : ${i}입니다`)
+
+        let a1 = 10
+        let a2 = 20
+        let a3 = 30
+
+        //let을 3개 쓰거나 ,로 이어서 쓸 수 있다
+        let b1 = 10, 
+            b2 = 20,
+            b3 = 30
+
+        //error처럼 보이게 강제로 출력할 수 있다
+        console.error('아무거나')
+
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

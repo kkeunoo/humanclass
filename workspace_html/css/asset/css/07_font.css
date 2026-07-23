@@ -1,0 +1,116 @@
+/* 웹폰트, 컴퓨터에 설치 없어도 쓰게 할 수 있도록 링크를 다운받아놓는 선언 */
+@font-face {
+    font-family: 'NostalgicPoliceVibe';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/Griun_PolSensibility-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+.size {
+    font-size: 32px;
+}
+
+.font {
+    font-family: 'NostalgicPoliceVibe', Arial;
+}
+
+.style {
+    /* html em으로 감싸도 되지만, 그건 강조체 css는 예쁘게표현 */
+    font-style: italic;
+}
+
+/* font-weight는 100 ~ 1,000적용이며 100단위로 사용할 수 있다 
+단, 100, 300, 900 3개의 패밀리만 가지고 있다면 이것만 표현될수도 있음*/
+.fw-100 { font-weight: 100; }
+.fw-300 { font-weight: 300; }
+.fw-500 { font-weight: 500; }
+.fw-700 { font-weight: 700; }
+.fw-900 { font-weight: 900; }
+.fw-1000 { font-weight: 1000; }
+.fw-2000 { font-weight: 2000; }
+.fw-bold { font-weight: bold; }
+
+.lh {
+    line-height: 300%;
+}
+
+.middle {
+    border: 1px solid red;
+    /* height를 주고 line-height를 주면 가운데 정렬 가능 */
+    height: 100px;
+    line-height: 100px;
+
+    width: 300px;
+    text-align: center;
+}
+
+.spacing {
+    /* 0이 기본값이며 1em은 1글자가 들어갈 자리를 만듦 */
+    /* letter-spacing: 1em */
+    /* letter-spacing: -0.1em */
+    letter-spacing: 0em
+}
+
+.justify {
+    text-align: justify;
+}
+
+/* inline요소지만 공간이 가득차있기 때문에 그 공간에서만 움직임 */
+.right {
+    text-align: right;
+}
+
+.lt {
+    text-decoration: line-through;
+}
+
+.ul {
+    text-decoration: underline;
+}
+
+.none {
+    text-decoration: none;
+}
+
+/* a tag 방문 안 했을 때 색 조정 */
+.none:link {
+    color: aqua;
+}
+
+/* a tag 방문 했을 때 색 조정 */
+.none:visited {
+    color: aqua;
+}
+
+/* 모든 content를 한 줄로 포기하고 싶을 때 쓰는 선언 
+그림같이 한 줄로 둔다고 하면 스크롤이 생김 */
+.nowrap {
+    border: 1px solid red;
+    width: 200px;
+
+    /* 3개가 조합으로 많이 쓰임, 가린 뒤 ... 표시를 하기 위해 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text {
+    border: 1px solid red;
+    width: 200px;
+}
+
+/* 단점은 단어가 중간에 끊어질 수 있음 */
+.word-wrap {
+    word-wrap: break-word;
+}
+
+.word-break {
+    word-break: break-all;
+}
+
+/* css로도 h1과 같이 만들 수 있지만 html의미를 잘 쓰는것이 더 좋음 */
+.fake-h1 {
+    /* font-weight: 600; */
+    font-weight: bold;
+    font-size: 2em;
+}

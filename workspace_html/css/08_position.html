@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="./asset/css/08_position.css">
+    </head>
+    <body id="top">
+        <div class="parent">
+            <div>L</div>
+            <div>O</div>
+            <div>V</div>
+            <div>E</div>
+        </div>
+
+        relative
+        <div class="parent">
+            <div>L</div>
+            <div class="relative">O</div>
+            <div>V</div>
+            <div>E</div>
+        </div>
+        
+        absolute
+        <div class="parent">
+            <div>L</div>
+            <div class="absolute">O</div>
+            <div>V</div>
+            <div class="abs-b">E</div>
+        </div>
+
+        relative 아래 absolute 부모기준으로 변경됨
+        <div class="parent rel">
+            <div>L</div>
+            <div class="absolute">O</div>
+            <div>V</div>
+            <div class="abs-b">E</div>
+        </div>
+
+        <div class="fixed">
+            <a href="#top">맨 위로</a>
+        </div>
+
+        <div class="sticky">
+            스티키 : 메뉴1 메뉴2
+        </div>
+
+        <div class="parent2">
+            <div class="rel z1">1번</div>
+            <div class="rel z2">2번</div>
+            <div class="rel z3">3번</div>
+        </div>
+        <hr>
+        
+        <div class="menu">
+            메뉴1-0 메뉴2-0 메뉴3-0
+        </div>
+        <div class="submenu">
+            메뉴1-1 메뉴2-1 메뉴3-1<br>
+            메뉴1-2 메뉴2-2 메뉴3-2
+        </div>
+
+        <div class="p1">
+            부모 박스
+            <div class="c1">
+                자식 박스
+            </div>
+        </div>
+
+    </body>
+</html>

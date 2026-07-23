@@ -1,0 +1,48 @@
+* {
+    border: 1px solid red;
+    margin: 0;
+}
+
+.main .contents {
+    text-align: center;
+    /* vertical-align: bottom; */
+    
+    width: 100vw;
+    height: 100vh;
+}
+
+.main .contents div {
+    display: inline-block;
+    /* vertical-align: middle; */
+    /* width: 500px;
+    height: 500px; */
+
+    position: relative;
+}
+
+.img {
+    width: 400px;
+    height: 400px;
+
+}
+
+.text {
+    width: 200px;
+    height: 200px;
+
+    /* top: 50px; */
+    left: -50px;
+    
+    top: calc(50% - (200px/2));
+}
+
+.bg {
+    width: 70%;
+    height: 100%;
+
+}
+
+.bg_main {
+    text-align: right;
+}
+

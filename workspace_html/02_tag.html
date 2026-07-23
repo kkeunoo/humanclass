@@ -1,0 +1,65 @@
+<!-- html 태그는 페이지 당 하나만 있는게 좋다 -->
+<html>
+    <!-- head 태그에는 페이지의 정보가 있다 title, style, link, script 등 메타데이터(브라우저가 이해하는 것)
+     이 페이지는 사진이 있거나 표가 있다 등 -->
+    <head>
+        <!-- 속성값이 아닌 title의 경우 body에 넣어도 맨 마지막것으로 끌어오긴 하나 맞는 구역에 넣는것이 좋음 -->
+        <title>정근욱</title>
+    </head>
+
+    <!-- body 태그에는 실질적으로 보여줄 내용이 있다 -->
+    <body>
+        <!-- alt + shift를 누른 상태면 아래로 복사할 수 있고 alt만 누른 상태라면 위치 이동가능 -->
+        hello world
+        <h1>h1</h1>
+        <h2>h2</h2>
+        <h3>h3</h3>
+        <h4>h4</h4>
+        <h5>h5</h5>
+        <h6>h6</h6>
+        <h7>h7</h7><br>
+
+        <jeong>아무 의미 없는 사용자 태그, 개인적으로 사용할 수도 있음</jeong><br>
+
+        <!-- b tag와 동일하게 사용할 수 있지만, b는 시맨틱태그가 아니기에 strong을 사용함 -->
+        <strong>굵어서 강조하는 글씨</strong><br>
+
+        <!-- i tag와 동일하게 사용할 수 있지만, i는 시맨틱태그가 아니기에 em을 사용함 -->
+        <em>기울여서 강조하는 글씨</em><br>
+
+        <!-- 노란색으로 고정되어 있고 HTML에서는 많이 사용하지 않고 css로 처리함 -->
+        적당히 <mark>mark</mark>태그 넣기<br>
+
+        <!-- HTML에서는 많이 사용하지 않고 css로 처리함 -->
+        적당히 <del>mark</del>태그 넣기
+
+        <!-- lorem처럼 자동완성이 되는것은 '제안'이라는 것이고 테스트 할 때 등 주로 쓰임, 의미는 없음
+         p tag는 '문단'을 뜻하며 기존 문법 문단과 같이 아래, 위 여백이 생김 -->
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Distinctio, quidem! Eum iusto autem cum facilis nobis modi, natus inventore voluptas? Nesciunt, esse aspernatur! Doloremque possimus nisi dignissimos dolorem vel atque!</p>
+        <p>Lorem ipsum <br>dolor sit, amet consectetur adipisicing elit. Distinctio, quidem! Eum iusto autem cum facilis nobis modi, natus inventore voluptas? Nesciunt, esse aspernatur! Doloremque possimus nisi dignissimos dolorem vel atque!</p>
+        
+        <!-- html에서는 1개 이상의 연속된 공백(space)과 1개 이상의 연속된 줄바꿈(enter)을 1개의 공백으로 표시 -->
+        <p>Lorem ipsum 
+            
+            dolor sit, 
+            
+            <!-- 아래처럼 연속된 공백(spcae)를 아무리 많이해도 1칸의 공백으로 표시됨을 알 수 있음, &nbsp; 사용
+             (단, nbsp(스페이스)의 경우 실무에서는 css로 대체하고 주로 사용하지 않는것이 좋음) -->
+            1   2&nbsp;&nbsp;&nbsp;3<br>
+            
+            <!-- 꺽새를 표시하고 싶을 땐 &lt; &gt;를 사용해서 표기 / copyright = &copy; / & = &amp; -->
+            &lt;br&gt; &copy; &amp;<br>
+            
+            amet consectetur adipisicing elit. Distinctio, quidem! Eum iusto autem cum facilis nobis modi, natus inventore voluptas? Nesciunt, esse aspernatur! Doloremque possimus nisi dignissimos dolorem vel atque!</p>
+        
+        <!-- pre는 코딩 한 그대로의 content를 살려 출력하며, 1의 경우 앞에 공백이 없기 때문에 들여쓰기로 그대로 출력됨 -->
+        <Pre>1
+            2<br>
+            3
+            4
+        </Pre><br>
+
+        <!-- hr의 경우 1줄의 수평줄을 삽입할 수 있다 -->
+        <hr><br>           
+    </body>
+</html>

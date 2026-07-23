@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+        let m = '+'
+        let s = '_'
+        // 1단계
+        // +++++
+        let string = ''
+        for(let i=1; i<=5; i++) {
+            string += m
+        }
+        console.log(string) 
+
+        // 2단계
+        // +_+_+_+_+_
+        string = ''
+        for(let i=1; i<=5; i++) {
+            string += m
+            string += s
+        }
+        console.log(string) 
+
+        // 3단계
+        /*
+            +++++
+            +++++
+            +++++
+        */
+       for(let i=1; i<=3; i++) {
+            string = ''
+            for(let j=1; j<=5; j++) {
+                string += '+'
+            } 
+            console.log(string)
+        }
+
+        // 4단계
+        /*
+            11111
+            22222
+            33333
+            44444
+            55555
+        */
+       for(let j=1; j<=5; j++) {
+           string=''
+            for(let i=1; i<=5; i++) {
+                string += j
+            }
+            console.log(string)
+       }
+
+        // 5단계
+        /*
+            1
+            22
+            333
+            4444
+            55555
+        */
+        for(let j=1; j<=5; j++) {
+            string=''
+            for(let i=1; i<=j; i++) {
+                string += j
+            }
+            console.log(string)
+       }
+
+        // 6단계
+        /*
+            +
+            ++
+            +++
+            ++++
+            +++++
+        */
+        for(let j=1; j<=5; j++) {
+            string=''
+            for(let i=1; i<=j; i++) {
+                string += '+'
+            }
+            console.log(string)
+       }
+
+        // 7단계
+        /*
+            11111
+            2222
+            333
+            44
+            5
+        */
+        let val = 5
+        for(let j=1; j<=val; j++) {
+            string=''
+            for(let i=1; i<=(val+1)-j; i++) {
+                string += j
+            }
+            console.log(string)
+       }
+
+        for(let j=1; j<=5; j++) {
+            string=''
+            for(let i=1; i<=6-j; i++) {
+                string += j
+            }
+            console.log(string)
+       }
+
+        // 8단계
+        /*
+            +____
+            ++___
+            +++__
+            ++++_
+            +++++
+        */
+
+        for(let j=1; j<=5; j++) {
+            string = ''
+            for(let i=1; i<=j; i++) {
+                string += '+'
+            }
+            for(let k=1; k<=5-j; k++) {
+                string += '_'
+            }
+            console.log(string)
+        }
+
+        // 9단계
+        /*
+            ____+
+            ___++
+            __+++
+            _++++
+            +++++
+        */
+
+        for(let j=1; j<=5; j++) {
+            string = ''
+            for(let i=1; i<=5-j; i++) {
+                string += '_'
+            }
+            for(let k=1; k<=j; k++) {
+                string += '+'
+            }
+            console.log(string)
+        }
+
+        // 10단계
+        /*
+            ____+
+            ___+++
+            __+++++
+            _+++++++
+            +++++++++
+        */
+
+        for(let j=1; j<=5; j++) {
+            string =''
+            for(let i=1; i<=5-j; i++) {
+                string += '_'
+            }
+            for(let k=1; k<=2*j-1; k++) {
+                string += '+'
+            }
+            console.log(string)
+        }
+
+        // 11단계
+        /*
+            ____+____
+            ___+++___
+            __+++++__
+            _+++++++_
+            +++++++++
+        */
+        console.log('--------------복습용--------------')
+        for(let j=1; j<=5; j++) {
+            string = ''
+            for(let i=1; i<=5-j; i++) {
+                string += '_'
+            }
+            for(let k=1; k<=2*j-1; k++) {
+                string += '+'
+            }
+            for(let i=1; i<=5-j; i++) {
+                string += '_'
+            }
+            console.log(string)
+        }
+
+
+        // 12단계
+        // 입력 받은 줄 수 대로 출력
+        let value = prompt('12. 줄 수를 입력해주세요.')
+            for(let j=1; j<=value; j++) {
+                string = ''
+                for(let i=1; i<=value-j; i++) {
+                    string += '_'
+                }
+                for(let k=1; k<=2*j-1; k++) {
+                    string += '+'
+                }
+                for(let i=1; i<=value-j; i++) {
+                    string += '_'
+                }
+                console.log(string)
+        }
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>

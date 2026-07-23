@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            .hidden {
+                visibility: hidden;
+            }
+
+            /* 자리까지 없어지기때문에 보통 display를 주로 씀 */
+            .none {
+                display: none;
+            }
+
+            /* 글씨,그림 모두 투명도를 민들 수 있음 */
+            /* visibility:hidden과 opacity:0은 동일하게 자리는 있으나 투명하게 만듦 */
+            .opacity {
+                /* opacity: 0.3; */
+                opacity: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <p>첫번째</p>
+        <p class="hidden">두번째</p>
+        <p class="none">세번째</p>
+        <p class="opacity">네번째</p>
+        <p>다섯번째</p>
+    </body>
+</html>

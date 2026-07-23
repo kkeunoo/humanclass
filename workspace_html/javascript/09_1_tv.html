@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+            // TV 만들기 (채널은 0~10번까지, 볼륨은 0~5까지)
+            // 채널 10일 때 up을 누르면 0번으로 돌아가게
+            // 채널 0일 때 down을 누르면 10번으로 돌아가게
+            // 기능
+            /*
+                1. 전원 on
+                2. 전원 off
+                3. 채널(직접입력)
+                4. 채널 up
+                5. 채널 down
+                6. 볼륨 up
+                7. 볼륨 down
+                8. 음소거 on/off
+            */
+
+            let power = false; // 전원 상태 저장(꺼져있는걸 기본값)
+
+            let lastCh = 0; // 전원을 끄기 전 또는 바꿨을 때 마지막 채널
+            const CH_MAX = 10 // 중요한 부분은 const 및 대문자로 보통 주로 씀
+            const CH_MIN = 0 // 채널이 0~10이기에 최소,최대값 지정
+
+            let lastVol = 0 // 기존 볼륨값을 저장하기 위한 변수 선언
+            let VOL_MUTE = false; // mute를 했을 때 true/false값을 저장하기 위한 변수
+            const VOL_MAX = 5 // 볼륨은 0~5이기에 최소, 최대값 지정
+            const VOL_MIN = 0
+
+            function powerOn() {
+                power = true;
+                console.log("TV 켜짐")    
+            }
+
+            function powerOff() {
+                power = false;
+                console.log("TV 꺼짐")    
+            }
+
+            // power가 true(켜진상태)일 때 원버튼을 동작시키면 꺼지면서 false값 저장
+            // power가 false(꺼진상태)일 때 원버튼을 동작시키면 켜지면서 true값 저장
+            function powerOne() {
+                if(power) {
+                    console.log("원버튼 TV 꺼짐")    
+                    power = false;
+                // } else if (!power) {
+                } else {
+                    console.log("원버튼 TV 켜짐")   
+                    power = true;
+                }
+            }
+
+            function channel(ch) {
+                if(power) {
+
+                    // return만 쓰면 해당 함수가 종료되기 때문에 else 대신 사용
+                    // 지정채널을 받을 때 채널이 0~10의 값이 아니라면, 채널이 없다고 출력하며 종료
+                    if(ch < CH_MIN || ch > CH_MAX) {
+                        console.log('채널이 없습니다')
+                        return
+                    }
+
+                    // 0~10번사이 채널일 경우 받은 ch인자로 채널을 변경하며, lastCh에 저장
+                    lastCh = ch
+                    console.log(ch+'번으로 채널변경')
+                } else {
+                    console.log('전원 꺼져있음')
+                }
+            }
+
+            function channelUp() {
+                if(power) {
+                    lastCh++
+                    if(lastCh > CH_MAX) {
+                        lastCh = CH_MIN
+                    } 
+                    console.log(lastCh+'번으로 채널변경')
+                    // console.log(++lastCh + '번으로 채널변경')
+                } else {
+                    console.log('전원 꺼져있음')
+                }
+            }
+
+            function channelDown() {
+                if(power) {
+                    lastCh--
+                    if(lastCh < CH_MIN) {
+                        lastCh = CH_MAX
+                    } 
+                    console.log(lastCh + '번으로 채널변경')
+                    // console.log(--lastCh + '번으로 채널변경')
+                } else {
+                    console.log('전원 꺼져있음')
+                }
+            }
+
+            // 볼륨 (최초엔 0에서 시작한다)
+            // 5일 때 up을 누르면 5 고정, 0일 때 down 누르면 0 고정
+            // 음소거는 mute , 음소거 상태라면 볼륨 0 , 해제할 경우 기존 볼륨으로 복구
+            // toggle : 실행 할 때 마다 상태 반전
+            function volUp() {
+                if(power) {
+                    lastVol++
+                    // VOL_MUTE = false 로 미리 선언해놔도 됨
+                    if(lastVol > VOL_MAX) {
+                        lastVol = VOL_MAX
+                    } else if(VOL_MUTE == true) {
+                        console.log('[음소거 해제 및 볼륨UP] 현재볼륨 : ',lastVol)
+                        VOL_MUTE = false;
+                    } else {
+                        console.log('[볼륨UP] 현재볼륨 : ',lastVol)
+                    }
+
+                } else {
+                    console.log('전원 꺼져있음')
+                }
+            }
+
+            function volDown() {
+                if(power) {
+                    lastVol--
+                    // VOL_MUTE = false 로 미리 선언해놔도 됨
+                    if(lastVol < VOL_MIN) {
+                        lastVol = VOL_MIN
+                    } else if(VOL_MUTE == true) {
+                        console.log('[음소거 해제 및 볼륨DOWN] 현재볼륨 : ',lastVol)
+                        VOL_MUTE = false;
+                    } else {
+                        console.log('[볼륨DOWN] 현재볼륨 : ', lastVol)
+                    } 
+                } else {
+                    console.log('전원 꺼져있음')
+                }
+            }
+
+            function muteOn() {
+                if(power) {
+                    console.log('[음소거 설정] 현재볼륨 : 0')
+                } else {
+                    console.log('전원 꺼져있음')
+                }
+            }
+
+            function muteOff() {
+                if(power) {
+                    console.log('[음소거 해제] 현재볼륨 :', lastVol)
+                } else {
+                    console.log('전원 꺼져있음')
+                }
+            }
+
+            function muteOne () {
+                if(power) {
+                    // 단순하게 바꾸는건 VOL_MUTE = !VOL_MUTE도 가능
+                    if(VOL_MUTE == false) {
+                        console.log('[음소거 설정] 현재볼륨 : 0')
+                        VOL_MUTE = true
+                    } else {
+                        console.log('[음소거 해제] 현재볼륨 :', lastVol)
+                        VOL_MUTE = false
+                    }
+                } else {
+                    console.log('전원 꺼져있음')
+                }
+            }
+
+            console.log(' - - 전원Off 중 테스트 - - ')
+            powerOff()
+            channel(5)
+            channelUp()
+            channelDown()
+            volUp()
+            volDown()
+            muteOne()
+            
+            console.log(' - - 전원On 중 테스트 - - ')
+            powerOn()
+            channelUp()
+            channel(5)
+            channelDown()
+            channel(50)
+            channelUp()
+            channel(-50)
+            channelDown()
+            volUp()
+            volDown()
+            volDown()
+            volUp()
+            muteOne()
+            volUp()
+            muteOne()
+            volDown()
+            muteOne()
+            muteOne()
+
+
+
+            
+
+    
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

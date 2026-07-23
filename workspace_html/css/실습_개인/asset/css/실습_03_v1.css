@@ -1,0 +1,16 @@
+.parent > [class^=item] {
+    /* border: 1px solid black; */
+    display: inline-block;
+    width: 150px;
+    margin: 5px;
+    vertical-align: top;
+}
+
+/* .parent > [class^=item] > a > img {
+    width: 150px;
+    border: 1px solid red;
+} */
+
+.parent [class^=item] img {
+    width: 150px;
+}

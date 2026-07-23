@@ -1,0 +1,62 @@
+/* body {
+    background-color:brown;
+} */
+
+.parent {
+    background-color: brown;
+
+    width: 100vw;
+    height: 50vh;
+
+    text-align: center;
+    /* overflow: hidden; */
+
+    padding-top: 200px;
+}
+
+.text1 {
+    color: white;
+    font-size: 30px;
+    margin: 20px;
+}
+
+.text2 {
+    color: white;
+    margin: 20px;
+}
+
+.text2 .text_border {
+    border-bottom: 1px dotted white;
+}
+
+.text3 {
+    /* display: inline-block; */
+    display: table;
+
+    width: 330px;
+    height: 50px;
+    margin: 20px;
+
+    border: 1px solid white;
+    background-color: rgba(255,255,255,0.15);
+    
+    border-radius: 3px;
+}
+
+.text3:hover {
+    background-color: rgba(255,255,255,0.3);
+}
+
+.text3 .text3_1 {
+    /* background-color: black; */
+    display: table-cell;
+    color: white;
+
+    vertical-align: middle;
+    
+}
+
+.center {
+    display: inline-block;
+    text-align: center;
+}

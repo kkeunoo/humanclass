@@ -1,0 +1,57 @@
+article img {
+    width: 100px;
+
+    float: right;
+}
+
+.box {
+    border: 1px solid red;
+
+    width: 100px;
+    height: 100px;
+
+    margin: 10px;
+}
+
+/* float도 absolute처럼 새로운 층에 선언되지만 좀 다르게 1개층만 생성 
+float도 inline-block으로 변경 됨 */
+.box.left {
+    float: left;
+    border: 1px solid blue;
+}
+
+/* 3,4를 쓰면 우측부터 나오게되고 줄이면 4가 아래로 내려감 */
+.box.right {
+    float: right;
+    border: 1px solid green;
+}
+
+/* float을 clear:both로 내린다고 해도 그 층에 남아있음 */
+.clearFix:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+/* .test {
+    clear: both;
+} */
+
+.coup div {
+    border: 1px solid red;
+
+    width: 100px;
+    height: 100px;
+}
+
+.logo {
+    border: 1px solid red;
+    width: 200px;
+    /* margin: 0 auto; */
+
+    display: inline-block;
+}
+
+.header {
+    text-align: center;
+}

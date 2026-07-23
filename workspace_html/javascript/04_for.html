@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+            /*
+                for( 초기화식; 조건식; 증감식; )
+
+                1. for문이 시작할 땐 초기화문을 맨 처음 딱 1번 실행함(생략가능)
+                2. 조건식이 거짓이 아니면 실행(생략가능, 생략할 시 무한반복) 
+                3. 실행 블럭을 실행
+                4. 증감식 실행 (생략가능, 블럭에 넣어도 됨)
+                5. '2.'번의 조건식으로 가서 false일 때 까지 반복
+
+                초기화식 → 조건식 → 블럭실행 → 증감식
+            */
+           for(let i=1; i<=10; i++) {
+                console.log(i)
+           }
+
+           //1~5까지의 합
+           let a = 1;
+           let sum = 0;
+           sum = sum + 1
+           sum += 2
+           sum += 3
+           sum += 4
+           sum += 5
+           console.log(sum)
+
+           sum = 0;
+           for(let i=1; i<=5; i++) {
+                sum += i
+           }
+           console.log(sum)
+
+           // 문제1_5~1까지 출력
+           for(let i=5; i>=1; i--) {
+                console.log(i)
+           }
+
+           // 문제2_1~5까지 출력 하면서 홀 짝 표시
+           for(let i=1; i<=5; i++) {
+                if(i % 2 == 0) {
+                    console.log(`${i}(짝)`)
+                } else {
+                    console.log(`${i}(홀)`)
+                }
+           }
+
+           // 문제3_1~10 까지 홀수의 개수
+           let count = 0;
+           for(let i=1; i<=10; i++) {
+                if(i % 2 !== 0) {
+                    count++
+                } 
+           }
+           console.log(`count : ${count}`)
+           
+           /*
+                반복문을 만드는 원리
+
+                1. 반복되는 것 찾기
+                    - ctrl + c, v 했을 때 바뀌지 않는 것 찾기
+                2. 반복되지 않는 것의 규칙(패턴) 찾기
+                3. 규칙을 변수로 바꿔서 ctrl + c, v 가 가능하도록 바꾸기
+                4. 시작 값 파악
+                5. 종료 조건 파악
+           */
+           sum = 0
+
+           let b = 1
+           sum += b
+           b = 2
+           sum += b
+           b = 3
+           sum += b
+
+           // 구구단
+           // 2 x 1 = 2
+           // 2 x 2 = 4
+           console.log('2 x 1 = 2')
+           console.log('2 x 2 = 4')
+           
+           let c = 1
+           console.log(`2 x ${c} = ${c*2}`)
+
+           console.log('--------------------')
+           for(let i=1; i<=9; i++){
+                console.log(`2 x ${i} = ${i*2}`)
+           }
+
+           console.log('--------------------')
+        //     for(let i=1; i<=9; i++){
+        //         console.log(`2 x ${i} = ${i*2}`)
+        //    }
+        //     for(let i=1; i<=9; i++){
+        //         console.log(`3 x ${i} = ${i*3}`)
+        //    }
+
+        //     let d = 2;
+        //     for(let i=1; i<=9; i++){
+        //         console.log(`${d} x ${i} = ${i*d}`)
+        //    }
+
+           for(let j=2; j<=9; j++) {
+                for(let i=1; i<=9; i++) {
+                    console.log(`${j} x ${i} = ${i*j}`)
+                }
+           }
+
+           console.log('--------------------')
+           // 문제3_주사위 하나의 모든 경우의 수를 출력하시오
+           for(let p=1; p<=6; p++) {
+                console.log(p)
+           }
+
+           console.log('--------------------')
+           // 문제4_주사위 두개의 모든 경우의 수를 출력하시오 ex) [1,2] [2,1]
+        //    console.log('1,2')
+        //    console.log('1,3')
+        //    console.log('1,4')
+        //    console.log('1,5')
+        //    console.log('1,6')
+
+           for(let p=1; p<=6; p++) {
+                for(let q=1; q<=6; q++) {
+                    console.log(`[${p}, ${q}]`)
+                }
+           }
+
+           
+           // 문제5_주사위 2개로 나올 수 있는 합 별 조합 정렬 ex) 
+        //    2 : 1+1
+        //    3 : 2+1 , 1+2
+
+        //    console.log('테스트1')
+        //     for(let p=1; p<=6; p++) {
+        //         for(let q=1; q<=6; q++) {
+        //             for(let r=2; r<=12; r++) {
+        //                 if(p+q == r) {
+        //                     console.log(`합계 ${r} : ${p}, ${q}`)
+        //                 }
+        //             }
+        //         }
+        //    }
+
+            // console.log('--------------------')
+            // // let num1;
+            // // let num2;
+            // // let num3;
+            // for(let r=2; r<=12; r++) {
+            //     console.log(`합계가 ${r} 일경우`)
+            //     for(let p=1; p<=6; p++) {
+            //         for(let q=1; q<=6; q++) {
+            //             if(p+q == r) {
+            //                 console.log(`[ ${p}, ${q} ]`)
+            //             }
+            //         }
+            //     }
+            // }
+
+            console.log('--------------------')
+
+            // 두번째 for문에서 q=p로 바꾸면 중복값을 제거할 수 있음
+            for(let r=2; r<=12; r++) {
+                let value = `합계 ${r} `
+                for(let p=1; p<=6; p++) {
+                    for(let q=1; q<=6; q++) {
+                        if(p+q == r) {
+                            value += `[${p}, ${q}]`;
+                        }
+                    }
+                }
+                console.log(value)
+            }
+
+            // min = 1
+            // max = 45
+            for(let i=1; i<=6; i++) {
+                // 1 ~ 45의 숫자 랜덤으로 뽑기. 단, 아직 중복이 나올 수 있음
+                // let lotto = parseInt(Math.random() * (max - min + 1)) + min
+                let lotto = parseInt(Math.random() * 45) + 1
+                console.log(lotto)
+            }
+
+            for(let i=1; i<=100; i++) {
+                // i>10이 더욱 안전하고, ==으로 하면 넘어갈수도 있기 때문에 오류가 발생할 수 있다
+                // ex) i == 11로 해놓았는데 증감이나 조건을 짝수로만 했다면 넘어갈 수 있기 때문
+                // if(i > 10) {
+                if(i == 11) {
+                    console.log(i, '종료합니다.')
+                    break;
+                }
+                console.log(i)
+            }
+
+            // 총 4층의 주차 건물이 있다
+            // 각 층에는 10대의 자리가 있다
+            // 내 차는 1층부터 첫번째부터 17번째 자리에 있다
+            let cnt = 0;
+            let flag = false;
+            for(let i=1; i<=4; i++) {
+
+                for(let j=1; j<=10; j++) {
+                    cnt++
+                    console.log(i,j, cnt+'번째')
+
+                    if(cnt >= 17) {
+                        flag = true;
+                        break;
+                    }
+                }
+
+                // if(cnt >= 17) {
+                // if(flag == true) {
+                if(flag) {
+                    break;
+                }
+            }
+
+            for(let i=1; i<=10; i++) {
+                if(i % 2 == 0) {
+                    continue;
+                }
+                console.log(i)
+            }
+
+            console.log('--------------------------------------------')
+            let arr = [1,2,3,4,5,6,7]
+
+            // for + in (in 앞의 변수 i에 현재 배열의 맨 처음에 있는 index를 저장함[0])
+            // 증감식이 없어도, 알아서 다음 index로 순서를 바꿈 (index가 중요할 때 쓰는 방법)
+            // i에 값을 다르게 주더라도 무조건 처음부터 끝까지
+            for(let i in arr) {
+                console.log('i(index) :', i)
+                console.log('값 :', arr[i])
+            }
+
+            console.log('--------------------------------------------')
+            // for + of (of 앞의 변수 i에 현재 배열의 값을 저장함)
+            // in과 동일하게 증감식이 없어도, 무조건 처음부터 끝까지 돌게 됨
+            // 몇 번째의 값인지 알고 싶다면 cnt 등 선언해서 확인해야 함
+            for(let i of arr) {
+                console.log('i(value) :', i)
+            }
+
+            console.log('--------------------------------------------')
+            // forEach는 안에 함수를 넣게되면, 배열 하나마다 안에 있는 함수 내용을 실행
+            arr.forEach(function(a, b, c, d) {
+                console.log('a :', a) // 현재 값
+                console.log('b :', b) // 현재 index
+                console.log('c :', c) // 배열 전체
+                console.log('d :', d)
+            })
+            // 보통은 element(for of), index(for in)를 주로 사용함
+            // forEach는 각 항목 별(개수만큼) 반복해서 실행
+            let r1 = arr.forEach(function(element, index, array) {
+                console.log('element :', element) // 현재 값
+                console.log('index :', index) // 현재 index
+                console.log('array :', array) // 배열 전체
+            })
+            console.log(r1) // undefined 
+
+            console.log('--------------------------------------------')
+            // map은 한 번 돌 때 마다 return값을 배열로 만들어 주는 것
+            // forEach와 비슷하지만, return으로 구성 된 똑같은 크기의 새로운 배열을 돌려줌
+            let r2 = arr.map(function(el, i, a) {
+                console.log(el, i, a)
+                // return i
+                // return el
+                // return a
+                if(el %2 == 0) {
+                    return '짝'
+                } else {
+                    return '홀'
+                }
+            })
+            console.log(r2) // retrurn이 없으면 undefined array
+
+            console.log('--------------------------------------------')
+            let movie = ['호프','스파이더맨-브랜드 뉴 데이','오디세이','모아나']
+            let r3 = movie.map(function(el) {
+                return el.length
+            })
+            // function 생략가능 및 =>
+            let r4 = movie.map((el) => {
+                return el.length
+            })
+            // return 값만 있고 인자가 하나인 경우 중괄호, 괄호 생략가능
+            let r5 = movie.map( el => el.length) 
+            console.log(r3)
+
+            // 정렬할 때 음수가 나오면 뒤에게 크고, 양수가 나오면 앞에게 크고 0이 나오면 같다
+            // 2,14,4,3 일 때 두번째, 첫번째를 먼저 비교하기 때문에 y, x로 인자를 설정
+            r3.sort(function(y, x) {
+                // -를 썼기 때문에 숫자로 인식한 상태
+                // return y - x //오름차순
+                return Number(x) - Number(y) //내림차순
+            })
+            console.log(r3)
+            
+            r3.sort((y, x) => x - y) // Arrow로 바꿨을 때 내림차순
+            r3.sort((y, x) => y - x) // Arrow로 바꿨을 때 오름차순
+            console.log(r3)
+
+            // console.log(r[ -1 ]) // 변수 이름이기에 불가능
+            console.log(r3.length) // 값이 4개가 들어있어 length는 4가 나옴, 다만 index로 보면 -1을 해야함
+            console.log( r3[r3.length-1] ) // length-1을 하면 맨 마지막 자리 값을 얻어올 수 있음
+
+            // map과 다른점은, filter는 return한 값만 배열로 이동함
+            // let r6 = movie.filter(function(el, i, a) {
+            //     if( el.length >= 4 ) {
+            //         return el
+            //     }
+            // })
+            let r6 = movie.filter(function(el, i, a) {
+                // if( el.length >= 4 ) {
+                //     return true // 값이 0일수가 있기에 true를 주는게 나음
+                // } else {
+                //     return false
+                // }
+
+                return el.length >= 4
+            })
+            console.log(r6)
+
+            r6 = movie.filter(el => el.length >= 4)
+
+        
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>

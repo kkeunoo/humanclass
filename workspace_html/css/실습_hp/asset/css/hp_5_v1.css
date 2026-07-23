@@ -1,0 +1,99 @@
+body {
+    box-sizing: border-box;
+    display: inline-block;
+
+}
+
+* {
+    border: 2px solid green;
+}
+
+.main {
+    text-align: center;
+
+    padding: 60px;
+    box-sizing: border-box;
+}
+
+.main .left_content {
+    display: inline-block;
+
+    width: 45%;
+    height: 50%;
+
+    text-align: left;
+    vertical-align: top;
+
+    /* min-width: 100%; */
+
+    /* margin: 15px; */
+
+    /* border: 3px solid red; */
+}
+
+.main .left_content .left_img .img1 {
+    /* display: inline-block; */
+
+    /* border: 5px solid green; */
+
+    width: 95%;
+    margin: 10px;
+    /* min-width: 100%; */
+
+    box-sizing: border-box;
+}
+
+.main .left_content .text1 {
+    font-size: 50px;
+
+    margin: 10px;
+}
+
+.main .left_content .text2 {
+    margin: 10px;
+}
+
+.main .right_content {
+    display: inline-block;
+
+    width: 45%;
+    height: 50%;
+
+    text-align: left;
+    vertical-align: top;
+
+    /* min-width: 100%; */
+    /* margin: 15px; */
+
+    /* border: 3px solid blue; */
+}
+
+.main .right_content .right_img img {
+    width: 100%;
+}
+
+.main .right_content .right_img .img1 {
+    display: inline-block;
+
+    margin: 100px 10px 10px 10px;
+
+    width: 200px;
+}
+.main .right_content .right_img .img2 {
+    display: inline-block;
+
+    margin: 10px;
+
+    width: 200px;
+    height: 200px;
+}
+.main .right_content .right_img2 .img1 {
+    display: inline-block;
+
+    margin: 10px;
+
+    width: 400px;
+
+    min-width: 50px;
+    max-width: 400px;
+}

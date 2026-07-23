@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+            //operator 연산자
+            let j = 10;
+            j = j + 1;
+            j += 1;
+            j++;
+
+            j--;
+
+            ++j;
+            --j;
+
+            let k = 10;
+            k++;
+            console.log('k++ 이후 : '+ k)
+            ++k;
+            console.log('++k 이후 : '+ k)
+
+            //단항(++k_더하기를 먼저 함), 이항(k++_더하기를 뒤에 함)연상자의 차이
+            // ex) -5(단항), 7-5(이항)
+            k = 10;
+            console.log('k++', k++)
+            console.log('k', k)
+
+            k = 10;
+            console.log('++k', ++k)
+            console.log('k', k)
+
+            k = 10;
+            let m = k++ + 1;
+
+            //++k에서 k가 11이 된 이후에 값이 뒤로 넘어가기때문에 뒤에 있는 k도 11이 되어있고
+            //k가 11인 상태에서 ++하기 떄문에 12가 출력됨
+            k = 10;
+            m = ++k + k++
+            console.log(`m: ${m}, k: ${k}`)
+            
+            //--나 ++는 계산할 때 우선으로 바로 적용하고, 뒤에++ 또는 --는 계산 후 그 다음값에 적용
+            //k가 10에서 뒷--가 되어 9로 넘어간 상태에서 앞++하여 10, 그 다음에 앞--되어 9가 됨
+            k = 10;
+            m = k-- + ++k - --k
+            10 + 10 - 9
+            console.log(`m: ${m}, k: ${k}`)
+
+            k = 10;
+            ++k;
+            k++;
+
+            console.log('------------------------------------------------')
+
+            //and, or, not 논리연산자
+            let boolA = true;
+            let boolB = false;
+            let result = boolA && boolB;
+            console.log('and : ', result)
+
+            result = boolA || boolB;
+            console.log('or : ', result)
+
+            console.log('!boolA : ', !boolA)
+            console.log('!boolB : ', !boolB)
+
+            //비교연산자 true or false로 나옴
+            console.log('같은가? ', boolA == boolB )
+            console.log('같지않은가? ', boolA != boolB )
+
+            let n = 3
+            let o = "3"
+            //javascript 한정으로 숫자와 문자여도 값이 같다고 인식함
+            console.log("n == o", n == o)
+            console.log("n != o", n != o)
+            console.log( typeof n )
+            console.log( typeof o )
+            //===은 값도 같고 형식도 같은가를 확인 (문자, 숫자 등)
+            console.log("n === o", n === o)
+            console.log("n !== o", n !== o)
+
+            console.log( typeof o == 'string')
+
+            //삼항 조건 연산자는 ? 앞의 값이 참이면 :왼쪽, 거짓이면 :오른쪽
+            let num = 2
+            result = (num % 2) == 0 ? '짝수' : '홀수';
+            console.log(result) 
+
+            num = 1
+            result = (num % 2) == 0 ? '짝수' : '홀수';
+            console.log(result) 
+
+            console.log('--------------------문제--------------------')
+
+            // 문제1
+            // 난 돈이 10,000원 있음
+            // 1. 4,800원짜리 피스타치오를 최대 몇 잔 살 수 있는가?
+            // 2. 그리고 남는 돈은?
+            let q1_money = 10000
+            let q1_pay = 4800
+            console.log(`구매가능 : ${parseInt(q1_money / q1_pay)}잔, 남는 돈 : ${q1_money % q1_pay}원`)
+
+            // 문제2
+            // 올리브영에 꿀홍차가 8,000원 입니다
+            // 오늘 15% 세일!! 그렇다면 가격은?
+            let q2_honey = 8000
+            let q2_percent = 15
+            console.log(`세일가 : ${q2_honey - ((q2_honey / 100) * q2_percent)}원`)
+
+            // 문제3
+            // 1234를 10의 자리 이하를 버림
+            // 결과: 1200
+            let q3_value = 1234
+            console.log(`결과값 : ${parseInt(q3_value / 100) * 100}`)
+
+            // 문제4
+            // 두 값 1000, 794가 있을 때 1000 / 794의 결과를 소수점 2자리 까지만 출력
+            // 결과 : 1.25
+            let q4_value1 = 1000
+            let q4_value2 = 794
+            console.log(`결과값 : ${parseInt(q4_value1 / q4_value2 * 100) / 100}`)
+
+            // 문제5
+            // 17,000원을 줄 때 5천원과 1천원짜리 밖에 없다면 
+            // 각각 몇 장씩 줄 수 있는가? (단, 5천원부터 준다)
+            let q5_pay = 17000
+            let q5_money1 = 5000
+            let q5_money2 = 1000
+            console.log(`5천원 : ${parseInt((q5_pay / q5_money1))}장 , 1천원 : ${(q5_pay % q5_money1) / q5_money2}장`)
+
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>

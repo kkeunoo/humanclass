@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+
+            // function(함수)는 준비해놓고 부르지 않으면 나오지 않음
+            // 함수 선언
+            function hello() {
+                console.log('hello world')
+            }
+
+            // 함수 사용
+            hello()
+
+            function getArea(width, height) {
+                console.log(`width: ${width}, height: ${height}`)
+                let area = width * height;
+                console.log('면적 : ', area);
+            }
+            
+            getArea(10, 20);
+            
+            // 함수는 이름이 같을 경우 아래것을 덮어쓰게 됨
+            function getArea2(width, height) {
+                console.log(`width: ${width}, height: ${height}`)
+                let area = width * height;
+                return area;
+            }
+
+            // 200을 리턴했으니 아래 getArea2가 200이라는 값을 가지게 됨
+            let result = getArea2(10, 20);
+            console.log(result)
+
+            // function 안에 있는 const의 경우 함수 안에서만 정의이기 때문에
+            // 다른곳에서 const를 겹쳐서 쓸 수 있음 (지역변수)
+            function plus(x, y) {
+                console.log('x : ', x)
+                console.log('y : ', y)
+
+                const z = x + y
+                return z;
+            }
+
+            // plus를 호출해서 2,3을 더한 값을 받고
+            // 그 값을 변수에 저장하여 출력하시오
+            result = plus(2, 3)
+            console.log(result)
+            
+            // result = plus(2, plus(5, 6))
+            // 뒤에 있는 plus가 연산된 뒤에 2와 연산이 진행 됨
+            result = plus(2, plus(result, 6))
+            console.log(result)
+
+            const z = plus(2, 3)
+
+            // 중괄호를 두개 쓰게 되면 그 안은 별도의 지역이 됨
+            // 상위 지역에서 선언하면 하위 지역에서도 다 사용할 수 있음
+            {
+                const a = 10;
+                // const a = 10;
+                {
+                    // 상위에서 이미 a가 있으나, 같은 지역에 있는 a를 가르키게됨
+                    // 아래에 있으니, 선언하기 전에 미리 사용했다는 ReferenceError가 나옴
+                    // 단, 위로 올려주면 값은 나오지만 더 상위 지역에 있는 a가 가려지게 됨(shadow현상)
+                    // const a = 20
+                    // console.log("a", a)
+                    // const a = 20
+                    console.log("a", a)
+
+                    const b = 20
+                    console.log("b", b)
+                }
+                // 아래 지역에만 b가 선언이 되어있기 때문에, 상위 지역에서 찍어보면 나오지 않음
+                // console.log(b)
+            }
+            // const a = 10;
+
+            // 아래처럼 for문에서도 해당 지역에서만 쓸 수 있기 때문에 중복해서 쓸 수 있음
+            for(let i=0; i<5; i++) {
+                let a = 10
+            }
+            for(let i=0; i<5; i++) {
+                let i = 10
+            }
+
+            function plus2(x, y) {
+                console.log('x : ', x)
+                console.log('y : ', y)
+
+                if(y == undefined) {
+                    console.log('y값 입력 못받음')
+                    y = 0
+                }
+
+                const z = x + y
+                return z;
+            }
+
+            // 아래와 같이 쓰면 undefined(변수는 선언되었으나, 값이 없음)이 나옴
+            // 다만 함수 안에 y = 0 처럼 기본값을 방어코딩 해두면 출력값이 나옴
+            let a = plus2(2)
+            console.log(a)
+
+            // 전달인자의 값이 undefined 일 때 기본 값 지정
+            // 전달 받은 값이 있으면 사용하고, 없으면 기본 값 사용
+            function plus3(x, y=0) {
+                console.log('x : ', x)
+                console.log('y : ', y)
+                // if(y == undefined) y = 0
+                if(y == undefined) {
+                    y = 0
+                }
+
+                const z = x + y
+                return z;
+            }
+
+            // 전달인자를 적게 줘도 에러는 나지 않음
+            // 기본값을 지정해주지 않으면 undefined로 나옴
+            a = plus3(2)
+            console.log(a)
+
+            // 인수가 2개가 들어가야 하는데, 3개를 주면 3번째 인수는 무시함
+            // 받을 만큼만 가져감 (아래에서 4는 없어지는 값)
+            a = plus3(2, 3, 4)
+            console.log(a)
+
+            // 익명 함수, 변수에는 담을 수 있고 함수에 이름을 지정해주지 않아도 됨
+            // 아래 2가지는 동일한 문법
+            let noName = function() {
+                console.log('익명함수')
+            }
+            // function noName(){
+            //     console.log('익명함수')
+            // }
+            noName()
+
+            let noName2 = noName
+            noName2()
+
+            // fn이 noName 함수를 인자로 받았는데, 이럴 때 fn을 '콜백함수'라고 부른다.
+            function test( fn ) {
+                console.log('test 실행중')
+                console.log(typeof fn)
+                if (typeof fn == 'function') {
+                    fn()
+                }
+            }
+            test( noName )
+
+            function print() {
+                console.log('첫번째 print 실행')
+            }
+            function print() {
+                console.log('두번째 print 실행')
+            }
+            print()
+
+            // print로 쓰면 함수 그 자체, print()는 함수의 실행값
+            // 함수가 있더라도 함수는 변수취급을 함, 그렇기 때문에 덮어씌워짐
+            console.log( print )
+            // console.log( print() )
+            let p = print
+            p()
+
+            let c = console
+            c.log(123)
+            let c1 = console.log
+            c1(1234)
+            // 아래처럼 하면 console.log를 '3'으로 지정한 것이기 때문에, 기존 출력되던게 안됨
+            console.log = 3
+            // console.log()
+
+            console.log = function(x){
+                // console.log('이거 해킹된거임')
+                // console.log()
+                c1('이거 해킹된거임')
+                c1(x)
+            }
+            console.log(123)
+
+            function desc(arr){
+                return arr.sort().reverse()
+            }
+            a = [1,6,2,9,3,4]
+            console.log( desc(a) )
+
+            function test1() {
+                console.log('test1')
+                return 3
+            }
+            function test2( a ) {
+                console.log('test2')
+                console.log(a)
+            }
+
+            // ()가 있으면 실행의 결과물을 주는것이고, 괄호가 없으면 함수의 내용 자체가 들어감
+            test2( test1() )
+            // 즉 x = test1()_실행 > test2(x) 가 된 것
+            test2 ( test1 )
+            // x = test1 함수 내용만 넣기 > text2(x)
+
+            let yahoo = function() {
+                console.log("야호")
+            }
+
+            // setTimeout(함수, 지연시간ms == 1/1000초) - 지연시간이 지나면 함수를 실행시켜 줌
+            // 이럴 때 콜백함수를 주로 사용함 (아래 2개는 동일하게 사용할 수 있음)
+            setTimeout(yahoo, 3000)
+            setTimeout(
+                function() { console.log("야호")}, 
+                4000
+            )
+
+            // setTimeout의 return은 예약번호이고, clearTimeout으로 해당 번호를 받아 취소할 수 있음
+            let idx = setTimeout(
+                function() { console.log("야호!!!!!!!!!!!")}, 
+                1000
+            )
+            console.log(idx)
+            // 예약 취소 clearTimeout
+            clearTimeout(idx)
+
+            function rc( cb ) {
+                cb()
+                
+                setTimeout(cb, 1000)
+            }
+
+            // 리커시브, 재귀호출이라고 함(반복)
+            function 기계_1초후_한번더( 함수 ) {
+                함수()
+                
+                setTimeout(
+                    기계_1초후_한번더( 함수 ),
+                    1000
+                )
+            }
+            
+            // 지정한 시간마다 자동으로 반복되게끔 할 수 있음
+            let idx2 = setInterval(function() {
+                console.log('인터발')
+            }, 1000*2)
+            // clearInterval(idx2)
+            // 10초 있다가 '인터발' 출력 끄기
+            // 전달인자 안에 함수를 넣을 수 있으므로, clearInterval을 함수로 하여 초와 같이 넣음
+            setTimeout(function(){
+                clearInterval(idx2)
+            }, 1000*10)
+            
+
+
+
+
+
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>

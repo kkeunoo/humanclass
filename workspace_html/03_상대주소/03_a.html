@@ -1,0 +1,62 @@
+<!-- !를 입력하고 엔터를 치면 기본값을 불러올 수 있음 -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- UTF-8표준은 한글이 깨지지 않게끔 포함되어 있어 문자세팅을 바꿔주는 것 -->
+        <meta charset="UTF-8">
+        <!-- PC에서 볼 때는 크게 상관이 없지만, 모바일로 접속했을 때 알아보기 편하게 크기를 조정해주는 것
+         viewport는 화면(보여주는 것)을 감지하는 것을 뜻함, initial-scale=1.0이면 원본 그대로 보여준다 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <h1 id="top">여기는 맨 위</h1>
+        <a href="#bottom">맨 아래로</a><br>
+
+
+        <!-- anchor의 약자이며 브라우저 주소를 대신 적어주는 기능(하이퍼링크를 걸어 이동할 수 있도록) -->
+        <!-- 마우스 휠 또는 ctrl을 누르고 링크를 누르면 새 탭에뜨고, shift를 누르고 링크를 누르면 새 창에 뜸
+             보통 사용자 편의에 따르지만 1,2,3...페이지 이동은 현 페이지에 / 검색어 등 열 때는 새 탭에 여는게 좋음 -->
+        <!-- href : hypertext reference 이며 a태그와 함께 동작함 / target : _blank 새 탭에서 열기 -->
+        <a href="https://naver.com">네이버</a><br>
+        <a href="https://google.com" target="_blank">구글</a><br>
+        
+        <!-- URL스킴(scheme) -->
+        <!-- a href태그에서 tel:을 사용하면 전화를 걸 수 있도록 설정가능 -->
+        <a href="tel:01026367203">전화걸기</a><br>
+        <!-- a href태그에서 mailto:를 사용하면 메일을 보낼 수 있도록 설정가능 -->
+        <a href="mailto:jkw200@naver.com">메일보내기</a><br>
+
+        <!-- 이미지를 클릭하면 이동하게 할 때 img위에 a태그를 덮어 사용할 수 있음 -->
+        <a href="https://comic.naver.com/webtoon/list?titleId=849352" target="_blank"">
+            <img src="https://image-comic.pstatic.net/webtoon/849352/thumbnail/thumbnail_IMAG21_0049830d-3474-462a-96b8-7cd0b8be1b52.jpg">
+        </a><br>
+        <!-- 같은 폴더에 있을 경우 파일명을 입력하면 열 수 있도록 설정할 수 있음 -->
+        <a href="01_hello.html" target="_blank">01_hello.html</a><br>
+
+        <!--  
+            상대 주소: 내 위치를 기준으로 삼는 주소(현재 주소의 맨 마지막 주소 /를 기준으로 이후 주소만 변경하는 것)
+            . : 내 폴더를 뜻 함 (써도 안 써도 동일함)
+            .. : 부모 폴더를 뜻 함
+        -->
+
+        <!-- 폴더 경로가 다를 경우 /를 이용하여 파일명과 경로를 설정할 수 있음(현재 디렉터리 기준 상대경로) -->
+        <!-- <a href="detail.html" target="_blank">디테일페이지 이동</a><br> -->
+        <a href="../asset/detail.html" target="_blank">디테일페이지 이동</a><br>
+        
+        <!--  
+            절대 주소: 언제든 따라갈 수 있는 주소
+            1. 프로토콜로 시작(http://, https://, ftp://)
+            2. // 로 시작 (http로 들어왔다면 http를 유지하고, 다른 것으로 접속했다면 다른 양식을 유지)
+            3. / 로 시작 (최상위 폴더로 이동, ip:port/ 이후 주소를 모두 변경)
+            ※절대 주소가 아닌 모든 주소는 상대주소를 뜻함
+        -->
+        <a href="/asset/detail.html" target="_blank">절대주소 디테일페이지</a><br>
+
+        <!-- br*50 기능이 있는 곳에서 사용이 가능함 -->
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <strong id="bottom">여기는 맨 아래</strong><br>
+        <a href="#top">맨 위로</a>
+
+    </body>
+</html>

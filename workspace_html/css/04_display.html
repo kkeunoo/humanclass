@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="asset/css/04_display.css">
+    </head>
+    <body>
+        <!-- block은 내가 가질 수 있는 최대너비를 가지고 있는 것이고 width로 지정해주는 것 
+         무조건 새로운 줄을 전체적으로 가지고 있기 때문에 두개의 div가 있더라도 한 줄씩 표시됨-->
+        <div id="div1">
+            a<br>
+            b
+        </div>
+
+        div.block*2
+        <div class="block"></div>
+        <div class="block">두번째 block</div>
+
+        <!-- inline은 block과 다르게 content의 영역만 가지고 있기 때문에 옆에도 다른 content가 올 수 있음 -->  
+        <!-- span.inline*3 -->
+        <span class="inline">첫번째 inline</span>
+        <span class="inline">두번째 inline</span>
+        <span class="inline">세번째 inline</span>
+        
+        <!-- inline안에는 block을 사용하지 않는 것이 좋다 -->
+        <span class="inline">
+            <div class="block">inline 안의 block</div>
+        </span>
+
+        <br><br><br><hr>
+        <div class="parent">
+            <div class="child1">자식1</div>
+            <div class="child2">자식2</div>
+        </div>
+        <br>
+        <div class="parent2">
+            <div class="child1">자식1</div>
+            <div class="child2">자식2</div>
+        </div>
+
+        <!-- -webkit- 이라는 형태가 있는데, 이건 브라우저마다 hidden으로 있는 적용하는 방법 -->
+        <p>
+            교재에 있는 것 참고용
+        </p>
+
+        <div class="parent3">
+            <div class="child1">목록1</div>
+            <div class="child2 right">
+                목록2<br>
+                상세내용
+            </div>
+        </div>
+
+        글씨
+        <div class="hide">
+            숨겨질 div : block
+        </div>
+        글씨
+
+        <div class="table">
+            <div class="td">
+                테이블의 첫줄 첫칸
+            </div>
+        </div>
+
+        <br><br><br><br><br><br><br><br><br><br>
+    </body>
+</html>

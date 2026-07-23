@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script>
+		let value = false;
+		if (!value) {
+			console.log('이거 true임')
+		}
+
+		let value2 = true;
+		if (value2) {
+			console.log('참')
+		}
+		if (!value2) {
+			console.log('거짓')
+		}
+
+		//위처럼 not(!)으로도 쓸 수 있지만 if, else로 보편적 사용
+		let value3 = true;
+		if (value3) {
+			console.log('참')
+		} else {
+			console.log('거짓')
+		}
+
+		let score = 85
+		if (score >= 60) {
+			console.log('합격')
+		} else {
+			console.log('불합격')
+		}
+		//아래와 같이 not(!)으로 반대를 표현할 수 있다 (크거나 같다의 반대는 작다)
+		//if 2개로 표현도 가능하지만, else를 쓰면 컴퓨터가 1번만 일 하기 때문에 차이가 있음
+		if (score < 60) { }
+		if (!(score >= 60)) { }
+
+		if (score >= 90) {
+			console.log('A')
+		} else {
+			//if(score < 90 && score >= 80) 으로도 작성 가능하지만, 이미 if첫문단에서 90이상은 걸림
+			if (score >= 80) {
+				console.log('B')
+			} else {
+				console.log('C')
+			}
+		}
+
+		//else if는 여러개로 쓸 수 있지만, else는 단 1개만 존재해야 함
+		//{}로 감싼곳이 실행블럭이라고 불림
+		if (score >= 90) {
+			console.log('A')
+		} else if (score >= 80) {
+			console.log('B')
+		} else if (score >= 70) {
+			console.log('C')
+		} else {
+			console.log('D')
+		}
+
+		/*
+			js(javascript)에서 
+			참(true)의 정의 : 거짓이 아닌 것(!거짓), 아래 5가지가 아닌 모든 것
+			거짓(false)의 정의 : false, 0, undefined, null, NaN 
+		*/
+
+		//1줄만 쓸 때에는 중괄호{}를 빼도 동작하나 알아보기가 어려움
+		if (true)
+			console.log(1)
+
+		//minumum 값을 정할 수 있을 때 한 줄로 쓰는 경우가 많음
+		let ac = 17
+		if (ac < 18) ac = 18;
+
+		let fruit = "apple"
+		if (fruit == 'apple') {
+			console.log('사과')
+		} else if (fruit == 'banana') {
+			console.log('바나나')
+		} else {
+			console.log('알 수 없음')
+		}
+
+		//if에서 ==같다만 스위치로 옮길 수 있기 때문에 주로 사용하지는 않음
+		switch (fruit) {
+			case 'apple':
+				console.log('사과')
+				break;
+			case 'banana':
+				console.log('바나나')
+				break;
+			default:
+				console.log('알 수 없음')
+		}
+
+		let phone = 's23'
+		if (phone == 's23') {
+			console.log('삼성')
+		} else if (phone == 's24') {
+			console.log('삼성')
+		}
+
+		if (phone == 's23'
+			|| phone == 's24'
+			|| phone == 's25'
+			|| phone == 's26') {
+			console.log('삼성')
+		}
+
+		switch (phone) {
+			case 's23':
+			case 's24':
+			case 's25':
+			case 's26':
+				console.log('삼성')
+				break;
+			case 'i15':
+			case 'i16':
+			case 'i17':
+				console.log('삼성')
+				break;
+			default:
+				console.log('삼성, 애플 아님')
+		}
+
+		console.log('--------------------문제--------------------')
+		// 문제1_아무 숫자나 받아서 다음 형식으로 출력하며, "양수" 또는 0 또는 "음수" (0도 양수로 침)
+		/*
+		let q1_num = prompt('1. 숫자를 입력해주세요.')
+		// 문제1_받은 값 재확인절차
+		// console.log('q1_num', q1_num)
+
+		//0도 양수로 치기에 0부터는 양수, -1부터는 음수, 그 외 나머지값은 오류값으로 출력
+		if(q1_num >= 0) {
+			console.log(`입력하신 ${q1_num}은(는) 양수 입니다.`)
+		} else if(q1_num < 0) {
+			console.log(`입력하신 ${q1_num}은(는) 음수 입니다.`)
+		} else {
+			console.log(`잘못된 값을 입력하셨습니다.\n정수만 입력해주세요.`)
+		}
+		*/
+
+		/*
+		// 문제2_"홀수" 또는 "짝수" 출력
+		let q2_num = prompt('2. 숫자를 입력해주세요.')
+		// 숫자 이외의 값(문자 등)이 들어왔을 때 오류값을 출력하기 위한 변환
+		let q2_result = Number(q2_num)
+
+		// 짝수의 경우 2로 나누었을 때 나머지가 0으로 남기 때문에 0이면 짝수, 반대는 홀수, 그 외 오류값
+		if(q2_result % 2 == 0) {
+			console.log(`입력하신 ${q2_num}은(는) 짝수 입니다.`)
+		} else if(!q2_result % 2 == 0) {
+			console.log(`입력하신 ${q2_num}은(는) 홀수 입니다.`)
+		} else {
+			console.log(`잘못된 값을 입력하셨습니다.\n정수만 입력해주세요.`)
+		}
+		*/
+
+		//문제3
+		//두 수를 받아서 둘 중에 큰 값을 출력
+		// 3과 5중에 큰수 : 5 형식
+		/*
+		let q3_num1 = prompt('3-1. 숫자를 입력해주세요.')
+		let q3_num2 = prompt('3-2. 숫자를 입력해주세요.')
+
+		// 숫자 이외의 값(문자 등)이 들어왔을 때 오류값을 출력하기 위한 변환
+		let q3_val1 = Number(q3_num1)
+		let q3_val2 = Number(q3_num2)
+
+		// 둘 중 큰 값을 출력하기 위해 동일한 값이 들어왔을 때 동일여부 출력
+		if(q3_val1 > q3_val2) {
+			console.log(`큰 값 : ${q3_val1} \n입력하신 숫자 : ${q3_val1},${q3_val2}`)
+		} else if(q3_val1 < q3_val2) {
+			console.log(`큰 값 : ${q3_val2} \n입력하신 숫자 : ${q3_val1},${q3_val2}`)
+		} else if(q3_val1 == q3_val2) {
+			console.log('입력하신 숫자가 동일합니다.')
+		} else {
+			console.log('숫자만 입력해주세요.')
+		}
+		*/
+
+		//문제4
+		//임의의 돈(money)이 있을 때, 7,000원 이상이면 "택시타자" 출력
+		//7,000원 미만 ~ 3,000원 이상이면 "버스타자", 3,000원 미만이면 "걸어가자" 출력
+		/*
+		let q4_money = prompt('4. 보유 금액을 입력해주세요.')
+
+		// 위 문제들처럼 숫자 외 값은 else에 오류값으로 출력하며, 정수는 포함이기에 별도 Number치환 없음
+		if(q4_money >= 7000) {
+			console.log('택시타자')
+		} else if(q4_money >= 3000) {
+			console.log('버스타자')
+		} else if(q4_money < 3000) {
+			console.log('걸어가자')
+		} else {
+			console.log('정확한 금액을 입력해주세요.')
+		}
+		*/
+
+		//문제5 -도전- '가위' , '바위' , '보' 중에 하나만 입력
+		//문제5-1_컴퓨터는 항상 '바위'만 내는 경우
+		/*
+		let q5_rps = prompt(`5. 가위/바위/보 중에 입력해주세요. \n컴퓨터는 항상 '바위'를 냅니다.`)
+
+		// String형태의 문자값을 받아 형태도 동일할 경우 승부가 날 수 있도록 ===사용, 그 외 오류값
+		if(q5_rps === '가위') {
+			console.log('졌습니다.')
+		} else if(q5_rps === '바위' ) {
+			console.log('비겼습니다.')
+		} else if(q5_rps === '보') {
+			console.log('이겼습니다.')
+		} else {
+			alert('알맞은 것을 입력해주세요.')
+			console.log('알맞은 것을 입력해주세요.')
+		}
+		*/
+
+		//문제5-2_이겼다, 졌다, 비겼다 출력
+		/*
+		let q5_rps = prompt('5. 가위/바위/보 중에 입력해주세요.')
+		// 사용자의 값은 prompt로 입력받으며, 랜드로 0,1,2만 출력하게 하여 해당 값이 출력 될 때
+		// com_rps라는 변수에 가위/바위/보 중에서 값을 받아올 수 있도록 if문 구성
+		let rand = parseInt(Math.random() * 10) % 3
+		let com_rps;
+
+		// console.log로 정확한 값을 받아오는지 출력해본 뒤 com_rps 변수에 값 입력
+		if(rand === 0){
+			com_rps = '가위'
+			// console.log(com_rps)
+		} else if(rand === 1){
+			com_rps = '바위'
+			// console.log(com_rps)
+		} else {
+			com_rps = '보'
+			// console.log(com_rps)
+		}
+
+		// 가위/바위/보 에서 승리/패배/비기는 경우의 수는 3가지씩으로 or(||)로 구성
+		if(q5_rps == com_rps){
+			console.log(`비겼습니다. (나: ${q5_rps} , 컴퓨터: ${com_rps})`)
+		} else if (q5_rps == '가위' && com_rps == '바위'
+			|| q5_rps == '바위' && com_rps == '보'
+			|| q5_rps == '보' && com_rps == '가위'
+		) {
+			console.log(`졌습니다. (나: ${q5_rps} , 컴퓨터: ${com_rps})`)
+		} else if (q5_rps == '가위' && com_rps == '보'
+			|| q5_rps == '바위' && com_rps == '가위'
+			|| q5_rps == '보' && com_rps == '바위'
+		) {
+			console.log(`이겼습니다. (나: ${q5_rps} , 컴퓨터: ${com_rps})`)
+		} else {
+			alert('가위/바위/보 중에서 입력해주세요.')
+		}
+		*/
+
+		//문제6_/임의의 수 3개 x, y, z를 받아 z가 x~y사이에 있는지 판단
+		/*
+		let q6_num1 = prompt('6. 첫번째(x) 숫자를 입력해주세요.')
+		let q6_num2 = prompt('6. 두번째(y) 숫자를 입력해주세요.')
+		let q6_num3 = prompt('6. 세번째(z) 숫자를 입력해주세요.')
+
+		// 받아오는 값이 문자값이기에 그럴 때 사이에 있는지 확인이 불가하여 Number로 치환
+		let num1 = Number(q6_num1)
+		let num2 = Number(q6_num2)
+		let num3 = Number(q6_num3)
+
+		// 값을 정확히 받아오는지 테스트 출력분
+		// console.log(q6_num1, q6_num2, q6_num3)
+
+		// z가 중간에 있는지 파악하기 위해 x,y값과 비교하여 and로 2가지 조건을 만족할 때 사이로 확인
+		// 중복된 값을 입력했을 때 사이에 있다고 판단하기 어려우므로 중복값 출력
+		if(num1 > num3 && num2 < num3) {
+			console.log(`세번째(z:${num3})는 첫번째(x:${num1})와 두번째(y:${num2})의 사이에 있습니다.`)
+		} else if(num1 < num3 && num2 > num3) {
+			console.log(`세번째(z:${num3})는 첫번째(x:${num1})와 두번째(y:${num2})의 사이에 있습니다.`)
+		} else if(num1 === num2 || num1 === num3 || num2 === num3) {
+			console.log('중복된 값을 입력하셨습니다.')
+		} else {
+			console.log(`세번째(z)는 x와 y사이에 있지 않습니다.`)
+		}
+		*/
+
+		//문제7_月을 입력 받아서 계절 출력 (단, 13이나 -1같은걸 받으면 "다시 입력하세요." 출력)
+		/*
+		let q7_month = prompt ('7. 월(月)을 입력해주세요.')
+
+		// switch문으로 구성했을 때 1~12의 값만 계절값을 출력하며 -1, 13, 문자 등의 값은 재입력 출력
+		// 계절의 경우 명확하지 않으나 3개월씩 잘라 4개의 계절로 표현
+		switch(q7_month) {
+			case '12' :
+			case '1' :
+			case '2' :
+				console.log(`입력하신 ${q7_month}월(月)은 겨울입니다.`)
+				break;
+			case '3' :
+			case '4' :
+			case '5' :
+				console.log(`입력하신 ${q7_month}월(月)은 봄입니다.`)
+				break;
+			case '6' :
+			case '7' :
+			case '8' :
+				console.log(`입력하신 ${q7_month}월(月)은 여름입니다.`)
+				break;
+			case '9' :
+			case '10' :
+			case '11' :
+				console.log(`입력하신 ${q7_month}월(月)은 가을입니다.`)
+				break;
+			default :
+				console.log('1과 12사이로 다시 입력하세요.')
+		}
+		*/
+
+		//문제8_온도를 입력받아 다음처럼 출력 (ex) 32입력 "영상 32도 입니다." , -3 "영하 3도 입니다.")
+		// 문제에서 -3일때 영하3이 되어야 하니 -1을 곱해서 정수로 표현될 수 있도록 하면 됨
+		/*
+		let q8_temp = prompt('8. 현재 온도를 입력해주세요.')
+
+		// 받아온 온도값의 영상, 영하, 이상, 이하를 표기하기 위해 Number로 치환
+		// 현실적으로 영하 50도, 영상 50도는 목숨이 위험하기에 추가문구 설정 (그 외 값은 오류값)
+		let temp = Number(q8_temp)
+
+		if(temp >= 0 && temp <= 50) {
+			console.log(`현재 온도는 영상 ${temp} 도 입니다.`)
+		} else if(temp < 0 && temp >= -50) {
+			console.log(`현재 온도는 영하 ${temp} 도 입니다.`)
+		} else if(temp > 50 || temp < -50) {
+			console.log(`현재 온도에서 당신은 죽을수도 있습니다.`)
+		} else {
+			console.log('올바른 온도만 입력해주세요.')
+		}
+		*/
+
+		//문제9_시와 분을 입력 받아서 35분 후의 시간 출력(3, 51입력받으면 출력을 4시 26분으로)
+		/*
+		let q9_time = prompt('9-1. 시간(1~23)을 입력해주세요.')
+		let q9_min = prompt('9-2. 분(1~60)을 입력해주세요.')
+
+		let time = Number(q9_time)
+		let min = Number(q9_min)
+
+		// 35분 후의 시간을 출력해야 하기에 25부터는 시간의 값을 증가시켜야 함
+		// 00시부터 23시까지의 값은 공통으로 받아오고 25~60분일경우에만 시간 1증가
+		// 1시간은 60분으로 25분(입력값)+35분(추가)일 때 00분이므로 -25를 줌
+		// 그 외 25분 미만은 35분을 추가하여 59분까지 출력 될 수 있도록 설정
+		if(min <= 60 && min >= 25 && time <= 23 && time >= 0) {
+			time++;
+			console.log(`현재 시간은 ${time}시 ${min-25}분 입니다.`)
+		} else if(min >= 0 && min < 25 && time <= 23 && time >= 0) {
+			console.log(`현재 시간은 ${time}시 ${min+35}분 입니다.`)
+		} else {
+			console.log('알맞은 시간을 입력해주세요.')
+		}
+		*/
+
+		/*
+		오전, 오후를 나누기 위함이나 이후 재검토 예정
+		else if(min >= 0 && min < 25 && time >= 12 && time < 24) {
+			console.log(`현재 시간은 ${time}시 ${min+35}분 입니다.`)
+		} else if(min >= 0 && min < 25 && time >= 12 && time < 24) {
+			console.log(`현재 시간은 ${time}시 ${min+35}분 입니다.`)
+		}
+		*/
+
+		//9번 참고형
+		/*
+		// -- 멘탈 챙길 자신 있으면 도전
+		// 9
+		// 시와 분을 입력 받아서 35분 후의 시간 출력
+		// 3, 51 입력
+		// 출력 : 4시 26분
+		let hour = parseInt(Math.random() * 24)
+		let minute = parseInt(Math.random() * 60)
+		console.log(`${hour}시 ${minute}분`)
+		minute += 35
+		if(minute >= 60){
+		hour ++
+		minute -= 60
+		}
+		if(hour >= 24){
+		hour -= 24
+		}
+		console.log(`${hour}시 ${minute}분`)
+		*/
+
+		//문제10
+		//두자리의 숫자를 받아서 10의자리와 1의자리가 같은지 판단
+		//ex) 88 > 같음 , 89 > 다름
+		// let q10_num1 = prompt('10. 두자리의 숫자를 입력하세요.')
+
+		//방법10-1
+		/*
+		let num1 = Number(q10_num1)
+		if(num1 % 11 == 0) {
+			console.log(`10의 자리와 1의 자리가 같습니다. \n입력하신 숫자: ${num1}`)
+		} else if(num1 < 10 || num1 >= 100) {
+			console.log(`10부터 99까지만 입력해주세요. \n입력하신 숫자: ${num1}`)
+		} else {
+			console.log(`10의 자리와 1의 자리가 다릅니다. \n입력하신 숫자: ${num1}`)
+		}
+		*/
+
+		//방법10-2
+		/*
+		let num1 = parseInt(Number(q10_num1)/10)
+
+		if(q10_num1 / num1 == 11){
+			console.log(`10의 자리와 1의 자리가 같습니다. \n입력하신 숫자: ${q10_num1}`)
+		} else if(q10_num1 < 10 || q10_num1 >= 100) {
+			console.log(`10부터 99까지만 입력해주세요. \n입력하신 숫자: ${q10_num1}`)
+		} else {
+			console.log(`10의 자리와 1의 자리가 다릅니다. \n입력하신 숫자: ${q10_num1}`)
+		}
+		*/
+
+		//문제11
+		//369게임 만들어보기
+		//임의의 수를 받아서 3, 6, 9가 있으면 "박수" 출력
+		//ex) 31 > 박수, 12 > 12
+		// let q11_num = prompt('11. 3/6/9게임 숫자를 입력하세요.')
+
+		// if(q11_num >= 30 && q11_num <= 39
+		//     || q11_num >= 60 && q11_num <= 69
+		//     || q11_num >= 90 && q11_num <= 99) {
+		//     console.log(`박수 짝 (입력하신 숫자 : ${q11_num})`)
+		// } else {
+		//     console.log('테스트')
+		// }
+
+		/*
+		let q11_num = prompt('11. 3/6/9게임 숫자를 입력하세요.')
+		let num1 = parseInt(q11_num / 10)
+		let num2 = q11_num % 10
+
+		if(num1 == 3 || num1 == 6 || num1 == 9 ||
+			num2 == 3 || num2 == 6 || num2 == 9) {
+			console.log(`박수 👏짝👏 (입력하신 숫자 : ${q11_num})`)
+		} else {
+			console.log(`계속 이어가세요. (입력하신 숫자 :  ${q11_num}`)
+		}
+		*/
+
+		//문제12
+		//x1(10),y1(20)_좌상단 
+		//x2(90),y2(100)_우하단 
+		//입력받은 좌표가 사각형에 겹치는가? 선에 딱 맞아도 겹침
+
+		let rand = Math.random()
+		console.log(rand)
+
+		//0 <= 숫자 < 1
+		// rand = parseInt(Math.random() * 10) % 3
+		// console.log(rand)
+		console.log(parseInt(Math.random() * 10) % 3)
+
+		// 0~2
+		// 아래처럼 썼을 때 3 < a를 먼저 하고 거기서 나온 true,false값을 <20 하기 때문에
+		// 3가지로 사용할 수 없음
+		let a = 10
+		// if(3 < a < 20){
+		if (3 < a && a < 20) {
+
+		}
+
+		// 0 <= a < 1 (랜덤 0.484941981 등)
+		let min = 0
+		let max = 2
+		Math.random() * 3
+
+		// max값 - min값 +1을 하면 random에 곱하는 값의 공식이 나옴
+		min = 1
+		max = 45
+
+		// 아래의 공식을 이용해서 min, max값만 지정하면 그 값들만 나오게 할 수 있음
+		min = 5
+		max = 8
+		let test = parseInt(Math.random() * (max - min + 1)) + min
+		console.log(test)
+
+	</script>
+	<!-- <style>
+            * {
+                border: 1px solid red;
+                margin: 0;
+                font-size: 0;
+            }
+
+            .main {
+                position: relative;
+
+                width: 100vw;
+                height: 100vh;
+            }
+
+            .main .test {
+                font-size: 16px;
+
+                position: absolute;
+
+                top: 20px;
+                left: 10px;
+                right: 90px;
+                bottom: 100px;
+            }
+        </style> -->
+</head>
+
+<body>
+	<!-- <div class="main">
+            <div class="test">
+                테스트박스
+            </div>
+        </div> -->
+</body>
+
+</html>

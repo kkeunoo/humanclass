@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+<script>
+    const list = {
+        contents: []
+    }
+    
+    window.onload = function(){
+        gemini()
+    }
+    
+    function gemini() {
+        const ask = document.querySelector('#ask')
+        ask.addEventListener('click', function() {
+            const key = ''
+            const prompt = document.querySelector('#prompt').value
+            const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent'
+        
+            const data = {
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }]
+            }
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'x-goog-api-key': key,
+                    'Content-Type': 'application/json'
+                },
+                // JSON으로 날아가면 안되기 때문에, 문자열로 변경해서 전달
+                body: JSON.stringify(data)
+            }).then( function(response){
+                return response.json()
+            }).then( function(result){
+                console.log(result['candidates']['0']['content']['parts']['0']['text'])
+                const divAdd = document.createElement('div')
+                const askResult = document.querySelector('#askResult')
+                askResult.append(divAdd)
+                askResult.innerText = result['candidates']['0']['content']['parts']['0']['text']
+            }).catch( function(error){
+                console.error('요청 중 에러', error)
+            })
+
+        
+        })
+
+        const ask2 = document.querySelector('#ask2')
+        ask2.addEventListener('click', function() {
+            const key = ''
+            const prompt = document.querySelector('#prompt').value
+            const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent'
+        
+            // push로 list라는 배열에 내가 보낸 것, gemini가 보내준 것을
+            // json으로 저장해서 gemini가 기억을 하는 것 처럼 구현할 수 있음
+            list.contents.push({
+                role: 'user',
+                parts: [{
+                    text: prompt
+                }]
+            })
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'x-goog-api-key': key,
+                    'Content-Type': 'application/json'
+                },
+                // JSON으로 날아가면 안되기 때문에, 문자열로 변경해서 전달
+                body: JSON.stringify(list)
+            }).then( function(response){
+                return response.json()
+            }).then( function(result){
+                console.log(result['candidates']['0']['content']['parts']['0']['text'])
+                
+                list.contents.push({
+                    role: 'model',
+                    parts: [{
+                        text: JSON.stringify(result)
+                    }]
+                })
+                
+                const divAdd = document.createElement('div')
+                const askResult = document.querySelector('#askResult')
+                askResult.append(divAdd)
+                askResult.innerText = result['candidates']['0']['content']['parts']['0']['text']
+            }).catch( function(error){
+                console.error('요청 중 에러', error)
+            })
+
+        })
+    }
+</script>
+    </head>
+    <body>
+        <textarea id="prompt"></textarea>
+        <br>
+        <button type="buttn" id="ask">질문하기</button>
+        <button type="buttn" id="ask2">멀티턴</button>
+        <div id="askResult"></div>
+    </body> 
+</html>

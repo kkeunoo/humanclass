@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+            // json (닫는태그 등 줄여서 간결하게 하기 위해서 사용)
+            // 값을 key와 value로 관리하나 순서는 보장하지 않음
+
+            // json 선언 (배열과 다르게 중괄호로 선언)
+            // value에는 변수에 담을 수 있는 모든것이 들어감 (함수,변수 등)
+            let json = {}
+            json = {
+                "key": "value",
+                "num": 1234,
+                "fn": function() {
+                    console.log(1)
+                },
+                "k1": {
+                    "k1-1": 1,
+                    "k1-2": 2
+                },
+                // javascript 한정 key도 ""없이 쓸 수 있음 ,가 마지막에 있어도 괜춘
+                k2 : 'k3',
+            }
+
+            console.log( json )
+            console.log( ""+json )
+
+            // 값에 접근하는 방법
+            // 방법1 : 배열처럼
+            console.log( "json['key'] : " , json['key'] )
+            console.log( "json['num'] : ", json['num'] )
+            console.log( "json['k1']['k1-1'] : ", json['k1']['k1-1'] )
+
+            // 방법2 : 프로퍼티처럼 .으로 접근 가능
+            console.log( 'json.key : ', json.key )
+            // 아래처럼 value값에 '-'가 있을 때 마이너스로 인식하여, NaN이 발생됨
+            // console.log( 'json.k1.k1-2 : ', json.k1.k1-2 )
+            console.log( 'json.k1.k : ', json.k1.k)
+
+            json['fn']()
+            json.fn()
+
+            // 값 넣기 (변수처럼 값을 넣을 수 있음)
+            // key가 있으면 덮어쓰기, 없다면 추가됨
+            json.num = 456
+            console.log(json.num)
+            // not defined가 아니라, 있을 것 같지만 값이 없어서 undefined가 나옴
+            console.log(json.num2)
+            json.num2 = 222
+            console.log(json.num2)
+
+            // 배열의 push처럼 넣지 않아도, 값을 넣으면 자동적으로 들어감
+            console.log( json )
+
+            // 네트워크 통신할 때 무조건 문자로 보내야 함
+            // json도 배열을 join()으로 문자값으로 바꾼 것 처럼 작업해야 함
+            // 아래와 같이 대문자 JSON에 stringify를 하면 글씨로 바꿔줌 
+            // 단, 값이 함수인 것은 제외함
+            const str = JSON.stringify(json)
+            console.log(str)
+
+            // parse(분석)을 이용해서 문자열로 바꾼 값을 다시 json으로 바꿀 수 있음
+            const json2 = JSON.parse(str)
+            console.log(json2)
+
+            //Uncaught Syntax(오타)Error: Unexpected token 
+            // '<', "<h1>" is not valid JSON(JSON이 아니다)
+            // at JSON.parse (<anonymous>)
+            // JSON.parse('<h1>')
+            
+            // 배열안에 JSON이 있는 경우도 허용해줌
+            let j = JSON.parse('{}')
+            console.log(j)
+            j = JSON.parse('[{}]')
+            console.log(j)
+
+            const temple = [{
+                이름: '그랜절',
+                주소: '광장',
+                가격: 300000
+            }, {
+                이름: '만우절',
+                주소: '없음',
+                가격: 2147483647
+            }]
+            // json 배열도 동일하게 사용할 수 있음
+            for(let t of temple) {
+                console.log(t.이름)
+            }
+            for(let i in temple) {
+                console.log(temple[i].가격)
+            }
+
+            // json의 모든 key를 배열로 돌려줌
+            const keys = Object.keys(json)
+            console.log(keys)
+
+            // key 삭제 (실무해서는 실제 삭제하지는 않음)
+            delete json.num
+            console.log(json)
+
+
+        </script>
+    </head>
+    <body>
+        19990302
+
+        <year cen="20">1999</year><month>03</month><day>02</day>
+        JSON : {year: {cen="20"} 1999,month:03,day:02}
+    </body>
+</html>

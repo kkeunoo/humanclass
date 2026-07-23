@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+            // 화살표(Arrow function)함수
+            // 익명 함수를 선언하는 문법
+
+            // 일반적인 익명함수
+            const fn1 = function(a, b) {
+                console.log(a, b)
+                return a, b
+                // return은 1번만 써야 한다
+                // return a, b
+            }
+            fn1(1, 2)
+            
+            // 아래와 같은 형태로 변수 선언 없이 실행하게도 할 수 있음
+            (function(a, b) {
+                console.log(a, b)
+                return a, b
+            })(1, 2) // ()는 실행의 괄호이기 때문에 앞에 있는 것 실행
+
+            const fn2 = (a, b) => {
+                console.log(a, b)
+                return a, b
+            }
+            fn2(1, 2)
+
+            // 전달 인자가 하나인 경우에만 전달인자의 () 생략 가능
+            // const fn3 = (a) => {
+            const fn3 = a => {
+                console.log(a)
+                return a
+            }
+
+            // 전달 인자가 하나도 없을 경우는 ()는 생략불가로 써줘야 함
+            const fn4 = () => {
+                console.log(a)
+                return a
+            }
+
+            const fn5 = (a, b) => {
+                return a + b
+            }
+            // 실행문 안에 return만 있는 경우 실행 블럭의 {}중괄호, return 생략 가능
+            // {}를 생략한 경우 return도 반드시 생략해야 함
+            const fn6 = (a, b) => a + b
+            const fn7 = a => a + 100
+            
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>

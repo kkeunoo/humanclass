@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            .box {
+                border: 1px solid red;
+                height: 130px;
+                width: 130px;
+                margin: 10px;
+            }
+
+            .hidden {
+                overflow: hidden;
+            }
+
+            .scroll {
+                overflow: scroll;
+            }
+
+            /* -y는 y영역 스크롤이 생기게끔 보장 (x는 없어질수도 있다) */
+            .overflow-y {
+                overflow-y: scroll;
+                /* overflow-x: scroll; */
+            }
+
+            /* auto는 필요 시 생기고 필요 없을 때 생기지 않음
+            실무에서는 자주 사용하지 않고 -y로 맞춰놓는편이 많음 */
+            .auto {
+                overflow: auto;
+            }
+            
+            .parent {
+                border: 1px solid red;
+                width: 300px;
+                white-space: nowrap;
+                overflow: auto;
+            }
+
+            .parent div {
+                border: 1px solid brown;
+                display: inline-block;
+                width: 100px;
+                margin: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="box hidden">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus debitis, iure explicabo ipsum tempore maiores unde dolor atque, magnam sint impedit laborum in, ullam fugiat ea eveniet cumque dignissimos aliquam!
+        </div>
+        <div class="box scroll">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus debitis, iure explicabo ipsum tempore maiores unde dolor atque, magnam sint impedit laborum in, ullam fugiat ea eveniet cumque dignissimos aliquam!
+        </div>
+        <div class="box scroll">
+            Lorem ipsum 
+        </div>
+        <div class="box overflow-y">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus debitis, iure explicabo ipsum tempore maiores unde dolor atque, magnam sint impedit laborum in, ullam fugiat ea eveniet cumque dignissimos aliquam!
+        </div>
+        <div class="box auto">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus debitis, iure explicabo ipsum tempore maiores unde dolor atque, magnam sint impedit laborum in, ullam fugiat ea eveniet cumque dignissimos aliquam!
+        </div>
+
+        div>div*5
+        <div class="parent">
+            <div>항목1</div>
+            <div>항목2</div>
+            <div>항목3</div>
+            <div>항목4</div>
+            <div>항목5</div>
+        </div>
+        <br><br><br><br><br><br><br><br><br><br>
+    </body>
+</html>

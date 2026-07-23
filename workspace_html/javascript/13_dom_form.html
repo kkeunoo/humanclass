@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <form>
+        <input type="text" id="id" value="abcd"><br>
+        <input type="password" id="pw"><br>
+        <input type="date" id="date"><br>
+
+        <hr>
+        <input type="radio" name="ai" value="1" checked>chatGPT
+        <input type="radio" name="ai" value="2">gemini
+        <input type="radio" name="ai" value="3">grok
+        <input type="radio" name="ai" value="4">perplexity(구글 대신 검색)
+        <input type="radio" name="ai" value="5">claude
+
+        <br><hr>
+        <input type="checkbox" class="game" value="a">마비노기 모바일
+        <input type="checkbox" class="game" value="b">스타듀밸리
+        <input type="checkbox" class="game" value="c">워크래프트3 
+        <input type="checkbox" class="game" value="d">오버워치 
+        <input type="checkbox" class="game" value="e">메이플 
+        <input type="checkbox" class="game" value="f">마인크래프트
+        
+        <br><hr>
+        <select id="lang">
+            <option value="1">javascript</option>
+            <option value="2" selected>python</option>
+            <option value="3">db</option>
+            <option value="4">java</option>
+        </select>
+
+        <br><hr>
+        <textarea id="textarea">초기값</textarea>
+        <div id="view"></div>
+
+    </form>
+
+    <script>
+        setTimeout( () => {
+
+            // input type에 value값이 있지만, 가져오는건 입력 된 최신 데이터
+            // text.value로 input text의 값을 바꿔줄 수 있음
+            const text = document.querySelector('#id')
+            text.value = '12345'
+            console.log('text', text.value)
+            
+            const password = document.querySelector('#pw')
+            console.log('password', password.value)
+
+            const date = document.querySelector('#date')
+            console.log('date', '['+date.value+']')
+            // date.value = '2026-7-16' yyyy-mm-dd 양식을 지켜야 함
+            date.value = '2026-07-16'
+
+            // y,m,d를 받아서 한자리일경우 두자리를 만들어 실시간 일자 표기
+            const today = new Date()
+            const y = today.getFullYear()
+            // getMonth는 0~11까지 나오기 때문에 +1 처리
+            let m = today.getMonth() + 1 // 7로 나오기 때문에 07로 만들어야 함
+            if(m < 10) {
+                m = '0' + m
+            }
+            // m = ('0'+m).slice(-2)
+
+            let d = today.getDate()
+            d = ('0'+d).slice(-2)
+
+            // const result = y + '-' + m + '-' + d
+            const result = `${y}-${m}-${d}`
+            date.value = result
+
+            // 아래 방법을 사용하거나, 위에 new Date로 받아서 각기 값을 넣어줘도 됨
+            console.log(today.toISOString().split('T')[0])
+
+            // radio 박스의 경우 checked 된 것의 'value'를 가져옴
+            const radio = document.querySelector('[name=ai]:checked')
+            console.log(radio.value)
+
+            // 아래와 같이 checked = true로 주면 기본 체크값을 바꿀 수 있음
+            const radios = document.querySelectorAll('[name=ai]')
+            radios[1].checked = true
+
+            // checkbox는 radio와 다르게 중복체크가 가능하기 때문에, all로 가져옴
+            // 배열이기 때문에 value값을 출력하기 위해서는 for문으로 작성
+            // 아래와 같이 반대의 경우 not()으로 사용할 수 있음
+            const checks = document.querySelectorAll('.game:not(:checked)')
+            // const checks = document.querySelectorAll('.game:checked')
+            for(let i=0; i<checks.length; i++) {
+                console.log(checks[i].value)
+            }
+
+            console.log('---------------------------')
+
+            const checks2 = document.querySelectorAll('.game')
+            for(let i=0; i<checks2.length; i++) {
+                console.log(checks2[i].value, checks2[i].checked)
+                if(checks2.checked == true) {
+                    console.log(checks2[i].value)
+                }
+            }
+
+            checks2[0].checked = true
+
+            console.log('---------------------------')
+            // select의 경우 checkbox와 다르게 체크되어있지 않아도 value가 나옴
+            // select도 checked = true로 하되, option에 주어야 함
+            const lang = document.getElementById('lang')
+            console.log(lang.value)
+
+            lang.value = '4'
+
+            console.log('---------------------------')
+            const textarea = document.querySelector('#textarea')
+            console.log(textarea.value)
+            console.log(textarea.value.indexOf('\n'))
+
+            const view = document.querySelector('#view')
+            view.innerHTML = textarea.value
+
+            // 정규표현식으로 textarea에 있는 \n을 br로 전환해 줄 수 있음
+            let str = textarea.value.replace(/\n/g, '<br>')
+            view.innerHTML = str
+
+            // console.log('---------------------------')
+            // const input_text = document.querySelector('#textarea')
+            // console.log(input_text.innerText)
+
+            // const value1 = input_text.innerText
+
+
+        }, 1000 * 3)
+
+    </script>
+    
+</body>
+</html>

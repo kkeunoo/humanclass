@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- title 안에 주석이 표시가 되는건, title은 안에 태그를 허용하지 않아 필요한 글씨만 기재 -->
+        <title>
+            <!-- 주석 -->
+            Document
+        </title>
+        <style>
+            #list li {
+                display: inline-block;
+            }
+        </style>
+
+    </head>
+    <body>
+        <!-- ul의 특징은 앞에 여백과 불렛표시로 생김, 화면에 표시되는 모든것은 li태그 안에 있어야 함 -->
+        <ul>
+            <li>아이템1</li>
+            <li>아이템2</li>
+            <!-- 아이템4 -->
+            <li>아이템3</li>
+            <li>
+                <a href="http://naver.com" target="_blank">네이버</a>
+            </li>
+        </ul>
+
+        <!-- ol의 특징은 순서를 표기하거나(목차 등) 숫자로 기입할 때 사용함, 거의 사용하는 경우는 없음 -->
+        <ol>
+            <li>아이템1</li>
+            <li>아이템2</li>
+            <!-- 아이템4 -->
+            <li>아이템3</li>
+            <li>
+                <a href="http://naver.com" target="_blank">네이버</a>
+            </li>
+        </ol>
+
+        <ul>
+            <li>리스트1</li>
+            <!-- ul안에 ul을 추가로 넣고싶다면 li에 넣어야 접근성 위반이 안 됨 -->
+            <li>리스트2
+                <ul>
+                    <li>리스트2-1</li>
+                    <li>리스트2-2</li>
+                </ul>
+            </li>
+        </ul>
+        <!-- ul>li*5 형태로도 사용 가능 -->
+
+        <!-- 정의에 대한 것, dl dt dd 순으로 정리됨 -->
+        <dl>
+            <dt>dl 태그</dt>
+            <dd>용어와 설명을 적는 구조</dd>
+        </dl>
+
+        <ul id="list">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+        </ul>
+    </body>
+</html>

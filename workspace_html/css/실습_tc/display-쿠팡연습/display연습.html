@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            /* body {
+                font-size: 0px;
+            } */
+            .item {
+                border: 1px solid red;
+                
+                display: inline-block;
+                width: 250px;
+                margin: 10px;
+                /* font-size: 16px; */
+
+                /* text-align: center; */
+                /* center를 주니 글씨까지 모두 정렬이되어, 이미지만 별도로 하고싶기에 결과값이 다름 */
+            }
+            /* 이렇게 계층구조를 주는것이 하이라키(hierarchy)구조라고 함 */
+            .item .thumb {
+                width: 200px;
+
+                /* img태그는 inline요소이기 때문에 먹히지 않음 */
+                /* text-align: center; */
+            }
+            
+            .item .img {
+                border: 1px solid blue;
+                /* 부모쪽에서는 자식까지 영향을 받기때문에 div로 감싸서 center를 줌 */
+                text-align: center;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="item">
+            <div class="img">
+                <img class="thumb" src="https://old.tokyorak.com/data/files/2024/11/06/342a43bb5b4bc1daf4c4a9ac603fe532.jpg">
+            </div>
+            <div>
+                <!-- <br> --> <!-- 원래 br로 구분했으나 div로 감싸면서 필요없어짐 -->
+                AKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKG
+            </div>
+            <div>
+                5,400원 
+            </div>
+        </div>
+        <div class="item">
+            <div class="img">
+                <img class="thumb" src="https://old.tokyorak.com/data/files/2024/11/06/342a43bb5b4bc1daf4c4a9ac603fe532.jpg">
+            </div>
+            <!-- <br> --> <!-- 원래 br로 구분했으나 div로 감싸면서 필요없어짐 -->
+            AKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKG
+            <br>
+            5,400원 
+        </div>
+        <div class="item">
+            <div class="img">
+                <img class="thumb" src="https://old.tokyorak.com/data/files/2024/11/06/342a43bb5b4bc1daf4c4a9ac603fe532.jpg">
+            </div>
+            <!-- <br> --> <!-- 원래 br로 구분했으나 div로 감싸면서 필요없어짐 -->
+            AKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKGAKG AKG
+            <br>
+            5,400원 
+        </div>
+
+    </body>
+</html>

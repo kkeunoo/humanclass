@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="프로젝트 중심 국비지원 IT교육 전문기관 ITAcademy"
+    >
+
+    <title>ITAcademy | 국비지원 IT교육</title>
+
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <!-- 스크롤 진행 표시 -->
+    <div class="scroll-progress" aria-hidden="true">
+        <span class="scroll-progress__bar"></span>
+    </div>
+
+    <!-- =========================
+         Header
+    ========================== -->
+    <header class="header" id="header">
+        <div class="container header__inner">
+            <a href="#home" class="header__logo">
+                IT<span>Academy</span>
+            </a>
+
+            <nav
+                class="nav"
+                id="mainNav"
+                aria-label="주요 메뉴"
+            >
+                <ul class="nav__list">
+                    <li>
+                        <a class="nav__link active" href="#home">
+                            HOME
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="nav__link" href="#courses">
+                            교육과정
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="nav__link" href="#support">
+                            취업지원
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="nav__link" href="#portfolio">
+                            포트폴리오
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="nav__link" href="#contact">
+                            상담신청
+                        </a>
+                    </li>
+                </ul>
+
+                <a
+                    href="#contact"
+                    class="button button--primary nav__contact"
+                >
+                    무료 상담
+                </a>
+            </nav>
+
+            <button
+                class="menu-toggle"
+                type="button"
+                aria-label="메뉴 열기"
+                aria-controls="mainNav"
+                aria-expanded="false"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- =========================
+             Hero
+        ========================== -->
+        <section class="hero" id="home">
+            <div class="hero__background" aria-hidden="true"></div>
+
+            <div class="container hero__inner">
+                <div class="hero__content reveal">
+                    <p class="hero__eyebrow">
+                        K-DIGITAL TRAINING · 국비지원 IT교육
+                    </p>
+
+                    <h1 class="hero__title">
+                        배우는 것을 넘어<br>
+                        <strong>개발자로 취업</strong>하는 교육
+                    </h1>
+
+                    <p class="hero__description">
+                        기초부터 실무 프로젝트, 포트폴리오와 취업까지
+                        현업 중심의 체계적인 교육으로 개발자의 시작을
+                        함께합니다.
+                    </p>
+
+                    <div class="hero__actions">
+                        <a
+                            href="#courses"
+                            class="button button--primary"
+                        >
+                            교육과정 보기
+                        </a>
+
+                        <a
+                            href="#contact"
+                            class="button button--outline"
+                        >
+                            상담 신청하기
+                        </a>
+                    </div>
+
+                    <ul class="hero__stats">
+                        <li>
+                            <strong>92%</strong>
+                            <span>수료생 취업률</span>
+                        </li>
+
+                        <li>
+                            <strong>1,200+</strong>
+                            <span>누적 수료생</span>
+                        </li>
+
+                        <li>
+                            <strong>48</strong>
+                            <span>협약 기업</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="hero__visual reveal">
+                    <div class="hero-card">
+                        <div class="hero-card__header">
+                            <div class="hero-card__dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+
+                            <span class="hero-card__filename">
+                                developer-roadmap.js
+                            </span>
+                        </div>
+
+                        <div class="hero-card__body">
+<pre><code><span>01</span>  HTML
+
+<span>02</span>  CSS
+
+<span>03</span>  JavaScript
+
+<span>04</span>  ↓
+
+<span>05</span>  React
+
+<span>06</span>  ↓
+
+<span>07</span>  Spring Boot
+
+<span>08</span>  ↓
+
+<span>09</span>  Portfolio
+
+<span>10</span>  ↓
+
+<span>11</span>  Employment 🚀</code></pre>
+                        </div>
+                    </div>
+
+                    <article class="floating-card floating-card--1">
+                        <span class="floating-card__icon">
+                            &lt;/&gt;
+                        </span>
+
+                        <div>
+                            <strong>실무 프로젝트</strong>
+                            <p>
+                                기업 실무 기반 프로젝트를 직접 수행합니다.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="floating-card floating-card--2">
+                        <span class="floating-card__icon">✓</span>
+
+                        <div>
+                            <strong>취업 완성</strong>
+                            <p>
+                                포트폴리오부터 면접까지 지원합니다.
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             Intro
+        ========================== -->
+        <section class="intro section">
+            <div class="container">
+                <div class="section-heading section-heading--center reveal">
+                    <p class="section-heading__eyebrow">
+                        WHY ITACADEMY
+                    </p>
+
+                    <h2 class="section-heading__title">
+                        취업에 필요한 모든 과정을<br>
+                        하나의 교육 안에 담았습니다.
+                    </h2>
+
+                    <p class="section-heading__description">
+                        이론 학습에 그치지 않고 실제 개발 업무와 유사한
+                        프로젝트를 경험하며 취업 경쟁력을 완성합니다.
+                    </p>
+                </div>
+
+                <div class="intro__grid">
+                    <article class="feature-card reveal">
+                        <span class="feature-card__number">01</span>
+                        <h3>현업 중심 커리큘럼</h3>
+                        <p>
+                            최신 개발 기술과 현업에서 사용하는 협업 방식을
+                            중심으로 학습합니다.
+                        </p>
+                    </article>
+
+                    <article class="feature-card reveal">
+                        <span class="feature-card__number">02</span>
+                        <h3>실무 프로젝트</h3>
+                        <p>
+                            기획, 개발, 테스트, 배포까지 프로젝트의 전체
+                            과정을 직접 경험합니다.
+                        </p>
+                    </article>
+
+                    <article class="feature-card reveal">
+                        <span class="feature-card__number">03</span>
+                        <h3>1:1 취업 관리</h3>
+                        <p>
+                            자기소개서, 포트폴리오, 기술 면접을 개인별로
+                            체계적으로 지원합니다.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             Courses
+        ========================== -->
+        <section class="courses section section--gray" id="courses">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <p class="section-heading__eyebrow">
+                        COURSES
+                    </p>
+
+                    <h2 class="section-heading__title">
+                        목표에 맞는 교육과정을<br>
+                        선택해보세요.
+                    </h2>
+                </div>
+
+                <!-- 데스크톱/태블릿 카드 -->
+                <div class="course-grid">
+                    <article class="course-card reveal">
+                        <div class="course-card__top">
+                            <span class="course-card__category">
+                                FRONTEND
+                            </span>
+
+                            <span class="course-card__duration">
+                                6개월
+                            </span>
+                        </div>
+
+                        <h3>프론트엔드 개발자 과정</h3>
+
+                        <p>
+                            HTML, CSS, JavaScript부터 React까지
+                            사용자 중심의 웹 서비스를 구현합니다.
+                        </p>
+
+                        <ul class="course-card__tags">
+                            <li>HTML</li>
+                            <li>CSS</li>
+                            <li>JavaScript</li>
+                            <li>React</li>
+                        </ul>
+
+                        <a href="#contact" class="course-card__link">
+                            과정 상담하기 →
+                        </a>
+                    </article>
+
+                    <article class="course-card reveal">
+                        <div class="course-card__top">
+                            <span class="course-card__category">
+                                BACKEND
+                            </span>
+
+                            <span class="course-card__duration">
+                                6개월
+                            </span>
+                        </div>
+
+                        <h3>Java 백엔드 과정</h3>
+
+                        <p>
+                            Java와 데이터베이스를 기반으로 안정적인
+                            서버 애플리케이션을 개발합니다.
+                        </p>
+
+                        <ul class="course-card__tags">
+                            <li>Java</li>
+                            <li>Oracle</li>
+                            <li>JSP</li>
+                            <li>Git</li>
+                        </ul>
+
+                        <a href="#contact" class="course-card__link">
+                            과정 상담하기 →
+                        </a>
+                    </article>
+
+                    <article class="course-card reveal">
+                        <div class="course-card__top">
+                            <span class="course-card__category">
+                                SPRING
+                            </span>
+
+                            <span class="course-card__duration">
+                                6개월
+                            </span>
+                        </div>
+
+                        <h3>Spring Boot 과정</h3>
+
+                        <p>
+                            REST API와 데이터베이스 연동을 통해
+                            실무형 백엔드 서비스를 구축합니다.
+                        </p>
+
+                        <ul class="course-card__tags">
+                            <li>Spring Boot</li>
+                            <li>JPA</li>
+                            <li>MySQL</li>
+                            <li>AWS</li>
+                        </ul>
+
+                        <a href="#contact" class="course-card__link">
+                            과정 상담하기 →
+                        </a>
+                    </article>
+
+                    <article class="course-card reveal">
+                        <div class="course-card__top">
+                            <span class="course-card__category">
+                                AI · DATA
+                            </span>
+
+                            <span class="course-card__duration">
+                                6개월
+                            </span>
+                        </div>
+
+                        <h3>AI · Python 과정</h3>
+
+                        <p>
+                            Python 기초부터 데이터 분석과 머신러닝
+                            프로젝트까지 단계별로 학습합니다.
+                        </p>
+
+                        <ul class="course-card__tags">
+                            <li>Python</li>
+                            <li>Pandas</li>
+                            <li>Machine Learning</li>
+                        </ul>
+
+                        <a href="#contact" class="course-card__link">
+                            과정 상담하기 →
+                        </a>
+                    </article>
+                </div>
+
+                <!-- 모바일 아코디언 -->
+                <div class="course-accordion">
+                    <article class="accordion-item">
+                        <h3>
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                aria-expanded="true"
+                            >
+                                <span>
+                                    <small>FRONTEND</small>
+                                    프론트엔드 개발자 과정
+                                </span>
+
+                                <span class="accordion-button__icon"></span>
+                            </button>
+                        </h3>
+
+                        <div class="accordion-panel">
+                            <div class="accordion-panel__inner">
+                                <p>
+                                    HTML, CSS, JavaScript부터 React까지
+                                    사용자 중심의 웹 서비스를 구현합니다.
+                                </p>
+
+                                <ul class="accordion-tags">
+                                    <li>HTML</li>
+                                    <li>CSS</li>
+                                    <li>JavaScript</li>
+                                    <li>React</li>
+                                </ul>
+
+                                <a href="#contact">
+                                    과정 상담하기 →
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="accordion-item">
+                        <h3>
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                aria-expanded="false"
+                            >
+                                <span>
+                                    <small>BACKEND</small>
+                                    Java 백엔드 과정
+                                </span>
+
+                                <span class="accordion-button__icon"></span>
+                            </button>
+                        </h3>
+
+                        <div class="accordion-panel" hidden>
+                            <div class="accordion-panel__inner">
+                                <p>
+                                    Java와 데이터베이스를 기반으로 안정적인
+                                    서버 애플리케이션을 개발합니다.
+                                </p>
+
+                                <ul class="accordion-tags">
+                                    <li>Java</li>
+                                    <li>Oracle</li>
+                                    <li>JSP</li>
+                                    <li>Git</li>
+                                </ul>
+
+                                <a href="#contact">
+                                    과정 상담하기 →
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="accordion-item">
+                        <h3>
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                aria-expanded="false"
+                            >
+                                <span>
+                                    <small>SPRING</small>
+                                    Spring Boot 과정
+                                </span>
+
+                                <span class="accordion-button__icon"></span>
+                            </button>
+                        </h3>
+
+                        <div class="accordion-panel" hidden>
+                            <div class="accordion-panel__inner">
+                                <p>
+                                    REST API와 데이터베이스 연동을 통해
+                                    실무형 백엔드 서비스를 구축합니다.
+                                </p>
+
+                                <ul class="accordion-tags">
+                                    <li>Spring Boot</li>
+                                    <li>JPA</li>
+                                    <li>MySQL</li>
+                                    <li>AWS</li>
+                                </ul>
+
+                                <a href="#contact">
+                                    과정 상담하기 →
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="accordion-item">
+                        <h3>
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                aria-expanded="false"
+                            >
+                                <span>
+                                    <small>AI · DATA</small>
+                                    AI · Python 과정
+                                </span>
+
+                                <span class="accordion-button__icon"></span>
+                            </button>
+                        </h3>
+
+                        <div class="accordion-panel" hidden>
+                            <div class="accordion-panel__inner">
+                                <p>
+                                    Python 기초부터 데이터 분석과 머신러닝
+                                    프로젝트까지 단계별로 학습합니다.
+                                </p>
+
+                                <ul class="accordion-tags">
+                                    <li>Python</li>
+                                    <li>Pandas</li>
+                                    <li>Machine Learning</li>
+                                </ul>
+
+                                <a href="#contact">
+                                    과정 상담하기 →
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             Employment Support
+        ========================== -->
+        <section class="support section" id="support">
+            <div class="container support__inner">
+                <div class="support__content reveal">
+                    <div class="section-heading">
+                        <p class="section-heading__eyebrow">
+                            CAREER SUPPORT
+                        </p>
+
+                        <h2 class="section-heading__title">
+                            수료가 끝이 아닌<br>
+                            취업까지 함께합니다.
+                        </h2>
+
+                        <p class="section-heading__description">
+                            전담 취업 매니저와 강사가 개인별 강점과 목표에
+                            맞춰 취업 준비 전 과정을 지원합니다.
+                        </p>
+                    </div>
+
+                    <ol class="support-steps">
+                        <li>
+                            <span>01</span>
+                            <div>
+                                <strong>진로·직무 상담</strong>
+                                <p>개인의 역량과 목표에 맞는 직무를 설계합니다.</p>
+                            </div>
+                        </li>
+
+                        <li>
+                            <span>02</span>
+                            <div>
+                                <strong>포트폴리오 완성</strong>
+                                <p>프로젝트를 채용 관점에서 보완합니다.</p>
+                            </div>
+                        </li>
+
+                        <li>
+                            <span>03</span>
+                            <div>
+                                <strong>입사지원·면접 코칭</strong>
+                                <p>지원 기업에 맞춘 서류와 면접을 준비합니다.</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="support__dashboard reveal">
+                    <div class="dashboard-card">
+                        <div class="dashboard-card__header">
+                            <div>
+                                <small>EMPLOYMENT DASHBOARD</small>
+                                <h3>취업 준비 현황</h3>
+                            </div>
+
+                            <span class="dashboard-card__status">
+                                진행 중
+                            </span>
+                        </div>
+
+                        <div class="dashboard-progress">
+                            <div class="dashboard-progress__label">
+                                <span>전체 진행률</span>
+                                <strong>82%</strong>
+                            </div>
+
+                            <div class="dashboard-progress__track">
+                                <span style="width: 82%"></span>
+                            </div>
+                        </div>
+
+                        <ul class="dashboard-list">
+                            <li class="complete">
+                                <span>✓</span>
+                                이력서 작성
+                            </li>
+
+                            <li class="complete">
+                                <span>✓</span>
+                                포트폴리오 제작
+                            </li>
+
+                            <li class="complete">
+                                <span>✓</span>
+                                기술 면접 준비
+                            </li>
+
+                            <li>
+                                <span>4</span>
+                                기업 지원
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             Portfolio
+        ========================== -->
+        <section
+            class="portfolio section section--dark"
+            id="portfolio"
+        >
+            <div class="container">
+                <div class="section-heading section-heading--light reveal">
+                    <p class="section-heading__eyebrow">
+                        STUDENT PORTFOLIO
+                    </p>
+
+                    <h2 class="section-heading__title">
+                        수강생이 직접 완성한<br>
+                        실무 프로젝트입니다.
+                    </h2>
+                </div>
+
+                <div class="portfolio-grid">
+                    <article class="portfolio-card reveal">
+                        <div class="portfolio-card__visual">
+                            <span>WEB SERVICE</span>
+                            <strong>SHOP</strong>
+                        </div>
+
+                        <div class="portfolio-card__content">
+                            <p>React · Spring Boot</p>
+                            <h3>쇼핑몰 웹 서비스</h3>
+                            <span>
+                                상품, 장바구니, 주문, 결제 기능을 구현한
+                                풀스택 프로젝트
+                            </span>
+                        </div>
+                    </article>
+
+                    <article class="portfolio-card reveal">
+                        <div class="portfolio-card__visual">
+                            <span>TEAM PROJECT</span>
+                            <strong>TRAVEL</strong>
+                        </div>
+
+                        <div class="portfolio-card__content">
+                            <p>JavaScript · API</p>
+                            <h3>여행 일정 추천 서비스</h3>
+                            <span>
+                                공공 API를 활용한 지역별 여행 정보와 일정
+                                추천 프로젝트
+                            </span>
+                        </div>
+                    </article>
+
+                    <article class="portfolio-card reveal">
+                        <div class="portfolio-card__visual">
+                            <span>DATA PROJECT</span>
+                            <strong>DATA</strong>
+                        </div>
+
+                        <div class="portfolio-card__content">
+                            <p>Python · Machine Learning</p>
+                            <h3>고객 이탈 예측 시스템</h3>
+                            <span>
+                                데이터를 분석하고 고객 이탈 가능성을
+                                예측하는 머신러닝 프로젝트
+                            </span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             FAQ
+        ========================== -->
+        <section class="faq section">
+            <div class="container faq__inner">
+                <div class="section-heading reveal">
+                    <p class="section-heading__eyebrow">
+                        FAQ
+                    </p>
+
+                    <h2 class="section-heading__title">
+                        자주 묻는 질문을<br>
+                        확인해보세요.
+                    </h2>
+                </div>
+
+                <div class="faq__list reveal">
+                    <article class="accordion-item">
+                        <h3>
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                aria-expanded="true"
+                            >
+                                비전공자도 수강할 수 있나요?
+                                <span class="accordion-button__icon"></span>
+                            </button>
+                        </h3>
+
+                        <div class="accordion-panel">
+                            <div class="accordion-panel__inner">
+                                <p>
+                                    가능합니다. 기초 문법부터 단계적으로
+                                    학습하기 때문에 전공이나 개발 경험이
+                                    없어도 참여할 수 있습니다.
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="accordion-item">
+                        <h3>
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                aria-expanded="false"
+                            >
+                                국비지원은 어떻게 받을 수 있나요?
+                                <span class="accordion-button__icon"></span>
+                            </button>
+                        </h3>
+
+                        <div class="accordion-panel" hidden>
+                            <div class="accordion-panel__inner">
+                                <p>
+                                    국민내일배움카드 발급 및 과정 참여
+                                    가능 여부를 상담한 뒤 신청할 수 있습니다.
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="accordion-item">
+                        <h3>
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                aria-expanded="false"
+                            >
+                                프로젝트는 개인으로 진행하나요?
+                                <span class="accordion-button__icon"></span>
+                            </button>
+                        </h3>
+
+                        <div class="accordion-panel" hidden>
+                            <div class="accordion-panel__inner">
+                                <p>
+                                    개인 프로젝트와 팀 프로젝트를 모두
+                                    진행하며, Git을 활용한 협업 방식도 함께
+                                    학습합니다.
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             Contact
+        ========================== -->
+        <section class="contact section" id="contact">
+            <div class="container contact__inner">
+                <div class="contact__content reveal">
+                    <p class="section-heading__eyebrow">
+                        CONTACT
+                    </p>
+
+                    <h2>
+                        개발자 취업을 위한 첫걸음,<br>
+                        지금 상담해보세요.
+                    </h2>
+
+                    <p>
+                        교육과정, 국비지원 자격, 취업 준비에 대해
+                        전문 상담사가 친절하게 안내해드립니다.
+                    </p>
+
+                    <ul class="contact__information">
+                        <li>📞 1588-1234</li>
+                        <li>✉ info@itacademy.co.kr</li>
+                        <li>🕘 평일 09:00 ~ 18:00</li>
+                    </ul>
+                </div>
+
+                <form class="contact-form reveal" id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">이름</label>
+
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                placeholder="이름을 입력해주세요."
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">연락처</label>
+
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                placeholder="010-0000-0000"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="course">관심 과정</label>
+
+                        <select id="course" name="course" required>
+                            <option value="">과정을 선택해주세요.</option>
+                            <option value="frontend">
+                                프론트엔드 개발자 과정
+                            </option>
+                            <option value="java">
+                                Java 백엔드 과정
+                            </option>
+                            <option value="spring">
+                                Spring Boot 과정
+                            </option>
+                            <option value="python">
+                                AI · Python 과정
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">문의 내용</label>
+
+                        <textarea
+                            id="message"
+                            name="message"
+                            rows="5"
+                            placeholder="궁금한 내용을 입력해주세요."
+                        ></textarea>
+                    </div>
+
+                    <label class="form-agreement">
+                        <input
+                            type="checkbox"
+                            name="privacy"
+                            required
+                        >
+
+                        <span>
+                            개인정보 수집 및 이용에 동의합니다.
+                        </span>
+                    </label>
+
+                    <button
+                        type="submit"
+                        class="button button--primary contact-form__submit"
+                    >
+                        상담 신청하기
+                    </button>
+
+                    <p
+                        class="contact-form__status"
+                        id="formStatus"
+                        role="status"
+                    ></p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- =========================
+         Footer
+    ========================== -->
+    <footer class="footer">
+        <div class="container footer__grid">
+            <div class="footer__brand">
+                <a href="#home" class="footer__logo">
+                    IT<span>Academy</span>
+                </a>
+
+                <h2>실무 중심 국비지원 IT교육 전문기관</h2>
+
+                <p>
+                    프로젝트 기반 교육으로 개발자의 꿈을
+                    현실로 만들어드립니다.
+                </p>
+
+                <div class="footer__social">
+                    <a href="#" aria-label="Facebook">Facebook</a>
+                    <a href="#" aria-label="Instagram">Instagram</a>
+                    <a href="#" aria-label="YouTube">YouTube</a>
+                </div>
+            </div>
+
+            <div class="footer__column">
+                <button
+                    class="footer__heading"
+                    type="button"
+                    aria-expanded="false"
+                >
+                    Quick Menu
+                    <span></span>
+                </button>
+
+                <div class="footer__panel">
+                    <ul>
+                        <li><a href="#home">HOME</a></li>
+                        <li><a href="#courses">교육과정</a></li>
+                        <li><a href="#support">취업지원</a></li>
+                        <li><a href="#portfolio">포트폴리오</a></li>
+                        <li><a href="#contact">상담신청</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer__column">
+                <button
+                    class="footer__heading"
+                    type="button"
+                    aria-expanded="false"
+                >
+                    교육과정
+                    <span></span>
+                </button>
+
+                <div class="footer__panel">
+                    <ul>
+                        <li><a href="#courses">프론트엔드 개발</a></li>
+                        <li><a href="#courses">Java 백엔드</a></li>
+                        <li><a href="#courses">Spring Boot</a></li>
+                        <li><a href="#courses">AI · Python</a></li>
+                        <li><a href="#courses">풀스택 개발</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer__column footer__contact">
+                <button
+                    class="footer__heading"
+                    type="button"
+                    aria-expanded="false"
+                >
+                    Contact
+                    <span></span>
+                </button>
+
+                <div class="footer__panel">
+                    <ul>
+                        <li>📞 1588-1234</li>
+                        <li>✉ info@itacademy.co.kr</li>
+                        <li>🕘 평일 09:00 ~ 18:00</li>
+                        <li>📍 서울특별시 강남구 테헤란로 123</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer__bottom">
+            <div class="container footer__bottom-inner">
+                <p>
+                    © <span class="year"></span>
+                    IT Academy. All Rights Reserved.
+                </p>
+
+                <a href="#home" class="footer__top">
+                    TOP ↑
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./main.js"></script>
+</body>
+</html>

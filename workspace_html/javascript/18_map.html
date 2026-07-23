@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script>
+        window.onload = ()=> {
+            document.querySelector('#btn1').addEventListener('click', ()=> {
+                console.log(location)
+                // 현재 주소를 알아낼 수 있는 변수
+                console.log(location.href)
+                // 아래와 같이 읽어 온 주소의 값을 바꿀수도 있음
+                location.href = 'http://naver.com'
+            })
+
+            document.querySelector('#btn2').addEventListener('click', ()=> {
+                // reload()를 사용해서 새로고침을 할 수 있음
+                location.reload()
+            })
+
+            document.querySelector('#btn3').addEventListener('click', ()=> {
+                console.log(history)
+
+                // 뒤로 한 칸 가겠다는 함수
+                // history.back()
+                history.go(-2)
+            })
+
+            document.querySelector('#btn4').addEventListener('click', ()=> {
+                const url = '17_event_form.html'
+                const name = 'open 연습'
+                let option = 'width=800,height=600'
+
+                // 새로운 팝업창을 하나 띄울 수 있고 iframe처럼 보안에 좋지 않음
+                // 옵션값으로 속성을 줄 수 있고 부모가 뭐 하는지 다 알 수 있음
+                window.open(url, name, option)
+            })
+
+            document.querySelector('#btn5').addEventListener('click', ()=> {
+                new kakao.Postcode({
+                    oncomplete: function(data) {
+                        console.log(data)
+                        console.log(data.address)
+                        console.log(data.zonecode)
+                    }
+                }).open();
+            })
+        }
+    </script>
+</head>
+<body>
+    <button type="button" id="btn1">네이버로 이동</button>
+    <button type="button" id="btn2">새로고침</button>
+    <button type="button" id="btn3">뒤로가기</button>
+    <button type="button" id="btn4">open</button>
+    <button type="button" id="btn5">우편번호찾기</button>
+
+
+    <!-- 카카오맵 이미지로 따오기 -->
+    <div style="font:normal normal 400 12px/normal dotum, sans-serif; width:640px; height:392px; color:#333; position:relative"><div style="height: 360px;"><a href="https://map.kakao.com/?urlX=532829.9999999995&amp;urlY=919102.9999999993&amp;itemId=1221530357&amp;q=%EB%8B%AC%EC%8B%9D%EB%8B%B9&amp;srcid=1221530357&amp;map_type=TYPE_MAP&amp;from=roughmap" target="_blank"><img class="map" src="http://t1.daumcdn.net/roughmap/imgmap/eeddbb219e74a4dfec39648ae01a6274324e280c572c8cfc096e75fd5a80d119" width="638px" height="358px" style="border:1px solid #ccc;"></a></div><div style="overflow: hidden; padding: 7px 11px; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 0px 0px 2px 2px; background-color: rgb(249, 249, 249);"><a href="https://map.kakao.com" target="_blank" style="float: left;"><img src="//t1.kakaocdn.net/localimg/localimages/07/2018/pc/common/logo_kakaomap.png" width="72" height="16" alt="카카오맵" style="display:block;width:72px;height:16px"></a><div style="float: right; position: relative; top: 1px; font-size: 11px;"><a target="_blank" href="https://map.kakao.com/?from=roughmap&amp;srcid=1221530357&amp;confirmid=1221530357&amp;q=%EB%8B%AC%EC%8B%9D%EB%8B%B9&amp;rv=on" style="float:left;height:15px;padding-top:1px;line-height:15px;color:#000;text-decoration: none;">로드뷰</a><span style="width: 1px;padding: 0;margin: 0 8px 0 9px;height: 11px;vertical-align: top;position: relative;top: 2px;border-left: 1px solid #d0d0d0;float: left;"></span><a target="_blank" href="https://map.kakao.com/?from=roughmap&amp;eName=%EB%8B%AC%EC%8B%9D%EB%8B%B9&amp;eX=532829.9999999995&amp;eY=919102.9999999993" style="float:left;height:15px;padding-top:1px;line-height:15px;color:#000;text-decoration: none;">길찾기</a><span style="width: 1px;padding: 0;margin: 0 8px 0 9px;height: 11px;vertical-align: top;position: relative;top: 2px;border-left: 1px solid #d0d0d0;float: left;"></span><a target="_blank" href="https://map.kakao.com?map_type=TYPE_MAP&amp;from=roughmap&amp;srcid=1221530357&amp;itemId=1221530357&amp;q=%EB%8B%AC%EC%8B%9D%EB%8B%B9&amp;urlX=532829.9999999995&amp;urlY=919102.9999999993" style="float:left;height:15px;padding-top:1px;line-height:15px;color:#000;text-decoration: none;">지도 크게 보기</a></div></div><div><span style="border-bottom:0px none #333333;position:absolute;left:-25px;top:-136px;width:0px;height:40px"></span></div></div>
+    
+    <!-- * 카카오맵 - 지도퍼가기 -->
+    <!-- 1. 지도 노드 -->
+    <div id="daumRoughmapContainer1784611174105" class="root_daum_roughmap root_daum_roughmap_landing"></div>
+
+    <!--
+        2. 설치 스크립트
+        * 지도 퍼가기 서비스를 2개 이상 넣을 경우, 설치 스크립트는 하나만 삽입합니다.
+    -->
+    <script charset="UTF-8" class="daum_roughmap_loader_script" src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
+
+    <!-- 3. 실행 스크립트 -->
+    <script charset="UTF-8">
+        new daum.roughmap.Lander({
+            "timestamp" : "1784611174105",
+            "key" : "r85qmeux7up",
+            "mapWidth" : "640",
+            "mapHeight" : "360"
+        }).render();
+    </script>
+
+    <!-- 카카오 우편번호 찾기 -->
+    <script src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+</body>
+</html>

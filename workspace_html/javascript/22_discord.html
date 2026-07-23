@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+
+        window.onload = function() {
+            discord()
+        }
+
+        function discord() {
+            const ask = document.querySelector('#ask')
+            ask.addEventListener('click', function() {
+                const prompt = document.querySelector('#prompt').value
+
+                const url = ''
+  
+                const xhr = new XMLHttpRequest()
+                xhr.open('post', url)
+
+                xhr.setRequestHeader('Content-Type','application/json')
+                // discord에 보내기 위한 파라미터 양식
+                const param = {
+                    username: 'zl존법사v',
+                    content: prompt
+                }
+
+                xhr.send( JSON.stringify(param) )
+
+                xhr.onload = function() {
+                    console.log(xhr.responseText)
+                }
+            })
+        }
+
+    </script>
+
+</head>
+<body>
+    <textarea id="prompt"></textarea>
+    <br>
+    <button type="buttn" id="ask">디코에 말하기</button>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+            /*
+                배열(array) 
+                한 번에 여러 변수를 만드는 기술
+                각 변수는 index로 구분(관리)한다
+                index는 '0번'부터 시작한다 (변수의 묶음)
+
+                - 배열정리
+                const arr = [a, b, c, d]
+
+                arr[1] = e 로 했다면 두 번째 자리에 있는 b가 e로 치환됨 [a, e, c, d]
+
+                arr = [e, f, g, h] 를 선언했을 때 let이라면 arr의 값 자체가 모두 바뀌지만,
+                const로 선언했다면 중복 선언이 불가하기 때문에 값을 바꿀 수 없음
+
+                결국 arr[자리(주소)]의 값은 변경할 수 있지만, 선언한 변수에 따라 변경 불가하게 할 수 있음
+            */
+
+            // 배열 선언 방법 1 (주된사용)
+            const arr1 = []
+            // arr을 찍어보았을 때 객체(object)로 type이 나옴 (숫자, 문자, 불리언이 아닌 것)
+            console.log( typeof arr1 )
+
+            // 배열 선언 방법 2
+            const arr2 = new Array()
+
+            const arr3 = [1, 2, "글씨", false, 3.14, arr1]
+            const arr4 = new Array(1, 2, "글씨", false, 3.14, arr1)
+
+            // +를 하게되면 배열이 ''+배열 이기 때문에 문자화되어 출력된다
+            // ,를 하게되면 배열에 들어있는 객체 그 자체가 출력됨 (키 0에 1을 넣고...key: value)
+            // let i = 2 > arr3[2] == arr3[i] 
+            console.log( 'arr3[0]:'+ arr3 )
+            console.log( 'arr3[0]:', arr3 )
+            console.log( 'arr3[0]:', arr3[0] )
+            // arr3[] 자체가 변수가 되었으며 본래 식별자(id)라고도 부름
+            console.log( typeof arr3[0] )
+
+            arr3[0] = 10
+            // arr3 = [1, 2, 3] 은 const로 선언했기 때문에 =으로 바꿀 수 없음(내용물은 바꿀 수 있음)
+            // 만약 let으로 arr3를 선언했다면 내용물 자체가 [1, 2, 3]으로 바뀔 수 있음
+            console.log( 'arr3[0]:', arr3 )
+            console.log( 'arr3[0]:', arr3[0] )
+
+            // 컴퓨터는 stack(KB, B)구조로 되어있는데, 늦게 들어온게 먼저 나가는 형태(반대는 큐)
+            // heap 영역은 GB영역(배열의 값들이 들어가고 생긴 주소값을 stack영역에 저장함) 문자1Byte, 숫자4byte
+            let s = "abc"
+            console.log( s[1] )
+
+            let arr = [1, 2, 3, 4, 5]
+            // arr60처럼 변수선언이 없을 때 'not defined'가 나오지만, 배열의 경우 'undefined'처럼 값이 없다고 나옴
+            console.log(arr[60])
+
+            let i;
+            console.log(i)
+
+            // 배열의 남은 자리에는 내가 원하는 값을 넣을 수 있다
+            arr[60] = 60
+            console.log(arr[60])
+            console.log(arr)
+            
+            arr['문자'] = '문자'
+            console.log(arr['문자'])
+            console.log(arr)
+
+            // 만약, 기존에 배열변수 선언을 하고 주소값이 사라진다면 GC(Garbage Collector)로 자료가 사라짐
+            arr = [0, 1, 2, 3, 4, 5]
+            for(let i=0; i<6; i++) {
+                console.log(arr[i])
+            }
+
+            // 배열의 길이
+            // 변수.length를 쓰면 배열의 길이를 알려주기에, 반복문을 돌릴 때 용이하게 사용할 수 있다
+            console.log('arr.length : ', arr.length)
+            for(let i=0; i<arr.length; i++) {
+                console.log(arr[i])
+            }
+
+            // 1차원 배열은 아래와 같이 [][]두개로 안에있는 값에 접근할 수 있다
+            const 양식 = ['파스타', '피자', '스테이크', '돈까스', '피시앤칩스']
+            const 중식 = ['짜장', '짬뽕', '탕수육', '난자완스', '깐풍기', '꽃빵', '칠리새우']
+            const 일식 = ['라멘', '슈토', '오차즈케', '후토마키', '스키야키']
+
+            const 음식 = [ 양식, 중식, 일식 ]
+
+            console.log( '음식.length : ', 음식.length )
+            let y = 음식[0]
+
+            // let p = 음식[0][0]
+            let p = y[0]
+            let 스테이크 = 음식[0][2]
+
+            // 문제
+            // 모든 먹거리를 한 번에 출력하시오.
+            // 단, 변수 음식만 사용한다.
+
+            // console.log( 음식[0][0])
+            // console.log( 음식[0][1])
+
+            for(let j=0; j<음식.length; j++) {
+                for(let i=0; i<음식[j].length; i++) {
+                    console.log(음식[j][i])
+                }
+            }
+            
+            // 큐: 선입선출(선입: unshift, 선출: shift), 스택: 후입선출(후압: push, 선출: pop)
+            // javascript 한정으로 쓸 수 있는 배열의 메소드(=함수) > 원본값들을 바꿔준다
+            arr = [1, 2, 3, 4]
+
+            // 맨 마지막에 하나 추가
+            arr.push(5)
+            console.log(arr)
+
+            // 맨 앞에 하나 추가
+            arr.unshift(0)
+            console.log(arr)
+
+            // 맨 마지막에 하나 제거, 변수에 제거한 값을 넣을 수 있음 (return)
+            // 원 배열에서 마지막 값 제거 후 그 값을 따로 사용 할 때 let 변수 = 배열.pop() 사용
+            let pop = arr.pop()
+            console.log(arr)
+            console.log(pop)
+
+            // 맨 처음 것 제거, 변수에 제거한 값을 넣을 수 있음 (return)
+            let shift = arr.shift()
+            console.log(arr)
+            console.log(shift)
+
+            // 배열을 뒤집어주는 함수, 바뀐 배열을 돌려받을 수 있음
+            const reverse = arr.reverse()
+            console.log(arr)
+            console.log(reverse)
+
+            // 배열 오름차순(어센딩) 
+            arr = [7, 4, 2, 3, 6, 5]
+            const sort = arr.sort()
+            console.log(arr)
+            console.log(sort)
+            
+            // 내림차순(디센딩)은 함수로는 없어, 정렬한것을 reverse로
+            // 아래 2가지는 동일한 방법으로, chanining 체이닝, 체인방식, 체인이라고 함
+            // sort.reverse()
+            arr.sort().reverse()
+            console.log(sort)
+
+            // slice는 원본을 해치지 않고 2(2번 index부터),5(5번 index 바로 앞까지) 복사해옴
+            // 마지막 index를 늘리더라도 배열에 있는 값만 복사해옴
+            arr = [0,1,2,3,4,5,6]
+            let a = arr.slice(2, 5)
+            console.log(arr)
+            console.log(a)
+
+            a = arr.slice(2, 50)
+            console.log(a)
+
+            // 한개만 썼을 경우 해당 index에서 끝까지 복사해올 수 있음 (전달인자)
+            a = arr.slice(2)
+            console.log(a)
+
+            // -index를 하면 뒤에서부터 값을 가져올 수 있음
+            let hour = 12
+            hour = '0'+12
+            hour = hour.slice(-2)
+            // hour = ('0'+12).slice(-2)
+            console.log(hour)
+
+            // 해당 값의 index를 돌려주며, 몇 번째 자리에 있는지 찾을 수 있음
+            // 아래처럼 @가 6번째 자리에 있을 때 slice를 이용해서 @앞에있는 값을 찾을 수 있음
+            let b = arr.indexOf(4, 0)
+            console.log(b)
+            let c = 'todair@naver.com'
+            b = c.indexOf('@')
+            console.log(b)
+            console.log(c.slice(0, b))
+
+            // 여러 글자를 쓰면 그 값의 첫 번째 index가 나옴, 값이 없으면 -1이 나옴
+            b = c.indexOf('kkk')
+            console.log(b)
+            
+            // 3, 5, 10으로 정렬이 되어야 하는데 10, 3, 5 순으로 정렬됨
+            // 숫자로 바꾸면 되겠지만, 배열 안에 있는건 이미 숫자이기 때문에 함수로 나중에 바꾸어야 함
+            arr = [10, 5, 3]
+            console.log(arr.sort())
+
+            // join은 배열에 있는 값을 문자로 만들어줌 
+            // 사이사이 구분하는 문자값을 넣을 수 있음 (,가 기본값_구분자(separator))
+            arr = ['a','b','c']
+            b = arr.join()
+            console.log(b)
+            console.log(arr)
+            console.log(''+arr)
+
+            // 네트워크 등 전송할 때 join으로 전환해서 보내기도 함 (보통 ; 많이 사용)
+            // 구분자는 중복이 안되게끔 사용하는 것이 좋고, 네이버 등 &로 검색해도 %로 바뀜
+            b = arr.join(';')
+            console.log(b)
+
+            // split으로 다시 배열로 바꿔줄 때 뭘로 자를지 넣어줘야 함 (기존 구분자는 없어짐)
+            let d = b.split(';')
+            console.log(d)
+
+            // 네이버 검색결과의 쿼리스트링 값 중 name이 query인 값을 출력하시오.
+            // let value = naver.split('query=')
+            // console.log(value)
+
+            // let exam1 = value.join()
+            // console.log(exam1)
+
+            // let output = exam1.split('&')
+            // console.log(output)
+            // let v1 = naver.split('&')
+            // console.log(v1[4])
+
+            const url = 'https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=1234&ackey=4lm5o7gi'
+
+            let temp = url.split('?')
+            console.log('temp', temp)
+            let qs = temp[1]
+            qs = qs.split('&')
+            console.log('qs', qs)
+            for(let i=0; i<qs.length; i++) {
+                let q = qs[i].split('=')
+                let name = q[0]
+                let value = q[1]
+                if(name == 'query') {
+                    console.log(value)
+                }
+            }
+
+            const email = 'test@naver.com'
+
+            let temp1 = email.split('@')
+            console.log(temp1)
+            let temp2 = temp1[1]
+            console.log(temp2)
+            let temp3 = temp2.split('.')
+            console.log(temp3[0])
+
+            // for(let i=0; i<temp2.length; i++) {
+            //     let qq = temp2[i].split('.')
+            //     let name2 = temp2[0]
+            //     let value2 = temp2[1]
+            //     if(name2 == 'naver') {
+            //         console.log(name2)
+            //     }
+            // }
+
+            const url_try = 'https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=1234&ackey=4lm5o7gi'
+            
+            let val_try = url_try.split('?')
+            console.log(val_try)
+            let val_try2 = val_try[1]
+            console.log(val_try2)
+            let val_try3 = val_try2.split('&')
+            console.log(val_try3)
+
+            for(let i=0; i<val_try3.length; i++) {
+                let val_q = val_try3[i].split('=')
+                let val_1 = val_q[0]
+                let val_2 = val_q[1]
+                if(val_1 == 'query') {
+                    console.log(val_2)
+                }        
+            }
+
+
+
+            // 문제_1 10개의 각 변수에 1~10까지 담기
+            // 1~10까지 넣을 배열 생성
+            let q1_array = []
+
+            // 1~10까지 넣어야 하기 때문에, push를 이용하여 10개 반복해서 삽입
+            // 정확하게 1~10이 각 배열 자리에 들어갔는지 확인하는 console.log 출력
+            for(let i=1; i<11; i++) {
+                q1_array.push(i)
+            }
+            console.log('- - - - - 문제1 - - - - -\n', q1_array)
+
+            // 문제2_[3, 4, 7, 5, 1, 6]
+            // 문제2-1_홀수의 개수 구하기
+            // 3~6이 들어가 있는 배열 생성 및 개수를 구하기 위한 count 선언
+            // 결과를 출력할 때 배열의 어떤 값이 홀수인지 알기 위해 num 선언
+            let q2_array = [3, 4, 7, 5, 1, 6]
+            let q2_num = '';
+            let count = 0;
+            // console.log(q2_array)
+
+            for(let i=0; i<q2_array.length; i++) {
+                if(q2_array[i] % 2 !== 0) {
+                    q2_num += q2_array[i]+' '
+                    count++
+                }
+            }
+            console.log(`- - - - - 문제2-1 - - - - -\n홀수의 개수 : ${count}개, 홀수인 수 : ${q2_num}`)
+
+            // 문제2-2_4보다 큰 수의 개수 구하기
+            q2_array = [3, 4, 7, 5, 1, 6]
+            q2_num = '';
+            count = 0;
+
+            for(let i=0; i<q2_array.length; i++) {
+                if(q2_array[i] > 4) {
+                    q2_num += String(q2_array[i])+' '
+                    count++
+                }
+            }
+            console.log(`- - - - - 문제2-2 - - - - -\n홀수의 개수 : ${count}개, 4보다 큰 수 : ${q2_num}`)
+
+            // 문제3_마라톤에 5명의 선수가 참가함 (등번호 1~5까지)
+            // 대회가 끝났을 때 완주 목록 : [2, 4, 5, 1] 
+            // 완주를 못 한 사람은? 
+            let q3_human = [1,2,3,4,5]
+            let q3_result = [2,4,5,1]
+            let check_num = q3_human.join('')
+            let check_num2 = check_num.split('3').join('')
+            // let check_true = false;
+            // console.log(q3_human,q3_result)
+            // console.log(check_num)
+            // console.log(check_num2)
+            
+            for(let i=0; i<q3_result.length; i++) {
+                for(let j=0; j<check_num.length; j++) {
+                    if(q3_result[i] == check_num[j]) {
+                        // check_true = true;
+                        console.log(`- - - - - 문제3 - - - - -\n완주자 : ${q3_result}`)
+                    }
+                    break;
+                }
+                // if(check_true == true) {
+                //     console.log(`- - - - - 문제3 - - - - -\n완주자 : ${q3_result}`)
+                // }
+            }
+
+            console.log('- - - - - - - - - -')
+            
+            const entry = [1,2,3,4,5]
+            const finisher = [2,4,5,1]
+            let result_success = []
+            let result_fail = []
+            
+            // console.log(entry[0])
+            // console.log(finisher[0])
+
+            // if(entry[0] == finisher[0]) {
+            //     result_success.push(entry[0])
+            // }
+            // if(entry[0] == finisher[1]) {
+            //     result_success.push(entry[0])
+            // }
+            // if(entry[0] == finisher[2]) {
+            //     result_success.push(entry[0])
+            // }
+            // if(entry[0] == finisher[3]) {
+            //     result_success.push(entry[0])
+            // }
+            // let result_rand = [parseInt(Math.random() * 4)]
+            // let result_test = []
+            // console.log(result_rand)
+
+            for(let j=0; j<entry.length; j++) {
+                let result_check = false
+
+                for(let i=0; i<finisher.length; i++) {
+                    if(entry[j] == finisher[i]) {
+                        result_check = true
+                        break;
+                    } else if(entry[j] !== finisher[i]){
+                        result_check = false
+                    }
+                }
+
+                if(result_check == true) {
+                    result_success += entry[j]+' '
+                } else if(result_check == false) {
+                    result_fail += entry[j]+' '
+                }
+            }
+            // console.log(result_rand)
+            console.log(`완주자 : ${result_success}`)
+            console.log(`미완주자 : ${result_fail}`)
+            console.log('- - - - - - - - - -')
+
+            // for(let i=0; i<entry.length; i++) {
+            //     let result_check = false;
+            //     for(let j=0; j<finisher.length; j++) {
+            //         if(finisher[j] == entry[i]) {
+            //             result_check = true;
+            //             console.log(result_check)
+            //         } else if(!finisher[j] == entry[i]) {
+            //             result_check = false;
+            //             console.log(result_check)
+            //         }
+            //         break;
+            //     }
+            // }
+            // console.log(result_success)
+            // console.log(result_fail)
+            
+            
+
+
+            // 문제3-1_참가 목록 : ['나미','우솝','조로','루피','상디']
+            // 완주 목록 : ['나미','우솝','조로','상디'] - 순서는 섞여서
+            // 완주를 못 한 사람은?
+            let q4_human = ['나미','우솝','조로','루피','상디']
+            let q4_result = ['나미','우솝','조로','상디']
+            let sum = ''
+            let sum2 = ''
+            let rand = parseInt(Math.random() * 4)
+            let test = []
+            console.log(q4_human,q4_result)
+
+            for(let i=0; i<q4_human.length; i++) {
+                for(let j=0; j<q4_result.length; j++) {
+                    if(q4_human[i] == q4_result[j]) {
+                        sum += q4_result[rand]
+                    } 
+                }
+            }
+            console.log(sum)
+
+            /*
+                문제4_소극장 예약시스템
+                자리는 총 10개이고, 1~10번까지 자리 번호가 있음
+                메뉴 : 1.예약 / 2.모든 좌석 현황 / 3.잔여 좌석 / x.종료
+                조건1_예약이 가능하다면, "n번 자리 예약 완료" 출력
+                조건2_예약이 이미 되어있다면, "이미 예약된 자리입니다" 출력
+
+            */
+
+            // q4_reserve 는 예약할 때 사용하기 위해 선언
+            // let q4_seat = []
+            // let q4_system = prompt ('1.예약 / 2. 모든 좌석 현황 / 3. 잔여 좌석 / x. 종료')
+            // let q4_reserve;
+
+            // while(true) {
+
+            //     if(q4_system == null || q4_system == 'x') {
+            //         break;
+            //     } else if (q4_system == '1') {
+            //         let value = prompt('예약할 좌석 번호를 입력해주세요.')
+            //         if(value <=10 && value >0) {
+            //             for(let i=1; i<2; i++) {
+            //                 q4_seat.push(value)
+            //                 console.log(q4_seat)
+            //             }
+            //         } else {
+            //             alert('1~10번 좌석까지만 입력해주세요.')
+            //         }
+            //     } else if (q4_system == '2')
+            //     q4_system = prompt ('1.예약 / 2. 모든 좌석 현황 / 3. 잔여 좌석 / x. 종료')
+            // }
+            
+            // 문제5_로또 1~45까지 중에서 번호 6개를 중복없이 출력
+            // 로또값을 받을 빈 배열을 생성
+            let q5_lotto = []
+
+            // 6개의 번호만 추출할 것이기 때문에 for문을 6번 반복하게 하고,
+            // 그 자리에 랜덤한 값을 push로 넣어 6개의 자리를 배열에 추가함
+            for(let i=0; i<6; i++) {
+                q5_lotto.push((parseInt(Math.random() * 45) + 1))
+                
+                // q5_lotto배열의 0번째부터의 값이 1~5를 더했을 때(0~6번 배열)
+                // 중복값이 있을 경우 마지막으로 들어간 값을 pop으로 제거
+                for(let k=1; k<6; k++) {
+                    for(let j=0; j<q5_lotto.length; j++) {
+                        if(q5_lotto[j] == q5_lotto[j+k]) {
+                            q5_lotto.pop()
+                            q5_lotto.push((parseInt(Math.random() * 45) + 1))
+                        } 
+                    }
+                }
+            }
+            console.log(`- - - - - 문제5 - - - - -\n나의 번호 : ${q5_lotto}`)
+  
+            let q6_lotto = []
+            let q6_number;
+
+            for(let i=0; i<6; i++) {
+                q6_number = parseInt(Math.random() * 45) + 1
+                if(q6_lotto[i] !== q6_number) {
+                    q6_lotto.push(q6_number)
+                } else {
+                    i--;
+                    continue;
+                }
+            }
+            console.log(`- - - - - 문제5-1 - - - - -\n나의 번호 : ${q6_lotto}`)
+
+            let q7_lotto = []
+            let q7_number;
+            
+            for(let i=0; i<6; i++) {
+                q7_number = parseInt(Math.random() * 45) + 1
+                let q7_check = false;
+                
+                for(let j=0; j<q7_lotto.length; j++) {
+                    if(q7_lotto[j] === q7_number) {
+                        q7_check = true;
+                        break;
+                    } 
+                }
+
+                if(!q7_check) {
+                    q7_lotto.push(q7_number)
+                } else {
+                    i--;
+                }
+            }
+            console.log(`- - - - - 문제7 - - - - -\n나의 번호 : ${q7_lotto.sort()}`)
+
+            // 문제4_숫자야구게임
+            // 임의의 3자리 숫자인 정답이 있을 때
+            // 스트라이크 : 숫자와 자리가 맞은 개수
+            // 볼 : 숫자는 정답에 있지만 자리가 틀린 수
+            // 아웃 : 하나도 맞지 않음
+            // ex) 123이 정답일 때 145(1strike), 135(1strike, 1ball), 328(2ball)
+
+            // 1. 컴퓨터가 랜덤으로 3가지 자리수를 생성하게 함 (문자로 더하게끔)
+            // 2. 사용자에게 3가지 자리수를 prompt로 입력받음
+            // 3. 입력한 값과 자리를 확인해야 하기 때문에 확인할 수 있는 변수 생성
+            
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>

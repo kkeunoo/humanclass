@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            /* px(pixel) : 절대적이며 디스플레이에 절대적인 크기이며 기본값은 16px
+            단, 기기마다 다를 순 있음(PC와 핸드폰을 예시) */
+            #pixel .box1 {
+                font-size: 16px;
+                
+                /* background컬러는 상속은 안되지만, 나머지가 투명하기에 모두 붉게 보이는 것 */
+                background-color: rgb(255, 0, 0);
+                
+                /* 2개씩 코드가 반복 될 때에는 한글자로 줄여서 쓸 수 있음 */
+                /* color: #F0EEE9;
+                color: #00ff00; */
+                color: #0f0;
+            }
+            
+            /* 자식들 전부까지 영향을 미치는것도 있고 아닌것도 있으나, font-size는 전체 영향을 미침(상속받는다) */
+            #pixel .box1 .box2 {
+                font-size: 32px;
+
+                /* rgba로 투명도 값도 지정할 수 있음 */
+                /* background-color: rgb(0, 0, 255); */
+                background-color: rgba(0, 0, 255, 0.4);
+            }
+
+            #pixel .box1 .box2 .box3 {
+                font-size: 16px;
+
+                /* hex형태는 6자리 뒤에 2자리로 표현할 수 있음 */
+                background-color: #00ff00a0;
+            }
+
+            /* %는 현재 값에 대한 상대적인 크기이기때문에 box1의 150%에 추가로 150%가 된 것 
+            비율적으로 가기때문에 모바일에서 볼 때 용이함*/
+            #percent .box1 {
+                font-size: 150%;
+            }
+
+            #percent .box1 .box2 {
+                font-size: 150%;
+            }
+
+            #percent .box1 .box2 .box3 {
+                font-size: 150%;
+            }
+
+            /* em은 %와 같이 상대적인 크기이고 보통 글씨 단위에 쓰며, 퍼센트와 같음 */
+            #em .box1 {
+                font-size: 1.5em;
+            }
+
+            #em .box1 .box2 {
+                font-size: 1.5em;
+            }
+
+            #em .box1 .box2 .box3 {
+                font-size: 1.5em;
+            }
+
+            /* root em의 약자로 body의 크기를 활용한다(최상단의 크기 또는 기본값) */
+            #rem .box1 {
+                font-size: 1.5rem;
+            }
+
+            #rem .box1 .box2 {
+                font-size: 1.5rem;
+            }
+
+            #rem .box1 .box2 .box3 {
+                font-size: 1.5rem;
+            }
+
+            #v1, #v2, #v3, #v4 {
+                border: 1px solid green;
+                margin: 10px;
+            }
+
+            /* vh: viewport(화면의 height높이를 1/100으로 쪼갠 크기) 
+            100vh라고 하면 현재 내 화면의 100%를 뜻함, 변형되어도 따라감 */
+            #v1 {
+                height: 100vh;
+            }
+
+            /* vw: viewwidth(화면의 width너비를 1/100으로 쪼갠 크기)
+            50vw라고 하면 현재 내 화면의 50%를 뜻함, 변형되어도 따라감 */
+            #v2 {
+                height: 20px;
+                width: 50vw;
+            }
+
+            /* vmin, vmax는 주로 사용하지는 않지만 화면에 보이는 좁은 곳 기준, 넓은 곳 기준으로 사용 
+            높이의 경우 내가 가진 컨텐츠의 100%로 따지기 때문에, vh를 사용하는것이 좋음*/
+            #v3 {
+                height: 90vmin;
+            }
+
+            #v4 {
+                height: 90vmax;
+            }
+        </style>
+    </head>
+    <body>
+        기본글씨 abc ABC 123 Wi<br>
+        <div id="pixel">
+            <div class="box1">
+                box1
+                <div class="box2">
+                    box2
+                    <div class="box3">
+                        box3
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        기본글씨 abc ABC 123 Wi<br>
+        <div id="percent">
+            <div class="box1">
+                box1-150%
+                <div class="box2">
+                    box2-150%
+                    <div class="box3">
+                        box3-150%
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        기본글씨 abc ABC 123 Wi<br>
+        <div id="em">
+            <div class="box1">
+                box1-1.5em
+                <div class="box2">
+                    box2-1.5em
+                    <div class="box3">
+                        box3-1.5em
+                </div>
+            </div>
+        </div>
+        <hr>
+        기본글씨 abc ABC 123 Wi<br>
+        <div id="rem">
+            <div class="box1">
+                box1-1.5rem
+                <div class="box2">
+                    box2-1.5rem
+                    <div class="box3">
+                        box3-1.5rem
+                </div>
+            </div>
+        </div>
+
+        <div id="v1"></div>
+        <div id="v2"></div>
+        <div id="v3"></div>
+        <div id="v4"></div>
+
+    </body>
+</html>

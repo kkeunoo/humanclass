@@ -1,0 +1,44 @@
+body {
+    /* text-align: center; */
+
+    background-color: rgba(190, 173, 255, 0.5);
+    padding: 50px;
+}
+
+.main .write {
+    font-size: 40px;
+    margin: 40px;
+
+    text-align: center;
+}
+
+.main [class^=text] {
+    display: inline-block;
+    background-color: white;
+    margin: 10px;
+    width: 350px;
+
+    text-align: center;
+}
+
+.main [class^=view] {
+    display: inline-block;
+    border-bottom: 1px solid red;
+    margin: 20px;
+}
+
+.main [class^=money] {
+    font-size: 24px;
+    color: red;
+    margin: 20px;
+}
+
+.main [class^=apt] {
+    display: inline-block;
+    font-size: 24px;
+    margin: 20px;
+}
+
+.main img {
+    width: 350px;
+}

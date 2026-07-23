@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            border: 1px solid red;
+        }
+        #parent {
+            text-align: center;
+            height: 400px;
+            background-color: rgb(220, 145, 145);
+        }
+
+        #parent .d1{
+            margin-top: 100px;
+        }
+        #parent .d2{
+            margin-top: 20px;
+        }
+        #parent .d3{
+            /* margin-top: 20px; */
+            height: 40px;
+            width: 200px;
+
+            margin: 20px auto;
+            
+            background-color: rgba(250, 235, 215, 0.3);
+        }
+        #parent .d3:hover{
+            background-color: rgba(250, 235, 215, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="parent">
+        <div class="d1">Welcome to Tessellate</div>
+        <div class="d2">A free responsive site template by HTML5 UP</div>
+        <div class="d3">Proceed to second phase</div>
+    </div>
+</body>
+</html>

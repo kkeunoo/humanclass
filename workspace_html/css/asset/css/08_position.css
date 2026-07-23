@@ -1,0 +1,196 @@
+.parent {
+    margin-bottom: 30px;
+
+    /* border: 2px solid green; */
+}
+
+.parent div {
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+    border: 1px solid red;
+
+    line-height: 50px;
+    text-align: center;
+
+    background: aqua;
+}
+
+.parent .relative {
+    background: #f007;
+
+    /* 
+        relative는 원래 위치를 기준으로 이동함(상대적)
+        가지고 있던 공간은 유지됨
+        LOVE가 나오고 위치를 변경하여 다시 그리기때문에 앞에있음
+    */
+    position: relative;
+    /* top: 20px; */
+    top: -20px;
+    left: 10px;
+    /* left: -20px; */
+    /* %로 주는것은 부모크기에 대한 %로 나를 기준해서 그대로 밀림 */
+    /* left: 50%; */
+}
+
+.parent .absolute {
+    background: #f007;
+
+    /* 
+        원래 내가 가지고 있던 공간이 없어지며 이동함 
+        부모중에 relative 등 static(정적/고정된) 아닌 것 기준으로 이동
+        - 이러한 부모가 없을 경우 body 기준 
+        absolute는 주었을 때 inline-block으로 바뀜
+    */
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    /* 남발하게 될 경우 모바일 등 브라우저 크기가 바뀌면 대응하기 어려움 
+    하나를 absolute를 주면 하위 자식까지 absolute를 주어야 함*/
+    top: 30px;
+    /* left: 300px; */
+}
+
+.parent .abs-b {
+    position: absolute;
+
+    /* 배경 사이즈가 바뀌면 층이 다시 생기기 때문에, 스크롤을 했을 땐
+    최초에 그려진 위치에 가만히 있어서 우측 하단은 잘 쓰지 않음 */
+    bottom: 0;
+    right: 0;
+}
+
+body {
+    height: 200vh;
+    width: 200vw;
+}
+
+.rel {
+    position: relative;
+}
+
+/* 스크롤에 상관 없이 해당 위치에 고정시켜둠
+fixed 도 inline-block요소로 변경됨 */
+.fixed {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+
+    border: 1px solid red;
+    width: 60px;
+    height: 60px;
+
+    text-align: center;
+    line-height: 60px;
+}
+
+/* 틀고정처럼 스크롤 시 사라지기 전에 고정되어 같이 내려감 */
+.sticky {
+    position: sticky;
+    top: 0;
+    top: 50px;
+}
+
+.parent2 {
+    border: 1px solid red;
+    width: 100px;
+    background: green;
+    color: #fff;
+}
+
+.parent2 div {
+    border: 1px solid red;
+    width: 50px;
+    height: 50px;
+}
+
+/* z-index는 레이어의 순서를 변경해줌 (position에서만) */
+.z1 {
+    background: hotpink;
+    top: 5px;
+    left: 20px;
+
+    z-index: 2;
+}
+
+.z2 {
+    background: yellow;
+    color: black;
+    top: -10px;
+    left: 10px;
+
+    z-index: 300;
+}
+
+.z3 {
+    background: orange;
+    color: black;
+    top: -70px;
+    left: 40px;
+
+    z-index: 99;
+}
+
+.rel:hover {
+    z-index: 999;
+    /* left: 300px; */
+}
+
+.menu {
+    /* display: inline-block; */
+    border: 1px solid red;
+}
+
+/* .menu:hover {
+    border-bottom: 2px solid blue;
+} */
+
+.submenu {
+    border: 1px solid green;
+    display: none;
+}
+
+.menu:hover + .submenu {
+    display: block;
+    position: relative;
+    top: 1px;
+}
+
+.p1 {
+    border: 1px solid red;
+    width: 400px;
+    height: 400px;
+
+    position: relative;
+}
+
+.c1 {
+    border: 1px solid blue;
+    width: 100px;
+    height: 100px;
+
+    position: absolute;
+
+    /* top: 50%;
+    left: 50%; */
+
+    /* 가운데 정렬을 하려면 부모/2-자식/2 
+    더하기나 빼기는 앞 뒤로 띄어쓰기 해야 함*/
+    top: calc( 400px/2 - 100px/2 );
+    left: calc( 50% - (100px/2) );
+}
+
+/* --box-color라는 변수를 지정해두고 쓸 수 있음 */
+:root {
+    --box-color : brown;
+}
+
+.p1 {
+    background: var(--box-color);
+}
+.c1 {
+    /* background: pink; */
+    background: var(--box-color);
+}

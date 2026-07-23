@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            .box {
+                border: 1px solid red;
+                width: 100px;
+                height: 100px;
+                background: green;
+                color: white;
+                margin: 10px;
+
+                /* width등 별개로 줄 수 있지만 보통 all로 사용하고 시간은 소수점도 가능 */
+                /* transition: all 0.5s; */
+                /* transition: width 1s; */
+            }
+
+            .box1:hover {
+                background: red;
+                border-radius: 50%;
+                width: 200px;
+                height: 200px;
+            }
+            .box2:hover {
+                background: red;
+                border-radius: 50%;
+                width: 200px;
+                height: 200px;
+                /* hover자체에 transition을 두면 hover자체에만 먹음 */
+                transition: all 0.5s;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="box box1">박스</div>
+        <div class="box box2">박스</div>
+    </body>
+</html>

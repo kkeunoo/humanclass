@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+            const now = new Date();
+            console.log(now)
+
+            // now를 썼을 때 표시하기 위한 양식
+            // 년
+            const y = now.getFullYear()
+            console.log("년 : ", y)
+
+            // 월(0~11까지 나옴, 배열과 같이)
+            const M = now.getMonth()
+            console.log("월 : ", M+1)
+
+            // 일 출력
+            const d = now.getDate()
+            console.log("일 : ", d)
+
+            // 시
+            const h = now.getHours()
+            console.log("시 : ", h)
+
+            // 분
+            const m = now.getMinutes()
+            console.log("분 : ", m)
+
+            // 초
+            const s = now.getSeconds()
+            console.log("초 : ", s)
+
+            // 년-월-일T시:분:초.밀리세컨드 (iso는 영국시간 UTC세계협정시 기준)
+            const iso = now.toISOString()
+            console.log(iso)
+            console.log(iso.split('T')[0])
+            // let date = iso.split('T')
+            // console.log(date[0])
+
+            // 1970년도 1월 1일 00시 00분 00초(UTC)부터 현재까지 흐른 밀리초의 총합
+            // 1783667295(초) 970(밀리초) = 1783667295970 (epoch사이트에서 변환해줌)
+            const timestamp = now.getTime()
+            console.log(timestamp)
+
+            // 아래와 같이 new Date() 현재 시간으로 해서 before, after를 쓰면 계산이 얼마나 걸렸는지 확인 가능
+            // 보통 20ms 이하는 우연히 벌어질 수 있고 이상의 경우 느림이 있을 수 있음
+            const before = new Date().getTime()
+            for(let i=0; i<=1000; i++) {
+                console.log(i)
+            }
+            const after = new Date().getTime()
+            console.log('after - before : ', after - before)
+
+            // 아래와 같이 새로운 시간을 받아 함수값을 입력하면 그 일자 기준
+            let time = new Date('2026-06-29')
+            console.log(time.toISOString())
+
+            // 보편적으로 get이 있다면 set도 있는 경우가 많음
+            // time.setHours( 10 )
+            time.setHours( time.getHours() + 9 )
+            time.setHours( now.getHours() + 9 )
+            console.log(time.toISOString())
+
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>

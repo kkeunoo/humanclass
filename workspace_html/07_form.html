@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <!-- input,textarea,select(폼 요소로 서버에 전송이 가능한 영역) -->
+        <!-- 한 페이지에 form은 여러개 생성할 수 있으나, form안에 form은 넣지 않기 (서버로 전달할 내용을 감싸는 태그) -->
+        <form>
+            <!-- input의 기본값이 text지만, 써주는것이 좋음(오타가 나도 텍스트로 됨) -->
+            text : <input type="text"><br>
+            text(기본값) : <input><br>
+
+            <!-- 빈 칸에 데이터를 미리 넣어놓고싶다면 value를 사용하면 됨 -->
+            text(value) : <input type="text" name="val" value="초기값"><br>
+
+            <!-- 회원가입 할 때 등, 기본적으로 깔려있는 회색 글씨 초기값이며 글씨를 입력하면 지워지고 지우면 다시 생김 -->
+            text(placeholder) : <input type="text" placeholder="플레이스홀더"><br>
+            text(value+placeholder) : <input type="text" value="초기값" placeholder="플레이스홀더"><br>
+
+            <!-- 바꿀 수 없는 값(아이디 등)을 넣을 땐 readonly/disable을 사용 
+             readonly는 서버로 날아가긴 하는데, disabled는 서버로 보내지 않음-->
+            text(readonly) : <input type="text" value="리드온리" readonly><br>
+            text(disabled) : <input type="text" value="비활성화" disabled><br>
+
+            <!-- type을 text로 바꾸게되면 보이게 할 수 있음 -->
+            password : <input type="password"><br>
+
+            <!-- 버튼 중, input타입은 value에 기재하며, submit 기본값은 '제출'로 나와있음, 
+             오타가 있을 경우 등 제출로 명시됨 -->
+            input:button : <input type="button" name="btn" value="input:button"><br>
+            submit : <input type="submit" value="전송"><br>
+            submit : <input type="submit" value123="전송"><br>
+
+            <!-- button에 대한 기본값은 submit이며, 버튼타입으로 해야 일반 버튼기능이 됨 -->
+            button : <button type="button">button</button><br>
+            button(기본값:submit) : <button>submit</button><br>
+
+            <!-- input 타입은 value에 값을 넣어야 해서 불가하지만, button타입은 안에 넣을 수 있음 -->
+            이미지를 버튼 태그로 감싼다<br>
+            <button type="button">
+                <img src="asset/Spongebob-Christmas-PNG-Picture.png" alt="스폰지밥이 웃고있는 사진">
+            </button>
+            <hr>
+
+            <!-- 여러개를 선택하거나, 선택하지 않아도 될 때 주로 사용함 -->
+            <!-- value와 name을 모두 해두어도 체크를 한 애들만 서버로 넘어간다(서버입장에서는 필수) -->
+            checkbox : 
+            <input type="checkbox" name="coffee" value="1">샷추가
+            <input type="checkbox" name="coffee" value="2" checked>펄추가
+            <input type="checkbox" name="coffee" value="3" disabled>휘핑크림추가
+            <input type="checkbox" name="coffee" value="4" >시럽추가
+            <input type="checkbox" name="coffee" value="5" >얼음추가
+            <br>
+
+            <!-- radio는 'name'을 준 그룹끼리만 결합함, checked는 사용하는게 중요하다(선택이 없이 넘길 수 있어서)
+             checked는 여러개를 쓰게된다면 마지막것만 살아있기 때문에 어디에 쓸 지 정해야 함 -->
+            radio : 
+            <input type="radio" name="china" checked>짜장면
+            <input type="radio" name="china" disabled>마파두부밥
+            <input type="radio" name="china">삼선짬뽕
+            <br>
+            <input type="radio" name="gender" value="여자" checked>여자
+            <input type="radio" name="gender" value="남자">남자
+            <br>
+
+            <!-- select도 내용에 따라 너비가 바뀜, 기본 select값은 첫번째 값 radio와 목적은 똑같은 디자인 차이 -->
+            select : 
+            <select name="sel1">
+                <option value="1">한식</option>
+                <option value="2">중식</option>
+                <option value="3">양식</option>
+                <option value="4" selected>분식</option>
+                <option value="5">일식</option>
+            </select>
+            <br>
+
+            <!-- ctrl또는 shift로 다른것도 같이 선택할 수 있음, size로 보여 줄 내용크기를 정할 수 있음 -->
+            select - multiple : 
+            <select multiple size="3">
+                <option>한식</option>
+                <option>중식</option>
+                <option>양식</option>
+                <option selected>분식</option>
+                <option>일식</option>
+            </select>
+            <br>
+
+            <!-- 라벨로 묶어두게 되면, 글씨를 클릭해도 체크할 수 있도록 묶여짐 (radio,checkbox) -->
+            <label>
+                <input type="checkbox" checked>펄추가
+            </label>
+            <br>
+
+            <!-- label안에 묶을 수 있지만, id를 지정해서 연결할 수 있음(for를 사용하면 어느 위치에 있어도 용이함) -->
+            <input type="checkbox" checked id="perl">
+            <label for="perl">펄추가</label>
+            <br>
+
+            <!-- textarea는 안에 있는 모든걸 그대로 보여줌(title과 동일함) -->
+            <textarea rows="10" cols="50" placeholder="placeholder" name="ta">미리
+                보여줄 글
+            </textarea>
+            <br>
+
+            <!-- 별도 새로고침 하지 않고 처음 들어왔던 그 상태로 초기화해줌 -->
+            reset : <input type="reset" value="reset"><br>
+
+            color : <input type="color"><br>
+            date : <input type="date" name="date" value="2026-06-24"><br>
+            time : <input type="time"><br>
+            <!-- 영어는 다 안 써지지만, 영어 e는 숫자로도 표현해서 들어가기도 함 -->
+            number : <input type="number"><br>
+            <!-- 미니멈과 맥시멈을 정할 수 있으며 step으로 얼마씩 올리고 내릴지 정할 수 있음 -->
+            range : <input type="range"
+                min="10" max="100" step="10"><br>
+        </form>
+        <hr>
+        <!-- 컴퓨터에서는 순서대로 받는 배열과, key=value가 있는데 두번째는 값에 name으로 제목,이름 등 붙여서(웹에서 사용) -->
+        <!-- 주소창에도 보면 ?song=hype&singer=hype 형태로 표기되는데 name을 지정하지 않으면 서버로 값이 가지 않음 -->
+        <!-- form action(action은 전송 할 서버의 주소, 기본값 현재주소) -->
+        <!-- method (get등 서버에 보내는 키밸류값을 query string이라고 함)
+            get(기본값) : 주소에 name=vaolue 형태로 전달하며 여러개일 경우 &로 구분하며 서버 주소 뒤 ?로 시작
+            post : 주소는 변경이 없으며 body영역에 담아서 서버로 전달함 (get과 다르게 주소창에 보이지 않음)
+        -->
+        <form method="get">
+            <input type="text" name="song"><br>
+            <input type="text"><br>
+            <input type="text" name="singer"><br>
+            <input type="submit" value="get 연습"><br>
+        </form>
+
+        <!-- 주소창 링크를 보면 ?의 앞 주소로 서칭사이트 등 알 수 있으며, 그 뒤에 나오는 name을 확인 -->
+        <form method="get" action="https://search.naver.com/search.naver">
+            <input type="text" name="query"><br>
+            <input type="submit" value="네이버 검색"><br>
+        </form>
+        <form method="get" action="https://www.google.com/search" target="_blank">
+            <input type="text" name="q"><br>
+            <input type="submit" value="구글 검색"><br>
+        </form>
+        <!-- Liveserver는 현재 post를 지원하지 않기 때문에 405에러로 페이지가 동작하지 않음 -->
+        <!-- 다만, 개발자도구 Payload에서 들어온 값은 확인할 수 있음 -->
+        <form method="post">
+            <input type="text" name="query"><br>
+            <input type="submit" value="post 연습"><br>
+        </form>
+    </body>
+</html>

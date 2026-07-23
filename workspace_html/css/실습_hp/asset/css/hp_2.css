@@ -1,0 +1,38 @@
+.main {
+    width: 100vw;
+    height: 100vh;
+
+    padding: 50px;
+
+    text-align: center;
+
+    background-color: rgba(190, 173, 255, 0.5);
+}
+
+.main .img {
+    display: inline-block;
+    border: 5px solid red;
+    width: 45vw;
+    margin: 15px;
+}
+
+.main .img .thumb {
+    border: 5px solid blue;
+    width: 45vw;
+}
+
+.main .write {
+    display: inline-block;
+    border: 5px solid green;
+
+    font-size: 20px;
+    
+    padding: 60px;
+    margin: 15px;
+
+    width: 45vw;
+    height: 70%;
+    background-color: white;
+
+    vertical-align: top;
+}

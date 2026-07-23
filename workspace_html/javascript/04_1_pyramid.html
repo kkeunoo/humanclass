@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+            let m = '+'
+            let s = '_'
+            // 1단계 +++++
+            // console.log('+++++')
+            let string = ''
+            // string = string + '+'
+            
+            for(let i=1; i<=5; i++) {
+                string += '+'
+            }
+            console.log(string)
+
+            // 2단계 +_+_+_+_+_
+            string = ''
+            for(let i=1; i<=5; i++) {
+                string += m
+                string += s
+            }
+            console.log(string)
+
+            // 3단계 +++++ 3줄
+            for(let j=1; j<=3; j++) {
+                string = ''
+                for(let i=1; i<=5; i++) {
+                    string += '+'
+                }
+                console.log(string)
+            }
+
+            // 4단계 
+            /*
+                11111
+                22222
+                33333
+                44444
+                55555
+            */
+           console.log('- - - - - 4단계 - - - - -')
+           for(let j=1; j<=5; j++) {
+               string = ''
+               for(let i=1; i<=5; i++) {
+                    string += j
+                }
+                console.log(string)
+            }
+            
+            // 5단계
+            /*
+                1
+                22
+                333
+                4444
+                55555
+            */
+            
+            console.log('- - - - - 5단계 - - - - -')
+            for(let j=1; j<=5; j++) {
+                string = ''
+                for(k=1; k<=5; k++) {
+                    if(j == k) {
+                        for(let i=1; i<=k; i++) {
+                            string += j
+                        }
+                        console.log(string)
+                    }
+                }
+            }
+
+             // 6단계
+            /*
+                +
+                ++
+                +++
+                ++++
+                +++++
+            */
+            console.log('- - - - - 6단계 - - - - -')
+            for(let j=1; j<=5; j++) {
+                string = ''
+                for(k=1; k<=5; k++) {
+                    if(j == k) {
+                        for(let i=1; i<=k; i++) {
+                            string += '+'
+                        }
+                        console.log(string)
+                    }
+                }
+            }
+
+            // 7단계
+            /*
+                11111
+                2222
+                333
+                44
+                5
+            */
+            console.log('- - - - - 7단계 - - - - -')
+            // for(let j=1; j<=5; j++) {
+            //     string = ''
+            //     for(k=1; k<=5; k++) {
+            //         if(j == k) {
+            //             for(let i=5; i>=k; i--) {
+            //                 string += j 
+            //             }
+            //             console.log(string)
+            //         }
+            //     }
+            // }
+
+            for(let j=1; j<=5; j++) {
+               string = ''
+                   for(let i=1; i<=6-j; i++) {
+                        string += j
+                    }
+                console.log(string)
+            }
+            
+            // 8단계
+            /*
+                +____
+                ++___
+                +++__
+                ++++_
+                +++++
+            */
+            console.log('- - - - - 8단계 - - - - -')
+            for(let j=1; j<=5; j++) {
+                string = ''
+                for(k=1; k<=5; k++) {
+                    if(j == k) {
+                        for(let i=1; i<=k; i++) {
+                            string += '+'
+                        }
+                        
+                    }
+                }
+                for(let i=1; i<=5-j; i++) {
+                    string += '_'
+                }
+                console.log(string)
+            }
+
+            // 9단계
+            /*
+            ____+
+            ___++
+            __+++
+            _++++
+            +++++
+            */
+            console.log('- - - - - 9단계 - - - - -')
+            for(let j=1; j<=5; j++) {
+                string = ''
+                for(let i=1; i<=5-j; i++) {
+                    string += '_'
+                }
+                for(k=1; k<=5; k++) {
+                    if(j == k) {
+                        for(let i=1; i<=k; i++) {
+                            string += '+'
+                        }
+                        
+                    }
+                }
+                console.log(string)
+            }
+
+            // 10단계
+            /*
+                ____+
+                ___+++
+                __+++++
+                _+++++++
+                +++++++++
+            */
+           console.log('- - - - - 10단계 - - - - -')
+            for(let j=1; j<=5; j++) {
+                string = ''
+                for(let i=1; i<=5-j; i++) {
+                    string += '_'
+                }
+                for(k=1; k<=5; k++) {
+                    if(j == k) {
+                        for(let i=1; i<=k; i++) {
+                            string += '+'
+                        }
+                        for(let i=2; i<=k; i++) {
+                            string += '+'
+                        }
+                    }
+                }
+                console.log(string)
+            }
+
+            // 여기서 보면 i<=5-j 가 4가되는데, _를 4번 출력하겠다는 소리임
+            // 그 아래를 보면 별이 1,3,5,7,9개가 있는데 그걸 홀수만 출력하겠다는 소리임
+            // j가 1일때 k에 들어가서 k=1; k<=2-1; k++이 되어 1번출력
+            // j가 2일때 k에 들어가서 k=1; k<=4-1; k++이 되어 3번출력
+            console.log('- - - - - 10단계-1 - - - - -')
+            for(let j=1; j<=5; j++) {
+                string = ''
+                for(let i=1; i<=5-j; i++) {
+                    string += '_'
+                }
+                for(let k=1; k<=2*j-1; k++) {
+                    string += '+'
+                }
+                console.log(string)
+            }
+
+            // 11단계
+            /*
+                ____+____
+                ___+++___
+                __+++++__
+                _+++++++_
+                +++++++++
+            */
+           console.log('- - - - - 11단계 - - - - -')
+            for(let j=1; j<=5; j++) {
+                string = ''
+                for(let i=1; i<=5-j; i++) {
+                    string += '_'
+                }
+                for(let k=1; k<=2*j-1; k++) {
+                    string += '+'
+                }
+                for(let i=1; i<=5-j; i++) {
+                    string += '_'
+                }
+                console.log(string)
+            }
+
+            // 12단계
+            // 입력 받은 줄 수 대로 출력
+            console.log('- - - - - 12단계 - - - - -')
+            let value = prompt('12. 줄 수를 입력해주세요.')
+            for(let j=1; j<=value; j++) {
+                string = ''
+                for(let i=1; i<=value-j; i++) {
+                    string += '_'
+                }
+                for(let k=1; k<=2*j-1; k++) {
+                    string += '+'
+                }
+                for(let i=1; i<=value-j; i++) {
+                    string += '_'
+                }
+                console.log(string)
+            }
+
+        </script>
+        <!-- <style>
+            .login {
+                width: 200px;
+
+                border: 1px solid black;
+                background: green;
+                font-weight: 900;
+            }
+        </style> -->
+    </head>
+    <body>
+        <!-- <div>
+            <input type="text" placeholder="ID를 입력해주세요*">
+        </div>
+        <div>
+            <input type="password" placeholder="PW를 입력해주세요*">
+        </div>
+        <div>
+            <input type="button" value="LOG IN" class="login">
+        </div>
+         -->
+    </body>
+</html>

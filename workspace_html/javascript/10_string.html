@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+            const str = "기사도가 죽었을 리가"
+            console.log(str)
+
+            // 문자열의 길이
+            console.log('str.length : '+ str.length)
+
+            // indexOf 동일한 글씨 찾기
+            // 있다면 동일한 첫번째 글씨 index 반환, 없으면 -1
+            console.log('str.indexOf(죽었) : '+ str.indexOf('죽었')) // 5
+            // console.log('str.indexOf(죽지) : '+ str.indexOf('죽지')) // -1
+            console.log('str.indexOf(가) : '+ str.indexOf('가')) // 3 (동일하게 있어도 앞에서부터, 찾으면 끝)
+            console.log('str.indexOf(나) : '+ str.indexOf('나')) // -1
+
+            // replace 문자 바꾸기
+            // 첫번째 전달인자를 두번째 전달인자로 바꾼다 (string쪽은 거의 원본값을 바꾸지 않음)
+            let s1 = str.replace('죽었','살았')
+            console.log(str)
+            console.log(s1)
+
+            // '가'가 2개 있어도 처음 만나는것만 바꿈 
+            // (반복하려면 while indexof로 -1 받을 때 까지)
+            let s2 = str.replace('가','나')
+            console.log(s2)
+
+            // 정규표현식으로 원본에 있는 해당하는 전체를 바꿀 수 있음
+            // Regular Expression /VALUE/i , 패턴구분자+찾을 문자열 패턴+패턴구분자+패턴변경자(g는 global)
+            s2 = str.replace(/가/g,'나')
+            console.log(s2)
+
+            // slice, 시작부터 끝 바로 앞까지 복사(a,b)
+            console.log( str.slice(3, 6) )
+
+            // split, 구분자로 배열을 나누며 복사(돌려줌)
+            console.log( str.split(' ') )
+
+            // substring, 스트링을 자른다(조각) slice와 동일한 역할
+            let s = str.substring(3, 6)
+            console.log(str)
+            console.log(s)
+
+            // substr은 a부터 b까지
+            // 시작 index부터 몇 개 까지가 인자값
+            s = str.substr(3, 7)
+            console.log(s)
+
+            // trim (앞, 뒤 공백을 제거한 값을 저장함)
+            // 네이버 등 로그인 할 때 공백이 있을 수 있기 때문에
+            let str2 = "    1 2  3   "
+            s = str2.trim()
+            console.log(s)
+
+            // 아래 공백이 있을 때 일반 length는 자리값이 나오기 때문에,
+            // trim().length를 해서 공백이 없는 length값으로 검사
+            str2 = "abc"
+            if(str2.length != 0){} 
+            if(str2.trim().length != 0){} 
+
+            // 문제1_어떤 이메일에서 id만 출력하기
+            console.log('- - - - - - - - - - 문제1 - - - - - - - - - -')
+            let emailCheck;
+
+            function emailValue(email) {
+                emailCheck = email.indexOf('@')
+                console.log('ID : '+ email.slice(0,emailCheck))
+            }
+            emailValue('abcd@naver.com')
+            emailValue('abcdef@google.com')
+            emailValue('abcdefgh@daum.net')
+
+            // 문제2_주민번호로 성별을 출력하기
+            console.log('- - - - - - - - - - 문제2 - - - - - - - - - -')
+            let genderCheck;
+            let genderResult;
+
+            function genderValue(gender) {
+                genderCheck = gender.indexOf('-')
+                genderResult = gender.substr(genderCheck+1,1)
+
+                if(genderResult == 1) {
+                    console.log('남자입니다')
+                } else {
+                    console.log('여자입니다')
+                }
+            }
+            genderValue('960119-1111111')
+            genderValue('960119-2111111')
+
+            // 문제3_"2026-07-14 12:43:19" 에서 월과 분 구하기
+            console.log('- - - - - - - - - - 문제3 - - - - - - - - - -')
+            const value = '2026-07-14 12:43:19'
+
+            let dateValue;
+            let monthCheck;
+            let minCheck;
+
+            function resultCheck(date) {
+                dateValue = date.split(' ')
+                monthCheck = dateValue[0].split('-')
+                minCheck = dateValue[1].split(':')
+
+                console.log(`${monthCheck[1]}월, ${minCheck[1]}분 입니다`)
+            }
+            resultCheck(value)
+
+            // 문제4_보안상 당첨 이메일을 가려서 출력해야 함 
+            // 앞 2글자만 제대로 표기하고 별표 4개 표시하고 @부터 전부 출력
+            // ex) todiar@naver.com >> to****@naver.com
+            // "to" + **** + @부터 끝까지
+            console.log('- - - - - - - - - - 문제4 - - - - - - - - - -')
+            let testURL = 'study.todair@gmail.com'
+
+            let testVAL = testURL.indexOf('@')
+            let testID = ''
+            if(testVAL != -1) {
+                testID = testURL.slice(0,testVAL)
+            }
+            console.log(testID)
+            let testLEN = testID.length - 2
+            let testNAME = testID.slice(0,2)
+            console.log(testNAME)
+            let testSEC = ''
+            for(let i=0; i<testLEN; i++) {
+                testSEC += '*'
+            }
+            console.log(testNAME + testSEC + testURL.slice(testVAL))
+            
+
+            console.log('- - - - - - - - - - 문제4 - - - - - - - - - -')
+            let sumCheck;
+            let securityEmail;
+
+            function secCheck(email) {
+                sumCheck = email.indexOf('@')
+                console.log(sumCheck)
+
+                for(let j=2; j<sumCheck; j++) {
+                    securityEmail = email.replace(email[j],'*')
+                    console.log(securityEmail)
+                }
+            }
+            secCheck('todair@naver.com')
+            secCheck('study.todair@gmail.com')
+
+
+            // 문제5_앞 2글자만 제대로 표기하고 별표는 가려진 개수만큼
+            // ex) study.todair@gmail.com >> st***.******@gmail.com
+            console.log('- - - - - - - - - - 문제5 - - - - - - - - - -')
+            let email = 'study.todair@gmail.com'
+            // let id = email.split('@')[0]
+            let pos = email.indexOf('@')
+            let id = ''
+            // @가 없으면 -1이 반환되기때문에 -1이 아닐 경우에 슬라이스 진행
+            if(pos != -1) {
+                id = email.slice(0,pos)
+            }
+            console.log(id)
+            let mask_id_1 = id.slice(0, 2)
+            let len = id.length - 2
+            console.log(len)
+            let mask_id_2 = ''
+            for(let i=0; i<len; i++) {
+                mask_id_2 += '*'
+            }
+            console.log(mask_id_1 + mask_id_2 + email.slice(pos))
+
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>

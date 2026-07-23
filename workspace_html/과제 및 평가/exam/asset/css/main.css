@@ -1,0 +1,99 @@
+/* * {
+    border: 1px solid red;
+} */
+
+body {
+    margin: 0;
+    font-size: 14px;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+}
+
+.main .header {
+    width: 100%;
+    height: 10%;
+
+    margin: 0 auto;
+}
+
+.main .content {
+    width: 100%;
+    height: 85%;
+    
+    margin: 0 auto;
+}
+
+.main .footer {
+    width: 100%;
+    height: 5%;
+
+    margin: 0 auto;
+}
+
+.main .content .comu_table {
+    width: 100%;
+
+    word-wrap: break-word;
+    word-break: break-word;
+
+    border-top: 1px solid gray;
+}
+
+.main .content .no {
+    width: 80px;
+    min-width: 60px;
+    text-align: center;
+
+    font-size: 12px;
+}
+
+.main .content .no .link {
+    text-decoration: none;
+    color: black;
+}
+
+.main .content .no .link:hover {
+    text-decoration: underline;
+}
+
+.main .content .click,
+.main .content .good {
+    width: 60px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.main .content .name,
+.main .content .today {
+    width: 100px;
+    min-width: 80px;
+}
+
+.main .content .title {
+    min-width: 300px;
+}
+
+.main .footer {
+    text-align: center;
+
+    margin: 20px;
+}
+
+.main .footer span {
+    margin: 0 5px;
+    padding: 0 5px;
+    background-color: rgba(139, 138, 138, 0.2);
+}
+
+.main .footer span:hover {
+    background-color: rgba(139, 138, 138, 0.5);
+}
+
+td, th {
+    font-size: 14px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    height: 30px;
+}

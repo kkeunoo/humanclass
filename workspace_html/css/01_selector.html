@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <!-- 보통 head에 표현하나, body에 있어도 적용은 됨 -->
+        <style>
+            /* CSS스타일 주석 */
+            /* 
+                여러줄
+                주석
+            */
+
+            /* 전체 선택자(head,body모두 포함) */
+            * { 
+                color: red; 
+            }
+
+            /* tag 선택자(원하는 태그별 지정가능, body를 쓰면 body전체내용)*/
+            h2 {
+                font-size: 300%;
+            }
+            h1 {
+                font-size: 300%;
+            }
+
+            /* ,를 이용해서 여러개를 동시에 바꿀 수 있음*/
+            h1, h2 {
+                font-size: 300%;
+            }
+
+            /* id선택자 같은 페이지일땐 ID를 하나만 지정함, 페이지가 달라지면 사용해도 무방 */
+            #li1 {
+                color: black;
+            }
+
+            /* 클래스는 중복되게끔 입력해도 됨, .을 빼면 일반 태그처럼 사용이 가능 */
+            .c1 {
+                background-color: green;
+            }
+            
+            .bigText {
+                font-size: 30px;
+            }
+
+            /* 속성 선택자 */
+            /* 속성이 존재한다면 */
+            [readonly] {
+                background-color: yellow;
+            }
+
+            /* 속성이 있고 값도 일치하면 */
+            [type=password] {
+                background-color: pink;
+            }
+
+            /* #li3은 id=li3과 동일한 의미를 가짐 */
+            [id=li3] {
+                border: 3px solid red;
+            }
+
+            /* ^=(캐럿)은 href속성의 해당문자(https)로 시작하는 모든 것 */
+            [href^=https] {
+                color: purple;
+            }
+
+            /* $=는 href속성의 해당문자(com)로 끝나는 모든 것 */
+            [href$=com] {
+                font-size: 30px;
+            }
+
+            /* ~=는 띄어쓰기로 구분되는 값을 가져와줌 .bigText의 원본격 (클래스에서만 사용) */
+            [class~=bigText] {
+                color: #0000ff;
+            }
+
+            /* 딱 붙여서 쓰면 '그리고'라는 조건이 됨 (여러개의 class를 가질 수 있다) 
+            .c1h2 형식은 구분이 안 되기 때문에 사용할 수 없음 */
+            h2.c1 {
+                color: rgb(200, 100, 0)
+            }
+
+            /* .c1.c2 클래스로도 가능하지만, li태그에 있는 c1,c2를 찾기 때문에 아래와 같이 입력 */
+            li.c1.c2 {
+                background-color: yellow;
+            }
+
+            /* 자손 선택자, 띄어쓰기는 div 핏줄에 strong이 언젠가 나온다면 적용 
+            div 안에 몇단계 아래여도 strong이 있다면 적용되는 양식 */
+            div strong {
+                color: blue;
+            }
+
+            /* 자식 선택자, 꺽새를 이용하면 바로 밑에 있는 자식만 선택할 때 적용 
+            div아래 strong이 있을 경우에만 적용되는 양식 */
+            div > strong {
+                font-size: 40px;
+            }
+
+            /* .A = 클래스 / #A = ID / A = 태그 */
+
+            /* 마우스를 올렸을 때 */
+            #div1:hover {
+                background-color: yellow;
+            }
+            /* 마우스를 클릭하고 있을 때(이후 자바스크립트로 적용하여 거의 쓰지 않음) */
+            #div1:active {
+                background-color: green;
+            }
+
+            /* 탭키, 마우스 등 요소를 선택하여 포커싱이 되었을 때 적용 */
+            .text1:focus {
+                background-color: yellow;
+            }
+
+            /* 체크박스 또는 라디오가 선택 된 상태일 때 상태 변경 */
+            input[type=checkbox]:checked {
+                width: 20px;
+                height: 20px;
+            }
+
+            /* input[type=checkbox]: + span {
+                text-decoration: line-through;
+            } */
+            /* 체크박스 또는 라디오가 선택 된 상태일 때 다음 형제요소를 변경 */
+            input[type=checkbox]:checked + span {
+                text-decoration: line-through;
+            }
+
+            /* ul1이라는 id를 가진 li중 4번째(몇번째요소) 자식을 가져오는 것 */
+            #ul1 > li:nth-child(4) {
+                color: black;
+            }
+            /* n은 0부터 들어가기때문에 2n은 짝수, +-로 1을 주면 홀수를 구할 수 있음 */
+            #ul1 > li:nth-child(2n+1) {
+                background-color: grey;
+            }
+
+            /* 선택자가 안에 들어갈 수 있는건 not처럼 들어갈 수 있는곳에만 들어갈 수 있다 */
+            /* not안의 선택자를 제외하고 선택 */
+            #ul1 li:not(.c3) {
+                font-size: 32px;
+            }
+
+            /* li에 있는 점처럼 before,after는 드래그가 되는 요소가 아님
+            드래그가 되는건 document문서요소/지금건 렌더링요소, 자바는 document만 건드릴 수 있음 */
+            /* 선택자 앞 또는 뒤에 content 추가 및 css 적용 */
+            h3::before {
+                content: "before";
+                color: black;
+            }
+
+            h3::after {
+                /* content는 필수적인 요소 */
+                content: "after";
+                color: blue;
+                /* 기본적인 font-size는 16px */
+                font-size: 10px;
+            }
+
+            /* 앞에 선택자가 없어도 구동되는 요소, 드래그 했을 때 작동 적용가능 */
+            ::selection {
+                background-color: aqua;
+            }
+
+            /* 
+                우선 순위에 있어서 
+                !important > style속성 > #id > .class = [속성] > tag > *전체선택자 > 브라우저 기본값
+                (구체적일수록 우선순위이며, 동등한 우선 순위일 때는 나중에 나온 것이 덮어쓴다)
+            */
+            #div2 {
+                border: 1px solid aqua;
+            }
+            
+            [human] {
+                border: 1px solid pink !important;
+            }
+            
+            .c4 {
+                border: 1px solid blue;
+            }
+            
+            div {
+                border: 1px solid red;
+            }
+
+            /* #div2 {
+                border: 1px solid aqua;
+            } */
+
+            #table .no {
+                background-color: yellow;
+            }
+        
+            #table [id^=title_] {
+                border: 1px solid red;
+            }
+
+            /* [id=table] [id^=title]  {
+                border: 1px solid red;
+            } */
+
+        </style>
+    </head>
+    <body>
+        <h1>hello world</h1>
+        <h2 class="c1">부제목</h2>
+
+        <ul>
+            <li id="li1" class="c1">li 1</li>
+            <!-- class안에 띄어쓰기로 구분하면 2개의 class도 부여할 수 있음 -->
+            <li class="c1 bigText c2">li 2</li>
+            <li id="li3">li 3</li>
+        </ul>
+
+        <input type="text" readonly="readonly"><br>
+        <input type="password"><br>
+        <a href="http://naver.com">http</a><br>
+        <a href="https://daum.net">https</a><br>
+
+        <strong>밖에 있는 strong</strong>
+        <!-- div는 시작할 때 전체 영역을 가져가기에 br기능이 있어 br을 별도로 입력하지 않아도 됨 -->
+        <div>
+            <strong>div 안에 있는 strong</strong>
+        </div>
+        <div>
+            <a href="#">
+                <strong>div 안의 a 안에 있는 strong</strong>
+            </a>
+        </div>
+
+        <hr>
+        <div id="div1">
+            hover 연습
+        </div>
+        focus 연습 : <input type="text" class="text1"><br>
+        
+        <input type="checkbox">checked 연습
+        <br>
+        <input type="checkbox"><span>점심먹기</span><br>
+
+        <ul id="ul1">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li class="c3">4</li>
+            <li class="c3">5</li>
+        </ul>
+
+        <h3>비포 애프터 연습</h3>
+
+        <div class="c4" id="div2" human="천안" style="border: 1px solid black;">
+            우선 순위 연습
+        </div>
+
+        <hr>
+        <table id="table" border="1">
+            <!-- class:no 노란색배경 / id언더바는 빨간색네모  -->
+            <tr>
+                <td class="no">No</td>
+                <td id="title_0">제목</td>
+                <td>글쓴이</td>
+            </tr>
+            <tr>
+                <td class="no">1</td>
+                <td id="title_1">제목1</td>
+                <td>글쓴이1</td>
+            </tr>
+            <tr>
+                <td class="no">2</td>
+                <td id="title_2">제목2</td>
+                <td>글쓴이2</td>
+            </tr>
+        </table>
+
+    </body>
+</html>

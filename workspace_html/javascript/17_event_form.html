@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+
+        <script src="./asset/js/17_event_form.js"></script>
+    </head>
+    <body>
+
+        <form id="form" 
+              method="get" 
+              action="https://search.naver.com/search.naver" 
+              target="_blank">
+
+            검색 : <input type="text" id="query" name="query"><br>
+            <br>
+            <input type="submit" value="검색">
+        </form>
+
+        <br><hr>
+        <div id="parent">
+            부모
+            <div id="child1">자식1</div>
+            <div id="child2">자식2</div>
+        </div>
+
+        <table id="board" border="1">
+
+            <tr>
+                <td>
+                    <input type="checkbox" class="chk" value="1">
+                </td>
+                <td class="title">제목1</td>
+                <td writer="w1">작성자1</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" class="chk" value="2">
+                </td>
+                <td class="title">제목2</td>
+                <td writer="w2">작성자2</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" class="chk" value="3">
+                </td>
+                <td class="title">제목3</td>
+                <td writer="w3">작성자3</td>
+            </tr>
+
+        </table>
+        <br><hr>
+        
+        <table id="Q1_board">
+            <tr>
+                <td colspan="2" style="font-weight:bold">Q1_주문과 배송</td>
+            </tr>
+            <tr>
+                <td>
+                    이름 : <input type="text" class="name1">
+                </td>
+                <td>
+                    주소 : <input type="text" class="address1">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <label>
+                        <input type="checkbox" class="valueChk">
+                        주문 정보와 배송 정보가 같습니다.
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    이름 : <input type="text" class="name2">
+                </td>
+                <td>
+                    주소 : <input type="text" class="address2">
+                </td>
+            </tr>
+        </table>
+        <br><hr>
+
+        <table id="Q2_board">
+            <tr>
+                <td style="font-weight:bold">Q2_로그인창</td>
+            </tr>
+            <tr>
+                <td>
+                    ID : <input type="text" class="id1">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    PW : <input type="password" class="pw1">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" id="login">로그인</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="errChk"></div>
+                </td>
+            </tr>
+        </table>
+        <br><hr>
+
+        <div style="font-weight:bold">Q3_피자주문</div>
+        <div>피자 종류 선택<br>
+            <select id="order">
+                <option>불고기</option>
+                <option>페퍼로니</option>
+                <option>포테이토</option>
+                <option>치즈</option>
+                <option>파인애플</option>
+                <option>고르곤졸라</option>
+            </select>
+        </div>
+        <div>사이즈 선택<br>
+            <label>
+                <input type="radio" name="size" value="small 18000" checked>small(18,000)
+            </label>
+            <label>
+                <!-- value를 두가지 넣었을 때 스페이스바보다는
+                 절대 쓰지 않는 ; 이나 & 기호로 스플릿하는게 좋음 -->
+                <input type="radio" name="size" value="medium 20000">medium(20,000)
+            </label>
+            <label>
+                <input type="radio" name="size" value="large 22000">large(22,000)
+            </label>
+        </div>
+        <div>도우 선택<br>
+            <label>
+                <input type="radio" name="dough" value="씬" checked>씬
+            </label>
+            <label>
+                <input type="radio" name="dough" value="고구마">고구마
+            </label>
+            <label>
+                <input type="radio" name="dough" value="치즈">치즈
+            </label>
+            <label>
+                <input type="radio" name="dough" value="소보로">소보로
+            </label>
+        </div>
+        <div>토핑 선택<br>
+            <input type="checkbox" class="topping" value="감자 2000" checked>감자(2,000)
+            <input type="checkbox" class="topping" value="고구마 2000">고구마(2,000)
+            <input type="checkbox" class="topping" value="치즈 2500">치즈(2,500)
+            <input type="checkbox" class="topping" value="베이컨 3000">베이컨(3,000)
+            <input type="checkbox" class="topping" value="옥수수 500">옥수수(500)
+            <input type="checkbox" class="topping" value="페퍼론치노 2500">페퍼론치노(2,500)
+        </div>
+        <div>
+            <button type="button" id="pay">주문</button>
+        </div>
+        <div id="orderChk"></div>
+        <div id="orderPrice"></div>
+        <br><hr>
+
+        <div style="font-weight:bold">Q4_메뉴선택</div>
+        <div id="items">
+            <span class="item1">인기상품순</span>
+            <span class="item2">낮은가격순</span>
+            <span class="item3">높은가격순</span>
+            <span class="item4">신상품순</span>
+            <span class="item5">상품평많은순</span>
+        </div> 
+        <br><hr>
+
+        <div style="font-weight:bold">Q5_Todo List</div>
+        <div>
+            <input type="text" id="inputText">
+            <button type="button" id="inputDiv">추가</button>
+        </div>
+        <div>
+            <input type="checkbox" id="allChk">전체선택
+            <button type="button" id="checkDel">선택삭제</button>
+        </div>
+        <div id="column">
+            한 줄이 추가 될 곳
+        </div>
+        <div id="view"></div>
+    </body>
+</html>

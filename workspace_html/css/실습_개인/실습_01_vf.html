@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>네이버 웹툰</title>
+    </head>
+    <style>
+        #best {
+            text-align: left;
+        }
+        #tues {
+            font-size: 20px;
+        }
+        /* #inki {
+            color: green;
+        } */
+        #inki {
+            color: rgb(100, 255, 100);
+        }
+    </style>
+    <body>
+        <table>
+            <tbody>
+            <tr>
+                <td>
+                    <strong id="tues">화요웹툰</strong>
+                    <button type="button" id="inki">인기순</button>
+                    <button type="button">업데이트순</button>
+                    <button type="button">조회순</button>
+                    <button type="button">별점순</button>
+                    <!-- <a id="inki">인기순·업데이트순·조회순·별점순</a> -->
+                </td>
+                <td>
+                    
+                </td>        
+            </tr>
+
+            <!-- 웹툰 이미지 보여주기 및 링크이동 -->
+            <tr>
+                <td>
+                    <a href="https://comic.naver.com/webtoon/list?titleId=851388">
+                        <img width="250" src="https://image-comic.pstatic.net/webtoon/851388/thumbnail/thumbnail_IMAG21_1dcac808-fa37-450b-93c7-ebbc072a3a08.jpg">
+                    </a>
+                </td>
+                <td>
+                    <a href="https://comic.naver.com/webtoon/list?titleId=851854">
+                        <img width="250" src="https://image-comic.pstatic.net/webtoon/851854/thumbnail/thumbnail_IMAG21_b4ecff72-291b-4cc3-b913-586ce97680c4.jpg">
+                    </a>
+                </td>
+                <td>
+                    <a href="https://comic.naver.com/webtoon/list?titleId=828715">
+                        <img width="250" src="https://image-comic.pstatic.net/webtoon/828715/thumbnail/thumbnail_IMAG21_8957548a-2eb2-4ddf-a50e-dbc7fddc16a7.jpg">
+                    </a>    
+                </td>
+            </tr>
+            <!-- 웹툰 제목 입력 -->
+            <tr>
+                <td>
+                    <a href="https://comic.naver.com/webtoon/list?titleId=851388">
+                        <strong>대공가의 새아가는 조금 사나워요</strong>
+                    </a>
+                </td>
+                <td>
+                    <a href="https://comic.naver.com/webtoon/list?titleId=851854">
+                        <strong>인그레이브</strong>
+                    </a>
+                </td>
+                <td>
+                    <a href="https://comic.naver.com/webtoon/list?titleId=828715">
+                        <strong>절대회귀</strong>
+                    </a>
+                </td>
+            </tr>
+            <!-- 웹툰 작가이름 입력 -->
+            <tr>
+                <td>심상 / 뫄과 / 진이현</td>
+                <td>
+                    <a href="https://comic.naver.com/artistTitle?id=410514">
+                        도마
+                    </a>
+                </td>
+                <td>JP / 박진환 / 장영훈</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- 2차 실습 건 -->
+        <hr>
+        <table>
+            <thead>
+                <!-- 추천 베스트도전 & 도전만화 / 베스트도전 전체보기-->
+                <tr>
+                    <!-- colspan으로 6개 열(th또는 td)을 묶었기 때문에 7개 중 5개는 주석처리 -->
+                    <th id="best" colspan="6">추천 베스트도전 &amp; 도전만화</th>
+                    <!-- <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th> -->
+                    <th>
+                        <a href="https://comic.naver.com/bestChallenge">
+                            베스트도전 전체보기 >
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <!-- 제목/작가/별점/뷰어쉽을 넣기 위해 3칸으로 하였으나 이미지는 1개이기에 3개 행 병합 -->
+                    <td rowspan="3">
+                        <a href="https://comic.naver.com/bestChallenge/list?titleId=851850">
+                            <img width="100" src="https://image-comic.pstatic.net/user_contents_data/challenge_comic/2026/06/16/358421/upload_3847256487147155555_202x164.jpeg">
+                        </a>
+                    </td>
+                    <!-- 작품명을 2칸 병합하였기 때문에 다음 열 1개 주석처리 -->
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/bestChallenge/list?titleId=851850">
+                            <strong>당신의 가격</strong>
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                    <!-- 공백을 표현하기 위해서 10개의 행을 모두 병합한 뒤 공백을 넣어 진행 -->
+                    <td rowspan="10">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td rowspan="3">
+                        <img width="100" src="https://image-comic.pstatic.net/user_contents_data/challenge_comic/2020/02/03/312881/thumbnail_202x1644a1ff785_5bae_4dfe_a1ae_53e3528d0836_00003656.JPEG">
+                    </td>
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/bestChallenge/list?titleId=701701">
+                            <strong>아빠는 N살</strong>
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                </tr>
+                <tr>
+                    <!-- <td></td>
+                    <td></td> -->
+                    <!-- 작가명을 2칸 병합하였기 때문에 다음 열 1개 주석처리 -->
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/artistTitle?id=358421">
+                            박정현
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                    <!-- <td></td> -->
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/artistTitle?id=312881">
+                            유영근
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                </tr>
+                <tr>
+                    <!-- <td></td>
+                    <td></td> -->
+                    <td>★9.53</td>
+                    <td>👁‍🗨2,428</td>
+                    <!-- <td></td> -->
+                    <td>★9.90</td>
+                    <td>👁‍🗨5.814만</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">
+                        <a href="https://comic.naver.com/bestChallenge/list?titleId=840964">
+                            <img width="100" src="https://image-comic.pstatic.net/user_contents_data/challenge_comic/2026/02/12/374855/upload_3558459660592821350_202x164.jpeg">
+                        </a>
+                        </td>
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/bestChallenge/list?titleId=840964">
+                            <strong>대마법소녀의 시대</strong>
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                    <!-- <td></td> -->
+                    <td rowspan="3">
+                        <img width="100" src="https://image-comic.pstatic.net/user_contents_data/challenge_comic/2026/05/20/363625/upload_4063199278040102753_202x164.jpeg">
+                    </td>
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/bestChallenge/list?titleId=826992">
+                            <strong>구미호 사제</strong>
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                </tr>
+                <tr>
+                    <!-- <td></td>
+                    <td></td> -->
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/artistTitle?id=374855">
+                            한라뽕
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                    <!-- <td></td> -->
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/artistTitle?id=363625">
+                            아네모네
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                </tr>
+                <tr>
+                    <!-- <td></td>
+                    <td></td> -->
+                    <td>★9.43</td>
+                    <td>👁‍🗨26만</td>
+                    <!-- <td></td> -->
+                    <td>★9.39</td>
+                    <td>👁‍🗨63만</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">
+                        <a href="https://comic.naver.com/challenge/list?titleId=850359">
+                            <img width="100" src="https://image-comic.pstatic.net/user_contents_data/challenge_comic/2026/05/03/407800/upload_4050814568063186483_202x164.jpeg">
+                        </a>
+                        </td>
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/challenge/list?titleId=850359">
+                            <strong>편견 타파 종족 교류회</strong>
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                    <!-- <td></td> -->
+                    <td rowspan="3">
+                        <img width="100" src="https://image-comic.pstatic.net/user_contents_data/challenge_comic/2025/12/30/396299/upload_3473232112099799862_202x164.jpeg">
+                    </td>
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/challenge/list?titleId=843945">
+                            <strong>나무와 미어</strong>
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                </tr>
+                <tr>
+                    <!-- <td></td>
+                    <td></td> -->
+                    <td colspan="2">
+                        <a href="https://comic.naver.com/artistTitle?id=407800">
+                            위마
+                        </a>
+                    </td>
+                    <!-- <td></td> -->
+                    <!-- <td></td> -->
+                    <td colspan="2">나무와 미어</td>
+                    <!-- <td></td> -->
+                </tr>
+                <tr>
+                    <!-- <td></td>
+                    <td></td> -->
+                    <td>★9.98</td>
+                    <td>👁‍🗨1.8만</td>
+                    <!-- <td></td> -->
+                    <td>★8.81</td>
+                    <td>👁‍🗨3.364</td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            /* * {
+                border: 1px solid red;
+            } */
+
+            body {
+                margin: 0;
+                
+            }
+
+            .main_content {
+                width: 100vw;
+                height: 100vh;
+
+                font-size: 14px;
+                padding: 20px;
+
+                box-sizing: border-box;
+            }
+
+            .main_content .all_board {
+                width: 800px;
+                height: 10%;
+
+                margin: 0 auto;
+
+                /* display: flex; */
+
+                /* justify-content: left;
+                align-content: center; */
+            }
+
+            .main_content .table_board {
+                width: 800px;
+                height: 90%;
+
+                border-top: 1px solid blue;
+
+                margin: 0 auto;
+            }
+
+            .main_content .table_board .table_size {
+                width: 100%;
+                word-wrap: break-word;
+                word-break: break-word;
+
+                /* border: 1px solid gray; */
+            }
+
+            .comu, .name, .click {
+                width: 80px;
+                min-width: 80px;
+
+                
+            }
+
+            .comu {
+                font-size: 12px;
+                text-align: center;
+
+                vertical-align:middle;
+            }
+
+            .comu .a {
+                text-decoration: none;
+                color: black
+            }
+
+            .comu .a:hover {
+                text-decoration: underline;
+            }
+
+            .title {
+                width: 440px;
+                /* word-wrap: break-word;
+                word-break: break-word; */
+            }
+
+            .day {
+                width: 120px;
+            }
+
+            .t1 {
+                max-width: 500px;
+            }
+
+            .under::after {
+                border-bottom: 5px solid gray;
+                background-color: gray;
+                
+            }
+
+            .un2 {
+                background-color: gray;
+                border: 1px solid red;
+            }
+
+            .test3 th {
+                border-bottom: 1px solid green;
+            }
+
+            td {
+                border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+                box-sizing: border-box;
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <div class="main_content">
+            <div class="all_board">
+                <h1>전체글보기</h1>
+            </div>
+            <div class="table_board">
+                <table class="table_size">
+                    <caption hidden>카페 게시글</caption>
+                    <summary hidden>제목, 작성자, 작성일, 조회수</summary>
+                    <thead>
+                        <tr class="test3">
+                                <th class="t1" colspan="3">제목</th>
+                                <!-- <th></th> -->
+                                <th>작성자</th>
+                                <th>작성일</th>
+                                <th>조회수</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="under">
+                            <td>
+
+                                <input type="checkbox">
+                            </td>
+                            <td class="comu">
+                                <a href="https://cafe.naver.com/f-e/cafes/31753352/menus/1" class="a">자유게시판</a>
+                            </td>
+                            <td class="title">AIAIAIIAIIIAIAIAIdsadddsdadasdasdasdasdsadasdsadsadsadasdsadasdd</td>
+                            <td class="name">홍길동</td>
+                            <td class="day">2026.07.08.</td>
+                            <td class="click">8</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="comu">자유게시판</td>
+                            <td class="title">AIAIAIIAIIIAIAIAIdsadddsdadasdasdasdasdsadasdsadsadsadasdsadasdd</td>
+                            <td class="name">홍길동</td>
+                            <td class="day">2026.07.08.</td>
+                            <td class="click">8</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="comu">자유게시판</td>
+                            <td class="title">AIAIAIIAIIIAIAIAIdsadddsdadasdasdasdasdsadasdsadsadsadasdsadasdd</td>
+                            <td class="name">홍길동</td>
+                            <td class="day">2026.07.08.</td>
+                            <td class="click">8</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="comu">자유게시판</td>
+                            <td class="title">AIAIAIIAIIIAIAIAIdsadddsdadadasdsadasdd</td>
+                            <td class="name">홍길동</td>
+                            <td class="day">2026.07.08.</td>
+                            <td class="click">8</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="comu">자유게시판</td>
+                            <td class="title">AIAIAIIAIIIAIAsdsadsadsadasdsadasdd</td>
+                            <td class="name">홍길동</td>
+                            <td class="day">2026.07.08.</td>
+                            <td class="click">8</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+        [type=submit] {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 가진 기술에 따라 인터페이스가 달라지기 때문에, NAVER/로그인/비밀번호 찾기 등 하나의 테이블로 하거나
+     기술이 적을 때 가운데만 border가 들어가기 때문에 위/중간/아래 세가지로 나누어도 됨 -->
+    <!-- form과 table을 쓸 때 form으로 table을 감싸야 안에 있는 데이터가 모두 전송 됨 -->
+    <form method="get">
+        <!-- <table>
+            <tr>
+                <th colspan="3">
+                    <h1>NAVER</h1>
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+        </table> -->
+        <!-- 네모 테두리로 가두기 위한 table -->
+        <table border="1">
+            <tr>
+                <th colspan="3">
+                    <h1>NAVER</h1>
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <!-- 안에 들어가 있는 table 메인 -->
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th colspan="3">
+                                    <h1>NAVER</h1>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    ID/전화번호
+                                </th>
+                                <th>
+                                    &nbsp;&nbsp;일회용 번호&nbsp;&nbsp;
+                                </th>
+                                <th>
+                                    QR코드
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3">
+                                    <input type="text" title="아이디" name="id" placeholder="아이디 또는 전화번호">
+                                </td>
+                                <!-- <td></td>
+                                    <td></td> -->
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <input type="password" title="비밀번호" name="pw" placeholder="비밀번호">
+                                </td>
+                                <!-- <td></td>
+                                    <td></td> -->
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <label>
+                                        <input type="checkbox" name="login">로그인 상태 유지
+                                    </label>
+                                </td>
+                                <!-- <td></td> -->
+                                <td>
+                                    <a href="https://nid.naver.com/login/ext/help_ip3.html" target="_blank">
+                                        IP보안
+                                    </a>
+                                    <input type="checkbox" name="ipsec">
+                                </td>
+                            </tr>
+                            <tr>
+                                <!-- <td></td> -->
+                                <td colspan="3">
+                                    <input type="submit" value="로그인" class="login">
+                                </td>
+                                <!-- <td></td> -->
+                            </tr>
+                            <tr>
+                                <td>비밀번호 찾기</td>
+                                <td>아이디 찾기</td>
+                                <td>회원가입</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table>
+        <tr>
+            <td>비밀번호 찾기</td>
+            <td>아이디 찾기</td>
+            <td>회원가입</td>
+        </tr>
+    </table>
+</body>
+
+</html>

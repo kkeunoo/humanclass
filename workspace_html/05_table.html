@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <!-- 테이블 -->
+        <table border="1">
+            <!-- tr: table row(한 줄을 뜻함) -->
+            <tr>
+                <!-- 
+                    td: table data(한 칸을 뜻함)
+                    상하 가운데 정렬 기능이 내장되어 있으며, 내용만큼 간격이 늘어나게 됨
+                -->
+                <td>내용1</td>
+                <td>내용2<br>두번째 줄</td>
+                <td>내용3</td>
+            </tr>
+
+            <tr>
+                <td>
+                    내용2-1 !!!!!!!!!!
+                </td>
+                <td>
+                    내용2-2 !!!!!!!!!!
+                </td>
+                <td>
+                    내용2-3 !!!!!!!!!!
+                </td>
+            </tr>
+        </table>
+
+        <table border="1">
+            <tr>
+                <!-- 
+                    th: table header(컬럼 또는 열의 제목을 뜻함)
+                    두꺼운 글씨로 표시하며 상/하/좌/우 정렬을 해줌
+                -->
+                <th>내용1</th>
+                <th>내용2<br>두번째 줄</th>
+                <th>내용3</th>
+            </tr>
+
+            <tr>
+                <td>
+                    내용2-1 !!!!!!!!!!
+                </td>
+                <td>
+                    내용2-2 !!!!!!!!!!
+                </td>
+                <td>
+                    내용2-3 !!!!!!!!!!
+                </td>
+                <!-- td가 아닌곳에 넣을 경우 테이블의 밖으로 빠져나가며 브라우저별로 어디에 튀어나올지 모름 -->
+                <!-- td가 아닌 곳 -->
+                <!-- 테이블의 경우 각 줄마다 칸의 개수가 같아야 하며, 같지 않을 경우 테이블이 깨짐 -->
+                <td>
+                    내용2-4 !!!!!!!!!!
+                </td>
+            </tr>
+        </table>
+        
+        <table border="1">
+            <tr>
+                <th>지역</th>
+                <td>천안</td>
+                <td>평택</td>
+            </tr>
+            <tr>
+                <th>이름</th>
+                <td>홍길동</td>
+                <td>김길동</td>
+            </tr>
+        </table>
+
+        <!-- table>tr*2>td*3  -->
+        <table border="1">
+            <tr>
+                <!-- col(컬럼)span(간격) 컬럼의 간격 / row(행)span(간격) 열의 간격 -->
+                <!-- 만들 땐 한 번에 합치지 말고 다 만들어둔 뒤에 영향을 받는 구역을 지우는게 편리함 -->
+                <td rowspan="2">1-1</td>
+                <td colspan="2">1-2</td>
+                <!-- <td>1-3</td> -->
+            </tr>
+            <tr>
+                <!-- <td>2-1</td> -->
+                <td>2-2</td>
+                <td>2-3</td>
+            </tr>
+        </table>
+
+        <hr>
+        <!-- table(+border), thead(필요 시), tbody, tr, td -->
+        <h1>테이블의 정석 구성</h1>
+        <table border="1">
+
+            <!-- 게시물을 보여주고 있다 등 기계가 읽을 때 사용 -->
+            <caption hidden>테이블 내용에 대한 설명을 함</caption>
+            <!-- 컬럼명을 나열하며 대략적으로 무엇이 있는지 요약을 해주는 것 -->
+            <summary hidden>제목, 작성자 <!--(컬럼 나열)--></summary>
+
+            <!-- 테이블의 헤드영역을 표기해주는 것, 실제로 표기 안 됨(세로일 경우는 묶지 못 함, 영역이 나뉘는 경우 사용)
+             thead: 제목영역 -->
+            <thead>
+                <tr>
+                    <th>제목</th>
+                    <th>작성자</th>
+                </tr>
+            </thead>
+            
+            <!-- 테이블의 바디영역을 표기해주는 것, 실제로 표기 안 됨(세로일 경우는 묶지 못 함, 영역이 나뉘는 경우 사용)
+             tbody: 내용영역 -->
+            <tbody>
+                <tr>
+                    <td>제목1</td>
+                    <td>작성자1</td>
+                </tr>
+                <tr>
+                    <td>제목2</td>
+                    <td>작성자2</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+        <table border="1">
+            <!-- width, height는 같은 행/열을 공유하고 있다면 동일해야하며 더 큰 값을 따라감 -->
+            <tr>
+                <th width="200" height="100">첫번째</th>
+            </tr>
+            <tr>
+                <td width="250" height="50">두번째</td>
+            </tr>
+        </table>
+
+        <hr>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th width="30"></td>
+                    <th width="250">제목</th>
+                    <th width="50">작성자</th>
+                    <th width="150">작성일</th>
+                    <th width="50">조회</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>23</td>
+                    <td>UI구현(사전평가)</td>
+                    <td>이름1</td>
+                    <td>2026.06.23.</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td>UI구현(사전평가)</td>
+                    <td>이름2</td>
+                    <td>2026.06.23.</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td>UI구현(사전평가)</td>
+                    <td>이름3</td>
+                    <td>2026.06.23.</td>
+                    <td>3</td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td>UI구현(사전평가)</td>
+                    <td>이름4</td>
+                    <td>2026.06.23.</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td>UI구현(사전평가)</td>
+                    <td>이름5</td>
+                    <td>2026.06.23.</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td>UI구현(사전평가)</td>
+                    <td>이름6</td>
+                    <td>2026.06.23.</td>
+                    <td>6</td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
