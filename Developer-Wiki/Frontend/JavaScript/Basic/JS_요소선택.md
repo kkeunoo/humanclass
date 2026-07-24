@@ -1571,3 +1571,1014 @@ DOM 관련 오류가 발생하면 다음 순서대로 확인한다.
 
 ---
 
+---
+
+# 요소 선택 종합 실습
+
+이번 실습에서는 하나의 요소와 여러 요소를 선택하고, 선택 결과에 따라 서로 다른 방식으로 DOM을 조작한다.
+
+## HTML
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>DOM 요소 선택 실습</title>
+    <script src="main.js" defer></script>
+</head>
+<body>
+
+    <h1 id="title">프론트엔드 학습 목록</h1>
+
+    <ul id="studyList">
+        <li class="study-item html">HTML</li>
+        <li class="study-item css">CSS</li>
+        <li class="study-item javascript">JavaScript</li>
+    </ul>
+
+    <p id="result"></p>
+
+</body>
+</html>
+```
+
+## JavaScript
+
+```javascript
+const title = document.querySelector("#title");
+const studyItems = document.querySelectorAll(".study-item");
+const result = document.querySelector("#result");
+
+console.log(title);
+console.log(studyItems);
+console.log(result);
+```
+
+각 변수의 선택 결과는 다음과 같다.
+
+| 변수 | 선택 결과 |
+|------|-----------|
+| `title` | `h1` 요소 하나 |
+| `studyItems` | 여러 `li` 요소가 들어 있는 NodeList |
+| `result` | `p` 요소 하나 |
+
+---
+
+# 하나의 요소 변경하기
+
+`title`은 요소 하나이므로 직접 `innerText`를 사용할 수 있다.
+
+```javascript
+title.innerText = "웹 개발 학습 목록";
+```
+
+다음과 같이 클래스를 추가할 수도 있다.
+
+```javascript
+title.classList.add("main-title");
+```
+
+요소 하나를 선택한 경우에는 해당 요소의 프로퍼티와 메서드를 직접 사용한다.
+
+---
+
+# 여러 요소 변경하기
+
+`studyItems`는 NodeList이므로 반복문을 사용해야 한다.
+
+```javascript
+for (let i = 0; i < studyItems.length; i++) {
+
+    studyItems[i].classList.add("active");
+
+}
+```
+
+모든 `.study-item` 요소에 `active` 클래스가 추가된다.
+
+---
+
+# 특정 요소 확인하기
+
+각 요소가 특정 클래스를 가지고 있는지 확인할 수 있다.
+
+```javascript
+for (let i = 0; i < studyItems.length; i++) {
+
+    const isJavaScript =
+        studyItems[i].classList.contains("javascript");
+
+    console.log(isJavaScript);
+
+}
+```
+
+결과
+
+```text
+false
+false
+true
+```
+
+세 번째 요소만 `javascript` 클래스를 가지고 있기 때문이다.
+
+---
+
+# 조건에 맞는 요소의 내용 변경하기
+
+```javascript
+for (let i = 0; i < studyItems.length; i++) {
+
+    if (
+        studyItems[i]
+            .classList
+            .contains("javascript")
+    ) {
+
+        studyItems[i].innerText =
+            "JavaScript DOM";
+
+    }
+
+}
+```
+
+실행 결과
+
+```text
+HTML
+CSS
+JavaScript DOM
+```
+
+---
+
+# 조건에 맞는 요소 개수 구하기
+
+```javascript
+let activeCount = 0;
+
+for (let i = 0; i < studyItems.length; i++) {
+
+    if (
+        studyItems[i]
+            .classList
+            .contains("active")
+    ) {
+
+        activeCount++;
+
+    }
+
+}
+
+result.innerText =
+    `활성화된 항목: ${activeCount}개`;
+```
+
+객체 하나를 선택할 때와 NodeList를 선택할 때의 차이를 이해하면 여러 요소를 조건에 따라 처리할 수 있다.
+
+---
+
+# 체크박스 선택 실습
+
+## HTML
+
+```html
+<h2>관심 분야</h2>
+
+<label>
+    <input
+        type="checkbox"
+        name="interest"
+        value="HTML"
+    >
+    HTML
+</label>
+
+<label>
+    <input
+        type="checkbox"
+        name="interest"
+        value="CSS"
+    >
+    CSS
+</label>
+
+<label>
+    <input
+        type="checkbox"
+        name="interest"
+        value="JavaScript"
+    >
+    JavaScript
+</label>
+
+<button id="checkButton">선택 확인</button>
+
+<p id="interestResult"></p>
+```
+
+---
+
+## JavaScript
+
+```javascript
+const checkButton =
+    document.querySelector("#checkButton");
+
+const interests =
+    document.querySelectorAll(
+        "[name=interest]"
+    );
+
+const interestResult =
+    document.querySelector(
+        "#interestResult"
+    );
+```
+
+`interests`에는 모든 관심 분야 체크박스가 들어 있는 NodeList가 저장된다.
+
+---
+
+# checked 프로퍼티 사용하기
+
+체크박스가 선택되어 있는지는 `checked` 프로퍼티로 확인할 수 있다.
+
+```javascript
+console.log(interests[0].checked);
+```
+
+선택되어 있으면
+
+```text
+true
+```
+
+선택되어 있지 않으면
+
+```text
+false
+```
+
+가 반환된다.
+
+---
+
+# 선택된 체크박스 출력하기
+
+```javascript
+checkButton.addEventListener(
+    "click",
+    function() {
+
+        let selectedResult = "";
+
+        for (
+            let i = 0;
+            i < interests.length;
+            i++
+        ) {
+
+            if (
+                interests[i].checked
+                === true
+            ) {
+
+                selectedResult +=
+                    interests[i].value
+                    + " ";
+
+            }
+
+        }
+
+        interestResult.innerText =
+            selectedResult;
+
+    }
+);
+```
+
+체크된 요소만 확인하여 해당 요소의 `value`를 출력한다.
+
+---
+
+# :checked 선택자 사용하기
+
+버튼을 클릭한 시점에 선택된 체크박스만 다시 찾을 수도 있다.
+
+```javascript
+checkButton.addEventListener(
+    "click",
+    function() {
+
+        const checkedInterests =
+            document.querySelectorAll(
+                "[name=interest]:checked"
+            );
+
+        let selectedResult = "";
+
+        for (
+            let i = 0;
+            i < checkedInterests.length;
+            i++
+        ) {
+
+            selectedResult +=
+                checkedInterests[i].value
+                + " ";
+
+        }
+
+        interestResult.innerText =
+            selectedResult;
+
+    }
+);
+```
+
+`querySelectorAll()`을 사용했으므로 선택된 체크박스가 없어도 `null`이 반환되지 않는다.
+
+선택된 요소가 없다면 빈 NodeList가 반환된다.
+
+```text
+NodeList(0)
+```
+
+---
+
+# 라디오 버튼 선택 실습
+
+## HTML
+
+```html
+<h2>사이즈 선택</h2>
+
+<label>
+    <input
+        type="radio"
+        name="size"
+        value="Small"
+    >
+    Small
+</label>
+
+<label>
+    <input
+        type="radio"
+        name="size"
+        value="Medium"
+    >
+    Medium
+</label>
+
+<label>
+    <input
+        type="radio"
+        name="size"
+        value="Large"
+    >
+    Large
+</label>
+
+<button id="sizeButton">
+    사이즈 확인
+</button>
+
+<p id="sizeResult"></p>
+```
+
+---
+
+## JavaScript
+
+```javascript
+const sizeButton =
+    document.querySelector(
+        "#sizeButton"
+    );
+
+const sizeResult =
+    document.querySelector(
+        "#sizeResult"
+    );
+```
+
+버튼을 클릭했을 때 선택된 라디오 버튼을 찾는다.
+
+```javascript
+sizeButton.addEventListener(
+    "click",
+    function() {
+
+        const size =
+            document.querySelector(
+                "[name=size]:checked"
+            );
+
+        console.log(size);
+
+    }
+);
+```
+
+---
+
+# 선택 여부 검사하기
+
+선택된 라디오 버튼이 없다면 `size`에는 `null`이 저장된다.
+
+따라서 `value`를 사용하기 전에 확인해야 한다.
+
+```javascript
+sizeButton.addEventListener(
+    "click",
+    function() {
+
+        const size =
+            document.querySelector(
+                "[name=size]:checked"
+            );
+
+        if (size === null) {
+
+            sizeResult.innerText =
+                "사이즈를 선택해주세요.";
+
+        } else {
+
+            sizeResult.innerText =
+                `선택한 사이즈: ${size.value}`;
+
+        }
+
+    }
+);
+```
+
+---
+
+# 실무 예제 프로젝트
+
+## 상품 선택 결과 출력
+
+사용자가 상품 옵션을 선택하면 선택된 값을 화면에 출력하는 예제이다.
+
+### HTML
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 옵션 선택</title>
+    <script src="main.js" defer></script>
+</head>
+<body>
+
+    <h1 id="productTitle">
+        상품 주문
+    </h1>
+
+    <h2>사이즈</h2>
+
+    <label>
+        <input
+            type="radio"
+            name="size"
+            value="Small"
+        >
+        Small
+    </label>
+
+    <label>
+        <input
+            type="radio"
+            name="size"
+            value="Large"
+        >
+        Large
+    </label>
+
+    <h2>추가 옵션</h2>
+
+    <label>
+        <input
+            type="checkbox"
+            class="option"
+            value="치즈"
+        >
+        치즈
+    </label>
+
+    <label>
+        <input
+            type="checkbox"
+            class="option"
+            value="베이컨"
+        >
+        베이컨
+    </label>
+
+    <label>
+        <input
+            type="checkbox"
+            class="option"
+            value="소스"
+        >
+        소스
+    </label>
+
+    <button id="orderButton">
+        주문 확인
+    </button>
+
+    <div id="orderResult"></div>
+
+</body>
+</html>
+```
+
+---
+
+## JavaScript
+
+```javascript
+const orderButton =
+    document.querySelector(
+        "#orderButton"
+    );
+
+const options =
+    document.querySelectorAll(
+        ".option"
+    );
+
+const orderResult =
+    document.querySelector(
+        "#orderResult"
+    );
+```
+
+---
+
+## 주문 버튼 이벤트
+
+```javascript
+orderButton.addEventListener(
+    "click",
+    function() {
+
+        const size =
+            document.querySelector(
+                "[name=size]:checked"
+            );
+
+        if (size === null) {
+
+            orderResult.innerText =
+                "사이즈를 선택해주세요.";
+
+            return;
+
+        }
+
+        let optionResult = "";
+
+        for (
+            let i = 0;
+            i < options.length;
+            i++
+        ) {
+
+            if (
+                options[i].checked
+                === true
+            ) {
+
+                optionResult +=
+                    options[i].value
+                    + " ";
+
+            }
+
+        }
+
+        if (optionResult === "") {
+
+            optionResult = "선택 없음";
+
+        }
+
+        orderResult.innerText =
+            `사이즈: ${size.value}
+추가 옵션: ${optionResult}`;
+
+    }
+);
+```
+
+---
+
+# 예제 코드 흐름
+
+```text
+1. 주문 버튼 요소를 선택한다.
+2. 추가 옵션 전체를 NodeList로 선택한다.
+3. 결과를 출력할 요소를 선택한다.
+4. 버튼 클릭 시 선택된 라디오 버튼을 찾는다.
+5. 라디오 버튼을 선택하지 않았다면 안내 문구를 출력한다.
+6. NodeList를 반복하며 체크된 옵션을 찾는다.
+7. 선택 결과를 문자열로 만든다.
+8. 결과 요소의 innerText를 변경한다.
+```
+
+---
+
+# 요소 선택 관련 오류 분석
+
+## 오류 1: null에서 프로퍼티 사용
+
+```javascript
+const result =
+    document.querySelector(
+        "#orderResult"
+    );
+
+result.innerText = "주문 완료";
+```
+
+HTML에 `id="orderResult"`인 요소가 없다면 다음 오류가 발생한다.
+
+```text
+Cannot set properties of null
+```
+
+해결 방법은 선택 결과를 먼저 확인하는 것이다.
+
+```javascript
+console.log(result);
+```
+
+---
+
+## 오류 2: NodeList에 classList 사용
+
+```javascript
+const items =
+    document.querySelectorAll(
+        ".item"
+    );
+
+items.classList.add("active");
+```
+
+`items`는 요소 하나가 아니라 NodeList이므로 오류가 발생한다.
+
+올바른 코드
+
+```javascript
+for (
+    let i = 0;
+    i < items.length;
+    i++
+) {
+
+    items[i]
+        .classList
+        .add("active");
+
+}
+```
+
+---
+
+## 오류 3: 존재하지 않는 인덱스 사용
+
+```javascript
+const items =
+    document.querySelectorAll(
+        ".item"
+    );
+
+console.log(items[5]);
+```
+
+선택된 요소가 세 개뿐이라면 `items[5]`의 결과는 다음과 같다.
+
+```text
+undefined
+```
+
+이 상태에서 `classList`를 사용하면 오류가 발생한다.
+
+```javascript
+items[5].classList.add("active");
+```
+
+오류 예시
+
+```text
+Cannot read properties of undefined
+```
+
+---
+
+## 오류 4: 선택되지 않은 라디오 버튼의 value 사용
+
+```javascript
+const size =
+    document.querySelector(
+        "[name=size]:checked"
+    );
+
+console.log(size.value);
+```
+
+선택된 라디오 버튼이 없다면 `size`는 `null`이다.
+
+따라서 다음처럼 검사해야 한다.
+
+```javascript
+if (size !== null) {
+
+    console.log(size.value);
+
+}
+```
+
+---
+
+## 오류 5: getElementById()에 # 작성
+
+잘못된 코드
+
+```javascript
+const title =
+    document.getElementById(
+        "#title"
+    );
+```
+
+올바른 코드
+
+```javascript
+const title =
+    document.getElementById(
+        "title"
+    );
+```
+
+`getElementById()`에는 실제 `id` 값만 전달한다.
+
+---
+
+## 오류 6: querySelector()의 class 선택자에서 . 생략
+
+HTML
+
+```html
+<p class="message">
+    안내 메시지
+</p>
+```
+
+잘못된 코드
+
+```javascript
+const message =
+    document.querySelector(
+        "message"
+    );
+```
+
+위 코드는 `message`라는 이름의 태그를 찾는다.
+
+올바른 코드
+
+```javascript
+const message =
+    document.querySelector(
+        ".message"
+    );
+```
+
+---
+
+# 선택 메서드 결정하기
+
+요소를 선택하기 전에 필요한 결과가 하나인지 여러 개인지 먼저 확인한다.
+
+## 하나의 요소가 필요한 경우
+
+```javascript
+document.getElementById("title");
+```
+
+```javascript
+document.querySelector("#title");
+```
+
+```javascript
+document.querySelector(
+    "[name=size]:checked"
+);
+```
+
+---
+
+## 여러 요소가 필요한 경우
+
+```javascript
+document.querySelectorAll(".item");
+```
+
+```javascript
+document.querySelectorAll(
+    "[name=interest]"
+);
+```
+
+```javascript
+document.querySelectorAll(
+    "[name=interest]:checked"
+);
+```
+
+---
+
+# 반환 결과에 따른 처리 방법
+
+| 반환 결과 | 처리 방법 |
+|-----------|-----------|
+| Element | 프로퍼티와 메서드를 직접 사용 |
+| `null` | 선택자와 실행 시점 확인 |
+| NodeList | 인덱스 또는 반복문 사용 |
+| 빈 NodeList | `length`가 `0`인지 확인 |
+| `undefined` | 사용한 인덱스가 존재하는지 확인 |
+
+---
+
+# 요소 선택 디버깅 체크리스트
+
+DOM 요소 선택 코드에서 오류가 발생하면 다음 순서로 확인한다.
+
+```text
+1. JavaScript 파일이 연결되었는가?
+2. JavaScript가 DOM 생성 후 실행되는가?
+3. HTML에 대상 요소가 존재하는가?
+4. id와 class의 철자가 같은가?
+5. #과 .을 올바르게 사용했는가?
+6. 선택 결과가 Element인가?
+7. 선택 결과가 NodeList인가?
+8. NodeList의 length는 몇 개인가?
+9. 사용한 인덱스가 실제로 존재하는가?
+10. null 또는 undefined 상태에서 프로퍼티를 사용하지 않았는가?
+```
+
+다음 코드를 먼저 작성하면 원인을 찾기 쉽다.
+
+```javascript
+console.log(target);
+console.log(typeof target);
+```
+
+NodeList라면 다음 내용도 확인한다.
+
+```javascript
+console.log(target.length);
+console.log(target[0]);
+```
+
+---
+
+# 이번 문서에서 새롭게 배운 내용
+
+- DOM 요소를 조작하려면 먼저 대상 요소를 선택해야 한다.
+- `getElementById()`는 `id` 값을 이용하여 요소 하나를 선택한다.
+- `querySelector()`는 CSS 선택자로 첫 번째 요소 하나를 선택한다.
+- `querySelectorAll()`은 조건에 맞는 모든 요소를 NodeList로 반환한다.
+- 요소 하나에는 `classList`, `innerText` 등을 직접 사용할 수 있다.
+- NodeList에는 요소의 `classList`를 직접 사용할 수 없다.
+- NodeList의 각 요소는 인덱스 또는 반복문으로 접근한다.
+- `querySelector()`가 요소를 찾지 못하면 `null`을 반환한다.
+- `querySelectorAll()`이 요소를 찾지 못하면 빈 NodeList를 반환한다.
+- 선택된 체크박스와 라디오 버튼은 `:checked` 선택자로 찾을 수 있다.
+- 체크박스의 선택 여부는 `checked` 프로퍼티로 확인할 수 있다.
+
+---
+
+# 자주 하는 실수
+
+- `getElementById()`의 인수에 `#`을 작성한다.
+- `querySelector()`에서 `id`와 `class` 선택자를 혼동한다.
+- `querySelector()`가 여러 요소를 모두 반환한다고 생각한다.
+- `querySelectorAll()`의 결과를 일반 Element로 생각한다.
+- NodeList에 직접 `classList`를 사용한다.
+- NodeList의 존재하지 않는 인덱스에 접근한다.
+- 선택 결과를 확인하지 않고 바로 프로퍼티를 사용한다.
+- 선택되지 않은 라디오 버튼의 `value`를 바로 사용한다.
+- `querySelectorAll()`의 결과가 없으면 `null`이라고 생각한다.
+- 단수형과 복수형 변수 이름을 구분하지 않는다.
+
+---
+
+# 면접 포인트
+
+### getElementById()란?
+
+HTML 요소의 `id` 값을 기준으로 요소 하나를 반환하는 메서드이다.
+
+인수에는 `#`을 작성하지 않고 실제 `id` 값만 전달한다.
+
+---
+
+### querySelector()란?
+
+CSS 선택자를 이용하여 조건에 맞는 첫 번째 요소 하나를 반환하는 메서드이다.
+
+요소를 찾지 못하면 `null`을 반환한다.
+
+---
+
+### querySelectorAll()이란?
+
+CSS 선택자와 일치하는 모든 요소를 NodeList 형태로 반환하는 메서드이다.
+
+조건에 맞는 요소가 없어도 `null`이 아닌 빈 NodeList를 반환한다.
+
+---
+
+### querySelector()와 querySelectorAll()의 차이는?
+
+`querySelector()`는 첫 번째 요소 하나를 반환한다.
+
+`querySelectorAll()`은 조건에 맞는 모든 요소를 NodeList로 반환한다.
+
+---
+
+### NodeList란?
+
+여러 DOM 노드를 저장하는 목록 형태의 객체이다.
+
+배열처럼 인덱스와 `length`를 사용할 수 있지만 배열과 완전히 같은 자료형은 아니다.
+
+---
+
+### NodeList에 classList를 직접 사용할 수 없는 이유는?
+
+`classList`는 개별 Element가 가지고 있는 프로퍼티이다.
+
+NodeList는 여러 요소를 담은 목록이므로 인덱스나 반복문으로 개별 요소에 접근해야 한다.
+
+---
+
+### querySelector()와 querySelectorAll()이 요소를 찾지 못하면 어떻게 되는가?
+
+`querySelector()`는 `null`을 반환한다.
+
+`querySelectorAll()`은 길이가 `0`인 빈 NodeList를 반환한다.
+
+---
+
+### 체크된 라디오 버튼은 어떻게 선택하는가?
+
+```javascript
+document.querySelector(
+    "[name=size]:checked"
+);
+```
+
+선택된 요소가 없다면 `null`이 반환되므로 사용 전에 확인해야 한다.
+
+---
+
+# 핵심 정리
+
+- DOM 조작은 요소 선택에서 시작한다.
+- `getElementById()`는 `id` 값으로 요소 하나를 선택한다.
+- `querySelector()`는 CSS 선택자로 첫 번째 요소를 선택한다.
+- `querySelectorAll()`은 모든 일치 요소를 NodeList로 반환한다.
+- Element와 NodeList는 서로 다른 방식으로 다뤄야 한다.
+- Element에는 프로퍼티와 메서드를 직접 사용할 수 있다.
+- NodeList는 인덱스 또는 반복문으로 각 요소에 접근한다.
+- `classList`는 NodeList가 아닌 개별 Element에 사용한다.
+- 단일 선택 결과가 없으면 `null`이 반환될 수 있다.
+- 다중 선택 결과가 없으면 빈 NodeList가 반환된다.
+- 선택 결과를 `console.log()`로 확인하는 습관이 중요하다.
+- 변수 이름을 단수형과 복수형으로 구분하면 오류를 줄일 수 있다.
+
+---
+
+# 변경 이력
+
+| Version | 날짜 | 변경 내용 |
+|---------|------|-----------|
+| v1.0 | 2026-07-22 | 최초 작성 |
+
+
