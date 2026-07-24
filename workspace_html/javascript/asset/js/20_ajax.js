@@ -352,4 +352,20 @@ function bind() {
             console.error( error )
         })
     })
+
+
+    const btn6 = document.querySelector('#btn6')
+    btn6.addEventListener('click', function() {
+        debugger
+
+        console.log('btn6 클릭')
+        debug()
+        console.log('끝')
+    })
+}
+
+function debug() {
+    let a = 1
+
+    console.log(a)
 }
