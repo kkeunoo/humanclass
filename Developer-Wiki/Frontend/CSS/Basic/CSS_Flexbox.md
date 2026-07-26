@@ -1,46 +1,44 @@
 ---
 title: CSS Flexbox
-version: v1.0
-last_updated: 2026-07-25
-status: Completed
+category: CSS
+last_updated: 2026-07-27
+status: Active
 ---
 
 # CSS Flexbox
 
-## 개념
 
-Flexbox는 한 방향으로 요소를 정렬하고 간격을 조절하는 레이아웃 방식이다.
-
-## 문법
+Flexbox는 한 방향으로 자식 요소를 정렬하는 레이아웃 방식이다.
 
 ```css
 .container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
 }
 ```
 
-## 예제
+## 축 이해
+
+`flex-direction: row`에서는 가로가 주축, 세로가 교차축이다.
+
+- justify-content: 주축 정렬
+- align-items: 교차축 정렬
+- gap: 항목 사이 간격
+- flex-wrap: 줄바꿈 여부
+
+## 자식 크기
 
 ```css
-.item { flex: 1; }
+.sidebar { flex: 0 0 240px; }
+.content { flex: 1; }
 ```
 
 ## 실무 예제
 
-내비게이션, 카드 목록, 가운데 정렬, 모바일 세로 배치에 활용한다.
+헤더 로고와 메뉴, 카드 목록, 버튼 묶음, 좌우 레이아웃에 활용한다.
 
 ## 주의사항
 
-주축은 flex-direction에 따라 바뀐다. justify-content와 align-items가 어떤 축을 제어하는지 확인한다.
-
-## 면접 포인트
-
-주축·교차축, container 속성과 item 속성을 설명한다.
-
-## 요약
-
-Flexbox는 한 방향 정렬과 유연한 크기 분배에 적합하다.
+`justify-content`가 기대대로 동작하려면 컨테이너에 남는 공간이 있어야 한다.
