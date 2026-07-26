@@ -1,52 +1,36 @@
 ---
-title: Developer-Wiki
-version: v1.0
-last_updated: 2026-07-25
-status: Completed
+title: Developer Wiki
+category: Project
+last_updated: 2026-07-27
+status: Active
 ---
 
-# Developer-Wiki
+# Developer Wiki
 
-> 국비 IT 교육 과정과 직접 작성한 코드를 기반으로 장기간 복습하고 실무에서도 참고할 수 있도록 관리하는 개인 개발 위키
 
-## 자료 우선순위
+수업에서 실제로 다룬 내용을 기준으로 HTML, CSS, JavaScript, Python을 정리한 개인 학습 위키다.
 
-1. `workspace_teacher` — 수업 범위와 강사님 기준 코드
-2. `workspace_html` — 개인 작성 코드, 주석, 문제 풀이, 수정 과정
-3. 기존 `Developer-Wiki` — 비교·정리·통합 대상
+## 작성 원칙
 
-## 문서 원칙
+1. 강사 Workspace를 수업 범위의 기준으로 삼는다.
+2. 개인 Workspace의 실습과 문제 풀이를 함께 반영한다.
+3. 수업에 등장하지 않은 심화 주제는 독립 문서로 확장하지 않는다.
+4. 개념만 나열하지 않고 문법, 동작 원리, 비교 예제, 실무 연결, 주의사항을 함께 적는다.
+5. 문제 풀이는 가능한 경우 `개인 풀이 / 강사 풀이 / 비교 코멘트`로 구분한다.
+6. 작성자를 판단하기 어려운 코드는 공통 학습 내용으로 취합한다.
+7. `BACKUP`은 이전 문서 참고용이며 현재 범위 판단의 근거로 사용하지 않는다.
 
-- 강사님이 다룬 범위 안에서만 문서화한다.
-- 같은 개념은 하나의 문서에서 관리한다.
-- 문서는 가능한 한 **개념 → 문법 → 예제 → 실무 예제 → 주의사항 → 면접 포인트 → 요약** 순서를 따른다.
-- 개인 풀이와 강사님 풀이가 구분되면 비교하고, 구분이 어려우면 공통 수업 코드로 취합한다.
-- 수정 시 부분 패치가 아니라 전체 Markdown 완성본을 다시 생성한다.
-- 새 규칙은 먼저 README의 Decision Log에 기록한다.
+## 목차
 
-## 구조
+- [HTML](Frontend/HTML/README.md)
+- [CSS](Frontend/CSS/README.md)
+- [JavaScript](Frontend/JavaScript/README.md)
+- [Python](Python/README.md)
+- [문제 풀이 비교](Comparisons/Problem-Solution-Comparison.md)
+- [감사 보고서](AUDIT_REPORT.md)
+- [변경 내역](CHANGELOG.md)
+- [파일별 커밋 메시지](COMMIT_MESSAGES.md)
 
-```text
-Developer-Wiki/
-├── README.md
-├── AUDIT_REPORT.md
-├── CHANGELOG.md
-├── COMMIT_MESSAGES.md
-├── Comparisons/
-└── Frontend/
-    ├── HTML/Basic/
-    ├── CSS/Basic/
-    └── JavaScript/Basic/
-```
+## 문서 읽는 순서
 
-## Decision Log
-
-| 날짜 | 결정 |
-|---|---|
-| 2026-07-25 | README를 프로젝트의 최상위 헌법으로 지정 |
-| 2026-07-25 | 강사 자료를 최우선 기준으로 사용 |
-| 2026-07-25 | 실무 예제는 현재 학습 범위 안에서만 추가 |
-| 2026-07-25 | 동일 개념은 하나의 문서에서 관리 |
-| 2026-07-25 | 범위 초과 또는 과도하게 깊은 기존 문서는 삭제하거나 수업 수준으로 재작성 |
-| 2026-07-25 | 완성본은 최상위 `Developer-Wiki` 폴더 전체를 ZIP으로 배포 |
-| 2026-07-25 | 커밋 메시지는 `날짜_영역_순번.내용` 형식으로 관리 |
+각 기술 폴더의 README에서 기본 개념 문서를 순서대로 학습한 뒤, `Problems` 폴더의 문제 풀이를 확인한다. 예제는 직접 실행하고 값을 바꾸어 결과가 어떻게 달라지는지 확인하는 것을 권장한다.
