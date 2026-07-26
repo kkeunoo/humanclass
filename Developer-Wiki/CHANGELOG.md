@@ -1,25 +1,20 @@
 ---
-title: Developer-Wiki Change Log
-version: v1.0
-last_updated: 2026-07-25
-status: Completed
+title: Change Log
+category: Project
+last_updated: 2026-07-27
+status: Active
 ---
 
 # Change Log
 
-## 2026-07-25
 
-### Added
-- README 및 Decision Log
-- 전체 Audit Report
-- Workspace 비교 보고서
-- 현재 수업 범위에 맞춘 HTML, CSS, JavaScript 문서 세트
-- 단계별 커밋 메시지
+## v2.0.0 - 2026-07-27
 
-### Changed
-- 기존 장문 문서를 수업 순서와 문서 표준 구조에 맞춰 전체 재작성
-- 개인 풀이와 강사 기준 코드를 출처 판정 원칙에 따라 통합
-
-### Removed
-- Grid, localStorage, dataset, 시맨틱 태그, 독립 정규표현식 문서
-- 현재 범위를 벗어난 상세 기능과 후속 기술 예시
+- 전체 문서를 간단 요약형에서 학습형 문서로 재작성
+- 문법, 동작 원리, 비교 예제, 실무 연결, 주의사항 추가
+- CSS Display 값별 형태와 화면 차이 보강
+- 개인 풀이와 강사 풀이 비교 문서 추가
+- JavaScript 문제 풀이 문서 6개 구성
+- Python 기초 문서 추가
+- BACKUP 및 수업 범위 밖 내용 제외
+- 개별 Markdown 파일별 Git 커밋 메시지 작성
