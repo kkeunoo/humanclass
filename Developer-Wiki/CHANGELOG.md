@@ -1,12 +1,19 @@
 ---
 title: Change Log
-category: Project
+version: v3.0
 last_updated: 2026-07-27
 status: Active
 ---
 
 # Change Log
 
+## v3.0 - 2026-07-27
+
+- Problems 문서를 정답 나열형에서 단계별 문제 해결형으로 전면 재작성
+- 문제, 접근 방법, 개인 풀이, 강사 풀이, 차이 분석, 개선 풀이, 테스트 값, 주의사항, 추가 연습 구성 추가
+- TIP, IMPORTANT, WARNING, NOTE 안내 박스 도입
+- CSS 레이아웃 문제에 display, inline-block, flex, 중앙 정렬, 반응형, position 판단 기준 추가
+- 통합 커밋 메시지 하나만 제공하도록 COMMIT_MESSAGES 개편
 
 ## v2.0.0 - 2026-07-27
 
