@@ -1,39 +1,11 @@
----
-title: 개인 풀이와 강사 풀이 비교 기준
-version: v3.0
-last_updated: 2026-07-27
-status: Active
----
+# 문제 풀이 비교 안내
 
-# 개인 풀이와 강사 풀이 비교 기준
+문제 풀이 비교는 v4부터 별도 문서가 아니라 각 개념 문서의 **수업 문제와 풀이** 영역에 통합한다.
 
-문제 문서는 단순히 두 코드를 나열하지 않는다. 각각의 의도와 장단점을 확인하고, 현재 학습 단계에서 가장 이해하기 좋은 개선 풀이를 제시한다.
-
-## 비교 순서
-
-1. 문제 요구사항을 원문 의미가 바뀌지 않게 정리한다.
-2. 필요한 입력, 처리, 출력을 구분한다.
-3. 개인 풀이에서 추가로 고려한 검증과 확장 기능을 찾는다.
-4. 강사 풀이에서 수업 개념을 가장 잘 보여주는 핵심 구조를 찾는다.
-5. 두 풀이의 장점을 합친 개선 풀이를 작성한다.
-6. 틀리기 쉬운 경계값과 테스트 방법을 제시한다.
-
-## 문서 안의 안내 박스
-
-- `TIP`: 문제를 더 쉽게 푸는 순서와 실무 습관
-- `IMPORTANT`: 반드시 이해해야 하는 핵심 원리
-- `WARNING`: 오류 또는 무한 반복, 형 변환처럼 주의할 부분
-- `NOTE`: 현재 수업 범위 안에서 추가로 알아둘 내용
-
-## 좋은 풀이의 기준
-
-- 정답이 나온다.
-- 변수 이름만 읽어도 역할을 알 수 있다.
-- 입력 검증과 핵심 로직이 분리되어 있다.
-- 중복된 조건과 코드를 줄인다.
-- 경계값에서도 동작한다.
-- 현재 수업에서 배운 문법으로 설명할 수 있다.
-
-## 범위 원칙
-
-`BACKUP/Developer-Wiki`는 문서의 구성과 설명 밀도를 참고하지만, BOM, localStorage 등 현재 수업에서 확인되지 않은 내용은 새 독립 문서로 확장하지 않는다. 수업 문제 코드에 실제 등장한 기능은 해당 문제를 이해하는 데 필요한 만큼만 설명한다.
+- CSS 레이아웃 문제 → `Frontend/CSS/Basic/CSS_Display.md`
+- JavaScript 배열 문제 → `Frontend/JavaScript/Basic/JS_Array.md`
+- JavaScript DOM 문제 → `Frontend/JavaScript/Basic/JS_DOM.md`
+- JavaScript 이벤트·폼 문제 → `Frontend/JavaScript/Basic/JS_Event_Form.md`
+- JavaScript 반복문 문제 → `Frontend/JavaScript/Basic/JS_Loop.md`
+- JavaScript 연산자·조건문 문제 → `Frontend/JavaScript/Basic/JS_Operator_Condition.md`
+- JavaScript 문자열 문제 → `Frontend/JavaScript/Basic/JS_String.md`

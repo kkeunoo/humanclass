@@ -1,27 +1,20 @@
----
-title: Change Log
-version: v3.0
-last_updated: 2026-07-27
-status: Active
----
+# CHANGELOG
 
-# Change Log
+## v4.0.0 — 2026-07-27
 
-## v3.0 - 2026-07-27
+### Changed
 
-- Problems 문서를 정답 나열형에서 단계별 문제 해결형으로 전면 재작성
-- 문제, 접근 방법, 개인 풀이, 강사 풀이, 차이 분석, 개선 풀이, 테스트 값, 주의사항, 추가 연습 구성 추가
-- TIP, IMPORTANT, WARNING, NOTE 안내 박스 도입
-- CSS 레이아웃 문제에 display, inline-block, flex, 중앙 정렬, 반응형, position 판단 기준 추가
-- 통합 커밋 메시지 하나만 제공하도록 COMMIT_MESSAGES 개편
+- 전체 학습 문서에 v4 공통 헤더와 푸터 적용
+- 난이도, 예상 학습 시간, 이전·다음 학습 정보 추가
+- `왜 배우는가`, 학습 전 질문, 직접 해보기, Check Point 추가
+- 자주 하는 실수, 예상 면접 질문, 복습 기록 추가
+- CSS와 JavaScript의 `Problems` 폴더 제거
+- 7개 문제 문서를 대응하는 개념 문서에 통합
+- README를 프로젝트 사용 설명서와 학습 로드맵 중심으로 전면 개편
+- 파트별 README의 문서 순서 및 링크 재작성
 
-## v2.0.0 - 2026-07-27
+### Preserved
 
-- 전체 문서를 간단 요약형에서 학습형 문서로 재작성
-- 문법, 동작 원리, 비교 예제, 실무 연결, 주의사항 추가
-- CSS Display 값별 형태와 화면 차이 보강
-- 개인 풀이와 강사 풀이 비교 문서 추가
-- JavaScript 문제 풀이 문서 6개 구성
-- Python 기초 문서 추가
-- BACKUP 및 수업 범위 밖 내용 제외
-- 개별 Markdown 파일별 Git 커밋 메시지 작성
+- v3의 수업 범위
+- 기존 개념 예제와 문제 풀이 내용
+- 수업 외 고급 주제를 추가하지 않는 원칙

@@ -1,39 +1,29 @@
----
-title: Developer Wiki Audit Report
-category: Project
-last_updated: 2026-07-27
-status: Active
----
+# AUDIT REPORT — Developer-Wiki v4
 
-# Developer Wiki Audit Report
+## 검사 기준
 
+- 수업 범위를 벗어난 독립 주제 추가 여부
+- Problems 폴더 제거 여부
+- 문제 문서의 개념 문서 통합 여부
+- 공통 학습 구조 적용 여부
+- README, CHANGELOG, VERSION, COMMIT 메시지 갱신 여부
 
-## 대상
+## 결과
 
-- 개인 `workspace_html`
-- 개인 `workspace_python`
-- 강사 `workspace_html`
-- 기존 `Developer-Wiki`
-- `BACKUP`은 범위 판단에서 제외
+- 전체 Markdown 문서: **41개**
+- 공통 템플릿을 적용한 Basic 학습 문서: **31개**
+- 제거한 Problems 폴더: **2개**
+- 통합한 문제 문서: **7개**
+- 독립 고급 주제 신규 추가: **0개**
 
-## 확인된 수업 범위
+## 주요 확인 사항
 
-HTML 기본 태그·목록·표·링크·이미지·폼, CSS 선택자·박스·display·배경·투명도·글꼴·position·overflow·float·shadow·transition·transform·flex·media query, JavaScript 변수·연산자·조건문·반복문·배열·Date·함수·문자열·DOM·이벤트·폼·비동기·JSON·AJAX·지도·Gemini·Discord, Python hello·변수/연산·문자열·list/range·tuple.
+1. CSS 레이아웃 문제는 `CSS_Display.md`에 통합했다.
+2. JavaScript 배열·DOM·이벤트·반복문·조건문·문자열 문제는 각각 대응하는 개념 문서에 통합했다.
+3. 모든 Basic 문서는 학습 목표, WHY, 실수, 실습, Check Point, 면접 질문, 복습 기록을 포함한다.
+4. 기존 코드 예제와 문제 풀이 내용은 삭제하지 않고 보존했다.
+5. 별도 문제 풀이 비교 문서는 안내 문서로 축소하고 실제 비교 내용은 개념 문서에서 확인하도록 변경했다.
 
-## 확장 원칙
+## 남은 업데이트 방식
 
-수업 코드에 설명이 부족한 부분은 같은 범위 안에서 동작 원리, 비교 예제, 실무 연결, 주의사항을 보강했다. CSS Display는 block, inline, inline-block, none의 차이를 실행 가능한 비교 예제로 확장했다.
-
-## 제외 및 제한
-
-- BACKUP 문서의 BOM 등 미학습 심화 내용
-- CSS Grid 독립 문서
-- localStorage 독립 문서
-- 정규표현식 독립 심화 문서
-- React 등 후속 기술 설명
-
-단, `dataset`처럼 실제 수업 문제 코드에서 사용된 개념은 해당 문제 이해에 필요한 최소 범위에서만 언급했다.
-
-## 문제 주석 탐색
-
-`// 문제`, `//문제1-1`, 여러 줄 `/* ... 문제 ... */`, HTML title의 문제 표기를 기준으로 탐색했다. 문제 풀이가 확인된 연산자, 조건문, 반복문, 배열, 문자열, DOM, 이벤트·폼을 별도 문서로 정리했다.
+새 수업 자료가 추가되면 해당 개념 문서에 직접 통합하고, 새로운 Problems 폴더는 만들지 않는다.
