@@ -1,121 +1,180 @@
-# 📚 Developer-Wiki v4.1
+# 📚 Developer-Wiki
 
-> 국비교육 수업 내용을 기반으로 만든 개인 개발 교재이자 복습용 기술 위키
+<p align="center">
+  <strong>수업을 다시 재생할 수 있는 개인 개발 교재</strong><br>
+  개념 → 이유 → 예제 → 문제 → 비교 → 복습까지 한 문서에서 이어집니다.
+</p>
 
-## 프로젝트 목표
+<p align="center">
+  <img src="./assets/learning-map.svg" alt="Developer-Wiki GitHub-style learning contribution map" width="100%">
+</p>
 
-Developer-Wiki는 단순한 문법 요약집이 아니다. 수업이 끝난 뒤에도 문서를 읽으며 **왜 배우는지 → 어떻게 동작하는지 → 어디에서 실수하는지 → 문제를 어떻게 푸는지**를 다시 따라갈 수 있도록 구성한다.
+> [!NOTE]
+> 이 맵은 출석률이나 실제 공부 시간을 의미하지 않습니다. 현재 Developer-Wiki에 존재하는 **31개 학습 문서**를 GitHub Contribution 형태로 시각화한 정적 학습 맵입니다. 새 수업 문서가 추가되면 잠금 칸이 활성 칸으로 바뀝니다.
+
+## 🔥 Continue Learning
+
+| 현재 단계 | 문서 | 상태 |
+|---|---|---|
+| Python 기초 | [Python List와 range](./Python/Basic/Python_List_Range.md) | 진행 중 |
+| 다음 복습 | [JavaScript DOM](./Frontend/JavaScript/Basic/JS_DOM.md) | 7일 복습 권장 |
+| 다음 과정 | 데이터 파이프라인·탐색 분석 | 🔒 문서 작성 전 |
+
+## 🧭 Learning Table of Contents
+
+아래 목차에서 **파란색 문서명은 실제 Markdown 파일로 연결**됩니다. 아직 수업하지 않았거나 Developer-Wiki 문서가 작성되지 않은 항목은 `🔒` 상태이며 링크가 없습니다.
+
+### 🌐 Frontend
+
+<details open>
+<summary><strong>HTML</strong> · 5 documents · ✅ Documented</summary>
+
+- [HTML 문서 구조](./Frontend/HTML/Basic/HTML_Document_Structure.md)
+- [HTML 태그와 속성](./Frontend/HTML/Basic/HTML_Tag_Attribute.md)
+- [HTML 목록과 표](./Frontend/HTML/Basic/HTML_List_Table.md)
+- [HTML 링크·경로·이미지](./Frontend/HTML/Basic/HTML_Link_Path_Image.md)
+- [HTML Form](./Frontend/HTML/Basic/HTML_Form.md)
+
+</details>
+
+<details open>
+<summary><strong>CSS</strong> · 10 documents · ✅ Documented</summary>
+
+- [CSS 선택자](./Frontend/CSS/Basic/CSS_Selector.md)
+- [CSS Font](./Frontend/CSS/Basic/CSS_Font.md)
+- [CSS Box Model](./Frontend/CSS/Basic/CSS_Box_Model.md)
+- [CSS Display](./Frontend/CSS/Basic/CSS_Display.md)
+- [CSS Position과 Overflow](./Frontend/CSS/Basic/CSS_Position_Overflow.md)
+- [CSS Flexbox](./Frontend/CSS/Basic/CSS_Flexbox.md)
+- [CSS Float와 Shadow](./Frontend/CSS/Basic/CSS_Float_Shadow.md)
+- [CSS Background와 Opacity](./Frontend/CSS/Basic/CSS_Background_Opacity.md)
+- [CSS Transition과 Transform](./Frontend/CSS/Basic/CSS_Transition_Transform.md)
+- [CSS Media Query](./Frontend/CSS/Basic/CSS_Media_Query.md)
+
+</details>
+
+<details open>
+<summary><strong>JavaScript</strong> · 11 documents · ✅ Documented</summary>
+
+- [변수와 자료형](./Frontend/JavaScript/Basic/JS_Variable_Type.md)
+- [연산자와 조건문](./Frontend/JavaScript/Basic/JS_Operator_Condition.md)
+- [반복문](./Frontend/JavaScript/Basic/JS_Loop.md)
+- [함수와 화살표 함수](./Frontend/JavaScript/Basic/JS_Function_Arrow.md)
+- [문자열](./Frontend/JavaScript/Basic/JS_String.md)
+- [배열](./Frontend/JavaScript/Basic/JS_Array.md)
+- [날짜 객체](./Frontend/JavaScript/Basic/JS_Date.md)
+- [DOM](./Frontend/JavaScript/Basic/JS_DOM.md)
+- [이벤트와 Form](./Frontend/JavaScript/Basic/JS_Event_Form.md)
+- [비동기·JSON·AJAX](./Frontend/JavaScript/Basic/JS_Async_JSON_AJAX.md)
+- [외부 API](./Frontend/JavaScript/Basic/JS_External_API.md)
+
+</details>
+
+### 🐍 Python
+
+<details open>
+<summary><strong>Python Basic</strong> · 5 documents · 🔥 Learning</summary>
+
+- [Hello Python](./Python/Basic/Python_Hello.md)
+- [변수와 연산자](./Python/Basic/Python_Variable_Operator.md)
+- [문자열](./Python/Basic/Python_String.md)
+- [List와 range](./Python/Basic/Python_List_Range.md)
+- [Tuple](./Python/Basic/Python_Tuple.md)
+
+</details>
+
+## 🔒 Upcoming Curriculum
+
+아래 항목은 업로드한 26주 시간표의 교육 흐름을 참고해 배치했습니다. 아직 Developer-Wiki에 대응하는 Markdown 문서가 없으므로 링크를 걸지 않았습니다.
+
+<details>
+<summary><strong>Data & Storage</strong> · 예정</summary>
+
+- 🔒 Python 데이터 파이프라인·탐색 분석
+- 🔒 RDB 설계
+- 🔒 문서 데이터베이스
+- 🔒 Vector Database
+
+</details>
+
+<details>
+<summary><strong>AI Service Backend</strong> · 예정</summary>
+
+- 🔒 FastAPI
+- 🔒 Django
+- 🔒 AI 서비스 API 레이어
+- 🔒 인증·예외·배포 기초
+
+</details>
+
+<details>
+<summary><strong>RAG & AI Agent</strong> · 예정</summary>
+
+- 🔒 Embedding과 검색
+- 🔒 RAG Architecture
+- 🔒 RAG Project
+- 🔒 Tool Calling
+- 🔒 AI Agent
+- 🔒 Agent Project
+
+</details>
+
+<details>
+<summary><strong>Quality & Final Project</strong> · 예정</summary>
+
+- 🔒 책임 있는 AI·보안 컴플라이언스
+- 🔒 품질보증·배포·운영관리
+- 🔒 개인화 추천·매칭 엔진
+- 🔒 최종 프로젝트와 포트폴리오
+
+</details>
 
 > [!IMPORTANT]
-> 내용 범위는 기존 v3와 수업 자료를 기준으로 유지한다. 배우지 않은 기술을 문서 수를 늘리기 위해 추가하지 않는다.
+> 예정 항목은 수업을 진행하고 관련 문서를 실제로 작성한 뒤에만 링크로 전환합니다. 빈 파일이나 임시 링크를 만들어 진행된 것처럼 표시하지 않습니다.
 
-## 자료 적용 우선순위
+## 📊 Progress by Track
 
-1. `workspace_teacher`: 강사 수업 범위와 강사 풀이
-2. `workspace`: 개인 실습과 개인 풀이
-3. 기존 Developer-Wiki: 이미 정리된 설명
-4. BACKUP: 문서 형식과 설명 밀도만 참고
+| Track | Documents | Progress |
+|---|---:|---|
+| HTML | 5 | `██████████` Documented |
+| CSS | 10 | `██████████` Documented |
+| JavaScript | 11 | `██████████` Documented |
+| Python Basic | 5 | `██████░░░░` Learning |
+| Data & Storage | 0 | `░░░░░░░░░░` Locked |
+| Backend | 0 | `░░░░░░░░░░` Locked |
+| RAG & Agent | 0 | `░░░░░░░░░░` Locked |
 
-## v4.1에서 달라진 점
+## 🧩 How the Roadmap Works
 
-- 별도 `Problems` 폴더를 제거했다.
-- 문제와 풀이를 관련 개념 문서 하단에 통합했다.
-- 모든 학습 문서에 난이도, 예상 시간, 이전·다음 학습 정보를 추가했다.
-- `왜 배우는가`, 자주 하는 실수, 직접 해보기, Check Point, 면접 질문을 추가했다.
-- 당일·1일·7일·30일 복습 기록표를 추가했다.
-- 한 문서에서 개념 학습부터 문제 풀이와 복습까지 끝낼 수 있도록 재구성했다.
+1. 수업을 진행한다.
+2. 해당 내용을 기존 문서에 통합하거나 새 Markdown 문서로 작성한다.
+3. 문서가 자체 검수를 통과하면 이 목차의 잠금을 해제한다.
+4. 목차 항목에 실제 상대 링크를 연결한다.
+5. `learning-map.svg`의 잠금 칸을 활성 칸으로 갱신한다.
 
-## 학습 로드맵
+이 방식에서는 **문서의 존재 여부가 진행 상태의 기준**입니다. PDF 시간표는 전체 교육 순서를 알려주는 참고 자료이고, 메인 화면의 활성화 여부는 Developer-Wiki의 실제 파일을 기준으로 결정합니다.
 
-```text
-HTML 문서 구조와 태그
-        ↓
-CSS 선택자와 박스 모델
-        ↓
-CSS display · position · flex · 반응형
-        ↓
-JavaScript 변수 · 조건문 · 반복문 · 함수
-        ↓
-JavaScript 문자열 · 배열 · 날짜
-        ↓
-DOM · 이벤트 · 폼
-        ↓
-JSON · AJAX · 외부 API
-        ↓
-Python 기초 문법과 자료형
-```
-
-## 폴더 구조
-
-```text
-Developer-Wiki/
-├── Frontend/
-│   ├── HTML/
-│   │   └── Basic/
-│   ├── CSS/
-│   │   └── Basic/
-│   └── JavaScript/
-│       └── Basic/
-├── Python/
-│   └── Basic/
-├── Comparisons/
-├── README.md
-├── AUDIT_REPORT.md
-├── CHANGELOG.md
-├── VERSION.md
-└── COMMIT_MESSAGES.md
-```
-
-## 문서 읽는 방법
+## 📖 Documentation Guide
 
 | 표시 | 의미 |
 |---|---|
-| 📌 / IMPORTANT | 반드시 이해해야 하는 핵심 |
-| 💡 / TIP | 사용 이유와 학습 팁 |
-| ⚠️ / WARNING | 자주 하는 실수와 주의사항 |
-| 🧪 직접 해보기 | 값을 바꾸며 실행하는 실습 |
-| ✅ Check Point | 다음 문서로 넘어가기 전 확인 |
-| 🏫 수업 문제 | 수업에서 다룬 문제와 풀이 과정 |
+| ✅ Documented | 문서가 작성되어 링크로 이동할 수 있음 |
+| 🔥 Learning | 현재 학습하거나 복습 중인 문서 |
+| 🔒 Locked | 아직 문서가 없어 이동할 수 없음 |
+| 💡 WHY | 개념이 필요한 이유 |
+| ⚠️ Common Mistake | 자주 발생하는 실수 |
+| ✅ Check Point | 다음 학습 전 이해도 확인 |
 
-## 문서 학습 순서
+## 🛠 Project Manual
 
-1. 문서 상단에서 학습 목표와 `왜 배우는가`를 읽는다.
-2. 개념과 예제를 직접 실행한다.
-3. 코드를 조금씩 바꾸고 결과를 예상한다.
-4. 수업 문제는 풀이를 보기 전에 먼저 작성한다.
-5. 강사 풀이·개인 풀이·개선점을 비교한다.
-6. Check Point와 면접 질문에 말로 답한다.
-7. 복습 기록표를 사용해 다시 확인한다.
-
-## 작성 원칙
-
-- 수업 범위를 벗어나지 않는다.
-- 정답보다 생각 과정을 먼저 설명한다.
-- 코드 한 줄에도 필요한 이유를 적는다.
-- 용어 나열보다 실행 흐름을 설명한다.
-- 실무 연결은 현재 수업으로 이해할 수 있는 수준까지만 다룬다.
-- 문제는 개념과 분리하지 않는다.
-
-## 권장 학습 방법
-
-문서를 읽는 것만으로 끝내지 않는다. 예제를 직접 작성하고, 값 하나를 변경하고, 오류도 일부러 만들어 본다. 학습한 내용을 말로 설명할 수 있어야 실제로 이해한 것이다.
-
-## 버전
-
-현재 버전은 **v4.1 (2026-07-27)**이다. 자세한 변경 내용은 `CHANGELOG.md`와 `AUDIT_REPORT.md`에서 확인한다.
-
+- 수업 범위를 벗어난 주제를 문서 수를 늘리기 위해 추가하지 않습니다.
+- 문제는 별도 `Problems` 폴더로 분리하지 않고 관련 개념 문서에 통합합니다.
+- 각 문서는 개념, 이유, 예제, 수업 문제, 풀이 비교, Check Point, 면접 질문, 복습 기록을 포함합니다.
+- 검수 결과는 [AUDIT_REPORT.md](./AUDIT_REPORT.md)에서 확인할 수 있습니다.
+- 변경 내역은 [CHANGELOG.md](./CHANGELOG.md), 버전은 [VERSION.md](./VERSION.md)에서 관리합니다.
 
 ---
 
-## v4.1 자체 검수 기준
-
-배포 ZIP을 만들기 전에 다음 항목을 자동·수동으로 확인한다.
-
-- `Problems` 이름의 폴더와 파일이 0개인지 검사
-- 모든 Basic 문서에 WHY, TIP, IMPORTANT, WARNING, 수업 메모가 있는지 검사
-- 모든 Basic 문서에 학습 목표, Check Point, 면접 질문, 요약, 복습 기록이 있는지 검사
-- Markdown 상대 링크의 대상 파일이 실제로 존재하는지 검사
-- 빈 문서와 중복 파일명이 없는지 검사
-- ZIP을 다시 열어 압축 무결성을 검사
-
-검수 결과는 [`AUDIT_REPORT.md`](AUDIT_REPORT.md)에 기록한다.
+<p align="center">
+  <strong>Read → Code → Compare → Review → Repeat</strong>
+</p>

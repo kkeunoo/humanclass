@@ -1,13 +1,11 @@
 # VERSION
 
-- 현재 버전: **v4.1**
-- 기준 날짜: **2026-07-27**
-- 상태: QA 완료 배포본
+## Current Version
 
-## 핵심 변화
+**Developer-Wiki v4.2 — GitHub Learning Roadmap Edition**
 
-- Problems 폴더 완전 제거 및 재검증
-- 모든 Basic 문서에 주제별 WHY·TIP·IMPORTANT·WARNING·수업 메모 적용
-- 공통 Header/Footer와 복습 요소 누락 검사
-- README와 파트별 학습 가이드 갱신
-- 상대 링크 및 ZIP 무결성 자체 검수
+- Release date: 2026-07-27
+- Base: v4.1 quality-assured documents
+- Main change: GitHub-style learning map and link-aware curriculum table of contents
+- Link rule: only existing, reviewed Markdown documents are linked
+- Future lessons: displayed as locked text without placeholder links
