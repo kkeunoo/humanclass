@@ -1,12 +1,27 @@
 # Python 학습 가이드
 
-Python 파트는 아래 순서대로 학습한다. 각 문서는 개념, 예제, 문제 풀이, 실수 사례와 복습 항목을 포함한다.
+> [!IMPORTANT]
+> 이 폴더에는 별도 `Problems` 디렉터리가 없다. 수업 문제와 해설은 관련 개념 문서 안에서 함께 학습한다.
+
+## 학습 방법
+
+1. 문서 상단의 학습 목표와 **WHY**를 먼저 읽는다.
+2. 예제 실행 결과를 예상한 뒤 직접 실행한다.
+3. **실무 TIP**, **반드시 기억하기**, **자주 하는 실수**를 확인한다.
+4. 통합된 수업 문제를 먼저 스스로 풀고 해설과 비교한다.
+5. Check Point와 복습 기록을 완료한다.
+
+## 권장 학습 순서
 
 1. [Python_Hello](Basic/Python_Hello.md)
-2. [Python_List_Range](Basic/Python_List_Range.md)
+2. [Python_Variable_Operator](Basic/Python_Variable_Operator.md)
 3. [Python_String](Basic/Python_String.md)
-4. [Python_Tuple](Basic/Python_Tuple.md)
-5. [Python_Variable_Operator](Basic/Python_Variable_Operator.md)
+4. [Python_List_Range](Basic/Python_List_Range.md)
+5. [Python_Tuple](Basic/Python_Tuple.md)
 
-> [!TIP]
-> 문서를 읽은 뒤 Check Point에 답하지 못하면 다음 문서로 넘어가기 전에 예제를 다시 실행한다.
+## v4.1 품질 기준
+
+- 모든 Basic 문서에 WHY, TIP, IMPORTANT, WARNING, 수업 메모 포함
+- 모든 Basic 문서에 Check Point, 면접 질문, 요약, 복습 기록 포함
+- Problems 폴더 0개 유지
+- 수업 범위를 넘어서는 독립 심화 문서 추가 금지

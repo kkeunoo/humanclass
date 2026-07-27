@@ -1,4 +1,4 @@
-# 📚 Developer-Wiki v4
+# 📚 Developer-Wiki v4.1
 
 > 국비교육 수업 내용을 기반으로 만든 개인 개발 교재이자 복습용 기술 위키
 
@@ -16,7 +16,7 @@ Developer-Wiki는 단순한 문법 요약집이 아니다. 수업이 끝난 뒤�
 3. 기존 Developer-Wiki: 이미 정리된 설명
 4. BACKUP: 문서 형식과 설명 밀도만 참고
 
-## v4에서 달라진 점
+## v4.1에서 달라진 점
 
 - 별도 `Problems` 폴더를 제거했다.
 - 문제와 풀이를 관련 개념 문서 하단에 통합했다.
@@ -102,4 +102,20 @@ Developer-Wiki/
 
 ## 버전
 
-현재 버전은 **v4.0.0 (2026-07-27)**이다. 자세한 변경 내용은 `CHANGELOG.md`와 `AUDIT_REPORT.md`에서 확인한다.
+현재 버전은 **v4.1 (2026-07-27)**이다. 자세한 변경 내용은 `CHANGELOG.md`와 `AUDIT_REPORT.md`에서 확인한다.
+
+
+---
+
+## v4.1 자체 검수 기준
+
+배포 ZIP을 만들기 전에 다음 항목을 자동·수동으로 확인한다.
+
+- `Problems` 이름의 폴더와 파일이 0개인지 검사
+- 모든 Basic 문서에 WHY, TIP, IMPORTANT, WARNING, 수업 메모가 있는지 검사
+- 모든 Basic 문서에 학습 목표, Check Point, 면접 질문, 요약, 복습 기록이 있는지 검사
+- Markdown 상대 링크의 대상 파일이 실제로 존재하는지 검사
+- 빈 문서와 중복 파일명이 없는지 검사
+- ZIP을 다시 열어 압축 무결성을 검사
+
+검수 결과는 [`AUDIT_REPORT.md`](AUDIT_REPORT.md)에 기록한다.

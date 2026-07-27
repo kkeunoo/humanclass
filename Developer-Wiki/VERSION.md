@@ -1,10 +1,13 @@
 # VERSION
 
-- Version: **4.0.0**
-- Release date: **2026-07-27**
-- Base: Developer-Wiki v3
-- Status: Active
+- 현재 버전: **v4.1**
+- 기준 날짜: **2026-07-27**
+- 상태: QA 완료 배포본
 
-## 버전 목표
+## 핵심 변화
 
-수업 범위를 유지하면서 모든 문서를 교재형 구조로 개편하고, 별도 문제 문서를 관련 개념 문서에 통합한다.
+- Problems 폴더 완전 제거 및 재검증
+- 모든 Basic 문서에 주제별 WHY·TIP·IMPORTANT·WARNING·수업 메모 적용
+- 공통 Header/Footer와 복습 요소 누락 검사
+- README와 파트별 학습 가이드 갱신
+- 상대 링크 및 ZIP 무결성 자체 검수

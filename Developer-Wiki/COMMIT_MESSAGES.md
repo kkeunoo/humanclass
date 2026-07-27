@@ -1,12 +1,13 @@
 # COMMIT MESSAGE
 
 ```text
-0727_DeveloperWiki_1.수업범위 기반 교재형 문서개편과 문제풀이 통합완료
+0727_DeveloperWiki_1.v4.1_전체문서 품질검수와 Problems 완전통합완료
 ```
 
 ## 포함 내용
 
-- Developer-Wiki v4 문서 구조 적용
-- Problems 폴더 제거 및 개념 문서 통합
-- WHY, 실수 사례, Check Point, 면접 질문, 복습 기록 추가
-- README와 학습 로드맵 개편
+- 전체 Problems 폴더 제거 상태 검증
+- 모든 학습 문서 WHY·TIP·IMPORTANT·WARNING 보강
+- 문서별 실수 사례와 수업 메모 추가
+- 공통 Header/Footer 및 복습 요소 검수
+- README·CHANGELOG·VERSION·AUDIT_REPORT 갱신
