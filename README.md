@@ -89,8 +89,12 @@ Developer-Wiki는 단순한 코드 설명 문서가 아니라, **학습 과정 �
 
 ------------------------------------------------------------------------
 
-::: {align="center"}
-**Developer-Wiki**
+<div align="center">
 
-*Learn • Compare • Improve • Archive*
-:::
+## 📚 Developer-Wiki
+
+**Learn • Compare • Improve • Archive**
+
+Made with ❤️ while learning Software Engineering.
+
+</div>
