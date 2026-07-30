@@ -85,10 +85,22 @@ AI · Software Engineering 과정을 학습하며 작성한 실습 코드와 학
 humanclass/
 ├── README.md
 ├── Developer-Wiki/
+│   ├── 01_HTML/
+│   ├── 02_CSS/
+│   ├── 03_JavaScript/
+│   └── 04_Python/
 ├── workspace_html/
-├── workspace_python/
-└── workspace_teacher/
+└── workspace_python/
 ```
+
+| Folder | Description | Link |
+|:--|:--|:--:|
+| `Developer-Wiki/` | HTML · CSS · JavaScript · Python의 개념, 예제, 코드 비교, 문제 풀이를 정리한 학습 문서 | [Open Wiki](./Developer-Wiki/README.md) |
+| `workspace_html/` | HTML · CSS · JavaScript 수업 실습 코드와 과제 및 평가 자료를 관리하는 작업 공간 | [Open Frontend Workspace](./workspace_html/) |
+| `workspace_python/` | Python 문법 실습 코드와 Quiz 문제를 관리하는 작업 공간 | [Open Python Workspace](./workspace_python/) |
+
+> `Developer-Wiki`는 학습 내용을 문서화하는 공간이며,  
+> `workspace_html`과 `workspace_python`은 실제 실습 코드를 작성하고 관리하는 공간입니다.
 
 ---
 
