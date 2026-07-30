@@ -187,13 +187,13 @@ window.addEventListener('load', function() {
         빨간 글씨가 나오게 (단, 아이디/비밀번호를 쓰고 로그인을 누르면 빨간 글씨 지우기)
     */
     const login = document.querySelector('#login')
-    
     login.addEventListener('click', function(){
         const id1 = document.querySelector('.id1')
         const pw1 = document.querySelector('.pw1')
         const errChk = document.querySelector('.errChk')
         // console.log(errChk)
         
+        // if(id1.trim().length == 0) { 으로도 사용할 수 있다.
         if(id1.value.trim() == '') {
             errChk.innerText = '아이디를 입력하세요'
             // style은 css에 주고나서, Attribute를 줘서 적용시키는게 좋음
@@ -341,8 +341,6 @@ window.addEventListener('load', function() {
     console.log(itemSet)
     let textKeep = ''
 
-    
-
     // click했을 때 'true'라는것을 주기 전에 다 제거해서
     // 없애준 뒤에 click한 값만 'true;'라는걸 다시 줌
 
@@ -473,18 +471,34 @@ window.addEventListener('load', function() {
 
         const chkBox = document.querySelectorAll('.deleteChk')
         console.log('chkBox', chkBox)
-        for(let j=0; j<chkBox.length; j++) {
-            chkBox[j].addEventListener('click', function() {
-                if(chkBox[j].checked == false) {
+        // let cnt = 0
+        // for(let j=0; j<chkBox.length; j++) {
+        //     if(chkBox[j].checked) {
+        //         cnt++
+        //     } else if(!chkBox[j].checked){
+        //         cnt--
+        //     }
+
+        //     if(cnt == chkBox.length) {
+        //         allChk.checked = true
+        //     } else {
+        //         allChk.checked = false
+        //     }
+
+        chkBox[j].addEventListener('click', function() {
+            if(chkBox[j].checked) {
+                allChk.checked = false
+            } 
+            for(let i=0; i<chkBox.length; i++) {
+                if(chkBox[i].checked == false) {
                     allChk.checked = false
                 } 
-                // for(let i=0; i<chkBox.length; i++) {
-                //     if(chkBox[i].checked == false) {
-                //         allChk.checked = false
-                //     } 
-                // }
-            })
-        }
+            }
+        })
+        // chkBox[i].checked = allChk.checked
+
+        
+        // }
         // 다 선택이 되었을 때 전체선택이 가능해지게 하려면,
         // 전체 배열을 가져와서 체크개수를 확인해보아야 함
 
