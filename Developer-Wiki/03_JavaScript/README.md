@@ -9,7 +9,7 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-22_Documents-F7DF1E?style=flat-square&logo=javascript&logoColor=000000)
 ![Status](https://img.shields.io/badge/Status-Complete-success?style=flat-square)
 
-[🎨 Previous: CSS](../02_CSS/) · [🏠 Wiki Home](../) · 🐍 Python 예정
+[🎨 Previous: CSS](../02_CSS/) · [🏠 Wiki Home](../) · [🐍 Next: Python](../04_Python/)
 
 </div>
 
@@ -137,7 +137,7 @@ Review      문제, 정답, 체크리스트로 복습
 
 | Previous | Home | Next |
 |:--|:--:|--:|
-| [🎨 CSS Documentation](../02_CSS/) | [📚 Developer-Wiki](../) | 🐍 Python Documentation · 예정 |
+| [🎨 CSS Documentation](../02_CSS/) | [📚 Developer-Wiki](../) | [🐍 Python Documentation](../04_Python/) |
 
 ---
 

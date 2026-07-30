@@ -72,10 +72,10 @@ AI · Software Engineering 과정을 학습하며 작성한 실습 코드와 학
 
 | Subject | Link |
 |:--|:--|
-| HTML | `Developer-Wiki/01_HTML` |
-| CSS | `Developer-Wiki/02_CSS` |
-| JavaScript | `Developer-Wiki/03_JavaScript` |
-| Python | `Developer-Wiki/04_Python` |
+| HTML | [Open HTML](./Developer-Wiki/01_HTML/README.md) |
+| CSS | [Open CSS](./Developer-Wiki/02_CSS/README.md) |
+| JavaScript | [Open JavaScript](./Developer-Wiki/03_JavaScript/README.md) |
+| Python | [Open Python](./Developer-Wiki/04_Python/README.md) |
 
 ---
 
