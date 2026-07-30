@@ -68,3 +68,49 @@ print( g )
 a = 'hello'
 print( list(a) ) # ['h', 'e', 'l', 'l', 'o']
 print( set(a) ) # {'o', 'e', 'l', 'h'} , 중복은 제거하지만 순서는 중요하지 않음 (jason key값이 set으로 관리되기 때문에 중복 없음)
+
+b = {
+    '이름': '홍길동',
+    '직업': '도적',
+    '스킬': {
+        '공격': '훔치기',
+        '방어': '도망가기',
+        'javascript': '중'
+    }
+}
+# update(키='값') 으로 바로 변경할 수 있고, 없으면 만들어 넣어 줌
+b.update(이름='타이거', 직업='호랑이')
+b.update(이름='타이거', 직업='호랑이', 나이='30')
+print(b)
+
+# pop을 사용하면 key는 없애고 해당 index에 있던 value를 반환받음
+c = b.pop('나이') 
+print(b)
+print(c)
+# c = b.pop('나이') # 없으면 에러 발생 KeyError: '나이'
+c = b.pop('나이', 0) #  없으면 두 번째 값을 사용
+print(c)
+# c = b.pop() # TypeError: pop expected at least 1 argument, got 0 , 적어도 1개의 전달인자 필요
+c = b.popitem() # popitem으로 임의의 키-값 쌍으로 삭제할 수 있음
+print(c)
+print(b)
+
+a = ['a', 'b', 'c']
+b = {
+    'a' : 0, 
+    'b' : 0, 
+    'c' : 0, 
+}
+b = {}
+b[a[0]] = 0
+b[a[1]] = 0
+
+c = dict.fromkeys(a)
+print(c)
+
+for i in c : 
+    print(i)
+    print(c[i])
+
+for key, value in c.items() :
+    print(key, value)
