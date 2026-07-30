@@ -50,7 +50,7 @@ print( i.find('z') ) # indexOf와 동일하게 값이 없을 때 -1 반환
 print( i.index('l') )
 # print( i.index('z') ) # index는 없으면 err msg가 나옴, ValueError: substring not found
 
-print( i.rfind('l') ) # rear 뒤에서부터 indexOf
+print( i.rfind('l') ) # right 우측부터 indexOf
 
 print( i.replace('l','w') ) # replace는 모두 바꿔줌
 
@@ -60,3 +60,45 @@ print(k)
 
 m = [1,2,3]
 a,b,c = m
+
+a = ['a','b','c','d','e']
+b = '-'.join(a) # b = '-'.join(map(str, a))
+'-'.join( str(data) for data in a )
+
+print(b)
+c = b.split('-')
+print(c)
+
+# 대소문자 구분 없이 검색할 때 upper,lower를 주로 사용 함
+a = "Don't Look Back is Anger"
+b = a.find('back')
+print(b)
+
+c = a.upper()
+print(c)
+
+d = a.upper().find('back'.upper())
+print(d)
+
+# strip을 사용하면 양 쪽 공백을 제거해 줌
+a = '   a b   '
+print(a.strip())
+print(a.strip().replace(' ',''))
+
+# zfill을 사용하면 앞에 '0'을 추가할 수 있음
+# 모자르면 채워주고, 자리수가 넘으면 그대로 둠
+print('35'.zfill(4))
+print('35000'.zfill(4))
+
+a = 7
+print( f'{a:03}' ) # 007
+print( f'..{a:3}..' ) # ..  7.. [3자리로 만들어줌]
+print( f'..{a:<3}..' ) # ..7  .. [좌측에 정렬]
+print( f'..{a:>3}..' ) # ..  7.. [우측에 정렬]
+print( f'..{a:^10}..' ) # ..    7     .. [가운데 정렬]
+
+a = 3.14
+print( f'{a:08.3f}' ) # 0003.140
+
+a = 15000
+print( f'{a:,}' ) # 15,000 [3자리마다 , 찍어줌]
