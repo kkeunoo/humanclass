@@ -1,100 +1,134 @@
-# 📚 AI Software Engineering Workspace
 
-> AI Software Engineering 학습 과정에서 작성한 실습 코드와 개발 문서를
-> 함께 관리하는 저장소입니다.
+# 📚 HumanClass
 
-------------------------------------------------------------------------
+### Learn · Compare · Improve · Archive
 
-## 📖 About
+AI · Software Engineering 과정을 학습하며 작성한 실습 코드와 학습 내용을  
+**실습하고, 비교하고, 개선하고, 기록하는 개발 학습 저장소**
 
-이 저장소는 학습 과정에서 작성한 **실습 코드**, **프로젝트**, 그리고
-**학습 내용을 정리한 개발 문서**를 함께 관리하기 위해 만들어졌습니다.
+![HTML](https://img.shields.io/badge/HTML5-Learning-E34F26?logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS3-Learning-1572B6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-Learning-F7DF1E?logo=javascript&logoColor=black)
+![Python](https://img.shields.io/badge/Python-Learning-3776AB?logo=python&logoColor=white)
+![Git](https://img.shields.io/badge/Git-Version_Control-F05032?logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github&logoColor=white)
+![Markdown](https://img.shields.io/badge/Markdown-Documentation-000000?logo=markdown&logoColor=white)
 
-코드만 보관하는 것이 아니라, 학습 과정과 개선 내용을 기록하여 지속적으로
-성장할 수 있는 개인 개발 아카이브를 목표로 합니다.
+---
 
-------------------------------------------------------------------------
+## ✨ About
+
+**HumanClass**는 수업 실습 코드와 Developer-Wiki를 함께 관리하는 개인 학습 저장소입니다.
+
+- 💻 실습 코드 관리
+- 🔍 강사 코드와 비교 및 개선
+- 📝 Markdown 기반 문서화
+- 🚀 지속적인 학습 아카이브
+
+---
+
+## 📌 Repository Highlights
+
+| Feature | Description |
+|---|---|
+| 📚 Documentation | HTML · CSS · JavaScript · Python 학습 문서 |
+| 💻 Practice | 언어별 실습 코드 관리 |
+| 🔍 Review | 내 코드와 강사 코드 비교 |
+| 📝 Wiki | 개념 · 예제 · 문제풀이 정리 |
+| 🚀 Growth | 지속적인 업데이트 |
+
+---
+
+## 📊 Current Progress
+
+| Subject | Documents | Status |
+|:--|--:|:--:|
+| HTML | 8 | ✅ |
+| CSS | 15 | ✅ |
+| JavaScript | 22 | ✅ |
+| Python | 12 | ✅ |
+| **Total** | **57** | **Complete** |
+
+---
+
+## 🗺 Learning Roadmap
+
+| ✅ Completed | 🚧 Next | 🌱 Future |
+|:--|:--|:--|
+| HTML | Java | Spring Framework |
+| CSS | Database | Spring Boot |
+| JavaScript | JSP | React |
+| Python |  | AI Agent |
+|  |  | Team Project |
+|  |  | Portfolio |
+
+---
+
+## 📖 Developer-Wiki
+
+| 📖 Learn | 🔍 Compare | 🚀 Improve | 📝 Archive |
+|:--:|:--:|:--:|:--:|
+| 개념 학습 | 코드 비교 | 리팩터링 | Markdown 문서화 |
+
+| Subject | Link |
+|:--|:--|
+| HTML | `Developer-Wiki/01_HTML` |
+| CSS | `Developer-Wiki/02_CSS` |
+| JavaScript | `Developer-Wiki/03_JavaScript` |
+| Python | `Developer-Wiki/04_Python` |
+
+---
 
 ## 📂 Repository Structure
 
-  -----------------------------------------------------------------------------------
-  Folder                                    Description
-  ----------------------------------------- -----------------------------------------
-  📁 [workspace_html](./workspace_html/)    HTML · CSS · JavaScript 실습 코드 및
-                                            프로젝트
+```text
+humanclass/
+├── README.md
+├── Developer-Wiki/
+├── workspace_html/
+├── workspace_python/
+└── workspace_teacher/
+```
 
-  🐍                                        Python 실습 코드 및 예제
-  [workspace_python](./workspace_python/)   
-
-  📚 [Developer-Wiki](./Developer-Wiki/)    학습 내용을 정리한 개발 문서(Wiki)
-
-  💾 `BACKUP`                               백업 파일 보관용 디렉터리
-  -----------------------------------------------------------------------------------
-
-------------------------------------------------------------------------
-
-## 📚 Developer-Wiki
-
-Developer-Wiki는 단순한 코드 설명 문서가 아니라, **학습 과정 전체를
-기록하는 개발 Wiki**입니다.
-
-현재 문서화된 내용
-
--   📄 HTML
--   🎨 CSS
--   ⚡ JavaScript
--   🐍 Python *(작성 중)*
-
-각 문서는 다음과 같은 형식으로 구성됩니다.
-
--   학습 목표
--   핵심 개념 정리
--   문법 및 예제
--   실습 코드
--   내 코드 vs 강사 코드 비교
--   개선 사항
--   자주 하는 실수
--   복습 문제 및 해설
--   핵심 요약
-
-➡️ **[Developer-Wiki 바로가기](./Developer-Wiki/)**
-
-------------------------------------------------------------------------
-
-## 🎯 Goals
-
--   실습 코드와 학습 문서를 함께 관리
--   학습 과정을 체계적으로 기록
--   강사 코드와 비교하며 개선점 분석
--   반복 학습이 가능한 개인 개발 Wiki 구축
--   지속적으로 확장 가능한 개발 아카이브 유지
-
-------------------------------------------------------------------------
+---
 
 ## 🛠 Tech Stack
 
--   HTML5
--   CSS3
--   JavaScript (ES6+)
--   Python *(Learning)*
--   Git & GitHub
+### Frontend
 
-------------------------------------------------------------------------
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 
-## 📌 Repository Policy
+### Programming
 
--   실습 코드는 각 언어별 Workspace에서 관리합니다.
--   학습 내용은 Developer-Wiki에 문서화합니다.
--   백업 파일은 BACKUP 폴더에서 별도로 관리합니다.
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 
-------------------------------------------------------------------------
+### Tools
 
-<div align="center">
+![Visual Studio Code](https://img.shields.io/badge/VS_Code-007ACC?logo=visualstudiocode&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
+![Markdown](https://img.shields.io/badge/Markdown-000000?logo=markdown&logoColor=white)
 
-## 📚 Developer-Wiki
+---
 
-**Learn • Compare • Improve • Archive**
+## 🚀 Future Roadmap
 
-Made with ❤️ while learning Software Engineering.
+- [ ] Java
+- [ ] Database
+- [ ] JSP / Servlet
+- [ ] Spring Framework
+- [ ] Spring Boot
+- [ ] React
+- [ ] AI Agent
+- [ ] Team Project
+- [ ] Portfolio
 
-</div>
+---
+
+## 📚 Keep Learning.
+
+### Keep Building. Keep Improving.
+
+**HumanClass Developer Repository**
