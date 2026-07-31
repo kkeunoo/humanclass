@@ -97,3 +97,14 @@ for i in range(100) :
         print('Buzz!')
     else :
         print(i)
+
+a = 20
+i = 0
+while i < 10 :
+    if i == a :
+        print('찾음')
+        break
+    i += 1
+else :
+    print('못찾음')
+# while의 else는 break를 만나지 않고 조건식에 의해 종료되는 경우 else문 실행 됨

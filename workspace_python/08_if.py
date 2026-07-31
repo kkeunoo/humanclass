@@ -87,3 +87,6 @@ match a :
         print('여름')
     case _ :
         print('그 외')
+
+# 값이 3 > 2 이면 3 출력, 아니라면 2 출력
+print( 3 if 3 > 2 else 2)
