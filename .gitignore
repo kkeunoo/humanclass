@@ -2,3 +2,10 @@
 BACKUP/
 
 **/a.webp
+# 과제 및 평가 제출 문서
+workspace_html/과제 및 평가/01*.pdf
+workspace_html/과제 및 평가/01*.png
+workspace_html/과제 및 평가/01*.zip
+workspace_html/과제 및 평가/02*.pdf
+workspace_html/과제 및 평가/02*.png
+workspace_html/과제 및 평가/02*.zip
