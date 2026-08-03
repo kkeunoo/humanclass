@@ -182,7 +182,7 @@ print('-'*30)
 #     f.write(str(list(a)))
 #     print(f.read())
 
-a = [1,2,3,4,5]
-print(a)
-print(b)
+# a = [1,2,3,4,5]
+# print(a)
+# print(b)
 
