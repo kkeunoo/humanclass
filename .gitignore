@@ -9,3 +9,12 @@ workspace_html/과제 및 평가/01*.zip
 workspace_html/과제 및 평가/02*.pdf
 workspace_html/과제 및 평가/02*.png
 workspace_html/과제 및 평가/02*.zip
+
+# Python 문서 ignore
+workspace_python/exam/99_order.txt
+workspace_python/exam/99_try.py
+workspace_python/exam/991_try.py
+workspace_python/Wiki_test.py
+
+workspace_python/__pycache_*
+workspace_python/fn/__pycache*
