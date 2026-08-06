@@ -1,3 +1,10 @@
+---
+title: Python 문자열과 포매팅
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # Python 문자열과 포매팅
 
 ## 문서 정보
@@ -6,184 +13,153 @@
 | --- | --- |
 | 문서 | `03_Python_문자열과_포매팅.md` |
 | 분류 | `04_Python` |
-| 권장 선수 학습 | `00-01_Python_실행방식과_프로그래밍_패러다임.md`, `00-02_Python_오류와_예외.md`, `01_Python_출력과_주석.md`, `02_Python_변수와_자료형_연산자.md` |
-| 다음 학습 | `04_Python_리스트.md` |
 | 원본 기준 | `workspace_python/03_string.py`, `workspace_teacher/workspace_python/_03_string.py` |
-| 핵심 범위 | 문자열 생성, 이스케이프 문자, 문자열 연결, 포매팅, 길이와 검색, 치환, 분리와 결합, 대소문자 변환, 공백 제거, 숫자 형식 지정 |
+| 핵심 범위 | 문자열 생성, 이스케이프, 문자열 연결, f-string, `format()`, `%` 포매팅, 문자열 메서드, 분리·결합, 대소문자, 공백 제거, 숫자·정렬 포맷 |
+| 실습 범위 | 온도 메시지, HTML 문자열, 문자열 검색, 치환, 목록 결합, 검색 정규화, 숫자 표시 |
+| 문서 형식 | Python Developer-Wiki V2 확정 형식 |
 
-> 이 문서는 내 코드의 `03_string.py`와 강사님 코드의 `_03_string.py`를 직접 비교해 작성했습니다. 두 파일은 문자열 생성부터 문자열 포매팅, 검색, 치환, 분리와 결합, 정렬과 숫자 출력 형식까지 다룹니다.
+> 이 문서는 내 코드와 강사님 코드 전체를 한 번에 나열하지 않는다.  
+> 문자열 생성·출력·검색·변환·포매팅에 필요한 코드만 발췌하고, 실행 결과와 사용 목적을 함께 설명한다.
+
+---
+
+# 개요
+
+문자열은 이름, 이메일, 게시글 제목, 상품 설명처럼 문자로 이루어진 데이터를 표현한다.
+
+```text
+사용자 이름
+상품명
+주소
+메시지
+HTML 코드
+로그 내용
+    ↓
+문자열로 저장
+```
+
+문자열을 다룰 때는 단순히 값을 저장하는 것뿐 아니라 다음 작업이 필요하다.
+
+```text
+문자열 만들기
+    ↓
+값 삽입하기
+    ↓
+길이 확인하기
+    ↓
+검색·치환하기
+    ↓
+분리·결합하기
+    ↓
+공백·대소문자 정리하기
+    ↓
+출력 형식 맞추기
+```
+
+> [!IMPORTANT]
+> 문자열은 사용자 입력, 파일 내용, 웹 데이터, 데이터베이스 값에서 계속 만나게 되는 핵심 자료형이다.
+
+---
+
+# 핵심 개념
+
+| 개념 | 핵심 역할 |
+| --- | --- |
+| 문자열 | 문자 데이터를 저장하는 자료형 |
+| 이스케이프 문자 | 따옴표·줄바꿈 등 특수 문자를 표현 |
+| 문자열 연결 | 여러 문자열을 하나로 결합 |
+| f-string | 문자열 안에 변수와 표현식을 삽입 |
+| `format()` | 위치 또는 이름을 이용한 문자열 포매팅 |
+| `%` 포매팅 | 오래된 문자열 포매팅 방식 |
+| 문자열 메서드 | 검색·치환·분리·결합·정리 기능 |
+| `len()` | 문자열 길이 반환 |
+| `find()` | 일치 위치 반환, 없으면 `-1` |
+| `index()` | 일치 위치 반환, 없으면 예외 |
+| `split()` | 문자열을 목록으로 분리 |
+| `join()` | 문자열 목록을 하나로 결합 |
+| 포맷 지정자 | 자리수·정렬·소수점·천 단위 형식 지정 |
 
 ---
 
 # 학습 목표
 
+이 문서를 학습한 뒤 다음 내용을 설명하고 작성할 수 있어야 한다.
+
 - 작은따옴표와 큰따옴표로 문자열을 만들 수 있다.
-- 따옴표 3개로 여러 줄 문자열을 작성할 수 있다.
-- 이스케이프 문자를 사용해 따옴표와 특수 문자를 표현할 수 있다.
+- 여러 줄 문자열을 작성할 수 있다.
+- 이스케이프 문자로 따옴표를 표현할 수 있다.
 - 문자열과 숫자를 연결할 때 형 변환이 필요한 이유를 설명할 수 있다.
-- 문자열 연결, f-string, `str.format()`, `%` 포매팅의 차이를 구분할 수 있다.
+- f-string으로 변수값을 문자열에 삽입할 수 있다.
+- `format()`과 `%` 포매팅의 기본 사용법을 이해한다.
 - `len()`, `count()`, `find()`, `index()`, `rfind()`를 사용할 수 있다.
-- `replace()`, `split()`, `join()`의 역할을 설명할 수 있다.
-- 문자열이 변경 불가능한 객체라는 의미를 이해한다.
-- `upper()`, `lower()`를 이용해 대소문자를 정규화할 수 있다.
-- `strip()`으로 양쪽 공백을 제거할 수 있다.
-- `zfill()`과 f-string 형식 지정자를 사용할 수 있다.
-- 내 코드와 강사님 코드의 차이 및 개선점을 설명할 수 있다.
+- `replace()`, `split()`, `join()`을 사용할 수 있다.
+- 문자열은 변경 불가능한 자료형이라는 점을 이해한다.
+- `upper()`, `lower()`, `strip()`, `zfill()`을 사용할 수 있다.
+- f-string 포맷 지정자로 정렬과 자리수를 조절할 수 있다.
+- 실수의 소수점 자리와 천 단위 구분 기호를 출력할 수 있다.
 
 ---
 
-# 1. 원본 코드 범위
+# 1. 작은따옴표와 큰따옴표
 
-두 원본은 다음 흐름으로 구성되어 있습니다.
-
-```text
-작은따옴표와 큰따옴표
-→ 여러 줄 문자열
-→ 따옴표 이스케이프
-→ 문자열과 숫자 연결
-→ f-string
-→ str.format()
-→ % 포매팅
-→ 문자열 길이
-→ 문자 개수와 위치 검색
-→ 문자열 치환
-→ split()과 구조 분해 대입
-→ join()과 split()
-→ 대소문자 변환 후 검색
-→ strip()
-→ zfill()
-→ f-string 정렬과 숫자 형식
-```
-
-내 코드는 강사님 코드에 비해 각 메서드의 동작과 JavaScript의 `indexOf()`를 연결한 주석을 더 많이 포함합니다.
-
----
-
-# 2. 문자열이란?
-
-문자열은 문자들이 순서대로 연결된 자료형입니다.
-
-```python
-name = "Python"
-message = "문자열 학습"
-```
-
-Python에서 문자열 자료형은 `str`입니다.
-
-```python
-print(type("hello"))
-```
-
-출력:
-
-```text
-<class 'str'>
-```
-
-문자열은 이름, 문장, 파일 경로, HTML 코드, 사용자 입력 등 다양한 텍스트 데이터를 표현할 때 사용합니다.
-
----
-
-# 3. 작은따옴표와 큰따옴표
-
-공통 원본:
+## 1-1. 내 코드
 
 ```python
 a = 'hello'
 b = "world"
 ```
 
-강사님 코드에는 `world`가 다음처럼 작성되어 있습니다.
+## 1-2. 강사님 코드
 
 ```python
+a = 'hello'
 b = "wolrd"
 ```
 
-이는 문자열 문법의 차이가 아니라 단순한 철자 차이입니다.
+강사님 코드의 `"wolrd"`는 `"world"`의 오타로 보인다. 문자열 문법에는 문제가 없지만 실제 값은 의도와 다르다.
 
-Python에서는 작은따옴표와 큰따옴표 모두 문자열을 생성합니다.
+## 1-3. 실행
 
 ```python
-single = 'hello'
-double = "hello"
+a = "hello"
+b = "world"
 
-print(single == double)
+print(a)
+print(b)
 ```
 
-출력:
+## 1-4. 출력 결과
 
 ```text
-True
+hello
+world
 ```
 
-두 방식의 자료형과 값은 같습니다. 프로젝트에서는 한 가지 스타일을 일관되게 사용하는 편이 좋습니다.
-
----
-
-# 4. 문자열 내부의 따옴표
-
-문자열 바깥과 다른 종류의 따옴표를 사용하면 내부 따옴표를 그대로 작성할 수 있습니다.
-
-```python
-message1 = "He's a developer"
-message2 = '그는 "Python"을 공부합니다.'
-```
-
-바깥과 같은 따옴표를 내부에 넣어야 한다면 이스케이프 문자를 사용할 수 있습니다.
-
-원본 예제:
-
-```python
-'he\'s name is \"민수\"'
-```
-
-조금 더 자연스럽게 작성하면 다음과 같습니다.
-
-```python
-message = 'His name is "민수".'
-```
-
-또는:
-
-```python
-message = "His name is \"민수\"."
-```
-
----
-
-# 5. 이스케이프 문자
-
-역슬래시 `\` 뒤에 특정 문자를 작성하면 문자열 안에서 특별한 의미를 표현할 수 있습니다.
-
-| 표현 | 의미 |
+| 요소 | 의미 |
 | --- | --- |
-| `\'` | 작은따옴표 |
-| `\"` | 큰따옴표 |
-| `\\` | 역슬래시 |
-| `\n` | 줄바꿈 |
-| `\t` | 탭 |
-| `\r` | 캐리지 리턴 |
+| `a`, `b` | 문자열을 저장하는 변수 |
+| `'hello'` | 작은따옴표 문자열 |
+| `"world"` | 큰따옴표 문자열 |
 
-예제:
-
-```python
-print("첫 번째 줄\n두 번째 줄")
-print("이름\t나이")
-```
-
-출력:
-
-```text
-첫 번째 줄
-두 번째 줄
-이름    나이
-```
+> [!TIP]
+> 작은따옴표와 큰따옴표는 같은 문자열을 만들 수 있다. 프로젝트 안에서는 한 가지 스타일을 정해 일관되게 사용하는 것이 좋다.
 
 ---
 
-# 6. 여러 줄 문자열
+# 2. 여러 줄 문자열
 
-공통 원본:
+## 2-1. 내 코드
+
+```python
+c = '''여기에
+여러 줄
+넣을 수 있다'''
+
+d = """여러 줄
+쌉 가능"""
+```
+
+## 2-2. 강사님 코드
 
 ```python
 c = '''여기에
@@ -194,7 +170,7 @@ d = """여러 줄
 가능"""
 ```
 
-따옴표 3개를 사용하면 줄바꿈을 포함한 문자열을 만들 수 있습니다.
+## 2-3. 실행
 
 ```python
 message = """첫 번째 줄
@@ -204,7 +180,7 @@ message = """첫 번째 줄
 print(message)
 ```
 
-출력:
+## 2-4. 출력 결과
 
 ```text
 첫 번째 줄
@@ -212,826 +188,515 @@ print(message)
 세 번째 줄
 ```
 
-HTML이나 SQL처럼 여러 줄의 텍스트를 변수에 저장할 때 유용합니다.
+> [!IMPORTANT]
+> 따옴표 3개는 실제 여러 줄 주석 문법이 아니라 여러 줄 문자열이다. 함수나 클래스의 첫 문장에 놓이면 Docstring으로 사용될 수 있다.
 
 ---
 
-# 7. 여러 줄 문자열과 주석의 차이
+# 3. 이스케이프 문자
 
-강사님 원본에는 다음 코드가 있습니다.
-
-```python
-'''
-여러줄
-주석으로 사용됨
-'''
-```
-
-내 코드에도 변수에 넣지 않은 여러 줄 문자열을 주석처럼 사용할 수 있다는 설명이 있습니다.
-
-하지만 따옴표 3개는 문법적으로 여러 줄 주석이 아니라 **문자열 리터럴**입니다.
+## 3-1. 원본 코드
 
 ```python
-"""
-이 내용도 문자열입니다.
-"""
+text = 'he\'s name is "name"'
 ```
 
-코드 어디에도 저장하지 않으면 결과가 사용되지 않아 주석처럼 보일 수 있습니다. 그러나 Python의 실제 주석 문법은 `#`입니다.
+## 3-2. 실행
 
 ```python
-# 이것이 Python의 한 줄 주석입니다.
+text = 'He\'s name is "Min-su".'
+
+print(text)
 ```
 
-함수, 클래스, 모듈의 첫 문자열은 문서 문자열인 docstring으로 사용될 수 있습니다.
+## 3-3. 출력 결과
 
-```python
-def greet():
-    """인사말을 출력하는 함수입니다."""
-    print("안녕하세요")
+```text
+He's name is "Min-su".
 ```
 
-정리하면 다음과 같습니다.
-
-| 형태 | 실제 의미 |
+| 표현 | 의미 |
 | --- | --- |
-| `# 설명` | 주석 |
-| 변수에 저장한 `'''...'''` | 여러 줄 문자열 |
-| 함수·클래스·모듈 첫 문자열 | docstring |
-| 그 외 단독 문자열 | 실행 중 만들어졌다가 사용되지 않는 문자열 객체 |
+| `\'` | 작은따옴표 문자 |
+| `\"` | 큰따옴표 문자 |
+| `\\` | 백슬래시 문자 |
+| `\n` | 줄바꿈 |
+| `\t` | 탭 |
 
 ---
 
-# 8. Raw String
+# 4. 문자열과 숫자 연결 오류
 
-원본에는 직접 등장하지 않지만 이스케이프 문자와 연결되는 보충 개념입니다.
-
-문자열 앞에 `r`을 붙이면 역슬래시를 대부분 일반 문자처럼 처리합니다.
+## 4-1. 오류 예제
 
 ```python
-path = r"C:\new_folder\test"
-print(path)
+temperature = 32.5
+message = "지금 온도는 " + temperature + "도 입니다."
 ```
 
-출력:
+## 4-2. 발생 결과
 
 ```text
-C:\new_folder\test
+TypeError
 ```
 
-정규 표현식이나 Windows 경로를 표현할 때 자주 사용합니다.
+문자열과 실수는 `+`로 바로 연결할 수 없다.
 
-단, raw string도 마지막이 홀수 개의 역슬래시로 끝날 수는 없습니다.
-
-```python
-# 잘못된 예
-# path = r"C:\folder\"
-```
-
----
-
-# 9. 문자열과 숫자 연결
-
-공통 원본:
-
-```python
-b = 32.5
-c = "지금 온도는 " + str(b) + "도 입니다."
-print(c)
-```
-
-출력:
-
-```text
-지금 온도는 32.5도 입니다.
-```
-
-문자열과 실수를 `+`로 바로 연결할 수는 없습니다.
+## 4-3. `str()`로 변환
 
 ```python
 temperature = 32.5
 
-# TypeError 발생
-# message = "현재 온도는 " + temperature
+message = (
+    "지금 온도는 "
+    + str(temperature)
+    + "도 입니다."
+)
+
+print(message)
 ```
 
-예외:
-
-```text
-TypeError: can only concatenate str (not "float") to str
-```
-
-연결하려면 숫자를 문자열로 변환해야 합니다.
-
-```python
-message = "현재 온도는 " + str(temperature) + "도입니다."
-```
-
----
-
-# 10. 문자열 연결 연산자 `+`
-
-`+`는 문자열을 이어 붙입니다.
-
-```python
-first = "Hello"
-second = "Python"
-
-print(first + " " + second)
-```
-
-출력:
-
-```text
-Hello Python
-```
-
-짧은 문자열 몇 개를 연결할 때는 간단하지만, 변수와 문장이 많아지면 f-string이 더 읽기 쉽습니다.
-
----
-
-# 11. 문자열 반복 연산자 `*`
-
-원본에는 직접 등장하지 않지만 문자열의 기본 연산으로 함께 알아두면 좋습니다.
-
-```python
-print("-" * 10)
-print("Python " * 3)
-```
-
-출력:
-
-```text
-----------
-Python Python Python 
-```
-
-구분선이나 반복 패턴을 만들 때 사용할 수 있습니다.
-
----
-
-# 12. f-string
-
-공통 원본:
-
-```python
-d = f"지금 온도는 {b}도 입니다."
-print(d)
-```
-
-출력:
+## 4-4. 출력 결과
 
 ```text
 지금 온도는 32.5도 입니다.
 ```
 
-문자열 앞에 `f`를 붙이고 `{}` 안에 변수나 표현식을 작성합니다.
+---
+
+# 5. f-string
+
+## 5-1. 내 코드
 
 ```python
-name = "민수"
-age = 20
+temperature = 32.5
+message = f"지금 온도는 {temperature}도 입니다."
 
-print(f"{name}의 나이는 {age}세입니다.")
+print(message)
 ```
 
-f-string은 JavaScript의 백틱 문자열과 비슷한 역할을 하지만, Python에서는 백틱이 아니라 문자열 앞의 `f`와 중괄호를 사용합니다.
+## 5-2. 강사님 코드
+
+```python
+temperature = 32.5
+message = f"지금 온도는 {temperature}도 입니다"
+
+print(message)
+```
+
+## 5-3. 출력 결과
 
 ```text
-Python      f"값: {value}"
-JavaScript  `값: ${value}`
+지금 온도는 32.5도 입니다.
 ```
 
-내 코드 주석의 `fomentic`은 일반적인 Python 용어가 아닙니다. 정확한 명칭은 **formatted string literal**, 줄여서 **f-string**입니다.
+| 코드 | 사용하는 이유 |
+| --- | --- |
+| `f"..."` | f-string 시작 |
+| `{temperature}` | 변수값 삽입 |
+| `message` | 완성된 문자열 저장 |
+
+> [!TIP]
+> 현재 Python 코드에서는 문자열 포매팅에 f-string을 가장 먼저 고려하는 경우가 많다.
 
 ---
 
-# 13. f-string 내부 표현식
-
-중괄호 안에는 단순 변수뿐 아니라 표현식도 사용할 수 있습니다.
+# 6. f-string 안의 표현식
 
 ```python
-x = 10
-y = 20
+unit_price = 45000
+quantity = 2
 
-print(f"합계: {x + y}")
-print(f"큰 값: {max(x, y)}")
+message = (
+    f"총 금액은 "
+    f"{unit_price * quantity:,}원입니다."
+)
+
+print(message)
+```
+
+## 6-1. 출력 결과
+
+```text
+총 금액은 90,000원입니다.
+```
+
+메서드 호출도 가능하다.
+
+```python
+user_name = "kim"
+
+print(f"사용자: {user_name.upper()}")
 ```
 
 출력:
 
 ```text
-합계: 30
-큰 값: 20
-```
-
-복잡한 로직을 중괄호 안에 길게 작성하면 가독성이 낮아지므로, 복잡한 계산은 먼저 변수에 저장하는 편이 좋습니다.
-
----
-
-# 14. 여러 줄 f-string
-
-공통 원본:
-
-```python
-f = f'''
-<div>
-    지금 온도는 {b}도 입니다
-</div>
-'''
-```
-
-내 코드는 이어서 출력합니다.
-
-```python
-print(f)
-```
-
-강사님 코드는 문자열을 변수 `f`에 저장하지만 `print(f)`는 작성하지 않습니다. 따라서 강사님 코드를 그대로 실행하면 HTML 형태의 문자열은 화면에 출력되지 않습니다.
-
-여러 줄 f-string은 HTML 템플릿이나 긴 메시지를 만들 때 사용할 수 있습니다.
-
-```python
-name = "Python"
-content = f"""
-<section>
-    <h1>{name}</h1>
-</section>
-"""
+사용자: KIM
 ```
 
 ---
 
-# 15. `str.format()`
+# 7. `format()` 메서드
 
-공통 원본:
+## 7-1. 내 코드와 강사님 코드
 
 ```python
-e = "지금 온도는 {0}도 입니다".format(b)
-print(e)
+temperature = 32.5
+
+message = (
+    "지금 온도는 {0}도 입니다"
+    .format(temperature)
+)
+
+print(message)
 ```
 
-`{0}`은 `format()`에 전달한 첫 번째 값을 의미합니다.
+## 7-2. 출력 결과
+
+```text
+지금 온도는 32.5도 입니다
+```
+
+여러 값도 넣을 수 있다.
 
 ```python
-name = "민수"
-age = 20
+message = (
+    "{0}님의 점수는 {1}점입니다."
+    .format("Kim", 95)
+)
 
-message = "이름: {0}, 나이: {1}".format(name, age)
 print(message)
 ```
 
 출력:
 
 ```text
-이름: 민수, 나이: 20
+Kim님의 점수는 95점입니다.
 ```
-
-이름을 붙여 사용할 수도 있습니다.
-
-```python
-message = "이름: {name}, 나이: {age}".format(
-    name="민수",
-    age=20
-)
-```
-
-현대 Python에서는 일반적으로 f-string이 더 간결하지만, 기존 코드를 읽기 위해 `format()`도 이해해야 합니다.
 
 ---
 
-# 16. `%` 문자열 포매팅
-
-공통 원본:
+# 8. 여러 줄 f-string
 
 ```python
-g = '지금 온도는 %d도 입니다' % b
-print(g)
+temperature = 32.5
 
-h = '지금 온도는 %f도 입니다' % b
-print(h)
+html = f'''
+<div>
+    지금 온도는 {temperature}도 입니다
+</div>
+'''
+
+print(html)
 ```
 
-`%d`는 정수 형식으로 출력합니다.
+## 8-1. 출력 결과
+
+```text
+
+<div>
+    지금 온도는 32.5도 입니다
+</div>
+```
+
+여러 줄 메시지, HTML 템플릿, SQL 문장 등에 활용할 수 있다.
+
+> [!WARNING]
+> 사용자 입력을 SQL 문장에 직접 삽입하면 위험하다. 데이터베이스에서는 문자열 포매팅 대신 파라미터 바인딩을 사용한다.
+
+---
+
+# 9. `%` 문자열 포매팅
+
+## 9-1. 정수 형식 `%d`
+
+```python
+temperature = 32.5
+
+message = (
+    "지금 온도는 %d도 입니다"
+    % temperature
+)
+
+print(message)
+```
+
+출력:
 
 ```text
 지금 온도는 32도 입니다
 ```
 
-`%f`는 실수 형식으로 출력합니다.
+## 9-2. 실수 형식 `%f`
+
+```python
+temperature = 32.5
+
+message = (
+    "지금 온도는 %f도 입니다"
+    % temperature
+)
+
+print(message)
+```
+
+출력:
 
 ```text
 지금 온도는 32.500000도 입니다
 ```
 
-대표적인 형식 문자는 다음과 같습니다.
-
-| 형식 | 의미 |
+| 기호 | 의미 |
 | --- | --- |
 | `%s` | 문자열 |
 | `%d` | 정수 |
 | `%f` | 실수 |
 
-여러 값을 넣을 때는 튜플을 사용합니다.
-
-```python
-name = "민수"
-age = 20
-
-print("이름: %s, 나이: %d" % (name, age))
-```
-
-`%` 포매팅은 오래된 코드에서 자주 볼 수 있지만 새 코드에서는 f-string이 더 선호됩니다.
+> [!TIP]
+> `%` 포매팅은 기존 코드에서 볼 수 있으므로 읽는 법은 알아두되, 새 코드에서는 f-string을 우선 고려한다.
 
 ---
 
-# 17. 문자열 포매팅 비교
+# 10. 문자열 포매팅 방식 비교
 
-같은 내용을 네 가지 방식으로 작성할 수 있습니다.
-
-```python
-name = "민수"
-age = 20
-```
-
-문자열 연결:
-
-```python
-message = "이름은 " + name + "이고 나이는 " + str(age) + "세입니다."
-```
-
-`%` 포매팅:
-
-```python
-message = "이름은 %s이고 나이는 %d세입니다." % (name, age)
-```
-
-`str.format()`:
-
-```python
-message = "이름은 {}이고 나이는 {}세입니다.".format(name, age)
-```
-
-f-string:
-
-```python
-message = f"이름은 {name}이고 나이는 {age}세입니다."
-```
-
-| 방식 | 특징 |
-| --- | --- |
-| 문자열 연결 | 간단하지만 형 변환과 `+`가 많아질 수 있음 |
-| `%` 포매팅 | 오래된 코드에서 자주 보임 |
-| `str.format()` | 위치·이름 기반 포매팅 가능 |
-| f-string | 현대 Python에서 가장 간결하고 읽기 쉬움 |
+| 방식 | 예시 | 특징 |
+| --- | --- | --- |
+| 문자열 연결 | `"온도: " + str(value)` | 형 변환을 직접 해야 함 |
+| `%` 포매팅 | `"온도: %f" % value` | 오래된 코드에서 자주 보임 |
+| `format()` | `"온도: {}".format(value)` | 위치·이름 지정 가능 |
+| f-string | `f"온도: {value}"` | 간결하고 값 위치가 명확함 |
 
 ---
 
-# 18. 문자열은 시퀀스
-
-문자열은 문자가 순서대로 저장된 시퀀스입니다.
+# 11. `len()`으로 문자열 길이 확인
 
 ```python
-text = "Python"
+text = "_hello"
 
-print(text[0])
-print(text[1])
-print(text[-1])
+print(len(text))
 ```
 
-출력:
-
-```text
-P
-y
-n
-```
-
-인덱스는 0부터 시작하며 음수 인덱스는 뒤에서부터 접근합니다.
-
-```text
-문자    P  y  t  h  o  n
-인덱스  0  1  2  3  4  5
-음수   -6 -5 -4 -3 -2 -1
-```
-
----
-
-# 19. 문자열 슬라이싱
-
-문자열 일부를 잘라 새 문자열을 만들 수 있습니다.
-
-```python
-text = "Python"
-
-print(text[0:3])
-print(text[2:])
-print(text[:4])
-print(text[::-1])
-```
-
-출력:
-
-```text
-Pyt
-thon
-Pyth
-nohtyP
-```
-
-기본 형식:
-
-```python
-문자열[start:stop:step]
-```
-
-`stop` 위치는 결과에 포함되지 않습니다.
-
----
-
-# 20. 문자열의 불변성
-
-문자열은 생성된 뒤 내부 문자를 직접 변경할 수 없는 immutable 객체입니다.
-
-```python
-text = "hello"
-
-# TypeError 발생
-# text[0] = "H"
-```
-
-예외:
-
-```text
-TypeError: 'str' object does not support item assignment
-```
-
-문자열을 바꾸려면 새로운 문자열을 만들어 다시 대입해야 합니다.
-
-```python
-text = "hello"
-text = "H" + text[1:]
-
-print(text)
-```
-
-출력:
-
-```text
-Hello
-```
-
-`replace()`, `upper()`, `strip()` 등의 메서드도 원본 문자열을 직접 변경하지 않고 새로운 문자열을 반환합니다.
-
----
-
-# 21. `len()` 문자열 길이
-
-공통 원본:
-
-```python
-i = '_hello'
-print(len(i))
-```
-
-출력:
+## 11-1. 출력 결과
 
 ```text
 6
 ```
 
-`len()`은 문자열에 포함된 문자의 개수를 반환합니다.
-
-```python
-print(len("Python"))
-print(len("안녕하세요"))
-print(len("a b"))
-```
-
-출력:
-
-```text
-6
-5
-3
-```
-
-공백도 하나의 문자로 계산됩니다.
+`_`, `h`, `e`, `l`, `l`, `o` 총 6글자다.
 
 ---
 
-# 22. `count()` 문자 개수 세기
-
-공통 원본:
+# 12. `count()`
 
 ```python
-print(i.count('l'))
+text = "_hello"
+
+print(text.count("l"))
 ```
 
-`i`가 `_hello`이므로 출력은 다음과 같습니다.
+## 12-1. 출력 결과
 
 ```text
 2
 ```
 
-부분 문자열의 등장 횟수도 셀 수 있습니다.
+문자열도 셀 수 있다.
 
 ```python
-text = "banana"
-
-print(text.count("a"))
-print(text.count("an"))
+print("banana".count("an"))
 ```
 
 출력:
 
 ```text
-3
 2
 ```
 
 ---
 
-# 23. `find()` 위치 찾기
-
-공통 원본:
+# 13. `find()`
 
 ```python
-print(i.find('l'))
-print(i.find('z'))
+text = "_hello"
+
+print(text.find("l"))
+print(text.find("z"))
 ```
 
-출력:
+## 13-1. 출력 결과
 
 ```text
 3
 -1
 ```
 
-`find()`는 처음 발견한 부분 문자열의 시작 인덱스를 반환합니다. 찾지 못하면 `-1`을 반환합니다.
-
-```python
-text = "hello"
-
-position = text.find("l")
-
-if position != -1:
-    print(f"찾은 위치: {position}")
+```text
+_ h e l l o
+0 1 2 3 4 5
 ```
 
-내 코드와 강사님 코드 모두 JavaScript의 `indexOf()`와 연결해 설명합니다. 찾지 못했을 때 `-1`을 반환한다는 점이 비슷합니다.
+`find()`는 값이 없으면 `-1`을 반환한다.
 
 ---
 
-# 24. `index()` 위치 찾기
-
-공통 원본:
+# 14. `index()`
 
 ```python
-print(i.index('l'))
-# print(i.index('z'))
+text = "_hello"
+
+print(text.index("l"))
 ```
 
-찾는 값이 존재하면 `find()`와 같은 인덱스를 반환합니다.
+## 14-1. 출력 결과
 
 ```text
 3
 ```
 
-하지만 값이 없으면 `ValueError`가 발생합니다.
-
-```python
-"hello".index("z")
-```
-
-예외:
+없는 값을 찾으면 다음 예외가 발생한다.
 
 ```text
 ValueError: substring not found
 ```
 
----
-
-# 25. `find()`와 `index()` 비교
-
-| 메서드 | 찾은 경우 | 찾지 못한 경우 |
+| 메서드 | 찾았을 때 | 없을 때 |
 | --- | --- | --- |
-| `find()` | 인덱스 반환 | `-1` 반환 |
-| `index()` | 인덱스 반환 | `ValueError` 발생 |
-
-존재 여부를 조건문으로 확인하려면 `find()`를 사용할 수 있습니다.
-
-```python
-if text.find("Python") != -1:
-    print("포함되어 있습니다.")
-```
-
-단순히 포함 여부만 확인할 때는 `in` 연산자가 더 읽기 쉽습니다.
-
-```python
-if "Python" in text:
-    print("포함되어 있습니다.")
-```
-
-찾지 못한 상황 자체가 비정상 상태라면 `index()`가 적합할 수 있습니다.
+| `find()` | 인덱스 반환 | `-1` |
+| `index()` | 인덱스 반환 | `ValueError` |
 
 ---
 
-# 26. `rfind()` 오른쪽 기준 검색
-
-공통 원본:
+# 15. `rfind()`
 
 ```python
-print(i.rfind('l'))
+text = "_hello"
+
+print(text.rfind("l"))
 ```
 
-`_hello`에서 마지막 `l`의 인덱스는 4입니다.
+## 15-1. 출력 결과
 
 ```text
 4
 ```
 
-`rfind()`는 문자열의 오른쪽에서부터 검색하지만 반환하는 값은 원래 문자열 기준의 인덱스입니다.
-
-```python
-text = "banana"
-print(text.rfind("a"))
-```
-
-출력:
-
-```text
-5
-```
+`find()`는 첫 번째 위치, `rfind()`는 마지막 위치를 반환한다.
 
 ---
 
-# 27. 문자열 포함 여부 `in`
-
-원본에는 직접 등장하지 않지만 검색과 함께 사용하는 핵심 문법입니다.
+# 16. `replace()`
 
 ```python
-text = "Python String"
+text = "_hello"
 
-print("String" in text)
-print("Java" in text)
-print("Java" not in text)
+result = text.replace(
+    "l",
+    "w",
+)
+
+print(result)
 ```
 
-출력:
-
-```text
-True
-False
-True
-```
-
-위치가 필요하지 않고 포함 여부만 확인한다면 `find()`보다 의도가 분명합니다.
-
----
-
-# 28. `replace()` 문자열 치환
-
-공통 원본:
-
-```python
-print(i.replace('l', 'w'))
-```
-
-출력:
+## 16-1. 출력 결과
 
 ```text
 _hewwo
 ```
 
-기본적으로 일치하는 모든 부분 문자열을 바꿉니다.
+교체 횟수를 제한할 수도 있다.
 
 ```python
-text = "banana"
-print(text.replace("a", "o"))
+result = text.replace(
+    "l",
+    "w",
+    1,
+)
+
+print(result)
 ```
+
+출력:
 
 ```text
-bonono
-```
-
-치환 횟수를 제한할 수도 있습니다.
-
-```python
-text = "banana"
-print(text.replace("a", "o", 1))
-```
-
-```text
-bonana
-```
-
-내 코드의 주석에 있는 “하나만 바꾸고 싶으면”이라는 질문에는 `replace(old, new, count)`의 세 번째 인수로 답할 수 있습니다.
-
-```python
-j = "그럼 저기서 하나만 바꾸고 싶으면요?"
-result = j.replace("요", "다", 1)
+_hewlo
 ```
 
 ---
 
-# 29. `replace()`는 원본을 변경하지 않는다
+# 17. 문자열은 변경 불가능하다
 
 ```python
 text = "hello"
-text.replace("h", "H")
+
+changed_text = text.replace(
+    "h",
+    "H",
+)
 
 print(text)
+print(changed_text)
 ```
 
-출력:
+## 17-1. 출력 결과
 
 ```text
 hello
-```
-
-문자열은 불변 객체이므로 반환값을 다시 저장해야 합니다.
-
-```python
-text = text.replace("h", "H")
-print(text)
-```
-
-```text
 Hello
 ```
 
+문자열 메서드는 기존 문자열을 직접 변경하지 않고 새 문자열을 반환한다.
+
 ---
 
-# 30. `split()` 문자열 분리
-
-공통 원본:
+# 18. `split()`
 
 ```python
-j = '그럼 저기서 하나만 바꾸고 싶으면요?'
-k = j.split()
-print(k)
+sentence = (
+    "그럼 저기서 하나만 "
+    "바꾸고 싶으면요?"
+)
+
+words = sentence.split()
+
+print(words)
 ```
 
-인수를 생략하면 연속된 공백을 기준으로 문자열을 나눕니다.
-
-출력:
+## 18-1. 출력 결과
 
 ```text
 ['그럼', '저기서', '하나만', '바꾸고', '싶으면요?']
 ```
 
-구분자를 직접 지정할 수도 있습니다.
+특정 구분자를 사용할 수도 있다.
 
 ```python
-data = "apple,banana,peach"
-items = data.split(",")
+date = "2026-08-06"
 
-print(items)
+print(date.split("-"))
 ```
 
 출력:
 
 ```text
-['apple', 'banana', 'peach']
+['2026', '08', '06']
 ```
 
 ---
 
-# 31. `split()`의 최대 분리 횟수
-
-두 번째 인수로 최대 분리 횟수를 지정할 수 있습니다.
+# 19. 리스트 언패킹
 
 ```python
-data = "2026-07-30-python"
-print(data.split("-", 2))
+numbers = [1, 2, 3]
+
+first, second, third = numbers
+
+print(first)
+print(second)
+print(third)
 ```
 
-출력:
-
-```text
-['2026', '07', '30-python']
-```
-
-파일 형식이나 앞부분의 고정된 필드를 분리할 때 유용합니다.
-
----
-
-# 32. 구조 분해 대입
-
-공통 원본:
-
-```python
-m = [1, 2, 3]
-a, b, c = m
-```
-
-오른쪽 시퀀스의 각 요소를 왼쪽 변수에 순서대로 대입합니다.
-
-```python
-print(a)
-print(b)
-print(c)
-```
+## 19-1. 출력 결과
 
 ```text
 1
@@ -1039,101 +704,46 @@ print(c)
 3
 ```
 
-변수 개수와 요소 개수가 맞지 않으면 `ValueError`가 발생합니다.
-
-```python
-# ValueError
-# a, b = [1, 2, 3]
-```
-
-```text
-ValueError: too many values to unpack
-```
-
-나머지 값을 `*`로 받을 수 있습니다.
-
-```python
-first, *rest = [1, 2, 3, 4]
-
-print(first)
-print(rest)
-```
-
-```text
-1
-[2, 3, 4]
-```
+변수 개수와 값 개수가 다르면 `ValueError`가 발생한다.
 
 ---
 
-# 33. `join()` 문자열 결합
-
-공통 원본:
+# 20. `join()`
 
 ```python
-a = ['a', 'b', 'c', 'd', 'e']
-b = '-'.join(a)
-print(b)
+letters = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+]
+
+result = "-".join(letters)
+
+print(result)
 ```
 
-출력:
+## 20-1. 출력 결과
 
 ```text
 a-b-c-d-e
 ```
 
-`join()`은 구분자 문자열을 기준으로 반복 가능한 객체의 문자열 요소들을 결합합니다.
-
-```text
-'-'.join(['a', 'b', 'c'])
- │       └─ 연결할 문자열들
- └───────── 각 문자열 사이에 들어갈 구분자
-```
-
-`join()`이 리스트의 메서드가 아니라 문자열의 메서드라는 점에 주의합니다.
-
-```python
-# 올바른 사용
-result = ", ".join(["사과", "바나나", "복숭아"])
-```
-
----
-
-# 34. 숫자 목록과 `join()`
-
-`join()`은 문자열만 연결할 수 있습니다.
+숫자 목록은 문자열로 변환해야 한다.
 
 ```python
 numbers = [1, 2, 3]
 
-# TypeError 발생
-# result = "-".join(numbers)
+result = "-".join(
+    str(number)
+    for number in numbers
+)
+
+print(result)
 ```
 
-예외:
-
-```text
-TypeError: sequence item 0: expected str instance, int found
-```
-
-강사님 원본에는 두 가지 변환 방식이 있습니다.
-
-```python
-a = [1, 2, 3, 4, 5]
-'-'.join(map(str, a))
-'-'.join(str(data) for data in a)
-```
-
-내 코드에는 주석으로 `map(str, a)` 방식이 언급되어 있고, generator expression 방식이 실행됩니다.
-
-```python
-numbers = [1, 2, 3]
-
-result1 = "-".join(map(str, numbers))
-result2 = "-".join(str(number) for number in numbers)
-```
-
-두 결과는 같습니다.
+출력:
 
 ```text
 1-2-3
@@ -1141,191 +751,185 @@ result2 = "-".join(str(number) for number in numbers)
 
 ---
 
-# 35. `split()`과 `join()`의 관계
-
-원본:
+# 21. `split()`과 `join()` 연결
 
 ```python
-b = '-'.join(a)
-c = b.split('-')
-print(c)
+letters = [
+    "a",
+    "b",
+    "c",
+]
+
+joined = "-".join(letters)
+split_result = joined.split("-")
+
+print(joined)
+print(split_result)
 ```
 
-동작 흐름:
+## 21-1. 출력 결과
 
 ```text
-['a', 'b', 'c', 'd', 'e']
-          ↓ join('-')
-'a-b-c-d-e'
-          ↓ split('-')
-['a', 'b', 'c', 'd', 'e']
+a-b-c
+['a', 'b', 'c']
 ```
 
-`join()`은 여러 문자열을 하나로 합치고, `split()`은 하나의 문자열을 여러 부분으로 나눕니다.
+```text
+리스트
+    ↓ join()
+문자열
+    ↓ split()
+리스트
+```
 
 ---
 
-# 36. 대소문자와 문자열 검색
+# 22. 대소문자 구분 검색
 
-내 코드:
-
-```python
-a = "Don't Look Back is Anger"
-b = a.find('back')
-print(b)
-```
-
-강사님 코드:
+## 22-1. 내 코드
 
 ```python
-a = "Don't Look Back in Anger"
-b = a.find('back')
-print(b)
+text = "Don't Look Back is Anger"
+position = text.find("back")
+
+print(position)
 ```
 
-두 코드 모두 문자열에는 `Back`이 있지만 검색 문자열은 `back`입니다.
+## 22-2. 강사님 코드
 
-Python 문자열 검색은 대소문자를 구분하므로 결과는 다음과 같습니다.
+```python
+text = "Don't Look Back in Anger"
+position = text.find("back")
+
+print(position)
+```
+
+## 22-3. 출력 결과
 
 ```text
 -1
 ```
 
-문장 자체는 강사님 코드의 `in Anger`와 내 코드의 `is Anger`가 다릅니다. 문자열 메서드 학습에는 영향을 주지 않지만 원문 비교 시 구분해야 합니다.
+문자열 검색은 기본적으로 대소문자를 구분한다.
 
 ---
 
-# 37. `upper()`와 `lower()`
-
-공통 원본 흐름:
-
-```python
-c = a.upper()
-print(c)
-
-d = a.upper().find('back'.upper())
-print(d)
-```
-
-두 문자열을 같은 대소문자로 변환한 뒤 검색합니다.
+# 23. `upper()`와 `lower()`
 
 ```python
 text = "Don't Look Back in Anger"
 keyword = "back"
 
-position = text.upper().find(keyword.upper())
+position = text.lower().find(
+    keyword.lower()
+)
+
+print(text.upper())
 print(position)
 ```
 
-출력:
+## 23-1. 출력 결과
 
 ```text
+DON'T LOOK BACK IN ANGER
 11
 ```
 
-소문자로 통일해도 됩니다.
-
-```python
-position = text.lower().find(keyword.lower())
-```
-
-`upper()`와 `lower()`도 원본 문자열을 변경하지 않고 새 문자열을 반환합니다.
+> [!TIP]
+> 검색 전에 입력값과 기준값을 모두 소문자 또는 대문자로 맞추면 대소문자 차이를 줄일 수 있다.
 
 ---
 
-# 38. `casefold()` 보충
-
-영문 위주의 단순 비교에는 `lower()`가 충분한 경우가 많습니다. 국제화된 문자열을 더 강하게 소문자화해 비교할 때는 `casefold()`를 사용할 수 있습니다.
+# 24. `casefold()`
 
 ```python
-left = "Straße"
-right = "STRASSE"
+text = "Python"
+keyword = "PYTHON"
 
-print(left.casefold() == right.casefold())
+print(
+    text.casefold()
+    == keyword.casefold()
+)
 ```
+
+## 24-1. 출력 결과
 
 ```text
 True
 ```
 
-초급 단계에서는 `lower()`를 우선 익히고, 다국어 텍스트 비교가 필요할 때 `casefold()`를 고려합니다.
+국제 문자를 포함한 대소문자 정규화에는 `casefold()`가 더 적합할 수 있다.
 
 ---
 
-# 39. 메서드 체이닝
+# 25. `strip()`
 
-원본에는 여러 문자열 메서드를 연속해서 호출하는 코드가 있습니다.
+## 25-1. 내 코드
 
 ```python
-print(a.strip().replace(' ', ''))
+text = "   a b   "
+
+print(text.strip())
 ```
 
-이처럼 반환값에 바로 다음 메서드를 호출하는 방식을 메서드 체이닝이라고 합니다.
+## 25-2. 강사님 코드
+
+```python
+text = "  a b  "
+
+print(text.strip())
+```
+
+## 25-3. 출력 결과
 
 ```text
-a.strip()
-    ↓ 새 문자열
-.replace(' ', '')
-    ↓ 최종 문자열
+a b
 ```
 
-단계가 많아지면 중간 변수를 사용해 읽기 쉽게 만들 수 있습니다.
-
-```python
-trimmed = a.strip()
-result = trimmed.replace(" ", "")
-```
+양쪽 공백만 제거되고 문자열 내부 공백은 유지된다.
 
 ---
 
-# 40. `strip()` 양쪽 공백 제거
-
-내 코드:
+# 26. 모든 공백 제거
 
 ```python
-a = '   a b   '
-print(a.strip())
-print(a.strip().replace(' ', ''))
+text = "   a b   "
+
+result = (
+    text.strip()
+    .replace(" ", "")
+)
+
+print(result)
 ```
 
-강사님 코드:
+## 26-1. 출력 결과
+
+```text
+ab
+```
+
+탭과 줄바꿈까지 포함한 공백 문자를 제거하려면 다음처럼 작성할 수 있다.
 
 ```python
-a = '  a b  '
-print(a.strip())
-```
+text = " a\tb\nc "
 
-`strip()`은 문자열 양쪽 끝의 공백 문자를 제거합니다.
+result = "".join(
+    text.split()
+)
+
+print(result)
+```
 
 출력:
 
 ```text
-a b
-ab
-```
-
-중간 공백은 제거하지 않습니다.
-
-```python
-text = "   a b   "
-print(text.strip())
-```
-
-```text
-a b
-```
-
-모든 일반 공백을 없애려면 원본처럼 `replace()`를 함께 사용할 수 있습니다.
-
-```python
-text.strip().replace(" ", "")
+abc
 ```
 
 ---
 
-# 41. `lstrip()`과 `rstrip()`
-
-한쪽 공백만 제거할 수도 있습니다.
+# 27. `lstrip()`과 `rstrip()`
 
 ```python
 text = "   Python   "
@@ -1340,1263 +944,533 @@ print(text.rstrip())
 | `lstrip()` | 왼쪽 |
 | `rstrip()` | 오른쪽 |
 
-파일의 줄바꿈만 제거할 때는 `rstrip("\n")`처럼 제거할 문자를 지정할 수 있습니다.
-
 ---
 
-# 42. `strip()` 인수의 의미
-
-`strip(chars)`는 정확한 접두사나 접미사를 제거하는 함수가 아닙니다. 전달한 문자 집합에 속하는 문자를 양끝에서 반복 제거합니다.
+# 28. `zfill()`
 
 ```python
-text = "xyPythonxy"
-print(text.strip("xy"))
+print("35".zfill(4))
+print("35000".zfill(4))
 ```
 
-출력:
-
-```text
-Python
-```
-
-정확한 접두사나 접미사를 제거하려면 다음 메서드를 사용할 수 있습니다.
-
-```python
-filename = "test.py"
-print(filename.removesuffix(".py"))
-```
-
----
-
-# 43. `zfill()` 0 채우기
-
-공통 원본:
-
-```python
-print('35'.zfill(4))
-print('35000'.zfill(4))
-```
-
-출력:
+## 28-1. 출력 결과
 
 ```text
 0035
 35000
 ```
 
-`zfill(width)`은 문자열 길이가 지정한 너비보다 짧으면 왼쪽을 `0`으로 채웁니다.
-
-이미 너비보다 길다면 원본 문자열을 그대로 반환합니다.
-
-```python
-print("7".zfill(3))
-print("1234".zfill(3))
-```
-
-```text
-007
-1234
-```
-
-일련번호나 날짜 일부를 고정 자릿수로 표현할 때 사용할 수 있습니다.
+지정한 길이보다 짧을 때만 왼쪽을 `0`으로 채운다.
 
 ---
 
-# 44. f-string 기본 너비 지정
-
-공통 원본 흐름:
-
-```python
-a = 7
-print(f'{a:03}')
-print(f'{a:3}')
-```
-
-출력:
-
-```text
-007
-  7
-```
-
-`03`은 전체 너비를 3으로 하고 빈자리를 `0`으로 채웁니다.
-
-`3`은 전체 너비를 3으로 하고 기본 정렬에 따라 공백을 채웁니다.
+# 29. f-string 자리수 지정
 
 ```python
 number = 7
 
 print(f"{number:03}")
-print(f"{number:3}")
+print(f"..{number:3}..")
 ```
+
+## 29-1. 출력 결과
+
+```text
+007
+..  7..
+```
+
+| 표현 | 의미 |
+| --- | --- |
+| `:03` | 전체 3자리, 빈 자리를 0으로 채움 |
+| `:3` | 전체 3자리, 기본 오른쪽 정렬 |
 
 ---
 
-# 45. f-string 정렬
-
-원본:
+# 30. f-string 정렬
 
 ```python
-print(f'..{a:<3}..')
-print(f'..{a:>3}..')
-print(f'..{a:^10}..')
+number = 7
+
+print(f"..{number:<3}..")
+print(f"..{number:>3}..")
+print(f"..{number:^10}..")
 ```
 
-강사님 코드에는 `>3` 예제가 없고, 내 코드에는 왼쪽·오른쪽·가운데 정렬이 모두 있습니다.
+## 30-1. 출력 결과
 
-| 표현 | 의미 |
+```text
+..7  ..
+..  7..
+..    7     ..
+```
+
+| 기호 | 의미 |
 | --- | --- |
 | `<` | 왼쪽 정렬 |
 | `>` | 오른쪽 정렬 |
 | `^` | 가운데 정렬 |
 
-```python
-value = 7
-
-print(f"|{value:<5}|")
-print(f"|{value:>5}|")
-print(f"|{value:^5}|")
-```
-
-출력:
-
-```text
-|7    |
-|    7|
-|  7  |
-```
-
 ---
 
-# 46. 채움 문자 지정
-
-정렬 기호 앞에 채움 문자를 지정할 수 있습니다.
+# 31. 실수 포맷
 
 ```python
-value = "Python"
+number = 3.14
 
-print(f"{value:-<10}")
-print(f"{value:->10}")
-print(f"{value:-^10}")
+print(f"{number:08.3f}")
 ```
 
-출력:
-
-```text
-Python----
-----Python
---Python--
-```
-
-형식:
-
-```text
-{값:채움문자정렬기호너비}
-```
-
----
-
-# 47. 실수 자릿수 지정
-
-공통 원본:
-
-```python
-a = 3.14
-print(f'{a:08.3f}')
-```
-
-출력:
+## 31-1. 출력 결과
 
 ```text
 0003.140
 ```
 
-형식의 의미:
-
 ```text
-08.3f
-││ │└─ 실수 형식
-││ └── 소수점 아래 3자리
-│└──── 전체 너비 8
-└───── 빈자리 0 채우기
+0
+→ 빈 자리를 0으로 채움
+
+8
+→ 전체 너비
+
+.3f
+→ 소수점 아래 3자리 실수
 ```
-
-다른 예제:
-
-```python
-pi = 3.141592
-
-print(f"{pi:.2f}")
-print(f"{pi:.4f}")
-```
-
-출력:
-
-```text
-3.14
-3.1416
-```
-
-표시 자릿수에 따라 반올림됩니다.
 
 ---
 
-# 48. 천 단위 구분 기호
-
-공통 원본:
+# 32. 천 단위 구분 기호
 
 ```python
-a = 15000
-print(f'{a:,}')
+price = 15000
+
+print(f"{price:,}")
 ```
 
-출력:
+## 32-1. 출력 결과
 
 ```text
 15,000
 ```
 
-금액이나 큰 수를 읽기 쉽게 표시할 수 있습니다.
+실무형 예:
 
 ```python
-price = 123456789
-print(f"{price:,}원")
-```
+product_name = "키보드"
+price = 45000
 
-```text
-123,456,789원
-```
-
----
-
-# 49. 퍼센트 형식 보충
-
-비율을 백분율로 출력할 수 있습니다.
-
-```python
-rate = 0.1567
-
-print(f"{rate:.1%}")
-print(f"{rate:.2%}")
+print(
+    f"{product_name}: "
+    f"{price:,}원"
+)
 ```
 
 출력:
 
 ```text
-15.7%
-15.67%
-```
-
-값에 100을 곱해 표시하고 `%` 기호를 붙입니다.
-
----
-
-# 50. 디버깅용 f-string 보충
-
-Python의 f-string에서는 변수 이름과 값을 함께 출력할 수 있습니다.
-
-```python
-temperature = 32.5
-print(f"{temperature=}")
-```
-
-출력:
-
-```text
-temperature=32.5
-```
-
-간단한 디버깅 시 유용하지만 사용자에게 보여주는 최종 문구에는 일반 f-string을 사용하는 편이 좋습니다.
-
----
-
-# 51. 문자열 메서드 호출 방식
-
-문자열 메서드는 점 표기법으로 호출합니다.
-
-```python
-text = "Python"
-
-text.upper()
-text.lower()
-text.find("th")
-text.replace("Py", "J")
-```
-
-기본 구조:
-
-```text
-문자열객체.메서드(인수)
-```
-
-반면 `len()`은 문자열 메서드가 아니라 내장 함수입니다.
-
-```python
-len(text)
-```
-
-```python
-# 존재하지 않는 방식
-# text.len()
+키보드: 45,000원
 ```
 
 ---
 
-# 52. 원본 전체 실행 결과 핵심
+# 33. 내 코드와 강사님 코드 비교
 
-내 코드의 주요 출력 흐름은 다음과 같습니다.
-
-```text
-지금 온도는 32.5도 입니다.
-지금 온도는 32.5도 입니다.
-지금 온도는 32.5도 입니다
-
-<div>
-    지금 온도는 32.5도 입니다
-</div>
-
-지금 온도는 32도 입니다
-지금 온도는 32.500000도 입니다
-6
-2
-3
--1
-3
-4
-_hewwo
-['그럼', '저기서', '하나만', '바꾸고', '싶으면요?']
-a-b-c-d-e
-['a', 'b', 'c', 'd', 'e']
--1
-DON'T LOOK BACK IS ANGER
-11
-a b
-ab
-0035
-35000
-007
-..  7..
-..7  ..
-..  7..
-..    7     ..
-0003.140
-15,000
-```
-
-출력 문구의 마침표와 공백은 내 코드와 강사님 코드 사이에 일부 차이가 있습니다.
-
----
-
-# 53. 내 코드와 강사님 코드 공통점
-
-두 코드 모두 다음 내용을 다룹니다.
-
-- 작은따옴표와 큰따옴표 문자열
-- 따옴표 3개를 이용한 여러 줄 문자열
-- 이스케이프 문자
-- `str()`을 이용한 숫자 변환
-- f-string
-- `str.format()`
-- `%d`, `%f` 포매팅
-- `len()`
-- `count()`
-- `find()`, `index()`, `rfind()`
-- `replace()`
-- `split()`
-- 구조 분해 대입
-- `join()`
-- 대소문자 변환 후 검색
-- `strip()`
-- `zfill()`
-- f-string 너비, 정렬, 실수, 천 단위 형식
-
-따라서 두 파일의 전체 학습 흐름은 거의 같습니다.
-
----
-
-# 54. 내 코드와 강사님 코드 차이
-
-| 비교 항목 | 내 코드 | 강사님 코드 |
+| 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
-| 두 번째 문자열 | `world` | `wolrd` |
-| 여러 줄 문자열 문구 | `쌉 가능` | `가능` |
-| 단독 여러 줄 문자열 | 설명 주석만 있음 | 실제 단독 문자열 작성 |
-| 이스케이프 예제 | 주석으로 설명 | 실제 문자열 리터럴 작성 |
-| 문자열 연결 문장 | 마침표 포함 | 마침표 없음 |
-| f-string 설명 | JavaScript 백틱과 비교 | 설명 없음 |
-| 여러 줄 f-string 출력 | `print(f)` 있음 | 변수에만 저장 |
-| `find()` 설명 | `indexOf()`와 반환값 상세 | 간단한 `indexOf` 주석 |
-| `index()` 오류 | 구체적인 `ValueError` 기록 | “없으면 에러” |
-| 숫자 `join()` | `map()`은 주석, generator 실행 | 두 방식 모두 작성 |
-| 원문 문장 | `Don't Look Back is Anger` | `Don't Look Back in Anger` |
-| `strip()` | `replace()` 체이닝 추가 | `strip()`만 사용 |
-| 오른쪽 정렬 | `>3` 예제 있음 | 없음 |
-| 출력 형식 주석 | 결과 설명이 상세함 | 코드 중심 |
+| 문자열 기본 | `hello`, `world` | `hello`, `wolrd` |
+| 여러 줄 문자열 | 추가 설명 포함 | 핵심 예제 중심 |
+| 이스케이프 | 사용 이유를 주석으로 기록 | 실제 문자열 예제 |
+| 문자열 연결 | 오류 이유를 자료형으로 기록 | 정상 코드 중심 |
+| f-string | JavaScript 템플릿 문자열과 비교 메모 | 기본 사용 예제 |
+| 검색 메서드 | `find`, `index`, `rfind` 차이 메모 | 핵심 차이 표시 |
+| 공백 제거 | 내부 공백 제거 예제 추가 | `strip()` 기본 예제 |
+| 포맷 지정 | 왼쪽·오른쪽·가운데 정렬 모두 확인 | 기본 정렬 예제 |
+| 문자열 결합 | 제너레이터 표현식 추가 | `map()`과 제너레이터 예제 |
+
+## 33-1. 내 코드의 장점
+
+- 메서드 차이를 직접 비교하며 메모했다.
+- 문자열과 숫자 연결 오류의 원인을 기록했다.
+- 대소문자 검색, 공백 제거, 정렬 포맷을 확장 실습했다.
+
+## 33-2. 내 코드의 개선점
+
+- f-string은 Python의 문자열 포매팅 문법으로 이해해야 한다.
+- 따옴표 3개는 메모리에 남기 때문에 주석이 되는 것이 아니다.
+- 문자열 메서드는 원본을 직접 변경하지 않는다는 설명이 필요하다.
+
+## 33-3. 강사님 코드의 장점
+
+- 문자열 생성부터 포맷 지정까지 핵심 메서드를 폭넓게 실습한다.
+- `map()`과 제너레이터 표현식으로 숫자 결합 방법을 함께 보여 준다.
+
+## 33-4. 강사님 코드의 보충점
+
+- `"wolrd"` 오타를 수정할 필요가 있다.
+- 여러 줄 문자열과 주석의 차이를 정확히 설명할 필요가 있다.
+- `%d` 사용 시 실수의 소수 부분이 사라지는 점을 설명해야 한다.
 
 ---
 
-# 55. 내 코드의 장점
+# 34. 기존 코드에서 개선 코드로 바꾼 이유
 
-- 문자열 연결 시 자료형 변환이 필요한 이유를 주석으로 남겼습니다.
-- f-string을 JavaScript 템플릿 리터럴과 연결해 이해하려고 했습니다.
-- 여러 줄 f-string을 실제로 출력해 결과를 확인했습니다.
-- `find()`와 `index()`의 실패 동작 차이를 구체적으로 기록했습니다.
-- `rfind()`가 오른쪽부터 검색한다는 점을 주석으로 남겼습니다.
-- `strip()`과 `replace()`를 연결해 양끝 공백과 모든 공백 제거를 비교했습니다.
-- 왼쪽, 오른쪽, 가운데 정렬 예제를 모두 작성했습니다.
-- 숫자 형식 지정 결과를 주석으로 확인할 수 있습니다.
+## 34-1. 문자열 연결을 f-string으로 개선
 
----
-
-# 56. 내 코드의 개선점
-
-- 변수 이름 `a`, `b`, `c`를 반복해서 재사용해 각 값의 의미를 추적하기 어렵습니다.
-- “변수에 넣지 않으면 주석으로 사용”이라는 설명은 단독 문자열과 주석의 문법적 차이를 구분하도록 수정할 필요가 있습니다.
-- `fomentic`은 일반 용어가 아니므로 `f-string` 또는 `formatted string literal`로 표현하는 것이 정확합니다.
-- Python의 f-string은 JavaScript 백틱과 역할이 비슷하지만 문법은 다르다는 점을 명확히 해야 합니다.
-- “float으로 선언 가능”보다는 `%f 형식으로 출력한다`고 표현하는 것이 정확합니다.
-- `rfind()`는 “오른쪽부터 indexOf”보다는 “오른쪽에서 검색해 원본 기준 인덱스를 반환한다”고 설명하는 편이 정확합니다.
-- `replace()`로 하나만 바꾸려면 세 번째 `count` 인수를 사용할 수 있다는 코드가 추가되면 좋습니다.
-- `'-'.join(str(data) for data in a)`의 반환값을 변수에 저장하거나 출력하지 않아 실행 결과를 확인할 수 없습니다.
-- 대소문자 검색 예제의 문장 `is Anger`는 강사님 코드의 `in Anger`와 다르므로 의도한 수정인지 확인할 필요가 있습니다.
-- `strip().replace(' ', '')`는 일반 공백만 제거하므로 모든 종류의 공백 처리 목적이라면 요구사항을 더 명확히 해야 합니다.
-
----
-
-# 57. 강사님 코드의 장점
-
-- 문자열 생성부터 출력 형식까지 수업 순서가 간결하게 이어집니다.
-- 단독 여러 줄 문자열을 실제 코드로 작성해 주석처럼 보이는 사용 방식을 확인할 수 있습니다.
-- 문자열 숫자 연결, f-string, `format()`, `%` 포매팅을 연속해서 비교할 수 있습니다.
-- `map(str, a)`와 generator expression을 모두 제시합니다.
-- 주요 문자열 메서드를 짧은 코드로 빠르게 실습할 수 있습니다.
-- `zfill()`과 f-string 형식 지정을 함께 학습할 수 있습니다.
-
----
-
-# 58. 강사님 코드의 개선점
-
-- `wolrd`는 `world`로 수정하는 편이 좋습니다.
-- 따옴표 3개를 “여러 줄 주석”이라고만 설명하면 문자열 리터럴이라는 사실을 오해할 수 있습니다.
-- 변수 `f`에 저장한 여러 줄 f-string을 출력하지 않아 결과를 확인할 수 없습니다.
-- `find()`와 `index()`의 차이를 예외 이름까지 명확히 설명하면 좋습니다.
-- `join()` 결과 두 개를 변수에 저장하거나 출력하지 않아 숫자 변환 결과를 확인하기 어렵습니다.
-- `strip()`이 중간 공백을 제거하지 않는다는 설명이 있으면 좋습니다.
-- 오른쪽 정렬 `>` 예제가 없어 왼쪽·가운데 정렬과 함께 비교하기 어렵습니다.
-- 변수 이름을 반복 재사용하여 초보자가 현재 자료형과 값을 추적하기 어렵습니다.
-
----
-
-# 59. 개선된 대표 코드
+기존:
 
 ```python
-temperature = 32.5
-
-concatenated = (
+message = (
     "지금 온도는 "
     + str(temperature)
-    + "도입니다."
+    + "도 입니다."
 )
-formatted = f"지금 온도는 {temperature}도입니다."
-legacy_format = "지금 온도는 {0}도입니다.".format(
-    temperature
-)
-
-print(concatenated)
-print(formatted)
-print(legacy_format)
-
-text = "_hello"
-
-print(len(text))
-print(text.count("l"))
-print(text.find("l"))
-print(text.find("z"))
-print(text.rfind("l"))
-print(text.replace("l", "w", 1))
-
-sentence = "그럼 저기서 하나만 바꾸고 싶으면요?"
-words = sentence.split()
-print(words)
-
-letters = ["a", "b", "c", "d", "e"]
-joined = "-".join(letters)
-restored = joined.split("-")
-
-print(joined)
-print(restored)
-
-numbers = [1, 2, 3, 4, 5]
-number_text = "-".join(
-    str(number)
-    for number in numbers
-)
-print(number_text)
-
-song_title = "Don't Look Back in Anger"
-keyword = "back"
-position = song_title.lower().find(
-    keyword.lower()
-)
-print(position)
-
-padded = "35".zfill(4)
-print(padded)
-
-value = 7
-print(f"{value:03}")
-print(f"|{value:<3}|")
-print(f"|{value:>3}|")
-print(f"|{value:^10}|")
-
-pi = 3.14
-print(f"{pi:08.3f}")
-
-price = 15000
-print(f"{price:,}원")
-```
-
----
-
-# 60. 실무 활용 예제: 사용자 입력 정리
-
-```python
-raw_name = "   홍 길 동   "
-
-clean_name = raw_name.strip()
-compact_name = clean_name.replace(" ", "")
-
-print(clean_name)
-print(compact_name)
-```
-
-출력:
-
-```text
-홍 길 동
-홍길동
-```
-
-사용자 입력에는 앞뒤 공백이 포함될 수 있으므로 저장 전에 정리할 수 있습니다.
-
----
-
-# 61. 실무 활용 예제: CSV 형태의 문자열
-
-```python
-raw_data = "apple,banana,peach"
-fruits = raw_data.split(",")
-
-print(fruits)
-print(" / ".join(fruits))
-```
-
-출력:
-
-```text
-['apple', 'banana', 'peach']
-apple / banana / peach
-```
-
-단순한 문자열은 `split()`으로 처리할 수 있지만, 따옴표와 쉼표가 복잡한 실제 CSV 파일은 표준 라이브러리 `csv`를 사용하는 편이 안전합니다.
-
----
-
-# 62. 실무 활용 예제: 파일 확장자 검사
-
-```python
-filename = "report.PDF"
-
-if filename.lower().endswith(".pdf"):
-    print("PDF 파일입니다.")
-```
-
-`endswith()`는 문자열이 특정 접미사로 끝나는지 확인합니다.
-
-```python
-url = "https://example.com"
-
-if url.startswith("https://"):
-    print("보안 연결 형식입니다.")
-```
-
-`startswith()`는 특정 접두사로 시작하는지 확인합니다.
-
----
-
-# 63. 실무 활용 예제: 고정 길이 번호
-
-```python
-order_number = 35
-formatted_order = str(order_number).zfill(6)
-
-print(formatted_order)
-```
-
-```text
-000035
-```
-
-f-string으로도 표현할 수 있습니다.
-
-```python
-print(f"{order_number:06}")
-```
-
-숫자 계산이 필요한 값은 숫자로 보관하고, 화면에 표시할 때만 형식을 적용하는 편이 좋습니다.
-
----
-
-# 64. 실무 활용 예제: 영수증 출력
-
-```python
-product = "키보드"
-price = 89000
-quantity = 2
-amount = price * quantity
-
-print(f"상품명 : {product}")
-print(f"단가   : {price:>10,}원")
-print(f"수량   : {quantity:>10}개")
-print(f"합계   : {amount:>10,}원")
-```
-
-형식 지정을 사용하면 숫자를 일정한 너비로 정렬할 수 있습니다.
-
----
-
-# 65. 자주 하는 실수: 숫자와 문자열 직접 연결
-
-잘못된 코드:
-
-```python
-age = 20
-# print("나이: " + age)
 ```
 
 개선:
 
 ```python
-print("나이: " + str(age))
-print(f"나이: {age}")
+message = (
+    f"지금 온도는 "
+    f"{temperature}도 입니다."
+)
 ```
 
-f-string을 사용하면 명시적인 `str()` 호출 없이 표현할 수 있습니다.
+## 34-2. 의미 있는 변수명 사용
+
+기존:
+
+```python
+a = "Don't Look Back in Anger"
+b = a.find("back")
+```
+
+개선:
+
+```python
+song_title = (
+    "Don't Look Back in Anger"
+)
+keyword_position = (
+    song_title.lower()
+    .find("back")
+)
+```
+
+## 34-3. 검색 실패를 안전하게 처리
+
+```python
+position = text.find(keyword)
+
+if position == -1:
+    print("검색 결과가 없습니다.")
+else:
+    print("검색 위치:", position)
+```
 
 ---
 
-# 66. 자주 하는 실수: `find()` 결과를 Boolean처럼 사용
-
-다음 코드는 찾은 위치가 0일 때 문제가 됩니다.
+# 35. 실무형 예제: 사용자 정보 요약
 
 ```python
-text = "Python"
+user_name = " kim "
+user_email = "KIM@EXAMPLE.COM"
+login_count = 7
+point = 15000
 
-if text.find("Python"):
-    print("찾았습니다.")
+normalized_name = (
+    user_name.strip().title()
+)
+
+normalized_email = (
+    user_email.strip().lower()
+)
+
+summary = f"""
+사용자: {normalized_name}
+이메일: {normalized_email}
+로그인 횟수: {login_count:03}
+포인트: {point:,}점
+""".strip()
+
+print(summary)
 ```
 
-`find()` 결과가 `0`이면 falsy이므로 출력되지 않습니다.
+## 35-1. 출력 결과
 
-정확한 방식:
-
-```python
-if text.find("Python") != -1:
-    print("찾았습니다.")
+```text
+사용자: Kim
+이메일: kim@example.com
+로그인 횟수: 007
+포인트: 15,000점
 ```
 
-포함 여부만 필요하면:
-
-```python
-if "Python" in text:
-    print("찾았습니다.")
-```
+| 코드 | 사용하는 이유 |
+| --- | --- |
+| `strip()` | 입력값 양쪽 공백 제거 |
+| `title()` | 이름 첫 문자를 대문자로 표시 |
+| `lower()` | 이메일 대소문자 정규화 |
+| `:03` | 로그인 횟수를 3자리로 표시 |
+| `:,` | 포인트에 천 단위 구분 기호 표시 |
+| 여러 줄 f-string | 여러 정보를 하나의 문자열로 구성 |
 
 ---
 
-# 67. 자주 하는 실수: `replace()` 반환값 무시
+# 36. 대표 오류로 이해하기
 
-잘못된 기대:
+## 36-1. 문자열과 숫자 연결
 
 ```python
-text = "hello"
-text.replace("h", "H")
+print("점수: " + 95)
+```
+
+발생 결과:
+
+```text
+TypeError
+```
+
+개선:
+
+```python
+print(f"점수: {95}")
+```
+
+## 36-2. 없는 문자열에 `index()`
+
+```python
+"hello".index("z")
+```
+
+발생 결과:
+
+```text
+ValueError
+```
+
+## 36-3. 숫자 리스트를 `join()`
+
+```python
+"-".join([1, 2, 3])
+```
+
+발생 결과:
+
+```text
+TypeError
+```
+
+## 36-4. 문자열 메서드 결과를 저장하지 않음
+
+```python
+text = " hello "
+text.strip()
+
 print(text)
 ```
 
 출력:
 
 ```text
-hello
+ hello 
 ```
+
+## 36-5. `find()` 결과를 바로 참·거짓으로 사용
+
+```python
+position = "Python".find("P")
+
+if position:
+    print("찾음")
+```
+
+`"P"`의 위치는 `0`이고 `0`은 Falsy이므로 출력되지 않는다.
 
 개선:
 
 ```python
-text = text.replace("h", "H")
-```
-
-문자열 메서드 대부분은 새로운 문자열을 반환합니다.
-
----
-
-# 68. 자주 하는 실수: `join()` 방향 반대로 작성
-
-잘못된 코드:
-
-```python
-items = ["a", "b", "c"]
-# items.join("-")
-```
-
-올바른 코드:
-
-```python
-"-".join(items)
-```
-
-구분자 문자열이 `join()` 메서드를 호출합니다.
-
----
-
-# 69. 자주 하는 실수: 숫자 목록 바로 결합
-
-잘못된 코드:
-
-```python
-numbers = [1, 2, 3]
-# "-".join(numbers)
-```
-
-개선:
-
-```python
-"-".join(map(str, numbers))
+if position != -1:
+    print("찾음")
 ```
 
 또는:
 
 ```python
-"-".join(str(number) for number in numbers)
+if "P" in "Python":
+    print("찾음")
 ```
 
 ---
 
-# 70. 자주 하는 실수: `strip()`이 중간 공백도 제거한다고 생각하기
+# 37. 자주 하는 실수
 
-```python
-text = "  a b  "
-print(text.strip())
-```
+## 37-1. 작은따옴표와 큰따옴표를 닫지 않음
 
-결과:
+`SyntaxError`가 발생한다.
+
+## 37-2. 여러 줄 문자열을 실제 주석으로만 이해
+
+정확히는 문자열 객체다.
+
+## 37-3. 문자열과 숫자를 `+`로 직접 연결
+
+숫자를 문자열로 변환하거나 f-string을 사용한다.
+
+## 37-4. `%d`에 실수를 넣고 소수값이 유지된다고 생각
+
+정수 형식으로 출력되어 소수 부분이 보이지 않는다.
+
+## 37-5. `find()`와 `index()` 실패 동작 혼동
+
+`find()`는 `-1`, `index()`는 예외다.
+
+## 37-6. 문자열 메서드가 원본을 변경한다고 생각
+
+대부분 새 문자열을 반환한다.
+
+## 37-7. `replace()`가 첫 번째 값만 바꾼다고 생각
+
+기본적으로 모든 일치값을 바꾼다.
+
+## 37-8. `split()` 결과를 문자열로 생각
+
+리스트를 반환한다.
+
+## 37-9. 숫자 목록에 `join()`을 바로 사용
+
+모든 항목이 문자열이어야 한다.
+
+## 37-10. 대소문자 차이를 고려하지 않고 검색
+
+양쪽을 `lower()` 또는 `casefold()`로 정규화한다.
+
+## 37-11. `strip()`이 문자열 내부 공백까지 제거한다고 생각
+
+양쪽 공백만 제거한다.
+
+## 37-12. `find()` 결과 `0`을 찾지 못한 것으로 처리
+
+`0`은 문자열 시작 위치다.
+
+## 37-13. 포맷 너비와 소수점 자리수를 혼동
+
+`8.3f`에서 `8`은 전체 너비, `3`은 소수점 아래 자리수다.
+
+---
+
+# 38. 핵심 요약
 
 ```text
-a b
-```
+'문자열'
+"문자열"
+→ 한 줄 문자열
 
-중간 공백은 남습니다.
+'''문자열'''
+"""문자열"""
+→ 여러 줄 문자열
 
-```python
-print(text.strip().replace(" ", ""))
+\'
+\"
+\n
+\t
+→ 이스케이프 문자
 ```
 
 ```text
-ab
+f"{value}"
+→ f-string
+
+"{}".format(value)
+→ format 포매팅
+
+"%s" % value
+→ % 포매팅
 ```
-
----
-
-# 71. 자주 하는 실수: 문자열 인덱스 직접 수정
-
-잘못된 코드:
-
-```python
-text = "hello"
-# text[0] = "H"
-```
-
-문자열은 불변 객체입니다.
-
-개선:
-
-```python
-text = "H" + text[1:]
-```
-
-또는:
-
-```python
-text = text.replace("h", "H", 1)
-```
-
----
-
-# 72. 자주 하는 실수: `index()` 예외 미처리
-
-```python
-text = "hello"
-# position = text.index("z")
-```
-
-찾는 문자열이 없을 가능성이 있다면 `find()`나 `in`을 사용합니다.
-
-```python
-if "z" in text:
-    position = text.index("z")
-```
-
----
-
-# 73. 자주 하는 실수: 포매팅과 값 자체 혼동
-
-```python
-number = 7
-formatted = f"{number:03}"
-
-print(number)
-print(formatted)
-print(type(number))
-print(type(formatted))
-```
-
-출력:
 
 ```text
-7
-007
-<class 'int'>
-<class 'str'>
+len()
+→ 길이
+
+count()
+→ 개수
+
+find()
+→ 위치 또는 -1
+
+index()
+→ 위치 또는 예외
+
+replace()
+→ 치환
+
+split()
+→ 문자열에서 리스트
+
+join()
+→ 리스트에서 문자열
 ```
-
-포매팅 결과는 화면 표시용 문자열이며 원래 숫자 값이 7에서 007로 바뀌는 것은 아닙니다.
-
----
-
-# 74. 면접·복습 질문 1
-
-## 문자열은 왜 불변 객체인가?
-
-문자열이 생성된 뒤 내부 문자를 직접 변경할 수 없다는 의미입니다.
-
-```python
-text = "hello"
-# text[0] = "H"
-```
-
-변경처럼 보이는 메서드도 실제로는 새 문자열을 반환합니다.
-
-```python
-upper_text = text.upper()
-```
-
-불변성은 문자열을 안전하게 공유하고 해시 가능한 값으로 사용할 수 있게 하는 특성과 연결됩니다.
-
----
-
-# 75. 면접·복습 질문 2
-
-## `find()`와 `index()`의 차이는?
-
-둘 다 부분 문자열의 위치를 반환합니다.
-
-- `find()`는 찾지 못하면 `-1`
-- `index()`는 찾지 못하면 `ValueError`
-
-단순 포함 여부는 `in`이 더 명확할 수 있습니다.
-
----
-
-# 76. 면접·복습 질문 3
-
-## `split()`과 `join()`의 차이는?
-
-- `split()`은 문자열을 나누어 리스트를 반환합니다.
-- `join()`은 문자열 요소들을 하나의 문자열로 결합합니다.
-
-```python
-"a-b-c".split("-")
-"-".join(["a", "b", "c"])
-```
-
----
-
-# 77. 면접·복습 질문 4
-
-## f-string의 장점은?
-
-- 변수와 표현식을 문자열 안에서 바로 사용할 수 있습니다.
-- 문자열 연결보다 읽기 쉽습니다.
-- 정렬, 소수점, 천 단위 등 형식 지정을 함께 사용할 수 있습니다.
-- 현대 Python 코드에서 널리 사용됩니다.
-
----
-
-# 78. 면접·복습 질문 5
-
-## `strip()`은 문자열 내부 공백도 제거하는가?
-
-아닙니다. 기본 `strip()`은 양쪽 끝의 공백 문자를 제거하고 중간 공백은 유지합니다.
-
----
-
-# 79. 면접·복습 질문 6
-
-## `join()`을 사용할 때 요소가 숫자라면?
-
-모든 요소를 문자열로 변환해야 합니다.
-
-```python
-"-".join(map(str, [1, 2, 3]))
-```
-
----
-
-# 80. Problems
-
-## 문제 1
-
-다음 변수들을 사용해 f-string으로 문장을 출력하세요.
-
-```python
-name = "민수"
-age = 20
-```
-
-예상 출력:
 
 ```text
-민수의 나이는 20세입니다.
+upper(), lower()
+→ 대소문자 변환
+
+strip()
+→ 양쪽 공백 제거
+
+zfill()
+→ 앞쪽 0 채우기
+
+:<, :>, :^
+→ 정렬
+
+:.2f
+→ 소수점 자리
+
+:,
+→ 천 단위 구분
 ```
 
 ---
 
-## 문제 2
+# 39. 최종 체크리스트
 
-다음 문자열의 길이와 `o`의 개수를 출력하세요.
-
-```python
-text = "Hello Python"
-```
-
----
-
-## 문제 3
-
-다음 문자열에서 `Python`의 시작 위치를 출력하세요.
-
-```python
-text = "Hello Python"
-```
-
-찾지 못했을 때 예외가 발생하지 않는 메서드를 사용하세요.
-
----
-
-## 문제 4
-
-다음 문자열의 모든 `apple`을 `orange`로 바꾸세요.
-
-```python
-text = "apple banana apple"
-```
+- [ ] 작은따옴표와 큰따옴표 문자열을 작성할 수 있는가?
+- [ ] 여러 줄 문자열을 작성할 수 있는가?
+- [ ] 문자열과 주석의 차이를 이해했는가?
+- [ ] 이스케이프 문자로 따옴표를 표현할 수 있는가?
+- [ ] 문자열과 숫자 연결 시 형 변환이 필요함을 이해했는가?
+- [ ] f-string으로 변수와 표현식을 삽입할 수 있는가?
+- [ ] `format()`과 `%` 포매팅을 읽을 수 있는가?
+- [ ] `len()`과 `count()`를 사용할 수 있는가?
+- [ ] `find()`와 `index()`의 차이를 설명할 수 있는가?
+- [ ] `rfind()`로 마지막 위치를 찾을 수 있는가?
+- [ ] `replace()` 결과를 저장할 수 있는가?
+- [ ] 문자열이 변경 불가능한 자료형임을 이해했는가?
+- [ ] `split()`과 `join()`을 사용할 수 있는가?
+- [ ] 숫자 목록을 문자열로 변환한 뒤 결합할 수 있는가?
+- [ ] 대소문자 구분 없이 검색할 수 있는가?
+- [ ] `strip()`과 `lstrip()`·`rstrip()`을 구분할 수 있는가?
+- [ ] `zfill()`로 고정 자리 문자열을 만들 수 있는가?
+- [ ] f-string으로 정렬과 자리수를 지정할 수 있는가?
+- [ ] 실수 소수점 자리와 천 단위 구분 기호를 출력할 수 있는가?
+- [ ] `find()` 결과가 `0`일 수 있음을 이해했는가?
 
 ---
 
-## 문제 5
+# 마무리
 
-다음 문자열을 쉼표 기준으로 나누어 리스트로 만드세요.
-
-```python
-data = "HTML,CSS,JavaScript,Python"
-```
-
----
-
-## 문제 6
-
-다음 리스트를 ` -> `로 연결하세요.
-
-```python
-languages = ["HTML", "CSS", "Python"]
-```
-
-예상 출력:
+문자열 처리의 핵심은 단순히 글자를 저장하는 데 있지 않다.
 
 ```text
-HTML -> CSS -> Python
+문자열을 만들고
+    ↓
+필요한 값을 삽입하고
+    ↓
+검색·치환·분리·결합하고
+    ↓
+공백과 대소문자를 정리하고
+    ↓
+사용자에게 읽기 좋은 형식으로 출력하는 것
 ```
 
----
-
-## 문제 7
-
-다음 숫자 리스트를 하이픈으로 연결하세요.
-
-```python
-numbers = [2026, 7, 30]
-```
-
-예상 출력:
-
-```text
-2026-7-30
-```
-
----
-
-## 문제 8
-
-다음 문자열에서 양쪽 공백을 제거하고 모든 일반 공백을 제거하세요.
-
-```python
-text = "   P y t h o n   "
-```
-
----
-
-## 문제 9
-
-숫자 35를 네 자리 문자열 `0035`로 출력하세요.
-
-`zfill()`과 f-string 두 가지 방식으로 작성하세요.
-
----
-
-## 문제 10
-
-다음 가격을 천 단위 쉼표와 `원`을 포함해 출력하세요.
-
-```python
-price = 1250000
-```
-
-예상 출력:
-
-```text
-1,250,000원
-```
-
----
-
-## 문제 11
-
-다음 문자열에서 대소문자를 구분하지 않고 `python`이 포함되어 있는지 확인하세요.
-
-```python
-text = "I Like PYTHON"
-```
-
----
-
-## 문제 12
-
-다음 문장에서 첫 번째 `좋아`만 `싫어`로 바꾸세요.
-
-```python
-text = "좋아 좋아 좋아"
-```
-
----
-
-# 81. Answers
-
-## 정답 1
-
-```python
-name = "민수"
-age = 20
-
-print(f"{name}의 나이는 {age}세입니다.")
-```
-
----
-
-## 정답 2
-
-```python
-text = "Hello Python"
-
-print(len(text))
-print(text.count("o"))
-```
-
----
-
-## 정답 3
-
-```python
-text = "Hello Python"
-
-print(text.find("Python"))
-```
-
----
-
-## 정답 4
-
-```python
-text = "apple banana apple"
-
-print(text.replace("apple", "orange"))
-```
-
----
-
-## 정답 5
-
-```python
-data = "HTML,CSS,JavaScript,Python"
-
-print(data.split(","))
-```
-
----
-
-## 정답 6
-
-```python
-languages = ["HTML", "CSS", "Python"]
-
-print(" -> ".join(languages))
-```
-
----
-
-## 정답 7
-
-```python
-numbers = [2026, 7, 30]
-
-print("-".join(map(str, numbers)))
-```
-
-또는:
-
-```python
-print(
-    "-".join(
-        str(number)
-        for number in numbers
-    )
-)
-```
-
----
-
-## 정답 8
-
-```python
-text = "   P y t h o n   "
-
-print(text.strip().replace(" ", ""))
-```
-
----
-
-## 정답 9
-
-```python
-number = 35
-
-print(str(number).zfill(4))
-print(f"{number:04}")
-```
-
----
-
-## 정답 10
-
-```python
-price = 1250000
-
-print(f"{price:,}원")
-```
-
----
-
-## 정답 11
-
-```python
-text = "I Like PYTHON"
-
-print("python" in text.lower())
-```
-
----
-
-## 정답 12
-
-```python
-text = "좋아 좋아 좋아"
-
-print(text.replace("좋아", "싫어", 1))
-```
-
----
-
-# 82. Final Checklist
-
-- [ ] 작은따옴표와 큰따옴표로 문자열을 만들 수 있다.
-- [ ] 따옴표 3개가 여러 줄 문자열 문법임을 설명할 수 있다.
-- [ ] 단독 여러 줄 문자열과 실제 주석의 차이를 설명할 수 있다.
-- [ ] 이스케이프 문자를 사용할 수 있다.
-- [ ] 문자열과 숫자를 연결할 때 `str()`을 사용할 수 있다.
-- [ ] f-string으로 변수와 표현식을 출력할 수 있다.
-- [ ] `str.format()`과 `%` 포매팅을 읽을 수 있다.
-- [ ] 문자열 인덱싱과 슬라이싱을 사용할 수 있다.
-- [ ] 문자열이 불변 객체임을 설명할 수 있다.
-- [ ] `len()`과 `count()`를 사용할 수 있다.
-- [ ] `find()`, `index()`, `rfind()`의 차이를 설명할 수 있다.
-- [ ] `replace()`의 반환값을 다시 저장해야 함을 이해한다.
-- [ ] `split()`과 `join()`을 사용할 수 있다.
-- [ ] 숫자 목록을 문자열로 변환해 `join()`할 수 있다.
-- [ ] `upper()`, `lower()`로 대소문자를 정규화할 수 있다.
-- [ ] `strip()`, `lstrip()`, `rstrip()`을 구분할 수 있다.
-- [ ] `zfill()`과 f-string 0 채우기를 사용할 수 있다.
-- [ ] f-string으로 정렬, 소수점, 천 단위 형식을 지정할 수 있다.
-- [ ] 내 코드와 강사님 코드의 차이를 설명할 수 있다.
-
----
-
-# 83. Key Summary
-
-```text
-문자열 생성
-'a' == "a"
-
-여러 줄 문자열
-'''...'''
-"""..."""
-
-문자열 연결
-"값: " + str(value)
-
-f-string
-f"값: {value}"
-
-길이와 검색
-len(text)
-text.count(value)
-text.find(value)
-text.index(value)
-text.rfind(value)
-
-변환
-text.replace(old, new)
-text.split(separator)
-separator.join(strings)
-
-대소문자와 공백
-text.upper()
-text.lower()
-text.strip()
-
-형식 지정
-f"{number:04}"
-f"{value:>10}"
-f"{value:.2f}"
-f"{price:,}"
-```
-
-문자열은 단순한 문자의 모음이 아니라 순서를 가진 불변 시퀀스입니다. 검색, 분리, 결합, 정규화와 포매팅을 정확히 이해하면 사용자 입력 처리와 화면 출력 코드를 더 명확하게 작성할 수 있습니다.
+이 흐름을 익히면 사용자 입력, 파일 데이터, 웹 응답, 로그 메시지를 더 안정적으로 처리할 수 있다.
