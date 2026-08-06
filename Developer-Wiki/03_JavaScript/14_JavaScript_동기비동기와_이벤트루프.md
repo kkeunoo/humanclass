@@ -6,11 +6,10 @@
 | --- | --- |
 | 문서 | `14_JavaScript_동기비동기와_이벤트루프.md` |
 | 분류 | `03_JavaScript` |
-| 권장 선수 학습 | `13_JavaScript_DOM폼요소와_입력값처리.md` |
-| 다음 학습 | `15_JavaScript_Promise와_비동기처리.md` |
 | 원본 기준 | `workspace/workspace_html/javascript/14_async.html`, `workspace_teacher/workspace_html/javascript/14_async.html` |
 | 핵심 범위 | 동기 실행, 함수 호출 순서, 호출 스택, `setTimeout()`, 0ms 지연, 비동기 callback, task queue, event loop, 실행 순서 예측 |
-| 프로젝트 연결 | 타이머, API 요청, UI 반응성, 애니메이션, 비동기 작업 순서 제어 |
+| 실습 범위 | 함수 호출 순서, 0ms 타이머, 여러 타이머, Microtask·Task 순서, 타이머 취소, Loading 상태 |
+| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `14_async.html`을 직접 비교해 작성했습니다. 두 파일은 `fn1()` → `fn2()` → `fn3()`의 동기 호출 흐름과 `setTimeout(..., 0)` callback의 비동기 실행 순서를 보여 줍니다. 내 코드는 설명이 훨씬 많고, 주석 처리된 단일 timeout 예제와 timeout 두 개의 실행 순서를 별도로 설명합니다. 원본에는 “같은 setTimeout 0이면 동기화된 것”이라는 표현과 “동기화가 안 되어 있다”라는 다소 부정확한 설명이 있으므로 원문은 보존하고 이벤트 루프 관점에서 정확히 보완합니다.
 

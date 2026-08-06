@@ -1,3 +1,10 @@
+---
+title: JavaScript JSON과 객체 직렬화
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # JavaScript JSON과 객체 직렬화
 
 ## 문서 정보
@@ -6,361 +13,376 @@
 | --- | --- |
 | 문서 | `19_JavaScript_JSON과_객체직렬화.md` |
 | 분류 | `03_JavaScript` |
-| 권장 선수 학습 | `18_JavaScript_BOM과_지도우편번호API.md` |
-| 다음 학습 | 이후 JavaScript 원본 순서에 따라 진행 |
-| 원본 기준 | `workspace/workspace_html/javascript/19_json.html`, `workspace_teacher/workspace_html/javascript/19_json.html` |
-| 핵심 범위 | JavaScript 객체, JSON 문법, bracket·dot notation, 중첩 객체, 함수 property, property 추가·수정·삭제, `JSON.stringify()`, `JSON.parse()`, 객체 배열, `for...of`, `for...in`, `Object.keys()` |
-| 프로젝트 연결 | API 요청·응답, localStorage 저장, 서버 데이터 변환, 설정 파일, 객체 목록 순회, 데이터 직렬화 |
+| 원본 기준 | `workspace_html/javascript/19_json.html`, `workspace_teacher/workspace_html/javascript/19_json.html` |
+| 핵심 범위 | 객체 Literal, Property 접근, 중첩 객체, Property 추가·수정·삭제, `JSON.stringify()`, `JSON.parse()`, 객체 배열, 객체 순회 |
+| 실습 범위 | 객체 조회·변경, 직렬화·역직렬화, JSON 오류 처리, 객체 배열 출력, Local Storage 저장 |
+| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
 
-> 이 문서는 내 코드와 강사님 코드의 `19_json.html`만 직접 비교했습니다. 두 원본 모두 JavaScript 객체를 반복해서 “JSON”이라고 부르지만, 함수 property·따옴표 없는 key·single quote·trailing comma를 사용하는 현재 값은 엄밀히 JSON이 아니라 JavaScript 객체 literal입니다. 강사님 코드에는 중첩 객체의 `k: 3`이 존재해 `json.k1.k`가 `3`을 출력하지만, 내 코드에서는 해당 property가 빠져 있어 `undefined`가 출력됩니다. 원본 표현과 오류는 보존하고 JavaScript 객체와 JSON text의 차이를 분리해 설명합니다.
+> 원본은 JavaScript 객체를 반복해서 “JSON”이라고 표현한다.  
+> 이 문서에서는 **JavaScript 객체 값**과 **JSON 형식의 문자열**을 정확히 분리하고, 저장·전송 과정에서 어떤 값이 사라지거나 변환되는지 함께 설명한다.
+
+---
+
+# 개요
+
+JavaScript 객체는 Key와 Value로 데이터를 관리한다.
+
+```javascript
+const user = {
+    name: "Kim",
+    age: 20,
+}
+```
+
+JSON은 객체 자체가 아니라 구조화된 데이터를 표현하는 문자열 형식이다.
+
+```json
+{
+    "name": "Kim",
+    "age": 20
+}
+```
+
+객체와 JSON 문자열 사이의 변환:
+
+```text
+JavaScript 값
+    ↓ JSON.stringify()
+JSON 문자열
+    ↓ JSON.parse()
+JavaScript 값
+```
+
+> [!IMPORTANT]
+> 변수 이름이 `json`이라고 해서 그 값이 자동으로 JSON이 되는 것은 아니다.  
+> 함수·따옴표 없는 Key·Single Quote 등을 포함한 값은 JavaScript 객체 Literal이지 JSON 문자열이 아니다.
+
+---
+
+# 핵심 개념
+
+| 개념 | 핵심 역할 |
+| --- | --- |
+| Object | Key와 Value를 저장하는 JavaScript 자료형 |
+| Property | 객체 안의 Key·Value 한 쌍 |
+| Dot Notation | `object.key` 형식의 접근 |
+| Bracket Notation | `object["key"]` 형식의 접근 |
+| JSON | 구조화된 데이터를 표현하는 문자열 형식 |
+| 직렬화 | JavaScript 값을 저장·전송 가능한 문자열로 변환 |
+| 역직렬화 | JSON 문자열을 JavaScript 값으로 변환 |
+| `JSON.stringify()` | JavaScript 값을 JSON 문자열로 변환 |
+| `JSON.parse()` | JSON 문자열을 JavaScript 값으로 변환 |
+| Replacer | Stringify 대상 Property를 선택·변환 |
+| Reviver | Parse 중 Value를 복원·변환 |
+| `Object.keys()` | Own Enumerable String Key 배열 반환 |
 
 ---
 
 # 학습 목표
 
-- JavaScript 객체와 JSON 문자열의 차이를 설명한다.
-- 객체 literal의 key와 value 구조를 이해한다.
-- bracket notation과 dot notation을 구분한다.
-- hyphen이 포함된 property key에 접근하는 방법을 이해한다.
-- 존재하지 않는 property가 `undefined`를 반환하는 이유를 설명한다.
-- 객체 property를 추가·수정·삭제한다.
-- 함수가 들어 있는 객체와 JSON 형식의 차이를 이해한다.
-- `JSON.stringify()`의 변환 규칙을 이해한다.
-- `JSON.parse()`가 유효한 JSON text만 처리한다는 점을 이해한다.
-- 객체 배열을 `for...of`와 `for...in`으로 순회한다.
-- `Object.keys()`로 own enumerable string key를 배열로 얻는다.
-- 내 코드와 강사님 코드의 실제 출력 차이를 정확히 기록한다.
+- JavaScript 객체와 JSON 문자열을 구분할 수 있다.
+- 객체 Literal의 Key와 Value를 설명할 수 있다.
+- Dot Notation과 Bracket Notation을 사용할 수 있다.
+- Hyphen이 포함된 Key에 안전하게 접근할 수 있다.
+- 존재하지 않는 Property와 선언되지 않은 변수의 차이를 이해한다.
+- 객체 Property를 추가·수정·삭제할 수 있다.
+- 객체 Method를 호출할 수 있다.
+- `JSON.stringify()`의 변환 규칙을 설명할 수 있다.
+- 함수·`undefined`·Symbol이 직렬화될 때의 결과를 이해한다.
+- `NaN`, `Infinity`, `BigInt`, 순환 참조의 동작을 설명할 수 있다.
+- `JSON.parse()` 오류를 `try...catch`로 처리할 수 있다.
+- Replacer와 Reviver를 사용할 수 있다.
+- 객체 배열을 `for...of`와 배열 메서드로 순회할 수 있다.
+- 배열에 `for...in`을 사용할 때의 한계를 이해한다.
+- `Object.keys()`, `values()`, `entries()`를 사용할 수 있다.
+- 객체를 Local Storage에 저장하고 복원할 수 있다.
 
 ---
 
-# Core Concepts
+# 1. 원본에서 말하는 JSON
 
-## 1. 원본에서 말하는 JSON
+원본:
 
-원본 주석:
-
-```js
-// json
-// 값을 key와 value로 관리
-// 순서는 보장하지 않는다
-```
-
-두 파일은 다음 변수를 사용합니다.
-
-```js
+```javascript
 let json = {}
 
 json = {
-  "key": "value",
-  "num": 1234,
-  "fn": function() {
-    console.log(1)
-  },
-  "k1": {
-    "k1-1": 1,
-    "k1-2": 2
-  },
-  k2: "k3"
+    "key": "value",
+    "num": 1234,
+
+    "fn": function () {
+        console.log(1)
+    },
+
+    "k1": {
+        "k1-1": 1,
+        "k1-2": 2,
+    },
+
+    k2: "k3",
 }
 ```
 
-변수 이름은 `json`이지만 실제 값은 JavaScript 객체입니다.
+이 값은 JSON 문자열이 아니라 JavaScript 객체다.
 
 ---
 
-## 2. JavaScript 객체와 JSON의 차이
+# 2. 객체와 JSON 차이
 
-JavaScript 객체 literal은 JavaScript 코드 안에서 사용하는 값입니다.
+JavaScript 객체:
 
-```js
+```javascript
 const user = {
-  name: "홍길동",
-  age: 20,
-  greet() {
-    console.log("안녕하세요")
-  }
+    name: "Kim",
+
+    greet() {
+        console.log("hello")
+    },
 }
 ```
 
-JSON은 데이터를 문자열로 표현하는 형식입니다.
+JSON 문자열:
 
 ```json
 {
-  "name": "홍길동",
-  "age": 20
+    "name": "Kim"
 }
 ```
 
-JSON에서는 다음을 사용할 수 없습니다.
+---
+
+# 3. JSON에서 사용할 수 없는 문법
 
 ```text
 함수
 undefined
 Symbol
-따옴표 없는 property name
-single quote 문자열
+따옴표 없는 Property Name
+Single Quote 문자열
 주석
-trailing comma
+Trailing Comma
 ```
 
-따라서 원본 객체는 그대로는 JSON text가 아닙니다.
+JSON의 Property Name과 문자열은 Double Quote를 사용한다.
 
 ---
 
-## 3. “닫는 태그를 줄이기 위해 JSON 사용” 설명
+# 4. JSON의 사용 목적
 
-내 원본 주석:
-
-```js
-// json (닫는태그 등 줄여서 간결하게 하기 위해서 사용)
-```
-
-JSON의 주된 목적은 HTML 닫는 tag를 줄이는 것이 아닙니다.
-
-JSON은 구조화된 데이터를 text로 교환하거나 저장하기 위한 형식입니다.
+원본의 “닫는 태그를 줄이기 위해 JSON 사용”이라는 설명은 정확하지 않다.
 
 대표 사용처:
 
-- API 요청과 응답
+- API 요청·응답
 - 설정 파일
-- localStorage 저장
-- 서버와 client 간 데이터 교환
-- 다른 언어와 데이터 공유
+- Local Storage
+- Server·Client 데이터 교환
+- 다른 프로그래밍 언어와 데이터 공유
+- 로그·캐시 데이터 저장
 
 ---
 
-## 4. 객체 선언
+# 5. 객체 선언
 
-원본:
-
-```js
-let json = {}
-```
-
-빈 객체를 만든 뒤 새 객체를 다시 대입합니다.
-
-```js
-json = {
-  "key": "value"
+```javascript
+const data = {
+    key: "value",
 }
 ```
 
-처음부터 작성할 수도 있습니다.
+재할당이 필요하지 않다면 `const`를 사용한다.
 
-```js
-const json = {
-  key: "value"
-}
+`const` 객체의 Property는 변경할 수 있다.
+
+```javascript
+data.key = "changed"
 ```
-
-재할당이 필요 없다면 `const`가 적절합니다.
 
 ---
 
-## 5. Key와 Value
+# 6. Key와 Value
 
-객체는 property의 집합입니다.
-
-```js
-{
-  "key": "value",
-  "num": 1234
+```javascript
+const product = {
+    name: "Keyboard",
+    price: 50000,
 }
 ```
-
-각 property:
 
 ```text
-key → "key"
-value → "value"
+name
+→ Key
 
-key → "num"
-value → 1234
+"Keyboard"
+→ Value
 ```
-
-JavaScript 객체의 property key는 string 또는 Symbol입니다.
-
-숫자처럼 작성한 key도 일반적으로 string key로 처리됩니다.
 
 ---
 
-## 6. Value에 들어갈 수 있는 값
+# 7. 객체 Value의 범위
 
-내 원본 주석:
+JavaScript 객체에는 대부분의 JavaScript 값을 저장할 수 있다.
 
-```js
-// value에는 변수에 담을 수 있는 모든것이 들어감
-// 함수, 변수 등
-```
-
-JavaScript 객체 value에는 대부분의 JavaScript 값을 넣을 수 있습니다.
-
-```js
+```javascript
 const object = {
-  number: 1,
-  string: "text",
-  boolean: true,
-  nothing: null,
-  missing: undefined,
-  array: [1, 2],
-  nested: {},
-  fn: function() {}
+    number: 1,
+    string: "text",
+    boolean: true,
+    nothing: null,
+    missing: undefined,
+    array: [1, 2],
+    nested: {},
+    fn() {},
 }
 ```
 
-하지만 JSON value는 다음 여섯 유형만 표현할 수 있습니다.
+JSON에서 표현 가능한 Value:
 
 ```text
-string
-number
-boolean
-null
-object
-array
+String
+Number
+Boolean
+Null
+Object
+Array
 ```
 
 ---
 
-## 7. Property 순서
+# 8. Property 순서
 
-원본은 순서를 보장하지 않는다고 설명합니다.
+객체를 배열처럼 순서 중심 자료구조로 사용하면 안 된다.
 
-실무적으로 객체를 array처럼 순서 중심 자료구조로 사용하면 안 된다는 취지는 타당합니다.
-
-다만 현대 JavaScript에는 own property key 열거 순서에 대한 규칙이 있습니다.
-
-대략:
-
-1. 정수 index 형태 key
-2. 나머지 string key의 생성 순서
-3. Symbol key의 생성 순서
-
-그래도 의미 있는 순서가 중요하다면 array를 사용하는 편이 명확합니다.
+현대 JavaScript에는 Key 열거 순서 규칙이 있지만, 의미 있는 순서가 중요하면 배열을 사용한다.
 
 ---
 
-# Syntax / Comparison
+# 9. Bracket Notation
 
-## 8. Bracket Notation
-
-원본:
-
-```js
+```javascript
 console.log(
-  json["key"]
-)
-
-console.log(
-  json["num"]
-)
-
-console.log(
-  json["k1"]["k1-1"]
+    data["key"],
 )
 ```
 
-bracket notation은 key를 문자열로 전달합니다.
-
-장점:
-
-- hyphen 포함 key 접근 가능
-- space 포함 key 접근 가능
-- 변수에 저장된 동적 key 접근 가능
-
-```js
-const keyName = "num"
-
-console.log(
-  json[keyName]
-)
-```
+문자열 형태의 Key를 전달한다.
 
 ---
 
-## 9. Dot Notation
+# 10. Dot Notation
 
-원본:
-
-```js
+```javascript
 console.log(
-  json.key
+    data.key,
 )
 ```
 
-identifier 문법에 맞는 property name은 dot notation으로 접근할 수 있습니다.
-
-```js
-json.num
-json.k1
-json.fn
-```
+Identifier 문법에 맞는 Key는 Dot Notation으로 접근할 수 있다.
 
 ---
 
-## 10. Hyphen Property
+# 11. 동적 Key
 
-원본 key:
+```javascript
+const keyName = "price"
 
-```js
-"k1-2": 2
+console.log(
+    product[keyName],
+)
 ```
 
-다음 코드는 원하는 property 접근이 아닙니다.
+변수에 저장된 Key를 사용할 때는 Bracket Notation이 필요하다.
 
-```js
-json.k1.k1 - 2
-```
+---
 
-JavaScript는 `-`를 subtraction operator로 해석합니다.
+# 12. Hyphen Key
 
-원본에 주석 처리된 표현:
-
-```js
-// json.k1.k1-2
-```
-
-실행하면 단순히 “hyphen key라서 NaN”이라고만 설명하기 어렵습니다.
-
-실제 해석은 대략 다음과 같습니다.
-
-```js
-(json.k1.k1) - 2
-```
-
-`json.k1.k1`이 `undefined`라면:
-
-```text
-undefined - 2
-→ NaN
+```javascript
+const data = {
+    "user-name": "Kim",
+}
 ```
 
 올바른 접근:
 
-```js
-json.k1["k1-2"]
+```javascript
+console.log(
+    data["user-name"],
+)
 ```
 
 ---
 
-## 11. 중첩 객체
+# 13. 잘못된 Hyphen 접근
 
-강사님 코드:
+```text
+data.user-name
+```
 
-```js
-"k1": {
-  "k1-1": 1,
-  "k1-2": 2,
-  k: 3
+JavaScript는 다음처럼 해석한다.
+
+```text
+data.user - name
+```
+
+Property 접근이 아니라 뺄셈 표현식이다.
+
+---
+
+# 14. 중첩 객체
+
+```javascript
+const data = {
+    profile: {
+        name: "Kim",
+        address: {
+            city: "Seoul",
+        },
+    },
 }
 ```
 
-따라서:
+접근:
 
-```js
-json.k1.k
+```javascript
+console.log(
+    data.profile.address.city,
+)
 ```
 
-결과:
+---
+
+# 15. Optional Chaining
+
+```javascript
+console.log(
+    data.profile?.address?.city,
+)
+```
+
+중간 값이 `null` 또는 `undefined`이면 오류 대신 `undefined`를 반환한다.
+
+---
+
+# 16. 내 코드와 강사님 코드의 `k`
+
+강사님 코드:
+
+```text
+k1: {
+    "k1-1": 1,
+    "k1-2": 2,
+    k: 3,
+}
+```
+
+```javascript
+console.log(
+    json.k1.k,
+)
+```
+
+출력:
 
 ```text
 3
@@ -368,258 +390,300 @@ json.k1.k
 
 ---
 
-## 12. 내 코드의 누락된 K Property
+# 17. 내 코드의 누락 Property
 
-내 코드:
+내 코드에는 `k`가 없다.
 
-```js
-"k1": {
-  "k1-1": 1,
-  "k1-2": 2
+```text
+k1: {
+    "k1-1": 1,
+    "k1-2": 2,
 }
 ```
 
-`k` property가 없습니다.
+따라서:
 
-그런데 다음 코드는 그대로 실행합니다.
-
-```js
+```javascript
 console.log(
-  "json.k1.k : ",
-  json.k1.k
+    json.k1.k,
 )
 ```
 
-결과:
+출력:
 
 ```text
 undefined
 ```
 
-강사님은 `3`, 나는 `undefined`가 출력되는 중요한 실제 차이입니다.
-
 ---
 
-## 13. 함수 Property
+# 18. 존재하지 않는 Property
 
-원본:
-
-```js
-"fn": function() {
-  console.log(1)
-}
-```
-
-호출 방법:
-
-```js
-json["fn"]()
-json.fn()
-```
-
-두 호출 모두 같은 함수를 실행해 `1`을 출력합니다.
-
-함수가 객체 property에 저장되어 있을 때 method라고 부를 수 있습니다.
-
----
-
-## 14. Object를 String과 결합
-
-원본:
-
-```js
+```javascript
 console.log(
-  "" + json
+    product.stock,
 )
 ```
 
-일반 객체는 문자열 변환 시 기본적으로 다음과 비슷한 결과가 나옵니다.
+출력:
+
+```text
+undefined
+```
+
+객체는 존재하지만 해당 Key가 없는 상태다.
+
+---
+
+# 19. 선언되지 않은 변수
+
+```text
+console.log(stock)
+```
+
+변수 자체가 선언되지 않았다면 `ReferenceError`가 발생할 수 있다.
+
+```text
+object.missing
+→ undefined
+
+missing
+→ ReferenceError 가능
+```
+
+---
+
+# 20. 함수 Property
+
+```javascript
+const calculator = {
+    add(
+        a,
+        b,
+    ) {
+        return a + b
+    },
+}
+```
+
+호출:
+
+```javascript
+console.log(
+    calculator.add(
+        2,
+        3,
+    ),
+)
+```
+
+출력:
+
+```text
+5
+```
+
+---
+
+# 21. 객체를 문자열과 결합
+
+```javascript
+console.log(
+    "" + product,
+)
+```
+
+대표 결과:
 
 ```text
 [object Object]
 ```
 
-객체 내용을 JSON 문자열로 확인하려면:
+객체 내부를 확인할 때는 객체 자체를 출력한다.
 
-```js
-JSON.stringify(json)
-```
-
-을 사용할 수 있습니다.
-
-Console에서는 객체 자체를 전달하는 편이 디버깅에 더 좋습니다.
-
-```js
-console.log(json)
+```javascript
+console.log(product)
 ```
 
 ---
 
-## 15. Property 수정
+# 22. Property 수정
 
-원본:
-
-```js
-json.num = 456
+```javascript
+product.price = 60000
 ```
 
-기존 `num` property가 있으므로 값이 `1234`에서 `456`으로 바뀝니다.
-
-```text
-기존 key
-→ value 수정
-```
+기존 Key가 있으므로 Value가 변경된다.
 
 ---
 
-## 16. 존재하지 않는 Property
+# 23. Property 추가
 
-원본:
+```javascript
+product.stock = 10
+```
 
-```js
+기존 Key가 없으므로 새 Property가 추가된다.
+
+---
+
+# 24. Computed Property 추가
+
+```javascript
+const key = "category"
+
+product[key] = "device"
+```
+
+동적으로 Key를 정할 수 있다.
+
+---
+
+# 25. Property 삭제
+
+```javascript
+delete product.stock
+```
+
+객체에서 해당 Property를 제거한다.
+
+---
+
+# 26. Immutable 제거
+
+```javascript
+const {
+    stock,
+    ...restProduct
+} = product
+```
+
+`restProduct`에는 `stock`을 제외한 Property가 저장된다.
+
+상태 관리 방식에 따라 `delete` 또는 새 객체 생성을 선택한다.
+
+---
+
+# 27. Property 존재 확인
+
+```javascript
 console.log(
-  json.num2
+    "price" in product,
 )
 ```
 
-`num2`가 아직 없으므로:
+Prototype Chain까지 검사한다.
 
-```text
-undefined
-```
+Own Property만 확인:
 
-가 출력됩니다.
-
-이는 undeclared identifier를 읽는 것과 다릅니다.
-
-```js
-console.log(num2)
-```
-
-변수 자체가 선언되지 않았다면 `ReferenceError`가 발생할 수 있습니다.
-
----
-
-## 17. Property 추가
-
-원본:
-
-```js
-json.num2 = 222
-```
-
-`num2`가 없으므로 새 property가 추가됩니다.
-
-내 코드는:
-
-```js
+```javascript
 console.log(
-  json.num2
+    Object.hasOwn(
+        product,
+        "price",
+    ),
 )
 ```
 
-를 한 번 더 실행해 `222`를 직접 출력합니다.
+---
 
-강사님 코드는 추가 후 객체 전체만 출력합니다.
+# 28. 직렬화
+
+```javascript
+const jsonText = (
+    JSON.stringify(
+        product,
+    )
+)
+```
+
+JavaScript 값을 JSON 문자열로 변환한다.
 
 ---
 
-## 18. Array Push와 객체 Property 추가
+# 29. 직렬화 결과 자료형
 
-내 주석:
-
-```js
-// 배열의 push처럼 넣지 않아도,
-// 값을 넣으면 자동적으로 들어감
+```javascript
+console.log(
+    typeof jsonText,
+)
 ```
 
-객체에는 array의 `push()`처럼 순서 끝에 넣는 개념이 핵심이 아닙니다.
+출력:
 
-property key를 지정해 추가합니다.
-
-```js
-object.newKey =
-  newValue
-```
-
-computed key:
-
-```js
-const key =
-  "newKey"
-
-object[key] =
-  newValue
+```text
+string
 ```
 
 ---
 
-# JSON 직렬화와 역직렬화
+# 30. 보기 좋은 JSON 문자열
 
-## 19. 직렬화
-
-객체를 전송·저장 가능한 문자열 표현으로 바꾸는 작업을 직렬화라고 합니다.
-
-원본:
-
-```js
-const str =
-  JSON.stringify(json)
+```javascript
+const jsonText = (
+    JSON.stringify(
+        product,
+        null,
+        2,
+    )
+)
 ```
 
-`JSON.stringify()`는 JavaScript 값을 JSON 문자열로 변환합니다.
+세 번째 인수는 들여쓰기 크기다.
 
 ---
 
-## 20. 함수 Property 제외
+# 31. 함수 Property 제외
 
-원본 객체에는 함수가 있습니다.
+```javascript
+const data = {
+    name: "Kim",
 
-```js
-fn: function() {
-  console.log(1)
+    greet() {
+        console.log("hello")
+    },
 }
+
+console.log(
+    JSON.stringify(data),
+)
 ```
 
-`JSON.stringify()` 결과에서 객체 property value가 함수라면 해당 property는 제외됩니다.
-
-예상 구조:
+결과:
 
 ```json
-{
-  "key": "value",
-  "num": 456,
-  "k1": {
-    "k1-1": 1,
-    "k1-2": 2
-  },
-  "k2": "k3",
-  "num2": 222
-}
+{"name":"Kim"}
 ```
 
-강사님 결과에는 중첩 `k: 3`도 포함됩니다.
+객체 Property의 함수는 제외된다.
 
 ---
 
-## 21. Stringify의 추가 규칙
+# 32. `undefined`와 Symbol
 
-객체 property에서 다음 value도 일반적으로 제외됩니다.
+객체 Property에서는 일반적으로 제외된다.
 
-```text
-undefined
-function
-Symbol
+```javascript
+const data = {
+    missing: undefined,
+    symbol: Symbol("id"),
+}
 ```
 
-array 안에서는 해당 값들이 `null`로 바뀔 수 있습니다.
+---
 
-```js
-JSON.stringify([
-  undefined,
-  function() {},
-  Symbol()
-])
+# 33. 배열 안의 변환
+
+```javascript
+const values = [
+    undefined,
+    function () {},
+    Symbol("id"),
+]
+
+console.log(
+    JSON.stringify(values),
+)
 ```
 
 결과:
@@ -628,1262 +692,1096 @@ JSON.stringify([
 [null,null,null]
 ```
 
-`NaN`과 `Infinity`도 JSON에서는 숫자로 표현할 수 없어 `null`이 됩니다.
-
-`BigInt`는 기본적으로 stringify 시 `TypeError`를 발생시킵니다.
-
 ---
 
-## 22. Network는 “무조건 문자”인가?
+# 34. `NaN`과 Infinity
 
-원본 주석:
-
-```js
-// 네트워크 통신할 때 무조건 문자로 전송한다
-```
-
-학습 단계에서는 JSON payload가 text 형태라는 뜻으로 이해할 수 있습니다.
-
-하지만 네트워크는 byte를 전송하며 다음과 같은 다양한 형식을 사용할 수 있습니다.
-
-- JSON text
-- form data
-- binary image
-- ArrayBuffer
-- Blob
-- Protocol Buffers
-
-따라서 모든 네트워크 데이터가 반드시 JavaScript string이라는 의미는 아닙니다.
-
----
-
-## 23. 역직렬화
-
-원본:
-
-```js
-const json2 =
-  JSON.parse(str)
-```
-
-JSON text를 JavaScript 값으로 변환합니다.
-
-결과는 문자열이 아니라 JavaScript object입니다.
-
-함수 property는 stringify 단계에서 빠졌으므로 `json2.fn`은 존재하지 않습니다.
-
----
-
-## 24. Parse 오류
-
-원본에 주석 처리:
-
-```js
-// JSON.parse("<h1>")
-```
-
-`"<h1>"`은 유효한 JSON text가 아니므로 `SyntaxError`가 발생합니다.
-
-유효한 JSON string value로 parsing하려면 문자열 자체를 JSON의 double quote로 감싸야 합니다.
-
-```js
-JSON.parse(
-  '"<h1>"'
+```javascript
+console.log(
+    JSON.stringify({
+        first: NaN,
+        second: Infinity,
+    }),
 )
 ```
 
 결과:
+
+```json
+{"first":null,"second":null}
+```
+
+---
+
+# 35. BigInt 오류
+
+```text
+JSON.stringify({
+    value: 10n
+})
+```
+
+기본적으로 `TypeError`가 발생한다.
+
+문자열로 명시적으로 변환할 수 있다.
+
+```javascript
+const data = {
+    value: String(10n),
+}
+```
+
+---
+
+# 36. Date 직렬화
+
+```javascript
+const data = {
+    createdAt: new Date(
+        "2026-08-06T06:00:00Z",
+    ),
+}
+
+console.log(
+    JSON.stringify(data),
+)
+```
+
+Date는 일반적으로 ISO 문자열로 변환된다.
+
+---
+
+# 37. 순환 참조 오류
+
+```javascript
+const data = {}
+
+data.self = data
+```
+
+```text
+JSON.stringify(data)
+→ TypeError
+```
+
+서로 다시 참조하는 구조는 기본 JSON으로 직렬화할 수 없다.
+
+---
+
+# 38. `toJSON()`
+
+```javascript
+const user = {
+    name: "Kim",
+    password: "secret",
+
+    toJSON() {
+        return {
+            name: this.name,
+        }
+    },
+}
+```
+
+```javascript
+console.log(
+    JSON.stringify(user),
+)
+```
+
+민감한 Property를 제외한 결과를 반환하도록 정의할 수 있다.
+
+---
+
+# 39. Replacer 배열
+
+```javascript
+const jsonText = (
+    JSON.stringify(
+        product,
+        [
+            "name",
+            "price",
+        ],
+    )
+)
+```
+
+지정한 Property만 포함한다.
+
+---
+
+# 40. Replacer 함수
+
+```javascript
+const jsonText = (
+    JSON.stringify(
+        product,
+        (
+            key,
+            value,
+        ) => {
+            if (
+                key === "password"
+            ) {
+                return undefined
+            }
+
+            return value
+        },
+    )
+)
+```
+
+민감한 값을 제외하거나 변환할 수 있다.
+
+---
+
+# 41. 네트워크는 무조건 문자열인가?
+
+원본의 “네트워크 통신은 무조건 문자로 전송한다”는 설명은 지나치게 단순하다.
+
+네트워크는 Byte를 전송하며 다양한 형식을 사용할 수 있다.
+
+- JSON Text
+- Form Data
+- Image Binary
+- Blob
+- ArrayBuffer
+- Protocol Buffers
+
+---
+
+# 42. 역직렬화
+
+```javascript
+const parsed = (
+    JSON.parse(
+        jsonText,
+    )
+)
+```
+
+JSON 문자열을 JavaScript 값으로 변환한다.
+
+---
+
+# 43. Parse 결과 자료형
+
+```javascript
+console.log(
+    typeof parsed,
+)
+```
+
+객체 JSON을 Parse했다면:
+
+```text
+object
+```
+
+---
+
+# 44. 함수는 복원되지 않음
+
+Stringify 과정에서 함수가 제외되었으므로 Parse 후에도 함수가 생기지 않는다.
+
+```javascript
+console.log(
+    parsed.greet,
+)
+```
+
+출력:
+
+```text
+undefined
+```
+
+---
+
+# 45. 잘못된 JSON Parse
+
+```text
+JSON.parse("<h1>")
+```
+
+유효한 JSON이 아니므로 `SyntaxError`가 발생한다.
+
+---
+
+# 46. JSON 문자열 값 Parse
+
+```javascript
+const value = JSON.parse(
+    '"<h1>"',
+)
+
+console.log(value)
+```
+
+출력:
 
 ```text
 <h1>
 ```
 
+외부 Double Quote가 JSON String Literal을 만든다.
+
 ---
 
-## 25. JSON.parse("{}")
+# 47. 빈 객체 Parse
 
-원본:
+```javascript
+const value = JSON.parse(
+    "{}",
+)
 
-```js
-let j =
-  JSON.parse("{}")
+console.log(value)
 ```
 
-결과:
+출력:
 
-```js
+```text
 {}
 ```
 
-빈 JavaScript object가 만들어집니다.
+---
 
-내 코드는 이를 Console에 출력합니다.
+# 48. 객체 배열 Parse
 
-강사님 코드는 변수에 대입만 합니다.
+```javascript
+const value = JSON.parse(
+    "[{}]",
+)
+
+console.log(value)
+```
+
+빈 객체 하나를 가진 배열이 만들어진다.
 
 ---
 
-## 26. JSON.parse("[{}]")
+# 49. Parse 오류 처리
 
-원본:
-
-```js
-j =
-  JSON.parse("[{}]")
+```javascript
+function safeParse(
+    jsonText,
+) {
+    try {
+        return {
+            ok: true,
+            value: JSON.parse(
+                jsonText,
+            ),
+        }
+    } catch (
+        error
+    ) {
+        return {
+            ok: false,
+            error,
+        }
+    }
+}
 ```
-
-결과:
-
-```js
-[
-  {}
-]
-```
-
-빈 객체 하나를 가진 array가 만들어집니다.
-
-내 코드는 이를 Console에 출력하고 강사님은 출력하지 않습니다.
 
 ---
 
-## 27. JSON 문법 규칙
+# 50. Parse 결과 사용
+
+```javascript
+const result = safeParse(
+    '{"name":"Kim"}',
+)
+
+if (result.ok) {
+    console.log(
+        result.value.name,
+    )
+} else {
+    console.error(
+        "JSON 형식 오류",
+    )
+}
+```
+
+---
+
+# 51. Reviver
+
+```javascript
+const parsed = JSON.parse(
+    '{"createdAt":"2026-08-06T06:00:00.000Z"}',
+    (
+        key,
+        value,
+    ) => {
+        if (
+            key === "createdAt"
+        ) {
+            return new Date(
+                value,
+            )
+        }
+
+        return value
+    },
+)
+```
+
+---
+
+# 52. JSON 문법 규칙
 
 올바른 JSON:
 
 ```json
 {
-  "name": "홍길동",
-  "age": 20,
-  "active": true,
-  "address": null,
-  "skills": ["HTML", "CSS"]
+    "name": "Kim",
+    "age": 20,
+    "active": true,
+    "address": null,
+    "skills": [
+        "HTML",
+        "CSS"
+    ]
 }
 ```
 
-핵심 규칙:
+---
 
-- property name은 double quote
-- string도 double quote
-- comment 불가
-- trailing comma 불가
-- function 불가
-- `undefined`, `NaN`, `Infinity` 불가
+# 53. Trailing Comma 금지
+
+잘못된 JSON:
+
+```text
+{
+    "name": "Kim",
+}
+```
+
+JavaScript 객체 Literal에서는 허용될 수 있지만 JSON에서는 허용되지 않는다.
 
 ---
 
-# 객체 배열과 순회
+# 54. Leading Zero 금지
 
-## 28. Temple 배열
+잘못된 JSON 숫자:
 
-양쪽 원본:
+```text
+03
+```
 
-```js
-const temple = [
-  {
-    이름: "그랜절",
-    주소: "광장",
-    가격: 300000
-  },
-  {
-    이름: "만우절",
-    주소: "없음",
-    가격: 2147483647
-  }
+날짜의 월·일처럼 앞자리 0을 유지해야 한다면 문자열로 저장한다.
+
+```json
+{
+    "month": "03",
+    "day": "02"
+}
+```
+
+---
+
+# 55. 객체 배열
+
+```javascript
+const temples = [
+    {
+        name: "그랜절",
+        address: "광장",
+        price: 300000,
+    },
+    {
+        name: "만우절",
+        address: "없음",
+        price: 2147483647,
+    },
 ]
 ```
 
-이는 JSON text가 아니라 JavaScript object 두 개를 담은 array입니다.
-
-property name으로 한글도 사용할 수 있습니다.
+객체 두 개를 가진 JavaScript 배열이다.
 
 ---
 
-## 29. For...of
+# 56. `for...of`
 
-원본:
-
-```js
+```javascript
 for (
-  let t of temple
+    const temple
+    of temples
 ) {
-  console.log(
-    t.이름
-  )
+    console.log(
+        temple.name,
+    )
 }
 ```
 
-`for...of`는 array의 value를 순회합니다.
-
-출력:
-
-```text
-그랜절
-만우절
-```
+배열의 Value를 순회한다.
 
 ---
 
-## 30. For...in
+# 57. `for...in`
 
-원본:
-
-```js
+```javascript
 for (
-  let i in temple
+    const index
+    in temples
 ) {
-  console.log(
-    temple[i].가격
-  )
+    console.log(
+        temples[index].price,
+    )
 }
 ```
 
-`for...in`은 enumerable key를 순회합니다.
+배열의 Enumerable Key를 순회한다.
 
-array에서는 key가 `"0"`, `"1"`처럼 전달됩니다.
-
-출력:
-
-```text
-300000
-2147483647
-```
-
-array value 순회에는 일반적으로 `for...of`, `forEach()`, `map()`이 더 의도에 맞습니다.
+배열 Value 순회에는 일반적으로 `for...of`가 더 적합하다.
 
 ---
 
-## 31. Object.keys()
+# 58. 배열 Method 순회
 
-원본:
+```javascript
+temples.forEach(
+    temple => {
+        console.log(
+            temple.name,
+        )
+    },
+)
+```
 
-```js
-const keys =
-  Object.keys(json)
+---
+
+# 59. `map()`
+
+```javascript
+const names = temples.map(
+    temple => (
+        temple.name
+    ),
+)
+
+console.log(names)
+```
+
+새 배열을 만든다.
+
+---
+
+# 60. `Object.keys()`
+
+```javascript
+const keys = Object.keys(
+    product,
+)
 
 console.log(keys)
 ```
 
-`Object.keys()`는 객체 자신의 enumerable string key를 array로 반환합니다.
-
-삭제 전 key는 파일별로 다릅니다.
-
-강사님:
-
-```text
-key
-num
-fn
-k1
-k2
-num2
-```
-
-내 코드도 최상위 key 목록은 같습니다.
-
-중첩 `k`의 존재 여부는 최상위 `Object.keys(json)`에는 영향을 주지 않습니다.
+Own Enumerable String Key를 배열로 반환한다.
 
 ---
 
-## 32. Property 삭제
-
-원본:
-
-```js
-delete json.num
-```
-
-`num` property를 객체에서 제거합니다.
-
-그 후:
-
-```js
-console.log(json)
-```
-
-객체에서 `num`이 사라진 상태를 확인합니다.
-
----
-
-## 33. “실무에서는 실제 삭제하지 않는다” 설명
-
-내 주석:
-
-```js
-// key 삭제
-// 실무해서는 실제 삭제하지는 않음
-```
-
-실무에서도 `delete`를 사용할 수 있습니다.
-
-다만 immutable update나 새 객체 생성 방식을 사용하는 경우도 많습니다.
-
-```js
-const {
-  num,
-  ...rest
-} = json
-```
-
-`rest`에는 `num`을 제외한 property가 들어갑니다.
-
-“실무에서 delete를 사용하지 않는다”라고 단정하기보다 상태 관리 방식과 성능·설계에 따라 선택한다고 설명하는 편이 정확합니다.
-
----
-
-# HTML과 데이터 표현
-
-## 34. Custom Element 형태
-
-양쪽 body:
-
-```html
-<year cen="20">
-  1999
-</year>
-
-<month>
-  03
-</month>
-
-<day>
-  02
-</day>
-```
-
-HTML parser는 알 수 없는 tag도 element로 만들 수 있습니다.
-
-그러나 의미 있는 표준 HTML 요소나 Web Components의 custom element naming 규칙을 사용하는 편이 좋습니다.
-
-custom element 이름은 일반적으로 hyphen을 포함해야 합니다.
-
-```html
-<birth-year></birth-year>
-```
-
----
-
-## 35. Teacher Body 설명
-
-강사님 body:
-
-```text
-[1~4] : 년도
-[5~6] : 월
-[7~8] : 일
-
-19990302
-```
-
-날짜 문자열의 위치별 의미를 먼저 보여 줍니다.
-
-내 body에는 이 세 줄이 없습니다.
-
----
-
-## 36. Teacher의 객체형 표현
-
-강사님 body:
-
-```text
-{year: {cen:20, value:1999},month:03,day:02}
-```
-
-이것은 JavaScript object처럼 보이는 설명용 text입니다.
-
-JSON이라면 key와 string value에 double quote가 필요하고 `03`, `02` 같은 leading zero number는 허용되지 않습니다.
-
-올바른 JSON 예:
-
-```json
-{
-  "year": {
-    "cen": 20,
-    "value": 1999
-  },
-  "month": "03",
-  "day": "02"
-}
-```
-
----
-
-## 37. 내 Body 표현
-
-내 body:
-
-```text
-JSON : {year: {cen="20"} 1999,month:03,day:02}
-```
-
-이 문자열은 유효한 JSON도 JavaScript object literal도 아닙니다.
-
-문제:
-
-- key에 double quote 없음
-- `cen="20"`은 object property 문법이 아님
-- `}` 뒤에 comma나 property key 없이 `1999` 등장
-- `03`, `02`는 JSON number로 부적절
-- 구조 구분이 불명확
-
-원본의 의도는 year tag의 attribute와 text를 object 구조로 표현하려는 것으로 보입니다.
-
----
-
-# My Code vs Teacher Code
-
-## 38. 비교표
-
-| 비교 항목 | 내 코드 | 강사님 코드 |
-| --- | --- | --- |
-| 핵심 흐름 | 동일 | 동일 |
-| 설명 주석 | 매우 상세 | 간결 |
-| 중첩 `k` property | 없음 | `k: 3` 있음 |
-| `json.k1.k` 결과 | `undefined` | `3` |
-| `num2` 추가 후 출력 | `json.num2`와 객체 모두 출력 | 객체만 출력 |
-| `JSON.parse("{}")` 출력 | 출력함 | 출력하지 않음 |
-| `JSON.parse("[{}]")` 출력 | 출력함 | 출력하지 않음 |
-| Parse 오류 설명 | 상세 error 주석 | 호출 예만 주석 |
-| Temple 주석 | 객체 배열 사용 설명 추가 | 없음 |
-| Delete 주석 | 실무에서는 실제 삭제하지 않는다고 설명 | 단순 삭제 설명 |
-| 날짜 위치 설명 | 없음 | 년·월·일 위치 표시 |
-| 마지막 객체 표현 | 문법상 잘못된 `JSON : ...` | 설명용 객체형 text |
-| 전체 formatting | 들여쓰기 깊음 | 일반적인 들여쓰기 |
-
----
-
-# My Code Analysis
-
-## 39. 내 코드 장점
-
-- 객체와 key·value 구조에 대한 설명을 많이 추가했다.
-- bracket notation과 dot notation을 구분했다.
-- hyphen key가 dot notation에서 문제가 된다는 점을 설명하려 했다.
-- 존재하지 않는 property가 `undefined`라는 점을 기록했다.
-- property 추가와 수정의 차이를 설명했다.
-- stringify가 함수 property를 제외한다는 점을 기록했다.
-- parse error message를 구체적으로 남겼다.
-- 빈 객체 JSON과 객체 배열 JSON을 직접 출력했다.
-- 객체 배열을 `for...of`와 `for...in`으로 순회했다.
-- `Object.keys()`와 `delete`를 실습했다.
-
----
-
-## 40. 내 코드 개선점
-
-- JavaScript 객체를 계속 JSON이라고 부른다.
-- JSON의 목적을 HTML 닫는 tag 축소와 연결한 설명이 부정확하다.
-- JSON value에 함수도 들어갈 수 있는 것처럼 설명한다.
-- `json.k1.k`를 출력하지만 실제 `k` property가 없어 `undefined`가 나온다.
-- hyphen key 설명에서 “value값에 -가 있다”고 했지만 문제는 property key이다.
-- `json.k1.k1-2`가 단순히 key를 찾는 표현처럼 설명되어 있다.
-- 네트워크 통신은 무조건 문자라고 단정한다.
-- parse가 문자열을 “다시 JSON으로” 만든다고 설명하지만 결과는 JavaScript 값이다.
-- 객체 배열을 “JSON 배열”이라고 부른다.
-- 실무에서는 delete를 사용하지 않는다고 단정한다.
-- 마지막 `JSON : ...` text가 유효한 JSON이 아니다.
-- `lang="en"`과 `<title>Document</title>`이 내용에 맞지 않는다.
-
----
-
-# Teacher Code Analysis
-
-## 41. 강사님 코드 장점
-
-- 객체 생성부터 접근·수정·추가·삭제까지 순서가 간결하다.
-- 중첩 객체에 `k: 3`을 실제로 선언해 `json.k1.k` 접근이 정상 동작한다.
-- bracket notation과 dot notation을 직접 비교한다.
-- 함수 property를 두 방식으로 호출한다.
-- stringify와 parse의 기본 왕복 흐름을 보여 준다.
-- 객체 배열을 두 반복문으로 순회한다.
-- Object.keys와 delete를 포함한다.
-- body에서 날짜 문자열을 구조화된 데이터로 바꾸려는 개념을 보여 준다.
-
----
-
-## 42. 강사님 코드 개선점
-
-- JavaScript 객체와 JSON을 구분하지 않는다.
-- 객체에 함수·single quote·trailing comma가 있어도 JSON이라고 부른다.
-- property 순서 설명이 지나치게 단순하다.
-- stringify의 제외·변환 규칙을 함수 외에는 설명하지 않는다.
-- parse 실패를 자세히 설명하지 않는다.
-- `for...in`을 array에 사용할 때 주의점을 설명하지 않는다.
-- 마지막 body 표현은 JSON이 아니다.
-- `03`, `02`를 number처럼 작성한 설명은 JSON 문법에 맞지 않는다.
-- custom tag의 의미와 제약을 설명하지 않는다.
-- `lang="en"`과 title이 내용에 맞지 않는다.
-
----
-
-# Improvements
-
-## 43. 올바른 객체와 JSON 구분
-
-JavaScript 객체:
-
-```js
-const user = {
-  name: "홍길동",
-  age: 20,
-  greet() {
-    console.log("안녕하세요")
-  }
-}
-```
-
-직렬화:
-
-```js
-const jsonText =
-  JSON.stringify(user)
-```
-
-결과:
-
-```json
-{"name":"홍길동","age":20}
-```
-
-함수 `greet`는 빠집니다.
-
-역직렬화:
-
-```js
-const parsedUser =
-  JSON.parse(jsonText)
-```
-
-`parsedUser`는 JavaScript object이며 method는 복구되지 않습니다.
-
----
-
-## 44. 안전한 Parse
-
-```js
-function parseJSON(text) {
-  try {
-    return JSON.parse(text)
-  } catch (error) {
-    console.error(
-      "JSON 형식이 올바르지 않습니다.",
-      error
-    )
-
-    return null
-  }
-}
-```
-
-외부에서 받은 JSON text는 형식 오류 가능성을 고려해야 합니다.
-
----
-
-## 45. Replacer
-
-특정 property만 stringify할 수 있습니다.
-
-```js
-const text =
-  JSON.stringify(
-    json,
-    [
-      "key",
-      "num",
-      "k1"
-    ]
-  )
-```
-
-또는 function replacer:
-
-```js
-const text =
-  JSON.stringify(
-    json,
-    function(key, value) {
-      if (
-        typeof value ===
-        "function"
-      ) {
-        return undefined
-      }
-
-      return value
-    }
-  )
-```
-
----
-
-## 46. Pretty Print
-
-```js
-const pretty =
-  JSON.stringify(
-    json,
-    null,
-    2
-  )
-```
-
-결과를 2-space indentation으로 읽기 좋게 만듭니다.
-
----
-
-## 47. Reviver
-
-parse할 때 값을 변환할 수 있습니다.
-
-```js
-const data =
-  JSON.parse(
-    '{"price":"300000"}',
-    function(key, value) {
-      if (key === "price") {
-        return Number(value)
-      }
-
-      return value
-    }
-  )
-```
-
----
-
-# Representative Examples
-
-## 48. API Data 예제
-
-```js
-const products = [
-  {
-    id: 1,
-    name: "키보드",
-    price: 50000
-  },
-  {
-    id: 2,
-    name: "마우스",
-    price: 30000
-  }
-]
-
-const requestBody =
-  JSON.stringify(products)
-
-console.log(
-  requestBody
+# 61. `Object.values()`
+
+```javascript
+const values = Object.values(
+    product,
 )
 ```
 
-server에서 받은 JSON text:
+Value 배열을 반환한다.
 
-```js
-const responseText = `
-[
-  {
-    "id": 1,
-    "name": "키보드",
-    "price": 50000
-  }
-]
-`
+---
 
-const responseData =
-  JSON.parse(
-    responseText
-  )
+# 62. `Object.entries()`
+
+```javascript
+const entries = Object.entries(
+    product,
+)
+
+for (
+    const [
+        key,
+        value,
+    ]
+    of entries
+) {
+    console.log(
+        key,
+        value,
+    )
+}
 ```
 
 ---
 
-# Practical Usage
+# 63. 객체 복사
 
-## 49. LocalStorage 저장
+```javascript
+const copied = {
+    ...product,
+}
+```
 
-`localStorage`는 string을 저장합니다.
+얕은 복사다.
 
-```js
+중첩 객체는 같은 참조를 공유할 수 있다.
+
+---
+
+# 64. JSON 기반 깊은 복사의 한계
+
+```javascript
+const copied = JSON.parse(
+    JSON.stringify(
+        original,
+    ),
+)
+```
+
+다음 값이 손실·변형될 수 있다.
+
+- Function
+- `undefined`
+- Symbol
+- Date
+- Map
+- Set
+- BigInt
+- 순환 참조
+- Class Instance
+
+일반 데이터 복사는 `structuredClone()`을 검토한다.
+
+---
+
+# 65. `structuredClone()`
+
+```javascript
+const copied = (
+    structuredClone(
+        original,
+    )
+)
+```
+
+지원 가능한 다양한 내장 자료형과 순환 참조를 복제할 수 있다.
+
+함수는 복제할 수 없다.
+
+---
+
+# 66. Local Storage 저장
+
+Local Storage에는 문자열만 저장된다.
+
+```javascript
 const settings = {
-  theme: "dark",
-  fontSize: 16
+    theme: "dark",
+    fontSize: 16,
 }
 
 localStorage.setItem(
-  "settings",
-  JSON.stringify(settings)
+    "settings",
+    JSON.stringify(
+        settings,
+    ),
 )
-```
-
-읽기:
-
-```js
-const saved =
-  localStorage.getItem(
-    "settings"
-  )
-
-const settings =
-  saved === null
-    ? null
-    : JSON.parse(saved)
 ```
 
 ---
 
-## 50. Fetch 요청 Body
+# 67. Local Storage 복원
 
-```js
+```javascript
+const stored = localStorage.getItem(
+    "settings",
+)
+
+const settings = (
+    stored === null
+        ? null
+        : JSON.parse(stored)
+)
+```
+
+---
+
+# 68. 저장 데이터 오류 처리
+
+```javascript
+function loadJson(
+    key,
+    fallback,
+) {
+    const stored = (
+        localStorage.getItem(
+            key,
+        )
+    )
+
+    if (stored === null) {
+        return fallback
+    }
+
+    try {
+        return JSON.parse(
+            stored,
+        )
+    } catch (
+        error
+    ) {
+        console.error(
+            `${key} 복원 실패`,
+            error,
+        )
+
+        return fallback
+    }
+}
+```
+
+---
+
+# 69. API 전송 전 직렬화
+
+```javascript
+const requestBody = (
+    JSON.stringify({
+        name: "Kim",
+        age: 20,
+    })
+)
+```
+
+Fetch에서 사용할 때:
+
+```javascript
 fetch(
-  "/api/users",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type":
-        "application/json"
+    "/api/users",
+    {
+        method: "POST",
+
+        headers: {
+            "Content-Type":
+                "application/json",
+        },
+
+        body: requestBody,
     },
-    body:
-      JSON.stringify({
-        name: "홍길동",
-        age: 20
-      })
-  }
 )
 ```
-
-`body`에는 JSON text가 들어갑니다.
-
-원본에는 없는 실무 확장 예제입니다.
 
 ---
 
-# Common Mistakes
+# 70. API 응답 Parse
 
-## 51. 자주 하는 실수
+```javascript
+const response = await fetch(
+    "/api/users",
+)
 
-### 51.1 객체를 모두 JSON이라고 부름
+const data = await response.json()
+```
 
-JavaScript object와 JSON text는 서로 다른 개념입니다.
-
-### 51.2 JSON에 함수가 들어갈 수 있다고 생각
-
-JSON 문법에는 함수가 없습니다.
-
-### 51.3 Single Quote를 JSON에서 사용
-
-JSON string은 double quote만 허용합니다.
-
-### 51.4 Hyphen Key를 Dot Notation으로 접근
-
-bracket notation을 사용해야 합니다.
-
-### 51.5 존재하지 않는 Property와 미선언 변수를 혼동
-
-전자는 `undefined`, 후자는 `ReferenceError`가 될 수 있습니다.
-
-### 51.6 Stringify 후 함수가 유지된다고 생각
-
-객체 property의 함수는 제외됩니다.
-
-### 51.7 Parse가 어떤 문자열이든 처리한다고 생각
-
-유효한 JSON text만 parsing할 수 있습니다.
-
-### 51.8 Array에 For...in을 기본으로 사용
-
-value 순회에는 `for...of`가 더 적합합니다.
-
-### 51.9 Object.keys가 중첩 Key까지 모두 반환한다고 생각
-
-현재 객체의 own enumerable string key만 반환합니다.
-
-### 51.10 Leading Zero Number를 JSON에 작성
-
-`03`, `02`는 유효한 JSON number가 아닙니다. 문자열 `"03"`, `"02"`로 표현해야 합니다.
+`response.json()`은 응답 Body를 읽고 JSON Parse까지 수행한다.
 
 ---
 
-# Interview / Review
+# 71. 내 코드와 강사님 코드 비교
 
-## 52. 면접·복습 포인트
+| 항목 | 내 코드 | 강사님 코드 |
+| --- | --- | --- |
+| 객체 기본 구조 | 거의 동일 | 거의 동일 |
+| 중첩 `k` Property | 없음 | `k: 3` 존재 |
+| `json.k1.k` 결과 | `undefined` | `3` |
+| `num2` 추가 후 출력 | 직접 출력 | 객체 전체 출력 |
+| Parse 결과 출력 | 일부 직접 출력 | 일부 대입만 수행 |
+| 객체 배열 | 동일 | 동일 |
+| 설명 주석 | 더 상세 | 핵심 중심 |
+| 객체와 JSON 용어 | 혼용 | 혼용 |
 
-### Q1. JavaScript 객체와 JSON의 차이는 무엇인가요?
+## 71-1. 내 코드의 장점
 
-JavaScript 객체는 실행 중 사용하는 값이고 JSON은 구조화된 데이터를 표현하는 문자열 형식입니다.
+- 객체의 Key·Value 구조를 상세히 주석으로 기록했다.
+- Bracket·Dot Notation 차이를 실습했다.
+- 함수 Property 호출을 확인했다.
+- Stringify·Parse 결과를 직접 출력했다.
+- 객체 배열과 반복문을 직접 확인했다.
 
-### Q2. JSON에서 함수가 허용되나요?
+## 71-2. 내 코드의 개선점
 
-허용되지 않습니다.
+- JavaScript 객체를 JSON이라고 부른다.
+- JSON을 HTML 닫는 Tag 감소 목적으로 설명한다.
+- `k` Property가 없는데 `json.k1.k`를 출력한다.
+- 네트워크 데이터가 항상 문자열이라고 단정한다.
+- 실무에서 `delete`를 사용하지 않는다고 단정한다.
+- `for...in`을 배열 Value 순회처럼 사용할 수 있다.
+- Parse 오류 처리와 저장 데이터 검증이 없다.
 
-### Q3. Hyphen이 포함된 Key에는 어떻게 접근하나요?
+## 71-3. 강사님 코드의 장점
 
-bracket notation을 사용합니다.
+- 객체 선언·접근·수정·추가·삭제 흐름이 간결하다.
+- 중첩 객체의 Dot·Bracket 접근을 보여 준다.
+- Stringify·Parse 기본 사용을 확인할 수 있다.
+- 객체 배열 순회와 `Object.keys()`를 연결한다.
 
-```js
-object["user-name"]
-```
+## 71-4. 강사님 코드의 보충점
 
-### Q4. 존재하지 않는 Property를 읽으면 무엇이 나오나요?
-
-일반적으로 `undefined`가 나옵니다.
-
-### Q5. JSON.stringify는 무엇을 하나요?
-
-JavaScript 값을 JSON 문자열로 직렬화합니다.
-
-### Q6. 함수 Property는 Stringify 결과에 어떻게 되나요?
-
-객체 property라면 제외됩니다.
-
-### Q7. JSON.parse는 무엇을 반환하나요?
-
-JSON text에 따라 JavaScript object, array, string, number, boolean 또는 null을 반환합니다.
-
-### Q8. For...of와 For...in 차이는 무엇인가요?
-
-for...of는 iterable value를 순회하고 for...in은 enumerable property key를 순회합니다.
-
-### Q9. Object.keys는 무엇을 반환하나요?
-
-own enumerable string key의 array를 반환합니다.
-
-### Q10. 내 코드와 강사님 코드의 핵심 실행 차이는 무엇인가요?
-
-강사님 중첩 객체에는 `k: 3`이 있어 `json.k1.k`가 3이고, 내 코드에는 없어 undefined입니다.
+- 객체와 JSON 문자열의 용어를 구분해야 한다.
+- Stringify에서 제외·변환되는 값 설명이 필요하다.
+- Parse 오류 처리와 Reviver를 보충할 수 있다.
+- `for...in` 배열 순회의 한계를 설명해야 한다.
+- Local Storage·API 연결 예제가 필요하다.
 
 ---
 
-# Problems
+# 72. 기존 코드에서 개선한 이유
 
-## 문제 1. 객체 선언
+## 72-1. 변수 이름
 
-이름과 나이를 가진 JavaScript 객체를 선언하세요.
+기존:
 
-## 문제 2. JSON Text
+```javascript
+const json = {
+    key: "value",
+}
+```
 
-문제 1의 객체와 같은 데이터를 유효한 JSON text로 작성하세요.
+개선:
 
-## 문제 3. Bracket Notation
+```javascript
+const data = {
+    key: "value",
+}
+```
 
-`"user-name"` property 값을 출력하세요.
+객체와 JSON 문자열을 이름으로 구분한다.
 
-## 문제 4. Dot Notation
+## 72-2. 직렬화 변수
 
-`user.age`를 출력하세요.
+```javascript
+const jsonText = (
+    JSON.stringify(
+        data,
+    )
+)
+```
 
-## 문제 5. 중첩 Property
+문자열임이 드러나는 이름을 사용한다.
 
-중첩 객체의 `address.city`를 출력하세요.
+## 72-3. 배열 순회
 
-## 문제 6. 존재하지 않는 Property
+기존:
 
-없는 property를 읽을 때 결과를 설명하세요.
+```javascript
+for (
+    const index
+    in temples
+) {
+    console.log(
+        temples[index],
+    )
+}
+```
 
-## 문제 7. Property 수정
+개선:
 
-age를 20에서 21로 바꾸세요.
+```javascript
+for (
+    const temple
+    of temples
+) {
+    console.log(temple)
+}
+```
 
-## 문제 8. Property 추가
+## 72-4. Parse 오류 처리
 
-active property에 true를 추가하세요.
+기존:
 
-## 문제 9. Property 삭제
+```javascript
+const data = JSON.parse(
+    input,
+)
+```
 
-active property를 삭제하세요.
+개선:
 
-## 문제 10. 함수 Property
-
-객체에 `greet()` 함수를 넣고 두 접근 방식으로 호출하세요.
-
-## 문제 11. String 변환
-
-일반 객체에 `"" + object`를 실행했을 때 대표 결과를 설명하세요.
-
-## 문제 12. Stringify
-
-JavaScript 객체를 JSON 문자열로 변환하세요.
-
-## 문제 13. 함수 제외
-
-함수 property가 stringify 결과에서 어떻게 되는지 설명하세요.
-
-## 문제 14. Parse
-
-JSON 문자열을 JavaScript 객체로 변환하세요.
-
-## 문제 15. Parse 오류
-
-`JSON.parse("<h1>")`가 실패하는 이유를 설명하세요.
-
-## 문제 16. 빈 객체 Parse
-
-`"{}"`를 parsing하세요.
-
-## 문제 17. 객체 배열 Parse
-
-`"[{}]"`를 parsing하세요.
-
-## 문제 18. For...of
-
-객체 배열의 모든 이름을 출력하세요.
-
-## 문제 19. For...in
-
-객체의 모든 key를 순회하세요.
-
-## 문제 20. Object.keys
-
-객체 key 배열을 만드세요.
-
-## 문제 21. 원본 차이
-
-내 코드에서 `json.k1.k`가 undefined인 이유를 설명하세요.
-
-## 문제 22. 종합 설정 저장
-
-다음 요구사항을 만족하세요.
-
-- 설정 객체에 theme, fontSize, notifications 저장
-- JSON.stringify로 문자열 변환
-- localStorage에 저장
-- 다시 읽기
-- 값이 없으면 기본 객체 사용
-- JSON.parse 실패를 try...catch로 처리
-- 복원된 객체의 theme 출력
-- 함수는 저장하지 않음
+```javascript
+const result = safeParse(
+    input,
+)
+```
 
 ---
 
-# Answers
+# 73. 실무형 예제: 설정 저장소
 
-## 정답 1
+```javascript
+function createJsonStorage(
+    storage,
+) {
+    return {
+        save(
+            key,
+            value,
+        ) {
+            const jsonText = (
+                JSON.stringify(
+                    value,
+                )
+            )
 
-```js
-const user = {
-  name: "홍길동",
-  age: 20
-}
-```
+            storage.setItem(
+                key,
+                jsonText,
+            )
+        },
 
-## 정답 2
+        load(
+            key,
+            fallback = null,
+        ) {
+            const jsonText = (
+                storage.getItem(
+                    key,
+                )
+            )
 
-```json
-{
-  "name": "홍길동",
-  "age": 20
-}
-```
+            if (
+                jsonText === null
+            ) {
+                return fallback
+            }
 
-## 정답 3
+            try {
+                return JSON.parse(
+                    jsonText,
+                )
+            } catch (
+                error
+            ) {
+                console.error(
+                    `${key} Parse 실패`,
+                    error,
+                )
 
-```js
-const user = {
-  "user-name":
-    "홍길동"
-}
+                return fallback
+            }
+        },
 
-console.log(
-  user["user-name"]
-)
-```
-
-## 정답 4
-
-```js
-console.log(
-  user.age
-)
-```
-
-## 정답 5
-
-```js
-const user = {
-  address: {
-    city: "서울"
-  }
-}
-
-console.log(
-  user.address.city
-)
-```
-
-## 정답 6
-
-```js
-console.log(
-  user.missing
-)
-```
-
-결과는 일반적으로 `undefined`입니다.
-
-## 정답 7
-
-```js
-user.age = 21
-```
-
-## 정답 8
-
-```js
-user.active = true
-```
-
-## 정답 9
-
-```js
-delete user.active
-```
-
-## 정답 10
-
-```js
-const user = {
-  greet:
-    function() {
-      console.log(
-        "안녕하세요"
-      )
+        remove(
+            key,
+        ) {
+            storage.removeItem(
+                key,
+            )
+        },
     }
 }
 
-user.greet()
-user["greet"]()
+const settingsStorage = (
+    createJsonStorage(
+        localStorage,
+    )
+)
+
+settingsStorage.save(
+    "app-settings",
+    {
+        theme: "dark",
+        fontSize: 16,
+    },
+)
+
+const settings = (
+    settingsStorage.load(
+        "app-settings",
+        {
+            theme: "light",
+            fontSize: 14,
+        },
+    )
+)
+
+console.log(settings)
 ```
 
-## 정답 11
+## 73-1. 코드에서 무엇을 사용하는 걸까?
 
-일반 객체의 기본 문자열 변환 결과는 대체로 다음과 같습니다.
+| 코드 | 사용하는 이유 |
+| --- | --- |
+| `JSON.stringify()` | 객체를 저장 가능한 문자열로 변환 |
+| `JSON.parse()` | 문자열을 객체로 복원 |
+| `try...catch` | 손상된 저장 데이터 처리 |
+| Fallback | 데이터 없음·오류 시 기본값 제공 |
+| Storage 주입 | Local·Session Storage 재사용 |
+| Method 분리 | 저장·조회·삭제 역할 구분 |
+
+---
+
+# 74. 대표 오류로 이해하기
+
+## 74-1. 객체를 JSON이라고 부름
+
+자료형과 문자열 형식을 혼동하게 된다.
+
+## 74-2. Hyphen Key에 Dot Notation 사용
+
+뺄셈 표현식으로 해석된다.
+
+## 74-3. 없는 Property와 없는 변수 혼동
+
+`undefined`와 `ReferenceError`가 다르다.
+
+## 74-4. 함수가 Parse 후 복원된다고 생각
+
+Stringify 단계에서 제외된다.
+
+## 74-5. 잘못된 JSON Parse
+
+`SyntaxError`가 발생한다.
+
+## 74-6. BigInt·순환 참조 Stringify
+
+`TypeError`가 발생할 수 있다.
+
+---
+
+# 75. 자주 하는 실수
+
+## 75-1. Single Quote JSON 작성
+
+JSON 문자열은 Double Quote를 사용한다.
+
+## 75-2. Trailing Comma 사용
+
+JavaScript 객체와 달리 JSON에서는 허용되지 않는다.
+
+## 75-3. `undefined`를 JSON Value로 기대
+
+객체에서는 제외되거나 배열에서는 `null`로 변환된다.
+
+## 75-4. Date가 Date 객체로 복원된다고 생각
+
+기본 Parse 결과는 문자열이다.
+
+## 75-5. JSON 복사로 모든 자료형 깊은 복사
+
+여러 자료형이 손실되거나 변형된다.
+
+## 75-6. 배열에 `for...in`을 우선 사용
+
+Value 순회에는 `for...of`가 더 적합하다.
+
+## 75-7. Local Storage 값을 바로 Parse
+
+잘못된 데이터에 대비해 `try...catch`를 사용한다.
+
+## 75-8. 민감정보를 그대로 Stringify
+
+Replacer·`toJSON()` 또는 별도 DTO로 제외한다.
+
+## 75-9. 객체 Property 순서를 업무 로직에 의존
+
+순서가 중요하면 배열을 사용한다.
+
+## 75-10. API 응답 구조를 검증하지 않음
+
+JSON Parse 성공과 데이터 형태가 올바른 것은 별개다.
+
+---
+
+# 76. 핵심 요약
 
 ```text
-[object Object]
+JavaScript Object
+→ 실행 중 사용하는 값
+
+JSON
+→ 구조화된 문자열 형식
 ```
 
-## 정답 12
-
-```js
-const text =
-  JSON.stringify(user)
+```text
+object.key
+object["key"]
+→ Property 접근
 ```
 
-## 정답 13
+```text
+JSON.stringify()
+→ 직렬화
 
-객체 property value가 함수이면 해당 property는 stringify 결과에서 제외됩니다.
-
-## 정답 14
-
-```js
-const user =
-  JSON.parse(
-    '{"name":"홍길동"}'
-  )
+JSON.parse()
+→ 역직렬화
 ```
 
-## 정답 15
-
-`<h1>`은 JSON 문법에 맞는 object, array, string, number, boolean, null 표현이 아니기 때문입니다.
-
-## 정답 16
-
-```js
-const emptyObject =
-  JSON.parse("{}")
+```text
+Object.keys()
+Object.values()
+Object.entries()
+→ 객체 순회용 배열
 ```
 
-## 정답 17
+```text
+for...of
+→ 배열 Value
 
-```js
-const objectArray =
-  JSON.parse("[{}]")
-```
-
-## 정답 18
-
-```js
-for (
-  const item of users
-) {
-  console.log(
-    item.name
-  )
-}
-```
-
-## 정답 19
-
-```js
-for (
-  const key in user
-) {
-  if (
-    Object.hasOwn(
-      user,
-      key
-    )
-  ) {
-    console.log(
-      key,
-      user[key]
-    )
-  }
-}
-```
-
-## 정답 20
-
-```js
-const keys =
-  Object.keys(user)
-```
-
-## 정답 21
-
-내 `json.k1` 객체에는 `"k1-1"`과 `"k1-2"`만 있고 `k` property가 선언되지 않았기 때문에 `json.k1.k`는 `undefined`입니다.
-
-## 정답 22
-
-```js
-const defaultSettings = {
-  theme: "light",
-  fontSize: 16,
-  notifications: true
-}
-
-function saveSettings(
-  settings
-) {
-  const text =
-    JSON.stringify(
-      settings
-    )
-
-  localStorage.setItem(
-    "settings",
-    text
-  )
-}
-
-function loadSettings() {
-  const text =
-    localStorage.getItem(
-      "settings"
-    )
-
-  if (text === null) {
-    return {
-      ...defaultSettings
-    }
-  }
-
-  try {
-    return JSON.parse(text)
-  } catch (error) {
-    console.error(
-      "설정 JSON을 읽지 못했습니다.",
-      error
-    )
-
-    return {
-      ...defaultSettings
-    }
-  }
-}
-
-saveSettings({
-  theme: "dark",
-  fontSize: 18,
-  notifications: false
-})
-
-const settings =
-  loadSettings()
-
-console.log(
-  settings.theme
-)
+for...in
+→ Enumerable Key
 ```
 
 ---
 
-# Final Checklist
+# 77. 최종 체크리스트
 
-## 객체
-
-- [ ] JavaScript 객체와 JSON을 구분했다.
-- [ ] key와 value를 이해했다.
-- [ ] bracket notation과 dot notation을 구분했다.
-- [ ] hyphen key에 bracket notation을 사용했다.
-- [ ] 존재하지 않는 property와 미선언 변수를 구분했다.
-- [ ] property를 추가·수정·삭제했다.
-- [ ] 함수 property를 호출했다.
-- [ ] 의미 있는 순서가 필요할 때 array를 사용했다.
-
-## Stringify와 Parse
-
-- [ ] JSON.stringify가 문자열을 반환함을 이해했다.
-- [ ] 함수 property가 제외됨을 이해했다.
-- [ ] undefined, Symbol, NaN, Infinity 처리도 확인했다.
-- [ ] BigInt stringify 오류를 인지했다.
-- [ ] JSON.parse가 JavaScript 값을 반환함을 이해했다.
-- [ ] parse 실패를 try...catch로 처리했다.
-- [ ] JSON property name과 string에 double quote를 사용했다.
-- [ ] comment와 trailing comma를 JSON에 넣지 않았다.
-- [ ] leading zero number를 문자열로 표현했다.
-
-## 순회
-
-- [ ] 객체 배열에 for...of를 사용했다.
-- [ ] for...in이 key를 순회함을 이해했다.
-- [ ] Object.keys가 key array를 반환함을 이해했다.
-- [ ] Object.keys가 중첩 key를 자동으로 펼치지 않음을 이해했다.
-- [ ] own property 확인이 필요한 상황을 이해했다.
-
-## 원본 검수
-
-- [ ] 두 실제 19_json.html만 비교했다.
-- [ ] 강사님 `k: 3`과 내 누락 차이를 기록했다.
-- [ ] 내 `json.k1.k` 결과가 undefined임을 기록했다.
-- [ ] num2 출력 차이를 기록했다.
-- [ ] parse 결과 Console 출력 차이를 기록했다.
-- [ ] teacher의 날짜 위치 설명 차이를 기록했다.
-- [ ] 두 body의 마지막 표현이 JSON이 아님을 기록했다.
-- [ ] 내 잘못된 `cen="20"` 구조를 기록했다.
-- [ ] JavaScript 객체를 JSON이라고 부르는 공통 문제를 기록했다.
-- [ ] BACKUP을 분석하지 않았다.
+- [ ] JavaScript 객체와 JSON 문자열을 구분할 수 있는가?
+- [ ] JSON에서 허용되지 않는 문법을 설명할 수 있는가?
+- [ ] Dot·Bracket Notation을 구분할 수 있는가?
+- [ ] 동적 Key에 Bracket Notation을 사용할 수 있는가?
+- [ ] Hyphen Key에 안전하게 접근할 수 있는가?
+- [ ] 중첩 객체에 Optional Chaining을 사용할 수 있는가?
+- [ ] 내 코드의 누락된 `k` Property 차이를 이해했는가?
+- [ ] 존재하지 않는 Property와 변수를 구분할 수 있는가?
+- [ ] Property를 추가·수정·삭제할 수 있는가?
+- [ ] `Object.hasOwn()`으로 Own Property를 확인할 수 있는가?
+- [ ] `JSON.stringify()` 결과가 문자열임을 이해했는가?
+- [ ] 함수·`undefined`·Symbol의 직렬화 규칙을 이해했는가?
+- [ ] `NaN`, Infinity, BigInt의 동작을 이해했는가?
+- [ ] 순환 참조 오류를 설명할 수 있는가?
+- [ ] Replacer로 Property를 제외할 수 있는가?
+- [ ] `JSON.parse()` 오류를 처리할 수 있는가?
+- [ ] Reviver로 Date를 복원할 수 있는가?
+- [ ] `for...of`와 `for...in`을 구분할 수 있는가?
+- [ ] `Object.keys()`, `values()`, `entries()`를 사용할 수 있는가?
+- [ ] JSON 깊은 복사의 한계를 이해했는가?
+- [ ] 객체를 Local Storage에 저장·복원할 수 있는가?
+- [ ] 저장 데이터 오류 시 Fallback을 제공하는가?
+- [ ] API 요청 Body를 JSON 문자열로 만들 수 있는가?
+- [ ] JSON Parse 성공 후 데이터 형태도 검증해야 함을 이해했는가?
 
 ---
 
-# Key Summary
+# 마무리
 
-- JavaScript 19번은 객체 property와 JSON 직렬화·역직렬화를 다룬다.
-- 원본 변수 이름은 `json`이지만 실제 값은 JavaScript object이다.
-- JavaScript 객체와 JSON 문자열은 서로 다른 개념이다.
-- JavaScript 객체는 함수, undefined, Symbol 등을 value로 가질 수 있다.
-- JSON은 string, number, boolean, null, object, array만 표현한다.
-- JSON property name과 string은 double quote를 사용해야 한다.
-- JSON에는 함수, comment, trailing comma, single quote를 사용할 수 없다.
-- bracket notation은 hyphen이나 동적 key 접근에 적합하다.
-- `json.k1["k1-2"]`는 올바르지만 `json.k1.k1-2`는 subtraction으로 해석된다.
-- 강사님 `json.k1`에는 `k: 3`이 있어 `json.k1.k`가 3이다.
-- 내 `json.k1`에는 k가 없어 같은 표현이 undefined다.
-- 객체의 존재하지 않는 property는 일반적으로 undefined다.
-- 미선언 identifier를 직접 읽는 것은 ReferenceError가 될 수 있다.
-- 기존 property에 값을 넣으면 수정되고 없는 key에 넣으면 추가된다.
-- `"" + object`의 대표 결과는 `[object Object]`이다.
-- `JSON.stringify()`는 JavaScript 값을 JSON 문자열로 직렬화한다.
-- 객체 property의 함수, undefined, Symbol은 stringify 결과에서 제외될 수 있다.
-- `NaN`과 `Infinity`는 JSON에서 null로 변환된다.
-- `JSON.parse()`는 유효한 JSON text를 JavaScript 값으로 바꾼다.
-- `JSON.parse("<h1>")`는 유효한 JSON이 아니므로 SyntaxError가 발생한다.
-- `JSON.parse("{}")`는 빈 객체를 반환한다.
-- `JSON.parse("[{}]")`는 빈 객체 하나를 가진 array를 반환한다.
-- temple은 JSON 문자열이 아니라 JavaScript 객체 배열이다.
-- `for...of`는 array value를 순회한다.
-- `for...in`은 enumerable key를 순회한다.
-- `Object.keys()`는 own enumerable string key의 array를 반환한다.
-- `delete`는 객체 property를 제거한다.
-- 실무에서 delete 사용 여부는 상태 관리 방식과 설계에 따라 달라진다.
-- 강사님 body의 객체형 text도 엄밀히 JSON이 아니다.
-- 내 body의 `JSON : {year: {cen="20"} 1999,...}`는 JSON과 JavaScript object 문법 모두에 맞지 않는다.
+JSON 처리의 핵심은 객체에 `JSON.stringify()`를 적용하는 것에서 끝나지 않는다.
+
+```text
+객체와 JSON 문자열을 정확히 구분하고
+    ↓
+변환 과정에서 손실되는 값을 이해하고
+    ↓
+유효하지 않은 문자열과 저장 오류를 처리하고
+    ↓
+객체 배열과 Property를 목적에 맞게 순회하고
+    ↓
+저장·API 전송에 안전한 데이터 구조를 설계하는 것
+```
+
+이 흐름을 이해하면 다음 AJAX·Fetch 문서에서 서버와 주고받는 데이터를 더 정확하게 처리할 수 있다.

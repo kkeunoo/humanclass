@@ -1,3 +1,10 @@
+---
+title: JavaScript AJAX와 Fetch API
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # JavaScript AJAX와 Fetch API
 
 ## 문서 정보
@@ -6,250 +13,284 @@
 | --- | --- |
 | 문서 | `20_JavaScript_AJAX와_Fetch_API.md` |
 | 분류 | `03_JavaScript` |
-| 권장 선수 학습 | `19_JavaScript_JSON과_객체직렬화.md` |
-| 다음 학습 | 이후 JavaScript 원본 순서에 따라 진행 |
-| 원본 기준 | `workspace/workspace_html/javascript/20_ajax.html`, `workspace/workspace_html/javascript/asset/js/20_ajax.js`, `workspace_teacher/workspace_html/javascript/20_ajax.html`, `workspace_teacher/workspace_html/javascript/asset/js/20_ajax.js` |
-| 핵심 범위 | AJAX, `XMLHttpRequest`, GET 요청, 비동기 응답, `responseText`, `JSON.parse()`, 공공데이터 API, `filter()`, 시간별 데이터 그룹화, 동적 table, `fetch()`, Promise chain, `try...catch`, `debugger` |
-| 프로젝트 연결 | 회원 목록 조회, 외부 API 호출, 날씨 데이터 가공, JSON 응답 렌더링, 오류 처리, 개발자 도구 디버깅 |
+| 원본 기준 | `workspace_html/javascript/20_ajax.html`, `workspace_html/javascript/asset/js/20_ajax.js`, 강사님 동일 파일 |
+| 핵심 범위 | AJAX, `XMLHttpRequest`, JSON 응답, 공공데이터 API, 데이터 필터·그룹화, Fetch, Promise, `async/await`, 오류 처리, Debugger |
+| 실습 범위 | 회원 조회, 상대 HTML 요청, 날씨 데이터 가공, Table 렌더링, Fetch 요청, 로딩·오류·중복 요청 처리 |
+| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
 
-> 이 문서는 HTML과 실제 연결된 JavaScript 파일을 함께 비교했습니다. 강사님 코드는 `XMLHttpRequest`의 기본 흐름, JSONPlaceholder 회원 정보, 기상청 초단기예보, 시간별 데이터 그룹화, `fetch()`, `try...catch`, `debugger`를 간결하게 구현합니다. 내 코드는 주석과 직접 풀이가 훨씬 많고 회원정보 table까지 구현했지만, 날씨 시간별 출력 조건이 잘못되어 온도·습도·강수량 열이 정확히 대응하지 않으며, 회원정보 출력에서 빈 `tr`을 만든 뒤 `tbody.innerHTML +=`로 `td`를 직접 추가하는 구조적 문제가 있습니다. 원본 오류와 차이는 수정하지 않고 보존한 뒤 개선 방향을 별도로 설명합니다.
+> 20번은 HTML과 연결된 외부 JavaScript 파일을 함께 확인한다.  
+> 강사님 코드는 `XMLHttpRequest`, 기상청 초단기예보, 시간별 그룹화, Fetch 흐름을 구현하고, 내 코드는 회원 Table과 날씨 출력 문제를 추가로 시도했다. 이 문서에서는 실제 오류를 보존해 비교한 뒤 안전한 구현으로 개선한다.
+
+---
+
+# 개요
+
+AJAX는 현재 페이지를 유지하면서 JavaScript로 서버에 데이터를 요청하고 응답 결과만 화면에 반영하는 방식이다.
+
+```text
+사용자 버튼 클릭
+    ↓
+JavaScript가 서버에 요청
+    ↓
+현재 화면은 유지
+    ↓
+응답 도착
+    ↓
+JSON 변환
+    ↓
+필요한 DOM만 갱신
+```
+
+대표 요청 방식:
+
+```javascript
+const xhr = new XMLHttpRequest()
+
+xhr.open(
+    "GET",
+    "/api/users",
+)
+
+xhr.send()
+```
+
+```javascript
+const response = await fetch(
+    "/api/users",
+)
+
+const users = await response.json()
+```
+
+> [!IMPORTANT]
+> 비동기 요청은 코드가 작성된 순서와 실제 완료 순서가 다를 수 있다. 응답 데이터는 요청 직후가 아니라 응답 완료 Callback 또는 `await` 이후에 사용해야 한다.
+
+---
+
+# 핵심 개념
+
+| 개념 | 핵심 역할 |
+| --- | --- |
+| AJAX | 현재 문서를 유지한 비동기 데이터 통신 |
+| `XMLHttpRequest` | 전통적인 HTTP 요청 객체 |
+| `open()` | HTTP Method와 URL 설정 |
+| `send()` | 요청 전송 |
+| `responseText` | 응답 Body 문자열 |
+| HTTP Status | 요청 처리 결과 코드 |
+| JSON Parse | JSON 문자열을 JavaScript 값으로 변환 |
+| Fetch | Promise 기반 HTTP 요청 API |
+| Promise | 미래에 완료될 작업의 상태·결과 표현 |
+| `response.ok` | HTTP 성공 범위 확인 |
+| `async/await` | Promise 흐름을 동기 코드처럼 작성 |
+| AbortController | 진행 중인 Fetch 요청 취소 |
+| Loading State | 요청 진행 중 UI 상태 |
+| Data Grouping | 분리된 항목을 공통 Key 기준으로 묶는 작업 |
 
 ---
 
 # 학습 목표
 
-- AJAX의 의미와 사용 목적을 설명한다.
-- `XMLHttpRequest`의 생성·설정·전송·응답 처리 단계를 이해한다.
-- 비동기 요청 직후 `responseText`가 비어 있을 수 있는 이유를 설명한다.
-- JSON 문자열을 JavaScript 값으로 변환한다.
-- 중첩 객체와 배열에서 필요한 값을 찾는다.
-- 공공데이터 API URL과 query parameter를 구성한다.
-- 날씨 category를 `filter()`로 추린다.
-- 시간별 category 값을 객체로 그룹화한다.
-- 동적으로 table row를 생성한다.
-- `fetch()`와 Promise chain의 흐름을 이해한다.
-- `try...catch`로 동기 오류를 처리한다.
-- `debugger`를 이용해 실행을 중단하고 상태를 확인한다.
-- HTTP 상태 오류와 network 오류의 차이를 이해한다.
-- 내 코드와 강사님 코드의 실제 차이와 오류를 정확히 기록한다.
+- AJAX의 목적을 설명할 수 있다.
+- 일반 페이지 이동과 AJAX 요청을 구분할 수 있다.
+- `XMLHttpRequest`의 생성·설정·전송·응답 처리 순서를 이해한다.
+- `open()`과 `send()`의 역할을 구분할 수 있다.
+- 요청 직후 `responseText`가 비어 있을 수 있는 이유를 설명할 수 있다.
+- HTTP Status와 Network Error를 구분할 수 있다.
+- JSON 응답을 안전하게 Parse할 수 있다.
+- 상대 URL의 기준이 현재 문서 URL임을 이해한다.
+- 공공데이터 API Query Parameter를 구성할 수 있다.
+- UTC 날짜와 Local 날짜의 차이를 이해한다.
+- 자정 이전 발표 시각을 안전하게 계산할 수 있다.
+- Weather Category를 필터링하고 시간별로 그룹화할 수 있다.
+- Table의 `tbody → tr → td` 구조를 올바르게 생성할 수 있다.
+- `fetch()`와 `response.json()`이 Promise를 반환함을 이해한다.
+- `response.ok`를 검사할 수 있다.
+- Promise Chain과 `async/await`를 사용할 수 있다.
+- 요청 진행·성공·실패 상태를 화면에 표시할 수 있다.
+- 중복 요청을 방지하고 필요하면 요청을 취소할 수 있다.
+- `debugger`와 개발자 도구로 실행 흐름을 추적할 수 있다.
 
 ---
 
-# Core Concepts
-
-## 1. AJAX란?
-
-AJAX는 다음 표현의 약자입니다.
+# 1. AJAX란?
 
 ```text
 Asynchronous JavaScript And XML
 ```
 
-원본 HTML 주석:
+이름에는 XML이 포함되지만 현대 웹에서는 JSON 응답을 더 자주 사용한다.
 
-```html
-<!--
-AJAX =
-Asynchronous JavaScript and XML
-비동기 통신
--->
-```
-
-이름에 XML이 포함되어 있지만 현대 웹에서는 JSON을 더 자주 사용합니다.
-
-핵심은 페이지 전체를 이동하거나 새로고침하지 않고 JavaScript에서 server와 비동기 통신하는 것입니다.
+핵심은 데이터 형식보다 현재 페이지를 유지한 비동기 통신이다.
 
 ---
 
-## 2. Browser 이동과 AJAX
-
-내 원본 주석:
+# 2. 일반 이동과 AJAX
 
 ```text
-browser는 서버에 가서 Text를 받아와 해석
-AJAX는 Text를 받아오는 것까지만
-
-browser는 직접 사이트를 이동해야 하지만
-AJAX는 값을 가져올 수 있음
-```
-
-보완하면 다음과 같습니다.
-
-```text
-일반 navigation
-→ browser가 새 document를 요청하고 화면 전체를 전환
+일반 Navigation
+→ 새 문서 요청
+→ 화면 전체 전환
 
 AJAX
-→ 현재 document를 유지한 채 JavaScript가 data를 요청
-→ 받은 data로 필요한 DOM만 갱신
+→ 현재 문서 유지
+→ 데이터 요청
+→ 일부 DOM만 갱신
 ```
-
-AJAX 응답은 text뿐 아니라 Blob, ArrayBuffer 등으로도 받을 수 있습니다.
 
 ---
 
-## 3. Load 이후 Bind
+# 3. AJAX 응답 형식
 
-양쪽 원본:
+응답은 문자열만 가능한 것이 아니다.
 
-```js
+- JSON
+- Text
+- HTML
+- Blob
+- ArrayBuffer
+- Form Data
+- Image·File Binary
+
+---
+
+# 4. 원본 초기화
+
+```javascript
 window.addEventListener(
-  "load",
-  bind
+    "load",
+    bind,
 )
 ```
 
-page의 주요 resource가 load된 뒤 `bind()`를 실행합니다.
+Load가 끝난 뒤 Button을 선택하고 Click Listener를 등록한다.
 
-`bind()` 안에서 button selector를 찾고 click listener를 등록합니다.
+DOM만 필요하면 `defer`와 초기화 함수를 사용할 수 있다.
 
 ---
 
-# XMLHttpRequest
-
-## 4. AJAX 4단계
-
-원본에서 설명하는 네 단계:
+# 5. `XMLHttpRequest` 기본 순서
 
 ```text
-1. XMLHttpRequest 객체 생성
-2. 요청 method와 URL 설정
+1. 객체 생성
+2. Method·URL 설정
 3. 요청 전송
-4. 응답을 받아 활용
-```
-
-코드:
-
-```js
-const xhr =
-  new XMLHttpRequest()
-
-xhr.open(
-  "GET",
-  url
-)
-
-xhr.send()
-
-xhr.onload =
-  function() {
-    // 응답 처리
-  }
+4. 응답 완료 후 처리
 ```
 
 ---
 
-## 5. XMLHttpRequest 생성
+# 6. 객체 생성
 
-```js
-const xhr =
-  new XMLHttpRequest()
-```
-
-HTTP 요청 상태와 응답을 관리하는 객체를 만듭니다.
-
----
-
-## 6. Open
-
-```js
-xhr.open(
-  "GET",
-  "https://jsonplaceholder.typicode.com/users"
+```javascript
+const xhr = (
+    new XMLHttpRequest()
 )
 ```
 
-`open()`은 즉시 network 요청을 보내는 것이 아니라 요청 정보를 설정합니다.
+요청 상태와 응답 정보를 관리하는 객체를 만든다.
 
-주요 인수:
+---
+
+# 7. `open()`
+
+```javascript
+xhr.open(
+    "GET",
+    "https://jsonplaceholder.typicode.com/users",
+)
+```
+
+요청 정보를 설정한다.
+
+이 단계에서는 실제 Network 요청을 보내지 않는다.
+
+---
+
+# 8. `open()`의 인수
 
 ```text
-method
-→ GET, POST 등
+Method
+→ GET, POST, PUT, DELETE 등
 
 URL
 → 요청 대상
 
-async
-→ 생략하면 기본적으로 true
+Async
+→ 기본값 true
 ```
+
+동기 XHR은 UI를 멈출 수 있으므로 사용하지 않는 편이 좋다.
 
 ---
 
-## 7. Send
+# 9. `send()`
 
-```js
+```javascript
 xhr.send()
 ```
 
-설정한 요청을 실제로 전송합니다.
+설정한 요청을 실제 전송한다.
 
-GET 요청은 보통 body 없이 호출합니다.
+GET 요청은 일반적으로 Body 없이 호출한다.
 
 ---
 
-## 8. Onload
+# 10. `onload`
 
-```js
-xhr.onload =
-  function() {
+```javascript
+xhr.onload = function () {
     console.log(
-      xhr.responseText
+        xhr.responseText,
     )
-  }
+}
 ```
 
-응답 load가 완료되었을 때 실행됩니다.
+응답 Body를 읽을 수 있는 상태가 되면 실행된다.
 
-다만 network 요청이 완료됐다는 뜻이지 HTTP status가 반드시 성공이라는 뜻은 아닙니다.
+---
 
-따라서 다음과 같은 status 검사가 필요할 수 있습니다.
+# 11. `onload`와 HTTP 성공
 
-```js
+`onload`는 요청·응답 교환이 완료되었다는 의미다.
+
+HTTP 404·500 응답이어도 `onload`가 실행될 수 있으므로 Status를 확인한다.
+
+```javascript
 if (
-  xhr.status >= 200 &&
-  xhr.status < 300
+    xhr.status >= 200
+    && xhr.status < 300
 ) {
-  // 성공
+    // 성공
 }
 ```
 
 ---
 
-## 9. ResponseText
+# 12. `responseText`
 
-```js
-xhr.responseText
-```
-
-응답 body를 string으로 제공합니다.
-
-JSONPlaceholder의 users endpoint는 JSON text를 반환합니다.
-
----
-
-## 10. 비동기 직후 ResponseText
-
-두 원본:
-
-```js
-xhr.send()
-
-xhr.onload =
-  function() {
-    console.log(
-      xhr.responseText
-    )
-  }
-
+```javascript
 console.log(
-  "[" +
-  xhr.responseText +
-  "]"
+    xhr.responseText,
 )
 ```
 
-마지막 log는 요청 완료 전에 실행됩니다.
+응답 Body를 문자열로 제공한다.
+
+JSON 응답도 처음에는 문자열이다.
+
+---
+
+# 13. 비동기 직후 응답
+
+원본:
+
+```javascript
+xhr.send()
+
+console.log(
+    `[${xhr.responseText}]`,
+)
+```
 
 대표 출력:
 
@@ -257,148 +298,283 @@ console.log(
 []
 ```
 
-그 후 응답이 오면 onload callback에서 HTML text가 출력됩니다.
-
-이는 code 위치가 아래라고 해서 나중에 실행되는 것이 아니라, asynchronous callback이 응답 완료 후 실행되기 때문입니다.
+응답이 도착하기 전에 동기 코드가 먼저 실행되기 때문이다.
 
 ---
 
-## 11. 상대 URL 기준
-
-두 번째 요청:
-
-```js
-xhr.open(
-  "GET",
-  "19_json.html"
-)
-```
-
-내 주석은 JavaScript가 head에 연결되어 20번 HTML과 같은 folder path를 참고한다고 설명합니다.
-
-더 정확히 말하면 상대 URL은 현재 document URL을 기준으로 해석됩니다.
-
-외부 JavaScript 파일 자신의 filesystem 위치가 기준이 아닙니다.
-
----
-
-# JSONPlaceholder 회원 데이터
-
-## 12. JSON Parse
-
-```js
-const users =
-  JSON.parse(
-    xhr.responseText
-  )
-```
-
-JSON string을 JavaScript array로 변환합니다.
-
----
-
-## 13. 두 번째 사용자 이름
-
-강사님:
-
-```js
-console.log(
-  member[1].name
-)
-
-console.log(
-  member[1]["name"]
-)
-```
-
-내 코드:
-
-```js
-console.log(
-  xhrData[1]["name"]
-)
-
-console.log(
-  xhrData[1].name
-)
-```
-
-둘 다 두 번째 배열 요소의 name을 가져옵니다.
-
-원본 주석의 예상값:
+# 14. 실제 실행 흐름
 
 ```text
-Ervin Howell
+send()
+→ Network 요청 시작
+→ 다음 동기 코드 실행
+→ ResponseText 아직 빈 값
+→ 응답 도착
+→ onload Callback 실행
 ```
-
-외부 서비스 데이터가 변경되면 실제 값도 달라질 수 있습니다.
 
 ---
 
-## 14. 세 번째 사용자의 Latitude
+# 15. `readystatechange`
 
-```js
-users[2]
-  .address
-  .geo
-  .lat
-```
-
-bracket notation:
-
-```js
-users[2]
-  ["address"]
-  ["geo"]
-  ["lat"]
-```
-
-중첩 객체 property를 순서대로 접근합니다.
-
----
-
-## 15. 내 코드와 강사님 출력 차이
-
-강사님은:
-
-```js
-console.log(
-  member[1]
+```javascript
+xhr.addEventListener(
+    "readystatechange",
+    () => {
+        console.log(
+            xhr.readyState,
+        )
+    },
 )
 ```
 
-로 두 번째 user 객체 전체도 출력합니다.
-
-내 코드는 parsed array 전체를 출력합니다.
-
-```js
-console.log(
-  xhrData
-)
-```
-
-학습 목적은 동일하지만 Console 범위가 다릅니다.
+XHR 상태 변화를 확인할 수 있다.
 
 ---
 
-# 기상청 API
+# 16. ReadyState
 
-## 16. 날짜 생성
+| 값 | 상태 |
+| ---: | --- |
+| `0` | UNSENT |
+| `1` | OPENED |
+| `2` | HEADERS_RECEIVED |
+| `3` | LOADING |
+| `4` | DONE |
 
-양쪽 원본:
+현대 코드에서는 `load`, `error`, `timeout` Event를 나누어 처리하는 편이 읽기 쉽다.
 
-```js
-const now =
-  new Date()
+---
 
-const today =
-  now
-    .toISOString()
-    .split("T")[0]
-    .replace(/-/g, "")
+# 17. Network Error
+
+```javascript
+xhr.onerror = function () {
+    console.error(
+        "Network 요청 실패",
+    )
+}
 ```
 
-결과 형식:
+연결 실패·DNS·CORS 같은 Network 문제를 처리한다.
+
+---
+
+# 18. Timeout
+
+```javascript
+xhr.timeout = 5000
+
+xhr.ontimeout = function () {
+    console.error(
+        "요청 시간이 초과되었습니다.",
+    )
+}
+```
+
+---
+
+# 19. 안전한 XHR 함수
+
+```javascript
+function requestJson(
+    url,
+) {
+    return new Promise(
+        (
+            resolve,
+            reject,
+        ) => {
+            const xhr = (
+                new XMLHttpRequest()
+            )
+
+            xhr.open(
+                "GET",
+                url,
+            )
+
+            xhr.onload = () => {
+                if (
+                    xhr.status < 200
+                    || xhr.status >= 300
+                ) {
+                    reject(
+                        new Error(
+                            `HTTP ${xhr.status}`,
+                        ),
+                    )
+
+                    return
+                }
+
+                try {
+                    resolve(
+                        JSON.parse(
+                            xhr.responseText,
+                        ),
+                    )
+                } catch (
+                    error
+                ) {
+                    reject(error)
+                }
+            }
+
+            xhr.onerror = () => {
+                reject(
+                    new Error(
+                        "Network 요청 실패",
+                    ),
+                )
+            }
+
+            xhr.ontimeout = () => {
+                reject(
+                    new Error(
+                        "요청 시간 초과",
+                    ),
+                )
+            }
+
+            xhr.timeout = 5000
+            xhr.send()
+        },
+    )
+}
+```
+
+---
+
+# 20. 상대 URL 기준
+
+원본:
+
+```javascript
+xhr.open(
+    "GET",
+    "19_json.html",
+)
+```
+
+상대 URL은 외부 JavaScript 파일의 위치가 아니라 현재 Document URL을 기준으로 해석된다.
+
+---
+
+# 21. JSON Parse
+
+```javascript
+const users = JSON.parse(
+    xhr.responseText,
+)
+```
+
+JSON 문자열을 JavaScript 배열로 변환한다.
+
+---
+
+# 22. 두 번째 사용자 이름
+
+```javascript
+console.log(
+    users[1].name,
+)
+```
+
+Bracket Notation:
+
+```javascript
+console.log(
+    users[1]["name"],
+)
+```
+
+---
+
+# 23. 중첩 Property
+
+```javascript
+const latitude = (
+    users[2]
+        .address
+        .geo
+        .lat
+)
+```
+
+응답 구조를 먼저 확인한 뒤 순서대로 접근한다.
+
+---
+
+# 24. 외부 데이터 변경 가능성
+
+JSONPlaceholder처럼 학습용 서비스도 응답·가용성이 변경될 수 있다.
+
+실무 코드에서는 다음을 검증한다.
+
+- 배열인지
+- 필요한 Index가 있는지
+- 중첩 객체가 있는지
+- 필요한 Property의 자료형
+- 빈 배열·빈 문자열 여부
+
+---
+
+# 25. Optional Chaining
+
+```javascript
+const latitude = (
+    users[2]
+        ?.address
+        ?.geo
+        ?.lat
+    ?? null
+)
+```
+
+중간 Property가 없을 때 `TypeError`를 방지한다.
+
+---
+
+# 26. 회원 데이터 검증
+
+```javascript
+function isUser(
+    value,
+) {
+    return (
+        value !== null
+        && typeof value === "object"
+        && Number.isInteger(
+            value.id,
+        )
+        && typeof value.name
+            === "string"
+    )
+}
+```
+
+JSON Parse 성공과 데이터 구조가 올바른 것은 별개다.
+
+---
+
+# 27. 기상청 요청 날짜
+
+원본:
+
+```javascript
+const today = (
+    new Date()
+        .toISOString()
+        .split("T")[0]
+        .replace(
+            /-/g,
+            "",
+        )
+)
+```
+
+결과:
 
 ```text
 YYYYMMDD
@@ -406,190 +582,203 @@ YYYYMMDD
 
 ---
 
-## 17. UTC 주의
+# 28. UTC 날짜 문제
 
-`toISOString()`은 UTC 기준입니다.
+`toISOString()`은 UTC 기준이다.
 
-한국 local date와 UTC date가 다른 시간대에는 API에 잘못된 날짜를 보낼 수 있습니다.
-
-local date가 필요하면 `getFullYear()`, `getMonth() + 1`, `getDate()`를 직접 조합하는 편이 안전합니다.
+한국 Local 날짜가 필요한 API에서는 새벽 시간대에 날짜가 다르게 계산될 수 있다.
 
 ---
 
-## 18. Base Time
+# 29. Local 날짜 함수
 
-원본:
+```javascript
+function formatLocalDate(
+    date,
+) {
+    const year = (
+        date.getFullYear()
+    )
 
-```js
-let hour =
-  now.getHours() - 1
-```
+    const month = String(
+        date.getMonth() + 1,
+    ).padStart(
+        2,
+        "0",
+    )
 
-이후:
+    const day = String(
+        date.getDate(),
+    ).padStart(
+        2,
+        "0",
+    )
 
-```js
-if (hour < 10) {
-  hour =
-    "0" +
-    hour +
-    "00"
-} else {
-  hour =
-    hour +
-    "00"
+    return (
+        `${year}${month}${day}`
+    )
 }
 ```
 
-현재 시각보다 한 시간 전의 `HH00` 형태를 만들려는 코드입니다.
+---
+
+# 30. 원본 Base Time
+
+```javascript
+let hour = (
+    new Date().getHours() - 1
+)
+```
+
+한 시간 전의 `HH00`을 만들려는 코드다.
 
 ---
 
-## 19. 자정 오류
+# 31. 자정 오류
 
-현재 시각이 0시이면:
-
-```js
-hour =
-  -1
-```
-
-조건 결과:
+현재 시각이 0시라면:
 
 ```text
-0-100
+hour
+→ -1
 ```
 
-과 같은 잘못된 base_time이 만들어질 수 있습니다.
-
-날짜도 전날로 바꿔야 합니다.
-
-현재 원본에는 자정 처리 로직이 없습니다.
+잘못된 Base Time이 만들어지고 날짜도 전날로 조정되지 않는다.
 
 ---
 
-## 20. Service Key 차이
+# 32. 발표 시각 계산
 
-강사님 원본에는 공공데이터 service key가 직접 포함되어 있습니다.
+```javascript
+function getBaseDateTime(
+    now = new Date(),
+) {
+    const base = new Date(
+        now,
+    )
 
-내 원본:
+    base.setHours(
+        base.getHours() - 1,
+        0,
+        0,
+        0,
+    )
 
-```js
-const key = ""
+    return {
+        baseDate: (
+            formatLocalDate(base)
+        ),
+
+        baseTime: (
+            String(
+                base.getHours(),
+            ).padStart(
+                2,
+                "0",
+            )
+            + "00"
+        ),
+    }
+}
 ```
 
-보안과 공유를 위해 이 문서에는 강사님 key 원문을 재출력하지 않습니다.
+Date가 날짜 경계를 자동 조정한다.
 
-중요한 차이:
+---
+
+# 33. API Key 차이
 
 ```text
-강사님
-→ key 값 존재
+강사님 코드
+→ Service Key 값 포함
 
 내 코드
 → 빈 문자열
 ```
 
-따라서 내 날씨 요청은 유효한 key가 없으면 정상 응답을 받지 못합니다.
-
-실무에서는 API key를 public repository의 client-side JavaScript에 직접 노출하지 않는 편이 좋습니다.
+강사님 Key 원문은 문서에 다시 노출하지 않는다.
 
 ---
 
-## 21. API URL
+# 34. Frontend API Key 노출
 
-원본:
+Browser JavaScript에 Key를 넣으면 Source·Network에서 확인할 수 있다.
 
-```js
-let url =
-  "http://apis.data.go.kr/" +
-  "1360000/" +
-  "VilageFcstInfoService_2.0/" +
-  "getUltraSrtFcst"
-```
-
-query parameter:
-
-```text
-serviceKey
-numOfRows
-pageNo
-dataType
-base_date
-base_time
-nx
-ny
-```
+보호가 필요한 Key는 Backend·Proxy·Serverless Function에서 관리한다.
 
 ---
 
-## 22. HTTP와 Mixed Content
+# 35. API Endpoint
 
-API URL은 HTTP입니다.
+원본은 HTTP Endpoint를 사용한다.
 
 ```text
 http://apis.data.go.kr/...
 ```
 
-페이지가 HTTPS라면 mixed content로 요청이 차단될 수 있습니다.
+HTTPS 페이지에서는 Mixed Content로 차단될 수 있다.
 
-API가 HTTPS endpoint를 지원한다면 HTTPS를 사용해야 합니다.
-
----
-
-## 23. URLSearchParams 개선
-
-문자열을 계속 이어 붙이는 대신:
-
-```js
-const params =
-  new URLSearchParams({
-    serviceKey: key,
-    numOfRows: "1000",
-    pageNo: "1",
-    dataType: "JSON",
-    base_date: today,
-    base_time: hour,
-    nx: "63",
-    ny: "110"
-  })
-
-const url =
-  `${endpoint}?${params}`
-```
-
-처럼 구성할 수 있습니다.
-
-service key가 이미 percent-encoded되어 있다면 `URLSearchParams`가 다시 encoding할 가능성도 검토해야 합니다.
+서비스가 지원한다면 HTTPS를 사용한다.
 
 ---
 
-## 24. 응답 구조
+# 36. Query Parameter
 
-원본 접근:
+대표 Parameter:
 
-```js
-data
-  .response
-  .body
-  .items
-  .item
-```
-
-`item`은 예보 항목 array입니다.
-
-대표 property:
-
-```text
-category
-fcstValue
-fcstTime
-```
+- `serviceKey`
+- `numOfRows`
+- `pageNo`
+- `dataType`
+- `base_date`
+- `base_time`
+- `nx`
+- `ny`
 
 ---
 
-## 25. Category
+# 37. `URLSearchParams`
 
-원본에서 사용하는 category:
+```javascript
+const params = (
+    new URLSearchParams({
+        serviceKey: apiKey,
+        numOfRows: "1000",
+        pageNo: "1",
+        dataType: "JSON",
+        base_date: baseDate,
+        base_time: baseTime,
+        nx: "63",
+        ny: "110",
+    })
+)
+
+const url = (
+    `${endpoint}?${params}`
+)
+```
+
+이미 Encoding된 Key를 다시 Encoding하지 않는지 API 문서를 확인한다.
+
+---
+
+# 38. 응답 구조
+
+```javascript
+const items = (
+    data
+        .response
+        .body
+        .items
+        .item
+)
+```
+
+실제 응답에는 오류 Message나 빈 Body가 올 수 있으므로 구조를 검증한다.
+
+---
+
+# 39. Weather Category
 
 ```text
 T1H
@@ -602,1804 +791,1279 @@ RN1
 → 1시간 강수량
 ```
 
-원본 주석에는 LGT도 번개 category 예로 언급됩니다.
+---
+
+# 40. Category Filter
+
+```javascript
+const targetCategories = [
+    "T1H",
+    "REH",
+    "RN1",
+]
+
+const filtered = items.filter(
+    item => (
+        targetCategories.includes(
+            item.category,
+        )
+    ),
+)
+```
 
 ---
 
-## 26. Filter
+# 41. 원본 문제 1
 
-양쪽 코드의 핵심:
+강사님은 Category·예측 시간·값을 Table에 출력한다.
 
-```js
-const filtered =
-  item.filter(
-    function(data) {
-      if (
-        data.category ===
-          "T1H" ||
-        data.category ===
-          "RN1" ||
-        data.category ===
-          "REH"
-      ) {
-        return true
-      }
+```text
+Category
+Forecast Time
+Forecast Value
+```
+
+내 코드는 같은 데이터를 `div`와 `inline-block`으로 표시한다.
+
+표 형태 데이터라면 의미 구조가 있는 `<table>`이 적합하다.
+
+---
+
+# 42. 안전한 Category Row
+
+```javascript
+function createRow(
+    values,
+) {
+    const row = document.createElement(
+        "tr",
+    )
+
+    for (const value of values) {
+        const cell = (
+            document.createElement(
+                "td",
+            )
+        )
+
+        cell.textContent = (
+            String(value)
+        )
+
+        row.append(cell)
     }
-  )
+
+    return row
+}
 ```
-
-간단히:
-
-```js
-const categories =
-  ["T1H", "RN1", "REH"]
-
-const filtered =
-  item.filter(
-    data =>
-      categories.includes(
-        data.category
-      )
-  )
-```
-
-로 작성할 수 있습니다.
 
 ---
 
-# 문제 1: 예측 Category Table
+# 43. Category Table 렌더링
 
-## 27. 강사님 구현
-
-강사님 HTML에는:
-
-```html
-<tbody id="q1"></tbody>
-```
-
-가 있습니다.
-
-JavaScript:
-
-```js
-for (
-  let i = 0;
-  i < filtered.length;
-  i++
+```javascript
+function renderForecastItems(
+    tbody,
+    items,
 ) {
-  const tr =
-    document.createElement(
-      "tr"
+    tbody.replaceChildren()
+
+    const fragment = (
+        document.createDocumentFragment()
     )
 
-  tr.innerHTML = `
-    <td>
-      ${filtered[i].category}
-    </td>
-    <td>
-      ${filtered[i].fcstTime}
-    </td>
-    <td>
-      ${filtered[i].fcstValue}
-    </td>
-  `
+    for (const item of items) {
+        fragment.append(
+            createRow([
+                item.category,
+                item.fcstTime,
+                item.fcstValue,
+            ]),
+        )
+    }
 
-  q1.append(tr)
+    tbody.append(fragment)
 }
 ```
 
-table 구조에 맞게 `tr`과 `td`를 생성합니다.
+---
+
+# 44. 시간별 그룹화
+
+같은 `fcstTime`의 Category를 하나의 객체로 묶는다.
+
+```javascript
+function groupForecast(
+    items,
+) {
+    return items.reduce(
+        (
+            grouped,
+            item,
+        ) => {
+            const time = (
+                item.fcstTime
+            )
+
+            grouped[time] ??= {}
+
+            grouped[time][
+                item.category
+            ] = item.fcstValue
+
+            return grouped
+        },
+        {},
+    )
+}
+```
 
 ---
 
-## 28. 내 구현
-
-내 HTML에는 `q1` table이 없습니다.
-
-대신:
-
-```html
-<div id="output"></div>
-```
-
-을 사용합니다.
-
-각 값에 `.column` class를 넣은 div를 생성합니다.
+# 45. 그룹화 결과
 
 ```text
-예측카테고리
-예측시간
-값
-```
-
-기능상 목록을 보여 주지만 semantic table이 아니라 div layout입니다.
-
----
-
-## 29. 내 CSS
-
-```css
-.column {
-  display: inline-block;
-  border: 1px solid red;
-  width: 100px;
-  text-align: center;
-}
-```
-
-두 번째 layout:
-
-```css
-.column2 {
-  display: inline-block;
-  border: 1px solid red;
-  width: 100px;
-  height: 50px;
-  text-align: center;
-  vertical-align: top;
-}
-```
-
-강사님 HTML에는 별도 CSS가 없습니다.
-
----
-
-# 문제 2: 시간별 Grouping
-
-## 30. 강사님의 객체 Grouping
-
-강사님은 빈 객체를 만듭니다.
-
-```js
-const grouped = {}
-```
-
-각 item의 `fcstTime`을 key로 사용합니다.
-
-```js
-if (
-  !grouped[
-    filtered[i].fcstTime
-  ]
-) {
-  grouped[
-    filtered[i].fcstTime
-  ] = {}
-}
-```
-
-category를 중첩 key로 저장합니다.
-
-```js
-grouped[
-  filtered[i].fcstTime
-][
-  filtered[i].category
-] =
-  filtered[i].fcstValue
-```
-
-결과 구조:
-
-```js
 {
-  "1000": {
-    T1H: "20",
-    REH: "80",
-    RN1: "0"
-  }
+    "1000": {
+        T1H: "20",
+        REH: "80",
+        RN1: "0",
+    },
 }
 ```
 
----
-
-## 31. Object.keys로 시간 순회
-
-```js
-const keys =
-  Object.keys(grouped)
-```
-
-각 시간 key에 접근:
-
-```js
-grouped[keys[i]].T1H
-grouped[keys[i]].REH
-grouped[keys[i]].RN1
-```
-
-강사님 구현은 같은 예보 시간의 세 category를 한 row에 배치합니다.
+한 시간의 값을 한 Row로 출력할 수 있다.
 
 ---
 
-## 32. 강사님 Q2 초기화 누락
+# 46. 내 코드의 Category 오류
 
-강사님 코드:
+원본의 온도 열 조건:
 
-```js
-const q2 =
-  document.querySelector(
-    "#q2"
-  )
+```text
+T1H 또는 REH
 ```
 
-그 뒤 기존 내용을 지우지 않고 row를 append합니다.
+온도 열에 습도 값도 들어간다.
 
-따라서 날씨 button을 여러 번 클릭하면 table row가 누적될 수 있습니다.
+정확한 연결:
 
-개선:
+```text
+온도
+→ T1H
 
-```js
-q2.innerHTML = ""
+습도
+→ REH
+
+강수량
+→ RN1
 ```
 
 ---
 
-## 33. 내 시간별 출력 구조
+# 47. 내 코드의 시간 열 오류
 
-내 코드는 filtered item을 다시 순회하면서 item 하나마다 row 역할의 div를 만듭니다.
+T1H 항목에서만 시간을 출력하고 REH·RN1 항목은 별도 Row를 만든다.
 
-```js
-for (
-  let j = 0;
-  j < timeFilter.length;
-  j++
+결과:
+
+```text
+같은 시간
+→ 세 개 Row로 분리
+→ 일부 시간 칸 비어 있음
+→ 값이 잘못된 Column에 배치
+```
+
+먼저 시간별로 그룹화해야 한다.
+
+---
+
+# 48. 시간별 Table 렌더링
+
+```javascript
+function renderGroupedForecast(
+    tbody,
+    grouped,
 ) {
-  const addDiv =
-    document.createElement(
-      "div"
+    tbody.replaceChildren()
+
+    const fragment = (
+        document.createDocumentFragment()
     )
+
+    for (
+        const [
+            time,
+            values,
+        ]
+        of Object.entries(grouped)
+    ) {
+        fragment.append(
+            createRow([
+                time,
+                values.T1H ?? "-",
+                values.REH ?? "-",
+                values.RN1 ?? "-",
+            ]),
+        )
+    }
+
+    tbody.append(fragment)
 }
-```
-
-같은 시간의 category를 하나의 객체로 먼저 묶지 않습니다.
-
-따라서 시간별 한 줄 구조를 만들기 어렵습니다.
-
----
-
-## 34. 내 Category 조건 오류
-
-내 코드의 온도 열:
-
-```js
-if (
-  category === "T1H" ||
-  category === "REH"
-) {
-  t1hDiv.innerText =
-    fcstValue
-}
-```
-
-온도 column에 습도 값도 들어갑니다.
-
-습도 열:
-
-```js
-if (
-  category === "T1H"
-) {
-  rehDiv.innerText =
-    fcstValue
-}
-```
-
-습도 열에도 온도 값이 들어갑니다.
-
-강수량 열:
-
-```js
-if (
-  category === "T1H"
-) {
-  rn1Div.innerText =
-    fcstValue
-}
-```
-
-강수량 열에도 온도 값이 들어갑니다.
-
-정확해야 할 조건:
-
-```text
-온도 열 → T1H
-습도 열 → REH
-강수량 열 → RN1
 ```
 
 ---
 
-## 35. 내 시간 열 빈칸
+# 49. 재조회 누적 문제
 
-내 코드:
+강사님 원본은 기존 `q2` Row를 지우지 않고 Append한다.
 
-```js
-if (
-  category === "T1H"
-) {
-  fcstDiv.innerText =
-    fcstTime
-}
+Button을 여러 번 누르면 결과가 누적될 수 있다.
+
+```javascript
+tbody.replaceChildren()
 ```
 
-T1H item에서만 시간을 표시하고 REH와 RN1 item row에서는 시간 칸이 비어 있습니다.
-
-결과적으로 하나의 시간에 대해 여러 줄이 생기고 값이 잘못된 column에 배치됩니다.
+로 먼저 초기화한다.
 
 ---
 
-# 문제 3: 회원정보 Table
+# 50. 회원정보 문제
 
-## 36. 강사님 상태
-
-강사님은 요구사항만 주석으로 남깁니다.
-
-```text
-btn4를 클릭하면
-10명의 정보 중
-id, name, zipcode, 회사 이름을 HTML로 표시
-```
-
-실제 `btn4` listener 구현은 없습니다.
-
----
-
-## 37. 내 HTML
-
-내 HTML에는 회원정보용 table이 있습니다.
-
-```html
-<tbody id="q3"></tbody>
-```
-
-column:
+요구사항:
 
 ```text
 ID
-NAME
-ZIPCODE
-COMPANY
+Name
+Zipcode
+Company Name
 ```
+
+강사님 코드는 요구사항만 있고 Listener 구현은 없다.
+
+내 코드는 요청과 렌더링을 직접 구현했다.
 
 ---
 
-## 38. 내 회원정보 요청
+# 51. 내 회원 Row 구조 오류
 
-```js
-const xhr =
-  new XMLHttpRequest()
+원본 흐름:
 
-xhr.open(
-  "GET",
-  "https://jsonplaceholder.typicode.com/users"
-)
+```text
+빈 tr 생성
+→ tbody에 append
 
-xhr.send()
-```
-
-응답을 parse해 users를 얻습니다.
-
----
-
-## 39. 내 Row 생성 오류
-
-내 코드:
-
-```js
-const tr =
-  document.createElement(
-    "tr"
-  )
-
-q3.append(tr)
-
-q3.innerHTML += `
-  <td>...</td>
-  <td>...</td>
-  <td>...</td>
-  <td>...</td>
-`
+td 문자열
+→ tbody.innerHTML += 로 추가
 ```
 
 문제:
 
-1. 만든 `tr`에 `td`를 append하지 않음
-2. 빈 `tr`이 먼저 남음
-3. `td`를 `tbody`의 direct child처럼 문자열로 추가함
-4. `innerHTML +=`가 매 반복마다 전체 `tbody`를 다시 parsing함
-5. 기존 DOM reference와 listener가 있다면 손실될 수 있음
-6. button을 다시 누르면 기존 결과가 누적됨
-
-browser가 HTML table parsing 규칙에 따라 보정할 수 있지만 의도한 구조가 명확하지 않습니다.
+- 빈 `tr`이 남음
+- `td`가 `tr` 안에 명확히 들어가지 않음
+- 매 반복마다 전체 `tbody` 재파싱
+- 기존 Node 참조가 바뀔 수 있음
+- 재조회하면 결과 누적
 
 ---
 
-## 40. 올바른 회원 Row
-
-```js
-const tr =
-  document.createElement(
-    "tr"
-  )
-
-tr.innerHTML = `
-  <td>${user.id}</td>
-  <td>${user.name}</td>
-  <td>${user.address.zipcode}</td>
-  <td>${user.company.name}</td>
-`
-
-q3.append(tr)
-```
-
-또는 모든 `td`를 `createElement()`로 생성할 수 있습니다.
-
----
-
-# Fetch API
-
-## 41. Try...catch 예제
-
-양쪽 원본:
-
-```js
-let a =
-  undefined
-
-try {
-  a.push(1)
-} catch (error) {
-  console.log(error)
-}
-```
-
-`undefined`에는 `push()` method가 없으므로 TypeError가 발생합니다.
-
-catch가 오류를 잡아 이후 fetch 코드가 계속 실행됩니다.
-
----
-
-## 42. Try...catch 범위
-
-`try...catch`는 해당 block 안에서 synchronous하게 발생한 오류를 잡습니다.
-
-Promise rejection은 `.catch()` 또는 `await`를 감싼 try...catch로 처리해야 합니다.
-
----
-
-## 43. Fetch 기본 구조
-
-양쪽 원본:
-
-```js
-fetch(
-  url,
-  {
-    method: "GET"
-  }
-)
-  .then(
-    function(response) {
-      console.log(response)
-
-      return response.json()
-    }
-  )
-  .then(
-    function(data) {
-      console.log(data)
-    }
-  )
-  .catch(
-    function(error) {
-      console.error(error)
-    }
-  )
-```
-
----
-
-## 44. Fetch 반환값
-
-`fetch()`는 Promise를 반환합니다.
-
-첫 번째 `.then()`은 `Response` 객체를 받습니다.
-
-```js
-response.json()
-```
-
-도 Promise를 반환합니다.
-
-두 번째 `.then()`은 parsing된 JavaScript data를 받습니다.
-
----
-
-## 45. “Fetch가 3단계를 한 번에” 설명
-
-내 주석:
+# 52. 올바른 Table 구조
 
 ```text
-fetch(주소, 옵션 JSON)
-3번까지가 한 번에 끝남
+table
+└── tbody
+    └── tr
+        ├── td
+        ├── td
+        ├── td
+        └── td
 ```
-
-개념적으로 `XMLHttpRequest`보다 선언적이고 간결하다는 뜻으로 이해할 수 있습니다.
-
-하지만 fetch도 내부적으로 요청 생성·전송·응답 대기·body parsing 단계가 존재합니다.
-
-`response.json()`은 별도 asynchronous 작업입니다.
-
-또한 fetch option은 JSON text가 아니라 JavaScript object입니다.
 
 ---
 
-## 46. HTTP 오류와 Catch
+# 53. 회원 Row 생성
 
-중요:
-
-```js
-fetch("/not-found")
-```
-
-가 HTTP 404를 받아도 fetch Promise가 자동으로 reject되지 않을 수 있습니다.
-
-`.catch()`는 주로 network failure, CORS failure, abort 등을 처리합니다.
-
-HTTP status 검사:
-
-```js
-if (!response.ok) {
-  throw new Error(
-    `HTTP ${response.status}`
-  )
+```javascript
+function createUserRow(
+    user,
+) {
+    return createRow([
+        user.id,
+        user.name,
+        user.address?.zipcode
+            ?? "-",
+        user.company?.name
+            ?? "-",
+    ])
 }
 ```
 
-가 필요합니다.
-
 ---
 
-## 47. Fetch 개선
+# 54. 회원 Table 렌더링
 
-```js
-fetch(url)
-  .then(
-    function(response) {
-      if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status}`
+```javascript
+function renderUsers(
+    tbody,
+    users,
+) {
+    tbody.replaceChildren()
+
+    const fragment = (
+        document.createDocumentFragment()
+    )
+
+    for (const user of users) {
+        fragment.append(
+            createUserRow(user),
         )
-      }
+    }
 
-      return response.json()
-    }
-  )
-  .then(
-    function(data) {
-      console.log(data)
-    }
-  )
-  .catch(
-    function(error) {
-      console.error(
-        "요청 실패:",
-        error
-      )
-    }
-  )
+    tbody.append(fragment)
+}
 ```
 
 ---
 
-# Debugger
-
-## 48. Debug Button
+# 55. `try...catch`
 
 원본:
 
-```js
-btn6.addEventListener(
-  "click",
-  function() {
-    debugger
+```javascript
+try {
+    const value = undefined
 
-    console.log(
-      "btn6 클릭"
+    value.push(1)
+} catch (
+    error
+) {
+    console.error(error)
+}
+```
+
+`undefined`에는 `push()`가 없어 `TypeError`가 발생한다.
+
+---
+
+# 56. 동기 오류와 비동기 오류
+
+```text
+동기 오류
+→ 같은 try Block의 catch 가능
+
+Promise Rejection
+→ await를 try로 감싸거나 .catch() 사용
+```
+
+---
+
+# 57. Fetch 기본 구조
+
+```javascript
+fetch(
+    "https://jsonplaceholder.typicode.com/users",
+)
+    .then(
+        response => (
+            response.json()
+        ),
     )
-
-    debug()
-
-    console.log(
-      "끝"
+    .then(
+        users => {
+            console.log(users)
+        },
     )
-  }
+    .catch(
+        error => {
+            console.error(error)
+        },
+    )
+```
+
+---
+
+# 58. Fetch 반환값
+
+`fetch()`는 Promise를 반환한다.
+
+첫 번째 `.then()`에는 `Response` 객체가 전달된다.
+
+---
+
+# 59. `response.json()`
+
+```javascript
+const promise = (
+    response.json()
 )
 ```
 
-개발자 도구가 열려 있으면 `debugger` statement에서 실행이 일시 정지됩니다.
+응답 Body를 읽고 JSON Parse하는 Promise를 반환한다.
 
 ---
 
-## 49. Debug 함수
+# 60. Fetch Option 객체
 
-양쪽 원본:
-
-```js
-function debug() {
-  let a = 1
-
-  console.log(a)
-}
+```javascript
+fetch(
+    url,
+    {
+        method: "GET",
+    },
+)
 ```
 
-step into, step over, scope 확인 등을 연습할 수 있습니다.
+두 번째 인수는 JSON 문자열이 아니라 JavaScript 객체다.
 
 ---
 
-## 50. Teacher의 중복 Key 객체
+# 61. HTTP 오류 처리
 
-강사님 JavaScript 마지막:
+Fetch는 404·500 같은 HTTP 응답을 자동으로 Reject하지 않을 수 있다.
 
-```js
-let a = {
-  a: 1,
-  b: 2,
-  a: 3
+```javascript
+if (!response.ok) {
+    throw new Error(
+        `HTTP ${response.status}`,
+    )
 }
-
-console.log(a)
 ```
 
-같은 object literal에서 `a` key가 두 번 나오면 뒤의 값이 앞의 값을 덮어씁니다.
+---
+
+# 62. Promise Chain 개선
+
+```javascript
+fetch(url)
+    .then(
+        response => {
+            if (!response.ok) {
+                throw new Error(
+                    `HTTP ${response.status}`,
+                )
+            }
+
+            return response.json()
+        },
+    )
+    .then(
+        data => {
+            console.log(data)
+        },
+    )
+    .catch(
+        error => {
+            console.error(
+                "요청 실패",
+                error,
+            )
+        },
+    )
+```
+
+---
+
+# 63. `async/await`
+
+```javascript
+async function loadUsers() {
+    const response = await fetch(
+        "https://jsonplaceholder.typicode.com/users",
+    )
+
+    if (!response.ok) {
+        throw new Error(
+            `HTTP ${response.status}`,
+        )
+    }
+
+    return response.json()
+}
+```
+
+---
+
+# 64. `try...catch`와 Await
+
+```javascript
+async function handleLoadUsers() {
+    try {
+        const users = (
+            await loadUsers()
+        )
+
+        console.log(users)
+    } catch (
+        error
+    ) {
+        console.error(
+            "회원정보 조회 실패",
+            error,
+        )
+    }
+}
+```
+
+---
+
+# 65. Loading State
+
+```javascript
+button.disabled = true
+message.textContent = (
+    "불러오는 중입니다."
+)
+```
+
+요청 완료 후 상태를 복구한다.
+
+---
+
+# 66. `finally`
+
+```javascript
+try {
+    // 요청
+} catch (
+    error
+) {
+    // 오류
+} finally {
+    button.disabled = false
+}
+```
+
+성공·실패와 관계없이 실행한다.
+
+---
+
+# 67. 빈 상태와 오류 상태
+
+```text
+Loading
+→ 데이터를 불러오는 중
+
+Success
+→ N개의 결과
+
+Empty
+→ 결과 없음
+
+Error
+→ 불러오지 못함
+```
+
+Console만이 아니라 사용자 화면에도 상태를 표시한다.
+
+---
+
+# 68. 중복 요청 방지
+
+```javascript
+if (button.disabled) {
+    return
+}
+
+button.disabled = true
+```
+
+같은 Button을 연속 클릭해 중복 요청이 발생하는 것을 줄인다.
+
+---
+
+# 69. AbortController
+
+```javascript
+const controller = (
+    new AbortController()
+)
+
+fetch(
+    url,
+    {
+        signal: controller.signal,
+    },
+)
+
+controller.abort()
+```
+
+진행 중인 Fetch 요청을 취소할 수 있다.
+
+---
+
+# 70. 최신 요청만 유지
+
+```javascript
+let currentController = null
+
+async function requestLatest(
+    url,
+) {
+    currentController?.abort()
+
+    currentController = (
+        new AbortController()
+    )
+
+    try {
+        const response = await fetch(
+            url,
+            {
+                signal: (
+                    currentController
+                        .signal
+                ),
+            },
+        )
+
+        if (!response.ok) {
+            throw new Error(
+                `HTTP ${response.status}`,
+            )
+        }
+
+        return await response.json()
+    } finally {
+        currentController = null
+    }
+}
+```
+
+검색 자동 완성처럼 이전 요청 결과가 최신 결과를 덮어쓰는 문제를 줄일 수 있다.
+
+---
+
+# 71. Abort 오류 처리
+
+```javascript
+async function handleLatestRequest(
+    url,
+) {
+    try {
+        return await requestLatest(
+            url,
+        )
+    } catch (
+        error
+    ) {
+        if (
+            error.name
+            === "AbortError"
+        ) {
+            return null
+        }
+
+        throw error
+    }
+}
+```
+
+취소는 일반 실패와 구분한다.
+
+---
+
+# 72. 응답 Content Type 확인
+
+```javascript
+const contentType = (
+    response.headers.get(
+        "content-type",
+    )
+    ?? ""
+)
+
+if (
+    !contentType.includes(
+        "application/json",
+    )
+) {
+    throw new Error(
+        "JSON 응답이 아닙니다.",
+    )
+}
+```
+
+서버가 HTML 오류 페이지를 반환하는 상황을 감지할 수 있다.
+
+---
+
+# 73. POST JSON 요청
+
+```javascript
+const response = await fetch(
+    "/api/users",
+    {
+        method: "POST",
+
+        headers: {
+            "Content-Type":
+                "application/json",
+        },
+
+        body: JSON.stringify({
+            name: "Kim",
+        }),
+    },
+)
+```
+
+---
+
+# 74. CORS
+
+다른 Origin으로 요청할 때 Server의 CORS 정책 영향을 받는다.
+
+```text
+Protocol
+Host
+Port
+```
+
+Browser에서 CORS 오류가 발생하면 Client JavaScript만으로 해결할 수 없는 경우가 많다.
+
+---
+
+# 75. Debugger
+
+```javascript
+button.addEventListener(
+    "click",
+    () => {
+        debugger
+
+        console.log(
+            "중단점 이후",
+        )
+    },
+)
+```
+
+개발자 도구가 열려 있으면 해당 줄에서 실행을 일시 정지한다.
+
+---
+
+# 76. Debugger 확인 항목
+
+- Scope 변수
+- Call Stack
+- Network 요청
+- Breakpoint
+- Step Over
+- Step Into
+- Step Out
+- Watch Expression
+- XHR·Fetch Breakpoint
+
+---
+
+# 77. 중복 객체 Key
+
+강사님 코드:
+
+```javascript
+const data = {
+    a: 1,
+    b: 2,
+    a: 3,
+}
+```
 
 결과:
 
-```js
+```text
 {
-  a: 3,
-  b: 2
+    a: 3,
+    b: 2,
 }
 ```
 
-내 JavaScript에는 이 코드가 없습니다.
+뒤의 `a: 3`이 앞의 값을 덮어쓴다.
 
 ---
 
-## 51. Teacher의 미완성 주석
+# 78. Counting Pattern
 
-강사님 마지막 주석:
+```javascript
+counts[key] = (
+    counts[key] ?? 0
+) + 1
+```
+
+Key가 없으면 0에서 시작하고 있으면 기존 값에 1을 더한다.
+
+---
+
+# 79. HTML 문구 차이
+
+내 Button:
 
 ```text
-key가 없으면 만들고
-key가 있으면 그 값에 +1
+19_jason.html
 ```
 
-관련 구현은 없습니다.
-
-예시:
-
-```js
-counts[key] =
-  (counts[key] ?? 0) + 1
-```
-
----
-
-# HTML 비교
-
-## 52. Button 문구
-
-| Button | 내 코드 | 강사님 코드 |
-| --- | --- | --- |
-| btn1 | `AJAX 실행` | `ajax 실행` |
-| btn2 | `19_jason.html` | `19_json.html` |
-| btn3 | `날씨예보` | `날씨 예보` |
-| btn4 | `회원정보` | `회원 정보` |
-| btn5 | `fetch` | `fetch` |
-| btn6 | `debug` | `debug` |
-
-내 btn2에는 `jason` 오타가 있지만 실제 요청 URL은 올바른 `19_json.html`입니다.
-
----
-
-## 53. Table 구성 차이
-
-강사님 HTML:
+실제 요청 URL:
 
 ```text
-q1
-→ category, time, value table
-
-q2
-→ time, temperature, humidity, rainfall table
+19_json.html
 ```
 
-내 HTML:
-
-```text
-q2
-→ time, temperature, humidity, rainfall table
-
-q3
-→ user information table
-
-output
-→ category listing div
-
-output_time
-→ time-based weather div
-```
-
-내 코드는 강사님 q1 문제를 div layout으로 별도 구현합니다.
+표시 문구의 `jason`은 오타다.
 
 ---
 
-## 54. 내 미사용 Q2 Table
+# 80. 문서 기본 정보
 
-내 HTML에는 `#q2` table이 있지만 내 JavaScript는 날씨 결과를 `#output_time`에 표시합니다.
-
-따라서 `#q2` tbody는 현재 코드에서 사용되지 않습니다.
-
----
-
-## 55. 내 HTML 주석
-
-내 HTML에는 AJAX 정의 주석이 있습니다.
-
-강사님 HTML에는 해당 주석이 없습니다.
-
----
-
-## 56. 문서 기본 정보
-
-양쪽 HTML:
+원본:
 
 ```html
 <html lang="en">
 <title>Document</title>
 ```
 
-한국어 학습 문서이므로:
+개선:
 
 ```html
 <html lang="ko">
 <title>AJAX와 Fetch API</title>
 ```
 
-가 더 적절합니다.
-
 ---
 
-# My Code vs Teacher Code
+# 81. 내 코드와 강사님 코드 비교
 
-## 57. 비교표
-
-| 비교 항목 | 내 코드 | 강사님 코드 |
+| 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
-| AJAX 설명 | 매우 상세 | 간결 |
-| btn2 표시 | `19_jason.html` 오타 | `19_json.html` |
-| 첫 users 출력 | array 전체 | 두 번째 user 객체 |
-| 날씨 API key | 빈 문자열 | 값 포함 |
-| 문제 1 출력 | div layout | semantic table |
-| 문제 2 grouping | grouping 미완성 | 시간별 객체 grouping |
-| 온도 조건 | T1H 또는 REH | grouped T1H |
-| 습도 조건 | T1H | grouped REH |
-| 강수량 조건 | T1H | grouped RN1 |
-| 회원정보 문제 | 직접 구현 | 요구사항만 |
-| 회원 row 구조 | 빈 tr + tbody innerHTML | 미구현 |
-| q2 초기화 | output_time 초기화 | q2 초기화 누락 |
-| fetch 흐름 | 동일, 설명 많음 | 동일 |
-| debugger | 동일 | 동일 |
-| 중복 object key 예제 | 없음 | 있음 |
-| 마지막 counting 주석 | 없음 | 있음 |
+| AJAX 설명 | 상세 주석 | 핵심 중심 |
+| `btn2` 문구 | `jason` 오타 | `json` |
+| User 출력 | 배열 전체 중심 | 특정 User 중심 |
+| Weather Key | 빈 값 | 값 포함 |
+| 문제 1 | Div Layout | Semantic Table |
+| 문제 2 | 시간별 Grouping 미완성 | 객체 Grouping |
+| 온도 조건 | T1H·REH | T1H |
+| 습도 조건 | T1H | REH |
+| 강수량 조건 | T1H | RN1 |
+| 회원 Table | 직접 구현·구조 오류 | 미구현 |
+| Fetch | 동일 흐름 | 동일 흐름 |
+| Duplicate Key | 없음 | 예제 존재 |
+
+## 81-1. 내 코드의 장점
+
+- AJAX와 Navigation 차이를 자세히 기록했다.
+- XHR의 네 단계를 직접 확인했다.
+- 요청 직후 응답이 비어 있는 현상을 확인했다.
+- Weather Category를 직접 필터링했다.
+- 회원정보 조회와 Table 출력까지 시도했다.
+- Fetch·Promise·`try...catch` 흐름을 설명했다.
+- Debugger 실습을 포함했다.
+
+## 81-2. 내 코드의 개선점
+
+- Button 문구에 `jason` 오타가 있다.
+- Weather API Key가 빈 값이다.
+- UTC 날짜와 자정 문제를 처리하지 않는다.
+- HTTP Endpoint를 사용한다.
+- XHR Status·Network Error를 처리하지 않는다.
+- Weather Grouping 없이 Category를 잘못된 Column에 넣는다.
+- 회원 Table에서 빈 Row와 `tbody.innerHTML +=`를 사용한다.
+- 재조회 시 기존 결과가 누적된다.
+- Fetch에서 `response.ok`를 검사하지 않는다.
+- Fetch Option 객체를 JSON이라고 부른다.
+
+## 81-3. 강사님 코드의 장점
+
+- XHR 기본 순서가 명확하다.
+- User JSON Parse와 중첩 Property 접근이 간결하다.
+- Weather Category Filter와 시간별 Grouping을 구현한다.
+- Table Row 구조가 비교적 올바르다.
+- Promise Chain과 Debugger를 연결한다.
+- 중복 Key 동작을 확인한다.
+
+## 81-4. 강사님 코드의 보충점
+
+- API Key를 Client 코드에 포함한다.
+- HTTP Endpoint와 UTC·자정 문제가 있다.
+- XHR Status·Error 처리가 없다.
+- Weather Table 재조회 시 Row가 누적된다.
+- 회원정보 문제를 구현하지 않는다.
+- Fetch에서 `response.ok` 검사가 없다.
+- Counting 주석이 구현되지 않았다.
 
 ---
 
-# My Code Analysis
+# 82. 기존 코드에서 개선한 이유
 
-## 58. 내 코드 장점
+## 82-1. XHR 응답 검사
 
-- AJAX와 일반 browser navigation의 차이를 주석으로 설명했다.
-- XMLHttpRequest 네 단계를 상세히 표시했다.
-- bracket notation과 dot notation을 모두 사용했다.
-- 상대 URL 기준을 스스로 보완 설명했다.
-- 비동기 요청 직후 responseText가 비어 있음을 확인했다.
-- 날씨 category를 filter로 추렸다.
-- 문제 1을 직접 DOM element 생성 방식으로 구현했다.
-- 회원정보 문제를 실제 요청과 table 출력까지 시도했다.
-- try...catch 동작을 자세히 설명했다.
-- XMLHttpRequest와 fetch를 비교했다.
-- Promise chain과 response.json 역할을 설명했다.
-- debugger 실습을 포함했다.
+기존:
 
----
+```javascript
+xhr.onload = () => {
+    const data = JSON.parse(
+        xhr.responseText,
+    )
+}
+```
 
-## 59. 내 코드 개선점
+개선:
 
-- btn2 표시 문구에 `jason` 오타가 있다.
-- 날씨 API key가 비어 있어 요청이 실패할 수 있다.
-- `toISOString()`의 UTC 날짜 문제를 처리하지 않는다.
-- 자정에 base_time이 음수가 되는 문제를 처리하지 않는다.
-- API endpoint가 HTTP다.
-- XMLHttpRequest에서 status와 onerror를 검사하지 않는다.
-- JSON parse 실패를 처리하지 않는다.
-- 문제 2에서 시간별 grouping을 하지 않는다.
-- 온도 열에 REH도 넣는다.
-- 습도와 강수량 열에 T1H를 넣는다.
-- 같은 시간 데이터를 여러 row로 분리한다.
-- 회원 table에서 빈 tr을 만들고 td는 tbody.innerHTML에 직접 추가한다.
-- `innerHTML +=`로 반복해서 tbody 전체를 재parse한다.
-- 회원 table을 다시 누르면 이전 결과가 누적된다.
-- fetch에서 `response.ok`를 검사하지 않는다.
-- fetch option을 JSON이라고 부른다.
-- `==`를 많이 사용한다.
-- 문서 lang과 title이 내용에 맞지 않는다.
-
----
-
-# Teacher Code Analysis
-
-## 60. 강사님 코드 장점
-
-- XMLHttpRequest 네 단계가 명확하다.
-- users JSON parsing과 중첩 property 접근을 간결하게 보여 준다.
-- 상대 HTML 요청의 asynchronous 결과를 확인한다.
-- 날씨 API response 구조를 단계적으로 접근한다.
-- category filter를 실제 실행한다.
-- 문제 1을 올바른 table row 구조로 구현한다.
-- 시간별 객체 grouping을 구현한다.
-- Object.keys로 시간별 row를 출력한다.
-- try...catch와 fetch Promise chain을 연결한다.
-- debugger와 duplicate key 예제를 포함한다.
-
----
-
-## 61. 강사님 코드 개선점
-
-- API key를 client JavaScript에 직접 포함한다.
-- HTTP 날씨 endpoint를 사용한다.
-- UTC 날짜와 자정 처리가 없다.
-- XMLHttpRequest status·error 처리가 없다.
-- q2를 다시 실행하기 전 비우지 않아 row가 누적된다.
-- btn4 문제는 구현하지 않는다.
-- fetch에서 response.ok를 검사하지 않는다.
-- `let option`을 만들고 실제 fetch에서는 literal object를 다시 작성해 option 변수가 사용되지 않는다.
-- `==`를 사용한다.
-- duplicate key는 동작하지만 lint error나 실수 가능성이 있다.
-- 마지막 counting 요구는 구현되지 않았다.
-- 문서 lang과 title이 내용에 맞지 않는다.
-
----
-
-# Improvements
-
-## 62. 안전한 XMLHttpRequest
-
-```js
-function requestJSON(
-  url,
-  onSuccess
-) {
-  const xhr =
-    new XMLHttpRequest()
-
-  xhr.open(
-    "GET",
-    url
-  )
-
-  xhr.onload =
-    function() {
-      if (
-        xhr.status < 200 ||
-        xhr.status >= 300
-      ) {
-        console.error(
-          `HTTP ${xhr.status}`
-        )
-
+```javascript
+xhr.onload = () => {
+    if (
+        xhr.status < 200
+        || xhr.status >= 300
+    ) {
         return
-      }
-
-      try {
-        const data =
-          JSON.parse(
-            xhr.responseText
-          )
-
-        onSuccess(data)
-      } catch (error) {
-        console.error(
-          "JSON 처리 실패",
-          error
-        )
-      }
     }
 
-  xhr.onerror =
-    function() {
-      console.error(
-        "Network 요청 실패"
-      )
-    }
-
-  xhr.send()
+    // Parse
 }
 ```
 
----
+## 82-2. Weather Grouping
 
-## 63. 시간별 날씨 Grouping
+기존:
 
-```js
-function groupForecast(items) {
-  const targetCategories =
-    ["T1H", "REH", "RN1"]
-
-  return items
-    .filter(
-      item =>
-        targetCategories
-          .includes(
-            item.category
-          )
-    )
-    .reduce(
-      function(grouped, item) {
-        const time =
-          item.fcstTime
-
-        if (!grouped[time]) {
-          grouped[time] = {}
-        }
-
-        grouped[time][
-          item.category
-        ] =
-          item.fcstValue
-
-        return grouped
-      },
-      {}
-    )
-}
+```text
+Item 하나마다 Row 생성
 ```
 
----
+개선:
 
-## 64. 안전한 Table Rendering
-
-```js
-function renderForecast(
-  tbody,
-  grouped
-) {
-  tbody.replaceChildren()
-
-  const fragment =
-    document
-      .createDocumentFragment()
-
-  Object.entries(
-    grouped
-  ).forEach(
-    function([
-      time,
-      values
-    ]) {
-      const tr =
-        document.createElement(
-          "tr"
-        )
-
-      const cells = [
-        time,
-        values.T1H ?? "-",
-        values.REH ?? "-",
-        values.RN1 ?? "-"
-      ]
-
-      cells.forEach(
-        function(value) {
-          const td =
-            document
-              .createElement(
-                "td"
-              )
-
-          td.textContent =
-            value
-
-          tr.append(td)
-        }
-      )
-
-      fragment.append(tr)
-    }
-  )
-
-  tbody.append(fragment)
-}
+```text
+fcstTime 기준 Grouping
+→ 한 시간당 한 Row
 ```
 
----
+## 82-3. 회원 Table
 
-# Representative Examples
+기존:
 
-## 65. Async/Await Fetch
+```javascript
+tbody.innerHTML += (
+    "<td>...</td>"
+)
+```
 
-```js
-async function loadUsers() {
-  const response =
-    await fetch(
-      "https://jsonplaceholder.typicode.com/users"
-    )
+개선:
 
-  if (!response.ok) {
+```javascript
+row.append(cell)
+tbody.append(row)
+```
+
+## 82-4. Fetch HTTP 오류
+
+기존:
+
+```javascript
+return response.json()
+```
+
+개선:
+
+```javascript
+if (!response.ok) {
     throw new Error(
-      `HTTP ${response.status}`
+        `HTTP ${response.status}`,
     )
-  }
-
-  return response.json()
 }
 
-async function handleClick() {
-  try {
-    const users =
-      await loadUsers()
-
-    console.log(users)
-  } catch (error) {
-    console.error(
-      "회원 정보를 불러오지 못했습니다.",
-      error
-    )
-  }
-}
+return response.json()
 ```
 
 ---
 
-# Practical Usage
+# 83. 실무형 예제: 회원 API Viewer
 
-## 66. 회원정보 Table 완성
-
-```js
-async function renderUsers() {
-  const q3 =
-    document.querySelector(
-      "#q3"
+```javascript
+function createUserRow(
+    user,
+) {
+    const row = document.createElement(
+        "tr",
     )
 
-  q3.replaceChildren()
+    const values = [
+        user.id,
+        user.name,
+        user.address?.zipcode
+            ?? "-",
+        user.company?.name
+            ?? "-",
+    ]
 
-  try {
-    const response =
-      await fetch(
-        "https://jsonplaceholder.typicode.com/users"
-      )
-
-    if (!response.ok) {
-      throw new Error(
-        `HTTP ${response.status}`
-      )
-    }
-
-    const users =
-      await response.json()
-
-    const fragment =
-      document
-        .createDocumentFragment()
-
-    users.forEach(
-      function(user) {
-        const tr =
-          document.createElement(
-            "tr"
-          )
-
-        const values = [
-          user.id,
-          user.name,
-          user.address.zipcode,
-          user.company.name
-        ]
-
-        values.forEach(
-          function(value) {
-            const td =
-              document
-                .createElement(
-                  "td"
-                )
-
-            td.textContent =
-              value
-
-            tr.append(td)
-          }
+    for (const value of values) {
+        const cell = (
+            document.createElement(
+                "td",
+            )
         )
 
-        fragment.append(tr)
-      }
-    )
-
-    q3.append(fragment)
-  } catch (error) {
-    console.error(
-      "회원정보 조회 실패",
-      error
-    )
-  }
-}
-```
-
----
-
-# Common Mistakes
-
-## 67. 자주 하는 실수
-
-### 67.1 Open이 요청을 바로 보낸다고 생각
-
-실제 전송은 `send()`에서 시작합니다.
-
-### 67.2 Send 바로 다음 줄에서 응답을 읽음
-
-비동기 요청이 아직 끝나지 않아 빈 문자열일 수 있습니다.
-
-### 67.3 Onload면 무조건 HTTP 성공이라고 생각
-
-status를 별도로 확인해야 합니다.
-
-### 67.4 상대 URL 기준을 JS 파일 위치라고 생각
-
-현재 document URL 기준입니다.
-
-### 67.5 ToISOString을 Local Date로 생각
-
-UTC 기준입니다.
-
-### 67.6 자정에 Hour - 1만 수행
-
-날짜도 전날로 조정해야 합니다.
-
-### 67.7 API Key를 Frontend에 직접 공개
-
-source에서 쉽게 노출됩니다.
-
-### 67.8 시간별 데이터를 Grouping하지 않음
-
-category별 item을 한 row에 정확히 배치하기 어렵습니다.
-
-### 67.9 Tbody에 Td를 직접 추가
-
-table 구조상 tr 안에 td가 있어야 합니다.
-
-### 67.10 Fetch Catch가 404도 자동 처리한다고 생각
-
-`response.ok`를 확인해야 합니다.
-
----
-
-# Interview / Review
-
-## 68. 면접·복습 포인트
-
-### Q1. AJAX란 무엇인가요?
-
-현재 페이지를 유지하면서 JavaScript로 server와 비동기 통신하고 일부 UI만 갱신하는 방식입니다.
-
-### Q2. XMLHttpRequest의 기본 순서는 무엇인가요?
-
-객체 생성, open, send, 응답 callback 처리입니다.
-
-### Q3. Send 직후 ResponseText가 비어 있는 이유는 무엇인가요?
-
-network 요청이 비동기로 진행되어 응답이 아직 도착하지 않았기 때문입니다.
-
-### Q4. Onload와 HTTP 성공은 같은 의미인가요?
-
-아닙니다. onload 후에도 status를 확인해야 합니다.
-
-### Q5. Fetch는 무엇을 반환하나요?
-
-Promise를 반환합니다.
-
-### Q6. Response.json은 무엇을 반환하나요?
-
-JSON body parsing 결과를 제공하는 Promise를 반환합니다.
-
-### Q7. Fetch에서 404를 어떻게 처리하나요?
-
-`response.ok` 또는 status를 검사하고 직접 error를 throw합니다.
-
-### Q8. 날씨 데이터를 시간별로 묶는 이유는 무엇인가요?
-
-같은 시간의 온도·습도·강수량을 한 row에 배치하기 위해서입니다.
-
-### Q9. 내 시간별 날씨 출력의 핵심 오류는 무엇인가요?
-
-category 조건이 잘못되어 온도 값이 습도·강수량 열에도 들어가고 시간별 grouping이 없습니다.
-
-### Q10. 내 회원 table 생성의 구조적 문제는 무엇인가요?
-
-빈 tr을 append한 뒤 td 문자열을 tbody.innerHTML에 직접 누적합니다.
-
----
-
-# Problems
-
-## 문제 1. XMLHttpRequest 생성
-
-새 XMLHttpRequest 객체를 생성하세요.
-
-## 문제 2. GET 요청 준비
-
-JSONPlaceholder users URL로 GET 요청을 설정하세요.
-
-## 문제 3. 요청 전송
-
-설정된 XMLHttpRequest를 전송하세요.
-
-## 문제 4. 응답 출력
-
-onload에서 responseText를 출력하세요.
-
-## 문제 5. Status 검사
-
-2xx status일 때만 성공 처리하세요.
-
-## 문제 6. JSON Parse
-
-users responseText를 JavaScript array로 변환하세요.
-
-## 문제 7. 중첩 Property
-
-세 번째 user의 latitude를 출력하세요.
-
-## 문제 8. 비동기 순서
-
-send 직후 responseText가 빈 값일 수 있는 이유를 설명하세요.
-
-## 문제 9. 상대 URL
-
-`19_json.html` 요청의 기준 URL을 설명하세요.
-
-## 문제 10. Category Filter
-
-T1H, REH, RN1만 filter하세요.
-
-## 문제 11. 시간별 Grouping
-
-fcstTime을 key로 category 값을 객체에 묶으세요.
-
-## 문제 12. Forecast Table
-
-시간, 온도, 습도, 강수량을 한 row로 출력하세요.
-
-## 문제 13. Table 초기화
-
-재조회 전에 tbody 기존 내용을 지우세요.
-
-## 문제 14. 회원정보 조회
-
-users에서 id, name, zipcode, company name을 출력하세요.
-
-## 문제 15. 안전한 Row 생성
-
-tbody 안에 올바른 tr과 td를 생성하세요.
-
-## 문제 16. Try Catch
-
-undefined에 push를 호출하는 오류를 catch하세요.
-
-## 문제 17. Fetch 요청
-
-fetch로 users를 GET 요청하세요.
-
-## 문제 18. Response OK
-
-HTTP 실패 status를 error로 처리하세요.
-
-## 문제 19. Promise Chain
-
-response.json 결과를 다음 then에서 출력하세요.
-
-## 문제 20. Async Await
-
-문제 17을 async/await로 다시 작성하세요.
-
-## 문제 21. 원본 오류
-
-내 날씨 category 조건과 회원 table 구조 오류를 설명하세요.
-
-## 문제 22. 종합 API Viewer
-
-다음 요구사항을 만족하세요.
-
-- fetch로 users 조회
-- response.ok 검사
-- JSON parsing
-- loading 문구 표시
-- 기존 tbody 초기화
-- id, name, zipcode, company 출력
-- createElement와 textContent 사용
-- 오류 발생 시 사용자 메시지 출력
-- 재조회해도 row 중복 없음
-- button 연속 클릭 중 중복 요청 방지
-
----
-
-# Answers
-
-## 정답 1
-
-```js
-const xhr =
-  new XMLHttpRequest()
-```
-
-## 정답 2
-
-```js
-xhr.open(
-  "GET",
-  "https://jsonplaceholder.typicode.com/users"
-)
-```
-
-## 정답 3
-
-```js
-xhr.send()
-```
-
-## 정답 4
-
-```js
-xhr.onload =
-  function() {
-    console.log(
-      xhr.responseText
-    )
-  }
-```
-
-## 정답 5
-
-```js
-xhr.onload =
-  function() {
-    if (
-      xhr.status >= 200 &&
-      xhr.status < 300
-    ) {
-      console.log(
-        xhr.responseText
-      )
-    }
-  }
-```
-
-## 정답 6
-
-```js
-const users =
-  JSON.parse(
-    xhr.responseText
-  )
-```
-
-## 정답 7
-
-```js
-console.log(
-  users[2]
-    .address
-    .geo
-    .lat
-)
-```
-
-## 정답 8
-
-요청과 응답이 비동기로 진행되므로 send 다음 synchronous code가 응답 callback보다 먼저 실행될 수 있기 때문입니다.
-
-## 정답 9
-
-상대 URL은 외부 JavaScript 파일 위치가 아니라 현재 document URL을 기준으로 해석됩니다.
-
-## 정답 10
-
-```js
-const categories =
-  ["T1H", "REH", "RN1"]
-
-const filtered =
-  items.filter(
-    item =>
-      categories.includes(
-        item.category
-      )
-  )
-```
-
-## 정답 11
-
-```js
-const grouped = {}
-
-filtered.forEach(
-  function(item) {
-    if (
-      !grouped[
-        item.fcstTime
-      ]
-    ) {
-      grouped[
-        item.fcstTime
-      ] = {}
-    }
-
-    grouped[
-      item.fcstTime
-    ][
-      item.category
-    ] =
-      item.fcstValue
-  }
-)
-```
-
-## 정답 12
-
-```js
-Object.entries(
-  grouped
-).forEach(
-  function([
-    time,
-    values
-  ]) {
-    const tr =
-      document.createElement(
-        "tr"
-      )
-
-    tr.innerHTML = `
-      <td>${time}</td>
-      <td>${values.T1H ?? "-"}</td>
-      <td>${values.REH ?? "-"}</td>
-      <td>${values.RN1 ?? "-"}</td>
-    `
-
-    tbody.append(tr)
-  }
-)
-```
-
-## 정답 13
-
-```js
-tbody.replaceChildren()
-```
-
-또는:
-
-```js
-tbody.innerHTML = ""
-```
-
-## 정답 14
-
-```js
-users.forEach(
-  function(user) {
-    console.log(
-      user.id,
-      user.name,
-      user.address.zipcode,
-      user.company.name
-    )
-  }
-)
-```
-
-## 정답 15
-
-```js
-const tr =
-  document.createElement(
-    "tr"
-  )
-
-const td =
-  document.createElement(
-    "td"
-  )
-
-td.textContent =
-  user.name
-
-tr.append(td)
-tbody.append(tr)
-```
-
-## 정답 16
-
-```js
-try {
-  const value =
-    undefined
-
-  value.push(1)
-} catch (error) {
-  console.error(error)
-}
-```
-
-## 정답 17
-
-```js
-fetch(
-  "https://jsonplaceholder.typicode.com/users"
-)
-```
-
-## 정답 18
-
-```js
-fetch(url)
-  .then(
-    function(response) {
-      if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status}`
+        cell.textContent = (
+            String(value)
         )
-      }
 
-      return response.json()
-    }
-  )
-```
-
-## 정답 19
-
-```js
-fetch(url)
-  .then(
-    response =>
-      response.json()
-  )
-  .then(
-    function(data) {
-      console.log(data)
-    }
-  )
-```
-
-## 정답 20
-
-```js
-async function loadUsers() {
-  try {
-    const response =
-      await fetch(url)
-
-    if (!response.ok) {
-      throw new Error(
-        `HTTP ${response.status}`
-      )
+        row.append(cell)
     }
 
-    const users =
-      await response.json()
-
-    console.log(users)
-  } catch (error) {
-    console.error(error)
-  }
+    return row
 }
-```
 
-## 정답 21
-
-내 날씨 코드는 온도 열에 T1H와 REH를 넣고, 습도와 강수량 열에는 T1H를 넣습니다. 또한 같은 시간의 세 category를 grouping하지 않습니다. 회원정보 코드는 빈 tr을 append한 뒤 td 문자열을 tbody의 innerHTML에 직접 누적하므로 올바른 row 구조가 아닙니다.
-
-## 정답 22
-
-```js
-const button =
-  document.querySelector(
-    "#loadUsers"
-  )
-
-const tbody =
-  document.querySelector(
-    "#users"
-  )
-
-const message =
-  document.querySelector(
-    "#message"
-  )
-
-button.addEventListener(
-  "click",
-  async function() {
+async function loadAndRenderUsers({
+    button,
+    tbody,
+    message,
+}) {
     if (button.disabled) {
-      return
+        return
     }
 
     button.disabled = true
-    message.textContent =
-      "불러오는 중입니다."
+    message.textContent = (
+        "회원정보를 불러오는 중입니다."
+    )
+
     tbody.replaceChildren()
 
     try {
-      const response =
-        await fetch(
-          "https://jsonplaceholder.typicode.com/users"
+        const response = await fetch(
+            "https://jsonplaceholder.typicode.com/users",
         )
 
-      if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status}`
-        )
-      }
-
-      const users =
-        await response.json()
-
-      const fragment =
-        document
-          .createDocumentFragment()
-
-      users.forEach(
-        function(user) {
-          const tr =
-            document.createElement(
-              "tr"
+        if (!response.ok) {
+            throw new Error(
+                `HTTP ${response.status}`,
             )
-
-          const values = [
-            user.id,
-            user.name,
-            user.address.zipcode,
-            user.company.name
-          ]
-
-          values.forEach(
-            function(value) {
-              const td =
-                document
-                  .createElement(
-                    "td"
-                  )
-
-              td.textContent =
-                value
-
-              tr.append(td)
-            }
-          )
-
-          fragment.append(tr)
         }
-      )
 
-      tbody.append(fragment)
-      message.textContent =
-        `${users.length}명을 불러왔습니다.`
-    } catch (error) {
-      message.textContent =
-        "회원정보를 불러오지 못했습니다."
+        const users = (
+            await response.json()
+        )
 
-      console.error(error)
+        if (!Array.isArray(users)) {
+            throw new TypeError(
+                "회원 목록 형식이 아닙니다.",
+            )
+        }
+
+        const fragment = (
+            document
+                .createDocumentFragment()
+        )
+
+        for (const user of users) {
+            fragment.append(
+                createUserRow(user),
+            )
+        }
+
+        tbody.append(fragment)
+
+        message.textContent = (
+            users.length === 0
+                ? "회원정보가 없습니다."
+                : `${users.length}명을 `
+                    + "불러왔습니다."
+        )
+    } catch (
+        error
+    ) {
+        message.textContent = (
+            "회원정보를 불러오지 "
+            + "못했습니다."
+        )
+
+        console.error(error)
     } finally {
-      button.disabled = false
+        button.disabled = false
     }
-  }
-)
+}
+```
+
+## 83-1. 코드에서 무엇을 사용하는 걸까?
+
+| 코드 | 사용하는 이유 |
+| --- | --- |
+| `async/await` | 요청 흐름을 순서대로 표현 |
+| `response.ok` | HTTP Status 검증 |
+| 배열 검사 | 응답 데이터 구조 검증 |
+| `textContent` | 외부 데이터를 안전하게 출력 |
+| `DocumentFragment` | 여러 Row를 한 번에 삽입 |
+| `replaceChildren()` | 재조회 중복 방지 |
+| Disabled 상태 | 중복 요청 방지 |
+| `finally` | 성공·실패 후 Button 복구 |
+| Empty 상태 | 결과 0건과 오류 구분 |
+
+---
+
+# 84. 대표 오류로 이해하기
+
+## 84-1. `send()` 직후 응답 사용
+
+응답이 아직 도착하지 않아 빈 문자열일 수 있다.
+
+## 84-2. `onload`를 무조건 성공으로 처리
+
+HTTP 404·500도 들어올 수 있다.
+
+## 84-3. JSON이 아닌 응답 Parse
+
+`SyntaxError`가 발생한다.
+
+## 84-4. 자정에 Hour만 1 감소
+
+Date와 Time이 서로 맞지 않는다.
+
+## 84-5. Weather Category를 잘못된 열에 배치
+
+의미가 다른 측정값이 섞인다.
+
+## 84-6. `tbody`에 `td` 직접 추가
+
+올바른 Table 구조가 아니다.
+
+---
+
+# 85. 자주 하는 실수
+
+## 85-1. `open()`이 요청을 전송한다고 생각
+
+실제 전송은 `send()`다.
+
+## 85-2. 상대 URL 기준을 JS 파일 위치로 생각
+
+현재 Document URL 기준이다.
+
+## 85-3. `toISOString()`을 Local 날짜로 생각
+
+UTC 기준이다.
+
+## 85-4. API Key를 Public Frontend에 직접 작성
+
+사용자에게 노출된다.
+
+## 85-5. HTTP API를 HTTPS 페이지에서 호출
+
+Mixed Content로 차단될 수 있다.
+
+## 85-6. 시간별 데이터를 Grouping하지 않음
+
+같은 시간의 값을 한 Row에 맞추기 어렵다.
+
+## 85-7. 반복문에서 `innerHTML +=` 사용
+
+하위 DOM 전체가 반복해서 재파싱될 수 있다.
+
+## 85-8. Fetch Catch가 404도 처리한다고 생각
+
+`response.ok`를 직접 검사한다.
+
+## 85-9. JSON Parse 성공만 확인
+
+응답의 실제 자료형·Property도 검증한다.
+
+## 85-10. 요청 상태 UI를 만들지 않음
+
+Loading·Empty·Error·Success를 구분한다.
+
+---
+
+# 86. 핵심 요약
+
+```text
+AJAX
+→ 현재 페이지 유지
+→ 비동기 데이터 요청
+→ 일부 DOM 갱신
+```
+
+```text
+XMLHttpRequest
+→ 생성
+→ open
+→ send
+→ load·error 처리
+```
+
+```text
+responseText
+→ 문자열
+
+JSON.parse()
+→ JavaScript 값
+```
+
+```text
+fetch()
+→ Promise<Response>
+
+response.json()
+→ Promise<JavaScript 값>
+```
+
+```text
+response.ok
+→ HTTP 성공 확인
+
+try...catch
+→ Await 오류 처리
+
+finally
+→ UI 상태 복구
 ```
 
 ---
 
-# Final Checklist
+# 87. 최종 체크리스트
 
-## AJAX와 XHR
-
-- [ ] AJAX의 의미를 설명할 수 있다.
-- [ ] XMLHttpRequest 네 단계를 이해했다.
-- [ ] open과 send 역할을 구분했다.
-- [ ] onload에서 응답을 처리했다.
-- [ ] status를 검사했다.
-- [ ] onerror를 처리했다.
-- [ ] responseText가 string임을 이해했다.
-- [ ] JSON.parse 실패 가능성을 처리했다.
-- [ ] 상대 URL의 기준을 이해했다.
-
-## 날씨 API
-
-- [ ] UTC와 local date 차이를 확인했다.
-- [ ] 자정 base_time 문제를 확인했다.
-- [ ] API key 노출을 피했다.
-- [ ] HTTPS endpoint를 검토했다.
-- [ ] T1H, REH, RN1을 filter했다.
-- [ ] fcstTime 기준으로 grouping했다.
-- [ ] 시간별 값을 한 row로 출력했다.
-- [ ] 재조회 전 tbody를 초기화했다.
-- [ ] 없는 category는 기본값을 표시했다.
-
-## Fetch
-
-- [ ] fetch가 Promise를 반환함을 이해했다.
-- [ ] response.json도 Promise임을 이해했다.
-- [ ] response.ok를 검사했다.
-- [ ] network error와 HTTP error를 구분했다.
-- [ ] Promise chain과 async/await를 모두 이해했다.
-- [ ] loading과 button disabled 상태를 처리했다.
-- [ ] finally에서 상태를 복구했다.
-
-## DOM과 Debug
-
-- [ ] tbody 안에 tr, tr 안에 td를 넣었다.
-- [ ] innerHTML 반복 재할당을 피했다.
-- [ ] createDocumentFragment를 활용했다.
-- [ ] textContent로 값을 넣었다.
-- [ ] debugger 중단점을 이해했다.
-- [ ] duplicate object key가 뒤 값으로 덮어써짐을 이해했다.
-
-## 원본 검수
-
-- [ ] 두 실제 20_ajax.html을 비교했다.
-- [ ] 연결된 두 실제 20_ajax.js를 비교했다.
-- [ ] 내 btn2의 `jason` 오타를 기록했다.
-- [ ] API key 유무 차이를 기록했다.
-- [ ] 강사님 key 원문을 문서에 재노출하지 않았다.
-- [ ] 문제 1 div/table 구현 차이를 기록했다.
-- [ ] 내 문제 2 category 조건 오류를 기록했다.
-- [ ] 강사님 시간별 grouping 구현을 기록했다.
-- [ ] 강사님 q2 누적 문제를 기록했다.
-- [ ] 내 회원 row 구조 문제를 기록했다.
-- [ ] 강사님의 btn4 미구현을 기록했다.
-- [ ] 강사님의 duplicate key 예제를 기록했다.
-- [ ] BACKUP을 분석하지 않았다.
+- [ ] AJAX의 의미를 설명할 수 있는가?
+- [ ] 일반 Navigation과 AJAX를 구분할 수 있는가?
+- [ ] XHR의 생성·Open·Send·응답 순서를 이해했는가?
+- [ ] `open()`이 요청 설정이라는 점을 이해했는가?
+- [ ] `send()` 직후 응답이 비어 있을 수 있음을 이해했는가?
+- [ ] XHR Status를 확인하는가?
+- [ ] `error`와 `timeout`을 처리하는가?
+- [ ] JSON Parse 오류를 처리할 수 있는가?
+- [ ] 상대 URL 기준이 Document임을 이해했는가?
+- [ ] 외부 응답 구조를 검증하는가?
+- [ ] Local 날짜와 UTC 날짜를 구분하는가?
+- [ ] 자정 이전 시각을 Date 연산으로 처리하는가?
+- [ ] API Key를 Frontend에 노출하지 않는가?
+- [ ] HTTPS Endpoint를 사용하는가?
+- [ ] `URLSearchParams`로 Query를 구성할 수 있는가?
+- [ ] Weather Category를 정확하게 필터링하는가?
+- [ ] 시간별로 데이터를 그룹화할 수 있는가?
+- [ ] 없는 Category에 기본값을 표시하는가?
+- [ ] 재조회 전에 기존 Table을 비우는가?
+- [ ] `tbody → tr → td` 구조를 지키는가?
+- [ ] `innerHTML +=` 반복을 피하는가?
+- [ ] Fetch가 Promise를 반환함을 이해했는가?
+- [ ] `response.json()`도 Promise임을 이해했는가?
+- [ ] `response.ok`를 검사하는가?
+- [ ] Network 오류와 HTTP 오류를 구분하는가?
+- [ ] `async/await`와 `try...catch`를 사용할 수 있는가?
+- [ ] Loading·Success·Empty·Error 상태를 표시하는가?
+- [ ] 중복 요청을 방지하거나 취소할 수 있는가?
+- [ ] 외부 데이터 출력에 `textContent`를 사용하는가?
+- [ ] `debugger`와 Network Panel로 요청을 추적할 수 있는가?
 
 ---
 
-# Key Summary
+# 마무리
 
-- JavaScript 20번은 XMLHttpRequest 기반 AJAX와 Fetch API를 다룬다.
-- AJAX는 현재 페이지를 유지하면서 server data를 비동기로 요청하는 방식이다.
-- XMLHttpRequest 기본 흐름은 생성, open, send, callback 처리다.
-- open은 요청 정보를 설정하고 실제 전송은 send가 수행한다.
-- responseText는 응답 body 문자열이다.
-- send 직후 responseText는 응답 전이라 비어 있을 수 있다.
-- 상대 URL은 현재 document URL을 기준으로 해석된다.
-- onload가 실행되어도 HTTP status가 성공이라는 보장은 없다.
-- JSON response는 JSON.parse로 JavaScript 값으로 바꾼다.
-- JSONPlaceholder users에서 중첩 property를 dot 또는 bracket notation으로 접근한다.
-- 날씨 날짜 생성에 toISOString을 쓰면 UTC와 local date 차이를 주의해야 한다.
-- 현재 시각에서 한 시간을 빼는 원본은 자정 처리가 없다.
-- 강사님 원본에는 service key가 포함되지만 내 원본 key는 빈 문자열이다.
-- API key를 client JavaScript와 public repository에 직접 노출하지 않는 편이 좋다.
-- 원본 날씨 endpoint는 HTTP라 HTTPS page에서 mixed content가 생길 수 있다.
-- T1H는 기온, REH는 습도, RN1은 강수량이다.
-- 강사님은 category를 filter한 뒤 fcstTime 기준 객체로 grouping한다.
-- 내 코드는 같은 시간의 category를 grouping하지 않는다.
-- 내 온도 열은 T1H와 REH를 넣고 습도·강수량 열은 T1H를 넣는 실제 오류가 있다.
-- 강사님 q2는 재조회 전에 비우지 않아 row가 누적될 수 있다.
-- 내 btn4는 회원정보를 직접 구현했지만 빈 tr과 tbody.innerHTML 누적 구조가 잘못됐다.
-- tbody에는 tr을 넣고 각 td는 해당 tr 안에 넣어야 한다.
-- try...catch는 synchronous 오류를 잡아 이후 code가 계속 실행되게 한다.
-- fetch는 Promise를 반환하고 response.json도 Promise를 반환한다.
-- fetch catch는 404 같은 HTTP status를 자동으로 오류 처리하지 않을 수 있다.
-- response.ok를 검사하고 직접 error를 throw해야 한다.
-- debugger statement는 개발자 도구에서 실행을 일시 정지한다.
-- 강사님 마지막 duplicate key 객체는 뒤의 a:3이 앞의 a:1을 덮어쓴다.
+AJAX와 Fetch의 핵심은 서버에서 JSON을 가져오는 것에서 끝나지 않는다.
+
+```text
+요청 시작과 응답 완료 시점을 구분하고
+    ↓
+HTTP·Network·Parse 오류를 각각 처리하고
+    ↓
+외부 데이터 구조를 검증하고
+    ↓
+필요한 형태로 Filter·Grouping한 뒤
+    ↓
+안전한 DOM 구조와 명확한 UI 상태로 렌더링하는 것
+```
+
+이 흐름을 이해하면 실제 프로젝트에서 회원 목록·검색 결과·날씨·상품·게시글 같은 서버 데이터를 안정적으로 화면에 연결할 수 있다.

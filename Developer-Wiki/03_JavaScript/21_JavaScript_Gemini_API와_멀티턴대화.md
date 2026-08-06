@@ -1,3 +1,10 @@
+---
+title: JavaScript Gemini API와 멀티턴 대화
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # JavaScript Gemini API와 멀티턴 대화
 
 ## 문서 정보
@@ -6,1973 +13,1879 @@
 | --- | --- |
 | 문서 | `21_JavaScript_Gemini_API와_멀티턴대화.md` |
 | 분류 | `03_JavaScript` |
-| 권장 선수 학습 | `20_JavaScript_AJAX와_Fetch_API.md` |
-| 다음 학습 | 이후 JavaScript 원본 순서에 따라 진행 |
-| 원본 기준 | `workspace/workspace_html/javascript/21_gemini.html`, `workspace_teacher/workspace_html/javascript/21_gemini.html` |
-| 핵심 범위 | 생성형 AI API 요청, `fetch()` POST, request body, header, `JSON.stringify()`, response parsing, 중첩 응답 접근, 대화 history 배열, `role: "user"`, `role: "model"`, 멀티턴 구현, DOM 출력 |
-| 프로젝트 연결 | AI 챗봇, 질문·응답 UI, conversation history, 외부 API 연동, 결과 렌더링, 오류 처리 |
+| 원본 기준 | `workspace_html/javascript/21_gemini.html`, `workspace_teacher/workspace_html/javascript/21_gemini.html` |
+| 핵심 범위 | Gemini API, POST 요청, Header, JSON Body, 응답 구조, 멀티턴 History, 오류·보안·UI 상태 |
+| 실습 범위 | 단일 질문, 대화 누적, 응답 렌더링, 중복 요청 방지, Backend Proxy 구조 |
+| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
 
-> 이 문서는 내 코드와 강사님 코드의 `21_gemini.html`만 직접 비교했습니다. 두 원본 모두 Gemini 계열 API 호출을 학습하기 위한 예제로 작성되어 있으며, API key는 빈 문자열입니다. 내 코드는 응답 text를 화면에 출력하고 멀티턴 설명 주석을 추가했지만, 응답 DOM 생성 방식과 대화 history 저장 방식에 실제 문제가 있습니다. 또한 원본의 model URL과 API 형식이 현재도 유효한지는 이 문서의 비교 범위에서 별도로 검증하지 않았습니다. 원본에 적힌 문자열과 구조를 그대로 보존하고, 코드 자체의 동작과 개선점을 분리해 설명합니다.
+> 21번은 생성형 AI API에 질문을 전송하고 응답을 화면에 표시하는 흐름을 다룬다.  
+> 원본의 API Key는 빈 문자열이며 실제 Key를 문서나 Client JavaScript에 추가하지 않는다.
+
+---
+
+# 개요
+
+생성형 AI API 요청도 일반적인 JSON API 요청 흐름을 따른다.
+
+```text
+사용자 질문 입력
+    ↓
+요청 객체 생성
+    ↓
+JSON 문자열 변환
+    ↓
+POST 요청
+    ↓
+응답 JSON 변환
+    ↓
+생성된 Text 추출
+    ↓
+화면 출력
+```
+
+멀티턴 대화에서는 이전 사용자 질문과 Model 답변을 History에 누적한다.
+
+```text
+User 질문 저장
+    ↓
+전체 History 전송
+    ↓
+Model 응답 저장
+    ↓
+다음 질문에서 다시 전체 History 전송
+```
+
+> [!IMPORTANT]
+> 멀티턴 대화의 핵심은 Model이 Browser 변수를 직접 기억하는 것이 아니다.  
+> Client가 이전 대화를 다시 요청에 포함해 Context를 제공하는 것이다.
+
+---
+
+# 핵심 개념
+
+| 개념 | 핵심 역할 |
+| --- | --- |
+| API Endpoint | 요청을 전송할 서버 주소 |
+| API Key | 요청 인증 정보 |
+| POST | 데이터를 Body에 담아 전송 |
+| Header | 인증 방식과 Body 형식 전달 |
+| `Content-Type` | 전송 데이터 형식 지정 |
+| `contents` | 대화 Turn 목록 |
+| `parts` | 한 Turn 안의 Text·Image 등 입력 단위 |
+| `role` | `user` 또는 `model` 발화자 |
+| Candidate | Model이 생성한 응답 후보 |
+| Conversation History | 이전 질문과 답변의 누적 목록 |
+| Loading State | 요청 중 화면 상태 |
+| Backend Proxy | Client 대신 외부 API에 안전하게 요청하는 서버 |
 
 ---
 
 # 학습 목표
 
-- 생성형 AI API 요청의 기본 구조를 이해한다.
-- `fetch()`로 POST 요청을 보낸다.
-- request header에 API key와 content type을 설정한다.
-- JavaScript 객체를 JSON 문자열로 변환해 body에 넣는다.
-- single-turn 요청 body 구조를 이해한다.
-- response JSON에서 text를 찾는다.
-- 대화 history를 배열에 누적해 multi-turn 요청을 구성한다.
-- `role: "user"`와 `role: "model"`의 의미를 이해한다.
-- 내 코드와 강사님 코드의 실제 출력 차이를 설명한다.
-- 내 코드의 DOM append 후 `innerText` 재할당 문제를 이해한다.
-- model history에 전체 response JSON을 문자열로 저장하는 문제를 설명한다.
-- API key를 client-side code에 직접 넣는 위험을 이해한다.
-- HTTP 오류와 response shape 오류를 안전하게 처리한다.
+- 생성형 AI API 요청 구조를 설명할 수 있다.
+- `fetch()`로 JSON POST 요청을 보낼 수 있다.
+- API Key Header와 Content Type Header의 역할을 이해한다.
+- JavaScript 객체와 JSON 문자열을 구분할 수 있다.
+- 단일 질문용 `contents` 구조를 만들 수 있다.
+- 응답의 중첩 구조에서 Text를 안전하게 추출할 수 있다.
+- HTTP 오류와 응답 구조 오류를 구분할 수 있다.
+- 사용자 질문과 Model 답변을 History에 올바르게 저장할 수 있다.
+- `user`와 `model` 역할을 번갈아 유지할 수 있다.
+- 전체 응답 JSON이 아니라 실제 답변 Text를 저장해야 함을 이해한다.
+- 빈 질문과 중복 요청을 방지할 수 있다.
+- 생성형 AI 결과를 `textContent`로 안전하게 출력할 수 있다.
+- API Key를 Client에 노출하면 안 되는 이유를 설명할 수 있다.
+- Backend Proxy 기반 실무 구조를 이해한다.
 
 ---
 
-# Core Concepts
-
-## 1. 생성형 AI API 요청 흐름
-
-원본의 전체 흐름:
-
-```text
-textarea에서 질문 읽기
-→ request body 객체 생성
-→ JSON.stringify()
-→ fetch POST 요청
-→ response.json()
-→ 응답 객체 확인
-→ text 출력
-```
-
-멀티턴에서는 여기에 다음이 추가됩니다.
-
-```text
-user 질문을 history에 push
-→ history 전체를 body로 전송
-→ model 응답을 history에 push
-→ 다음 질문 때 누적 history 재전송
-```
-
----
-
-## 2. 전역 대화 History
-
-양쪽 원본:
-
-```js
-const list = {
-  contents: []
-}
-```
-
-`contents` 배열에 user와 model message를 순서대로 저장하려는 구조입니다.
-
-초기 상태:
-
-```js
-{
-  contents: []
-}
-```
-
-질문 후:
-
-```js
-{
-  contents: [
-    {
-      role: "user",
-      parts: [
-        {
-          text: "질문"
-        }
-      ]
-    }
-  ]
-}
-```
-
-응답까지 저장하면 user와 model message가 번갈아 들어갑니다.
-
----
-
-## 3. Window.onload
-
-양쪽 원본:
-
-```js
-window.onload =
-  function() {
-    gemini()
-  }
-```
-
-page와 resource가 load된 뒤 `gemini()`를 호출합니다.
-
-`gemini()`는 실제 API를 즉시 호출하는 함수가 아니라 button event를 등록하는 초기화 함수입니다.
-
-함수 이름은 다음처럼 더 구체적으로 지을 수 있습니다.
-
-```js
-initGeminiEvents()
-```
-
----
-
-## 4. 두 Button
-
-HTML:
+# 1. 원본 HTML 구조
 
 ```html
+<textarea id="prompt"></textarea>
+
 <button
-  type="button"
-  id="ask"
+    type="button"
+    id="ask"
 >
-  질문하기
+    질문하기
 </button>
 
 <button
-  type="button"
-  id="ask2"
+    type="button"
+    id="ask2"
 >
-  멀티턴
+    멀티턴
 </button>
-```
 
-역할:
-
-```text
-ask
-→ 현재 prompt만 전송
-
-ask2
-→ 이전 대화 history와 현재 prompt를 함께 전송
-```
-
-내 HTML에서는 두 button의 type이 잘못 작성되어 있습니다.
-
-```html
-type="buttn"
-```
-
-강사님 HTML은 올바릅니다.
-
-```html
-type="button"
+<div id="ask-result"></div>
 ```
 
 ---
 
-# Single-turn 요청
+# 2. 내 코드의 Button Type 오류
 
-## 5. Prompt 읽기
+내 원본:
 
-양쪽 원본:
-
-```js
-const prompt =
-  document
-    .querySelector(
-      "#prompt"
-    )
-    .value
+```html
+<button type="buttn">
 ```
 
-textarea의 현재 문자열을 가져옵니다.
-
-원본에는 빈 문자열 검증과 trim 처리가 없습니다.
+`buttn`은 유효한 Button Type이 아니다.
 
 개선:
 
-```js
-const prompt =
-  promptInput
-    .value
-    .trim()
-
-if (prompt === "") {
-  alert(
-    "질문을 입력하세요."
-  )
-
-  return
-}
-```
-
----
-
-## 6. API Key
-
-양쪽 원본:
-
-```js
-const key = ""
-```
-
-실제 key가 비어 있으므로 요청은 정상 인증되지 않을 가능성이 큽니다.
-
-이 문서에는 key를 넣지 않습니다.
-
-client-side JavaScript에 실제 API key를 직접 작성하면 browser source와 network panel에서 노출될 수 있습니다.
-
-실무에서는 server가 key를 보관하고 frontend는 자신의 backend endpoint를 호출하는 구조를 검토합니다.
-
----
-
-## 7. API URL
-
-양쪽 원본:
-
-```js
-const url =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent"
-```
-
-이 문서는 원본에 적힌 URL을 그대로 기록합니다.
-
-다만 현재 실제 model 이름과 endpoint 지원 여부는 이 비교 작업에서 검증하지 않았습니다.
-
-외부 AI API는 model 이름, version, 인증 방식이 변경될 수 있으므로 실제 사용 전 공식 문서를 확인해야 합니다.
-
----
-
-## 8. Single-turn Data 구조
-
-양쪽 원본:
-
-```js
-const data = {
-  contents: [
-    {
-      parts: [
-        {
-          text: prompt
-        }
-      ]
-    }
-  ]
-}
-```
-
-구조:
-
-```text
-data
-└─ contents
-   └─ 첫 번째 message
-      └─ parts
-         └─ 첫 번째 part
-            └─ text
-```
-
-single-turn 요청에서는 role을 생략하고 text만 전달합니다.
-
----
-
-## 9. Fetch POST
-
-양쪽 원본:
-
-```js
-fetch(
-  url,
-  {
-    method: "POST",
-    headers: {
-      "x-goog-api-key":
-        key,
-      "Content-Type":
-        "application/json"
-    },
-    body:
-      JSON.stringify(
-        data
-      )
-  }
-)
-```
-
-핵심:
-
-```text
-method
-→ POST
-
-x-goog-api-key
-→ API 인증
-
-Content-Type
-→ JSON request body임을 알림
-
-body
-→ JavaScript 객체를 JSON text로 변환
-```
-
----
-
-## 10. 내 JSON 주석
-
-내 코드:
-
-```js
-// JSON으로 날아가면 안되기 때문에,
-// 문자열로 변경해서 전달
-```
-
-의도는 request body에 JavaScript 객체를 직접 넣지 않고 JSON 문자열로 직렬화해야 한다는 뜻입니다.
-
-더 정확한 표현:
-
-```text
-JavaScript 객체를 HTTP request body에 JSON text로 전달하기 위해
-JSON.stringify()를 사용한다.
-```
-
-“JSON으로 날아가면 안 된다”는 표현은 부정확합니다.
-
-실제로 content type은 `application/json`이고 body는 JSON text입니다.
-
----
-
-# Response 처리
-
-## 11. Response.json()
-
-양쪽 원본:
-
-```js
-.then(
-  function(response) {
-    return response.json()
-  }
-)
-```
-
-`response.json()`은 response body를 parsing하는 Promise를 반환합니다.
-
-다음 `.then()`에서 parsing된 JavaScript object를 받습니다.
-
----
-
-## 12. 강사님 Single-turn 출력
-
-강사님:
-
-```js
-.then(
-  function(result) {
-    console.log(result)
-  }
-)
-```
-
-전체 response object를 Console에 출력합니다.
-
-장점:
-
-- 실제 response 구조 확인 가능
-- candidates 유무 확인 가능
-- error response 분석 가능
-
----
-
-## 13. 내 Single-turn 출력
-
-내 코드:
-
-```js
-console.log(
-  result[
-    "candidates"
-  ][
-    "0"
-  ][
-    "content"
-  ][
-    "parts"
-  ][
-    "0"
-  ][
-    "text"
-  ]
-)
-```
-
-응답의 text만 직접 찾습니다.
-
-dot notation으로 표현하면:
-
-```js
-result
-  .candidates[0]
-  .content
-  .parts[0]
-  .text
-```
-
----
-
-## 14. 문자열 `"0"` Index
-
-내 코드는 array index를 string `"0"`으로 작성합니다.
-
-```js
-result["candidates"]["0"]
-```
-
-JavaScript array의 property key는 내부적으로 string key로 접근할 수 있어 동작할 수 있습니다.
-
-하지만 일반적인 array 표기는 다음이 더 명확합니다.
-
-```js
-result.candidates[0]
-```
-
----
-
-## 15. Response Shape 오류 가능성
-
-다음 구조가 항상 있다고 가정합니다.
-
-```text
-candidates[0].content.parts[0].text
-```
-
-인증 실패, quota 오류, safety block, server error 등에서는 구조가 다를 수 있습니다.
-
-그 경우 다음과 같은 TypeError가 발생할 수 있습니다.
-
-```text
-Cannot read properties of undefined
-```
-
-안전한 접근:
-
-```js
-const text =
-  result
-    ?.candidates
-    ?.[0]
-    ?.content
-    ?.parts
-    ?.[0]
-    ?.text
-```
-
----
-
-## 16. Response.ok 검사 누락
-
-양쪽 원본은:
-
-```js
-return response.json()
-```
-
-만 실행하고 `response.ok`를 검사하지 않습니다.
-
-HTTP 오류도 JSON body를 반환할 수 있으므로 다음처럼 처리할 수 있습니다.
-
-```js
-if (!response.ok) {
-  throw new Error(
-    `HTTP ${response.status}`
-  )
-}
-```
-
----
-
-# 내 DOM 출력
-
-## 17. AskResult 추가
-
-내 HTML에만 존재:
-
 ```html
-<div id="askResult"></div>
-```
-
-강사님 HTML에는 없습니다.
-
-내 코드는 API response text를 화면에 표시하려고 합니다.
-
----
-
-## 18. Div 생성
-
-내 코드:
-
-```js
-const divAdd =
-  document.createElement(
-    "div"
-  )
-
-const askResult =
-  document.querySelector(
-    "#askResult"
-  )
-
-askResult.append(
-  divAdd
-)
-```
-
-빈 div를 `#askResult` 안에 추가합니다.
-
----
-
-## 19. InnerText 재할당 문제
-
-곧바로:
-
-```js
-askResult.innerText =
-  responseText
-```
-
-를 실행합니다.
-
-`innerText`를 parent에 재할당하면 기존 child content가 대체됩니다.
-
-따라서 직전에 append한 `divAdd`는 실제로 유지되지 않습니다.
-
-결과적으로 화면에는 response text만 남습니다.
-
-의도대로 새 div에 넣으려면:
-
-```js
-divAdd.innerText =
-  responseText
-
-askResult.append(
-  divAdd
-)
-```
-
-순서로 작성해야 합니다.
-
----
-
-## 20. 대화 누적 출력 문제
-
-현재는 매 응답마다:
-
-```js
-askResult.innerText =
-  responseText
-```
-
-를 실행하므로 이전 출력이 모두 사라집니다.
-
-multi-turn history는 request body에는 누적되지만 화면에는 마지막 응답만 표시됩니다.
-
-chat UI라면 user message와 model message를 각각 새 element로 append해야 합니다.
-
----
-
-# Multi-turn 요청
-
-## 21. User Message Push
-
-양쪽 원본:
-
-```js
-list.contents.push({
-  role: "user",
-  parts: [
-    {
-      text: prompt
-    }
-  ]
-})
-```
-
-현재 질문을 대화 history 끝에 추가합니다.
-
----
-
-## 22. History 전체 전송
-
-```js
-body:
-  JSON.stringify(
-    list
-  )
-```
-
-single-turn의 `data` 대신 누적된 `list` 전체를 전송합니다.
-
-이 방식으로 이전 대화 문맥을 model에게 다시 전달하려는 구조입니다.
-
----
-
-## 23. Model Message Push
-
-양쪽 원본:
-
-```js
-list.contents.push({
-  role: "model",
-  parts: [
-    {
-      text:
-        JSON.stringify(
-          result
-        )
-    }
-  ]
-})
-```
-
-응답을 model message로 추가합니다.
-
----
-
-## 24. 전체 Result 저장 문제
-
-현재 저장하는 값:
-
-```js
-JSON.stringify(result)
-```
-
-은 model이 생성한 실제 답변 text가 아니라 전체 API response object의 JSON 문자열입니다.
-
-다음 요청 때 history에는 이런 형태가 들어갑니다.
-
-```text
-{
-  "candidates": [...],
-  "usageMetadata": ...,
-  ...
-}
-```
-
-대화 문맥으로 저장해야 할 값은 보통 model의 실제 응답 text입니다.
-
-```js
-const answer =
-  result
-    .candidates[0]
-    .content
-    .parts[0]
-    .text
-
-list.contents.push({
-  role: "model",
-  parts: [
-    {
-      text: answer
-    }
-  ]
-})
+<button type="button">
 ```
 
 ---
 
-## 25. 실패한 User Message가 History에 남는 문제
+# 3. 문서 기본 정보 개선
 
-user message는 fetch 전에 push됩니다.
-
-```js
-list.contents.push(
-  userMessage
-)
-
-fetch(...)
-```
-
-요청이 실패해도 user message는 list에 남습니다.
-
-다음 재시도에서는 실패했던 질문이 history에 중복되거나 model response 없이 남을 수 있습니다.
-
-개선 방법:
-
-- 요청 성공 후 history 확정
-- 실패 시 마지막 user message 제거
-- pending state를 별도로 관리
-
-예:
-
-```js
-const message = {
-  role: "user",
-  parts: [
-    {
-      text: prompt
-    }
-  ]
-}
-
-list.contents.push(message)
-
-try {
-  // 요청
-} catch (error) {
-  list.contents.pop()
-}
-```
-
----
-
-## 26. 연속 클릭 문제
-
-원본에는 loading state나 button disabled가 없습니다.
-
-사용자가 빠르게 여러 번 클릭하면:
-
-- 요청 순서와 응답 순서가 달라질 수 있음
-- history 순서가 꼬일 수 있음
-- 같은 prompt가 여러 번 들어갈 수 있음
-- UI 응답이 뒤섞일 수 있음
-
-요청 중 button을 disable하는 방식이 필요할 수 있습니다.
-
----
-
-# Error 처리
-
-## 27. Catch
-
-양쪽 원본:
-
-```js
-.catch(
-  function(error) {
-    console.error(
-      "요청 중 에러",
-      error
-    )
-  }
-)
-```
-
-network failure, parsing rejection, then callback 내부 오류 등을 처리할 수 있습니다.
-
-하지만 HTTP 400·401·500이 자동으로 catch되는 것은 아닙니다.
-
----
-
-## 28. Error Response Body
-
-AI API는 HTTP 오류일 때도 JSON error body를 반환할 수 있습니다.
-
-안전한 예:
-
-```js
-const result =
-  await response.json()
-
-if (!response.ok) {
-  const message =
-    result
-      ?.error
-      ?.message ??
-    `HTTP ${response.status}`
-
-  throw new Error(message)
-}
-```
-
----
-
-# HTML 비교
-
-## 29. 강사님 HTML
-
-강사님 body:
-
-```html
-<textarea id="prompt"></textarea>
-<br>
-<button
-  type="button"
-  id="ask"
->
-  질문하기
-</button>
-<br>
-<button
-  type="button"
-  id="ask2"
->
-  멀티턴
-</button>
-```
-
-특징:
-
-- button type 정상
-- 두 button 사이 line break
-- 결과 출력 element 없음
-
----
-
-## 30. 내 HTML
-
-내 body:
-
-```html
-<textarea id="prompt"></textarea>
-<br>
-<button
-  type="buttn"
-  id="ask"
->
-  질문하기
-</button>
-<button
-  type="buttn"
-  id="ask2"
->
-  멀티턴
-</button>
-<div id="askResult"></div>
-```
-
-특징:
-
-- `type="buttn"` 오타
-- 두 button이 같은 줄
-- 결과 표시 div 추가
-- closing body 뒤에 trailing space
-- 파일 마지막 newline 없음
-
----
-
-## 31. Unknown Button Type
-
-HTML button의 기본 type은 form 내부에서는 `submit`입니다.
-
-원본 button은 form 밖에 있어 현재 예제에서는 submit 문제가 드러나지 않습니다.
-
-하지만 `type="buttn"`은 유효한 button type이 아닙니다.
-
-정확히:
-
-```html
-type="button"
-```
-
-으로 작성해야 합니다.
-
----
-
-## 32. 문서 언어와 Title
-
-양쪽 원본:
+원본:
 
 ```html
 <html lang="en">
 <title>Document</title>
 ```
 
-한국어 UI이므로 다음이 더 적절합니다.
+개선:
 
 ```html
 <html lang="ko">
-<title>Gemini API 실습</title>
+<title>Gemini API와 멀티턴 대화</title>
 ```
 
 ---
 
-# My Code vs Teacher Code
+# 4. 원본 초기화
 
-## 33. 비교표
-
-| 비교 항목 | 내 코드 | 강사님 코드 |
-| --- | --- | --- |
-| 원본 파일 | `21_gemini.html` | `21_gemini.html` |
-| API key | 빈 문자열 | 빈 문자열 |
-| API URL | 동일 | 동일 |
-| Single-turn request body | 동일 | 동일 |
-| Multi-turn history | 동일한 기본 구조 | 동일한 기본 구조 |
-| Single-turn Console | answer text만 출력 | result 전체 출력 |
-| Multi-turn Console | answer text만 출력 | result 전체 출력 |
-| 결과 DOM | `#askResult` 추가 | 없음 |
-| DOM 출력 | 마지막 text로 교체 | 미구현 |
-| 빈 div 생성 | 생성 후 parent innerText로 제거됨 | 없음 |
-| Multi-turn 설명 | 상세 주석 추가 | 없음 |
-| Button type | `buttn` 오타 | `button` 정상 |
-| Button 배치 | 같은 줄 | `<br>`로 분리 |
-| 응답 history 저장 | 전체 result JSON 문자열 | 전체 result JSON 문자열 |
-| Response.ok | 검사하지 않음 | 검사하지 않음 |
-| Prompt 검증 | 없음 | 없음 |
-
----
-
-# My Code Analysis
-
-## 34. 내 코드 장점
-
-- request body를 문자열로 바꾸는 이유를 주석으로 설명했다.
-- response의 실제 answer text 경로를 직접 찾아 출력했다.
-- API 결과를 Console뿐 아니라 화면에 표시하려고 시도했다.
-- multi-turn이 user와 model message를 history에 저장하는 구조임을 설명했다.
-- single-turn과 multi-turn button을 분리했다.
-- request 실패를 catch로 처리했다.
-- 강사님 코드보다 학습용 설명이 풍부하다.
-
----
-
-## 35. 내 코드 개선점
-
-- `type="buttn"` 오타가 두 곳에 있다.
-- prompt trim과 빈 값 검증이 없다.
-- API key가 빈 문자열이다.
-- API key를 browser code에 직접 넣는 구조다.
-- 현재 model URL이 유효한지 확인하지 않는다.
-- `response.ok`를 검사하지 않는다.
-- response shape를 고정으로 가정한다.
-- optional chaining이나 fallback이 없다.
-- `divAdd`를 append한 뒤 parent `innerText`로 제거한다.
-- 화면에는 마지막 응답만 남는다.
-- user message는 화면에 표시하지 않는다.
-- model history에 answer text가 아니라 전체 result JSON을 넣는다.
-- 요청 실패 시 user history가 그대로 남는다.
-- 연속 클릭 방지가 없다.
-- 입력 textarea를 응답 후 비우지 않는다.
-- `lang="en"`과 title이 내용에 맞지 않는다.
-
----
-
-# Teacher Code Analysis
-
-## 36. 강사님 코드 장점
-
-- single-turn request 구조가 간결하다.
-- full response object를 Console에 출력해 API 구조를 확인하기 좋다.
-- multi-turn history의 user/model role 구조를 보여 준다.
-- fetch POST와 JSON.stringify를 연결한다.
-- catch를 통해 request 오류를 확인한다.
-- button type이 올바르다.
-- 내 코드보다 불필요한 DOM 조작이 적다.
-
----
-
-## 37. 강사님 코드 개선점
-
-- prompt 검증이 없다.
-- API key가 빈 문자열이다.
-- 실제 key를 frontend에 넣으면 노출된다.
-- 현재 model endpoint 유효성을 확인하지 않는다.
-- `response.ok`를 검사하지 않는다.
-- response JSON의 error shape를 처리하지 않는다.
-- model history에 전체 response JSON 문자열을 저장한다.
-- 요청 실패 시 user message가 history에 남는다.
-- 결과를 화면에 표시하지 않는다.
-- loading state와 중복 요청 방지가 없다.
-- 대화 history 크기 제한이 없다.
-- `lang="en"`과 title이 내용에 맞지 않는다.
-
----
-
-# Improvements
-
-## 38. Response Text 추출 함수
-
-```js
-function getAnswerText(
-  result
-) {
-  const text =
-    result
-      ?.candidates
-      ?.[0]
-      ?.content
-      ?.parts
-      ?.[0]
-      ?.text
-
-  if (
-    typeof text !==
-    "string"
-  ) {
-    throw new Error(
-      "응답 text를 찾지 못했습니다."
-    )
-  }
-
-  return text
+```javascript
+window.onload = function () {
+    gemini()
 }
 ```
 
----
-
-## 39. Message 생성 함수
-
-```js
-function createMessage(
-  role,
-  text
-) {
-  return {
-    role,
-    parts: [
-      {
-        text
-      }
-    ]
-  }
-}
-```
-
-사용:
-
-```js
-const userMessage =
-  createMessage(
-    "user",
-    prompt
-  )
-
-const modelMessage =
-  createMessage(
-    "model",
-    answer
-  )
-```
+`gemini()`는 API를 즉시 호출하는 함수가 아니라 Event Listener를 등록하는 초기화 함수다.
 
 ---
 
-## 40. 안전한 Request 함수
+# 5. 함수 이름 개선
 
-```js
-async function requestGemini(
-  contents
-) {
-  const response =
-    await fetch(
-      "/api/gemini",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-        body:
-          JSON.stringify({
-            contents
-          })
-      }
-    )
+기존:
 
-  const result =
-    await response.json()
-
-  if (!response.ok) {
-    throw new Error(
-      result
-        ?.error
-        ?.message ??
-      `HTTP ${response.status}`
-    )
-  }
-
-  return getAnswerText(
-    result
-  )
+```javascript
+function gemini() {
+    // Event 등록
 }
 ```
 
-이 예제는 frontend에 vendor API key를 두지 않고 자신의 backend endpoint를 호출하는 구조입니다.
+개선:
+
+```javascript
+function initGeminiChat() {
+    // Event 등록
+}
+```
+
+역할이 드러나는 이름을 사용한다.
 
 ---
 
-# Representative Examples
-
-## 41. Chat Message 렌더링
-
-```js
-function appendMessage(
-  container,
-  role,
-  text
-) {
-  const message =
-    document.createElement(
-      "div"
-    )
-
-  message.classList.add(
-    "message",
-    `message--${role}`
-  )
-
-  const label =
-    document.createElement(
-      "strong"
-    )
-
-  label.textContent =
-    role === "user"
-      ? "나"
-      : "AI"
-
-  const content =
-    document.createElement(
-      "p"
-    )
-
-  content.textContent =
-    text
-
-  message.append(
-    label,
-    content
-  )
-
-  container.append(
-    message
-  )
-}
-```
-
-`textContent`를 사용하므로 model response에 HTML처럼 보이는 문자열이 있어도 code로 실행하지 않습니다.
-
----
-
-# Practical Usage
-
-## 42. 안전한 Multi-turn Chat
-
-```js
-const history = []
-
-const promptInput =
-  document.querySelector(
-    "#prompt"
-  )
-
-const askButton =
-  document.querySelector(
-    "#ask2"
-  )
-
-const resultArea =
-  document.querySelector(
-    "#askResult"
-  )
-
-askButton.addEventListener(
-  "click",
-  async function() {
-    const prompt =
-      promptInput
-        .value
-        .trim()
-
-    if (prompt === "") {
-      alert(
-        "질문을 입력하세요."
-      )
-
-      return
-    }
-
-    if (askButton.disabled) {
-      return
-    }
-
-    const userMessage =
-      createMessage(
-        "user",
-        prompt
-      )
-
-    askButton.disabled =
-      true
-
-    history.push(
-      userMessage
-    )
-
-    appendMessage(
-      resultArea,
-      "user",
-      prompt
-    )
-
-    try {
-      const answer =
-        await requestGemini(
-          history
-        )
-
-      const modelMessage =
-        createMessage(
-          "model",
-          answer
-        )
-
-      history.push(
-        modelMessage
-      )
-
-      appendMessage(
-        resultArea,
-        "model",
-        answer
-      )
-
-      promptInput.value =
-        ""
-    } catch (error) {
-      history.pop()
-
-      appendMessage(
-        resultArea,
-        "error",
-        error.message
-      )
-
-      console.error(error)
-    } finally {
-      askButton.disabled =
-        false
-
-      promptInput.focus()
-    }
-  }
-)
-```
-
----
-
-## 43. History 크기 제한
-
-대화가 길어질수록 request body가 커집니다.
-
-간단한 제한 예:
-
-```js
-const MAX_MESSAGES = 20
-
-if (
-  history.length >
-  MAX_MESSAGES
-) {
-  history.splice(
-    0,
-    history.length -
-      MAX_MESSAGES
-  )
-}
-```
-
-실제 AI API에서는 token limit과 system instruction 구조를 함께 고려해야 합니다.
-
----
-
-# Common Mistakes
-
-## 44. 자주 하는 실수
-
-### 44.1 API Key를 HTML에 직접 작성
-
-browser에서 누구나 확인할 수 있습니다.
-
-### 44.2 JavaScript 객체를 Body에 그대로 전달
-
-JSON API라면 `JSON.stringify()`가 필요합니다.
-
-### 44.3 Content-Type만 JSON이면 객체를 자동 변환한다고 생각
-
-header는 형식을 알릴 뿐 body 직렬화는 별도입니다.
-
-### 44.4 Response.ok를 검사하지 않음
-
-HTTP 오류를 정상 response처럼 parsing할 수 있습니다.
-
-### 44.5 Candidates가 항상 존재한다고 가정
-
-error나 blocked response에서는 없을 수 있습니다.
-
-### 44.6 Parent InnerText로 Child 제거
-
-append한 message element가 사라집니다.
-
-### 44.7 Model History에 전체 API Result 저장
-
-다음 대화에는 실제 answer text를 저장해야 합니다.
-
-### 44.8 실패한 User Message를 History에 유지
-
-다음 요청의 문맥이 잘못될 수 있습니다.
-
-### 44.9 연속 Click을 허용
-
-응답 순서와 history 순서가 꼬일 수 있습니다.
-
-### 44.10 유효하지 않은 Button Type 사용
-
-`type="buttn"`이 아니라 `type="button"`입니다.
-
----
-
-# Interview / Review
-
-## 45. 면접·복습 포인트
-
-### Q1. 생성형 AI API 요청에서 POST를 사용하는 이유는 무엇인가요?
-
-질문과 대화 history 같은 request body를 server에 전달하기 위해서입니다.
-
-### Q2. JSON.stringify를 사용하는 이유는 무엇인가요?
-
-JavaScript 객체를 JSON text로 직렬화해 HTTP body에 넣기 위해서입니다.
-
-### Q3. Single-turn과 Multi-turn 차이는 무엇인가요?
-
-single-turn은 현재 질문만 보내고 multi-turn은 이전 user와 model message history를 함께 보냅니다.
-
-### Q4. Role은 무엇을 나타내나요?
-
-message가 user가 보낸 것인지 model이 생성한 것인지 구분합니다.
-
-### Q5. 내 DOM 출력에서 빈 Div가 사라지는 이유는 무엇인가요?
-
-child를 append한 뒤 parent의 innerText를 다시 지정해 기존 child를 교체하기 때문입니다.
-
-### Q6. Model History에 JSON.stringify(result)를 넣는 문제는 무엇인가요?
-
-실제 model 답변이 아니라 metadata를 포함한 전체 API response가 다음 대화 문맥으로 들어갑니다.
-
-### Q7. Fetch Catch가 HTTP 401도 자동 처리하나요?
-
-항상 그렇지 않습니다. response.ok를 검사하고 직접 error를 발생시켜야 합니다.
-
-### Q8. API Key를 Frontend에 넣으면 왜 위험한가요?
-
-source와 network request에서 key가 노출될 수 있기 때문입니다.
-
-### Q9. Optional Chaining이 필요한 이유는 무엇인가요?
-
-응답 구조 일부가 없을 때 TypeError 대신 안전하게 undefined를 얻기 위해서입니다.
-
-### Q10. Multi-turn에서 요청 중 Button을 막는 이유는 무엇인가요?
-
-중복 요청과 response 순서 역전으로 history가 꼬이는 것을 줄이기 위해서입니다.
-
----
-
-# Problems
-
-## 문제 1. Prompt 읽기
-
-textarea `#prompt`의 값을 trim해서 가져오세요.
-
-## 문제 2. 빈 질문 검증
-
-질문이 비어 있으면 요청하지 않고 안내하세요.
-
-## 문제 3. Single-turn Data
-
-현재 prompt를 `contents[].parts[].text` 구조에 넣으세요.
-
-## 문제 4. Fetch POST
-
-JSON request body로 POST 요청을 작성하세요.
-
-## 문제 5. Header
-
-API key header와 JSON content type을 설정하세요.
-
-## 문제 6. Stringify
-
-request data를 JSON text로 변환하세요.
-
-## 문제 7. Response JSON
-
-response body를 JavaScript object로 parsing하세요.
-
-## 문제 8. Response OK
-
-HTTP 오류 상태면 error를 발생시키세요.
-
-## 문제 9. Answer Text
-
-`candidates[0].content.parts[0].text`를 읽으세요.
-
-## 문제 10. Optional Chaining
-
-응답 구조가 없을 때 안전하게 text를 확인하세요.
-
-## 문제 11. User Message
-
-role이 user인 message 객체를 만드세요.
-
-## 문제 12. Model Message
-
-role이 model인 message 객체를 만드세요.
-
-## 문제 13. Multi-turn History
-
-user와 model message를 순서대로 history에 추가하세요.
-
-## 문제 14. History Body
-
-history 전체를 `contents`로 전송하세요.
-
-## 문제 15. 실패 Rollback
-
-요청 실패 시 마지막 user message를 history에서 제거하세요.
-
-## 문제 16. DOM Message
-
-새 div에 response text를 넣고 결과 영역에 append하세요.
-
-## 문제 17. 기존 대화 유지
-
-parent innerText 재할당 없이 message를 누적하세요.
-
-## 문제 18. Button Type
-
-내 HTML의 `buttn` 오타를 수정하세요.
-
-## 문제 19. 중복 요청 방지
-
-요청 중 button을 disabled로 만드세요.
-
-## 문제 20. API Key 보호
-
-Frontend에 직접 key를 넣지 않는 구조를 설명하세요.
-
-## 문제 21. 원본 차이
-
-내 코드와 강사님 코드의 응답 출력과 HTML 차이를 설명하세요.
-
-## 문제 22. 종합 AI Chat
-
-다음 요구사항을 만족하세요.
-
-- textarea 질문 입력
-- 빈 값 검증
-- multi-turn history
-- user와 model role 구분
-- POST JSON 요청
-- response.ok 검사
-- answer text 안전 추출
-- user·model message 화면 누적
-- textContent 사용
-- 요청 중 button disabled
-- 실패 시 user history rollback
-- 오류 메시지 표시
-- 요청 성공 후 textarea 초기화와 focus
-- frontend에는 실제 vendor API key를 두지 않음
-
----
-
-# Answers
-
-## 정답 1
-
-```js
-const prompt =
-  document
-    .querySelector(
-      "#prompt"
-    )
-    .value
-    .trim()
-```
-
-## 정답 2
-
-```js
-if (prompt === "") {
-  alert(
-    "질문을 입력하세요."
-  )
-
-  return
-}
-```
-
-## 정답 3
-
-```js
-const data = {
-  contents: [
-    {
-      parts: [
-        {
-          text: prompt
-        }
-      ]
-    }
-  ]
-}
-```
-
-## 정답 4
-
-```js
-fetch(
-  url,
-  {
-    method: "POST",
-    headers,
-    body:
-      JSON.stringify(
-        data
-      )
-  }
-)
-```
-
-## 정답 5
-
-```js
-const headers = {
-  "x-goog-api-key":
-    key,
-  "Content-Type":
-    "application/json"
-}
-```
-
-## 정답 6
-
-```js
-const body =
-  JSON.stringify(data)
-```
-
-## 정답 7
-
-```js
-const result =
-  await response.json()
-```
-
-## 정답 8
-
-```js
-if (!response.ok) {
-  throw new Error(
-    `HTTP ${response.status}`
-  )
-}
-```
-
-## 정답 9
-
-```js
-const text =
-  result
-    .candidates[0]
-    .content
-    .parts[0]
-    .text
-```
-
-## 정답 10
-
-```js
-const text =
-  result
-    ?.candidates
-    ?.[0]
-    ?.content
-    ?.parts
-    ?.[0]
-    ?.text
-```
-
-## 정답 11
-
-```js
-const userMessage = {
-  role: "user",
-  parts: [
-    {
-      text: prompt
-    }
-  ]
-}
-```
-
-## 정답 12
-
-```js
-const modelMessage = {
-  role: "model",
-  parts: [
-    {
-      text: answer
-    }
-  ]
-}
-```
-
-## 정답 13
-
-```js
-history.push(
-  userMessage
-)
-
-history.push(
-  modelMessage
-)
-```
-
-## 정답 14
-
-```js
-body:
-  JSON.stringify({
-    contents:
-      history
-  })
-```
-
-## 정답 15
-
-```js
-try {
-  // 요청
-} catch (error) {
-  history.pop()
-}
-```
-
-## 정답 16
-
-```js
-const message =
-  document.createElement(
-    "div"
-  )
-
-message.textContent =
-  answer
-
-resultArea.append(
-  message
-)
-```
-
-## 정답 17
-
-```js
-resultArea.append(
-  message
-)
-```
-
-parent의 `innerText`나 `innerHTML`을 다시 지정하지 않습니다.
-
-## 정답 18
+# 6. `defer` 초기화
 
 ```html
-<button
-  type="button"
-  id="ask"
->
-  질문하기
-</button>
+<script
+    src="./js/21_gemini.js"
+    defer
+></script>
 ```
 
-## 정답 19
+```javascript
+initGeminiChat()
+```
 
-```js
-button.disabled =
-  true
+Inline Script보다 HTML과 JavaScript를 분리하기 쉽다.
 
-try {
-  // 요청
-} finally {
-  button.disabled =
-    false
+---
+
+# 7. 전역 History
+
+원본:
+
+```javascript
+const list = {
+    contents: [],
 }
 ```
 
-## 정답 20
+`contents` 배열에 대화 Turn을 저장하려는 구조다.
 
-Frontend는 자신의 backend endpoint를 호출하고 backend가 환경 변수 등에 보관한 vendor API key로 외부 AI API를 호출합니다.
+---
 
-## 정답 21
+# 8. 변수 이름 개선
 
-강사님 코드는 single-turn과 multi-turn 모두 전체 result 객체를 Console에 출력하고 화면 출력 element가 없습니다. 내 코드는 answer text만 Console과 `#askResult`에 표시하려 하지만 빈 div를 append한 뒤 parent `innerText`를 지정해 그 div를 제거합니다. 또한 내 두 button은 `type="buttn"` 오타이고 강사님은 `type="button"`입니다.
-
-## 정답 22
-
-```js
-const history = []
-
-const promptInput =
-  document.querySelector(
-    "#prompt"
-  )
-
-const button =
-  document.querySelector(
-    "#ask2"
-  )
-
-const output =
-  document.querySelector(
-    "#askResult"
-  )
-
-function createMessage(
-  role,
-  text
-) {
-  return {
-    role,
-    parts: [
-      {
-        text
-      }
-    ]
-  }
+```javascript
+const conversation = {
+    contents: [],
 }
+```
 
-function appendMessage(
-  role,
-  text
-) {
-  const div =
-    document.createElement(
-      "div"
+`list`보다 저장 목적이 명확하다.
+
+---
+
+# 9. 단일 질문 입력
+
+```javascript
+const promptInput = (
+    document.querySelector(
+        "#prompt",
+    )
+)
+
+const prompt = (
+    promptInput.value
+)
+```
+
+Textarea의 현재 입력값을 문자열로 읽는다.
+
+---
+
+# 10. 빈 질문 검증
+
+```javascript
+const prompt = (
+    promptInput.value.trim()
+)
+
+if (prompt === "") {
+    message.textContent = (
+        "질문을 입력해주세요."
     )
 
-  div.classList.add(
-    "message",
-    `message--${role}`
-  )
-
-  div.textContent =
-    `${role}: ${text}`
-
-  output.append(div)
+    promptInput.focus()
+    return
 }
+```
 
-function getAnswerText(
-  result
-) {
-  const answer =
-    result
-      ?.candidates
-      ?.[0]
-      ?.content
-      ?.parts
-      ?.[0]
-      ?.text
+공백만 입력한 경우도 차단한다.
 
-  if (
-    typeof answer !==
-    "string"
-  ) {
-    throw new Error(
-      "답변을 찾지 못했습니다."
-    )
-  }
+---
 
-  return answer
-}
+# 11. API Key
 
-button.addEventListener(
-  "click",
-  async function() {
-    const prompt =
-      promptInput
-        .value
-        .trim()
+원본:
 
-    if (
-      prompt === "" ||
-      button.disabled
-    ) {
-      return
-    }
+```javascript
+const key = ""
+```
 
-    const userMessage =
-      createMessage(
-        "user",
-        prompt
-      )
+빈 문자열이므로 인증 요청이 실패할 수 있다.
 
-    history.push(
-      userMessage
-    )
+---
 
-    appendMessage(
-      "user",
-      prompt
-    )
+# 12. API Key를 Client에 넣으면 안 되는 이유
 
-    button.disabled =
-      true
+Browser JavaScript에 Key를 넣으면 다음 위치에서 확인할 수 있다.
 
-    try {
-      const response =
-        await fetch(
-          "/api/gemini",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-            body:
-              JSON.stringify({
-                contents:
-                  history
-              })
-          }
-        )
+- Page Source
+- DevTools Sources
+- Network Request Header
+- Build File
+- Git Repository
+- Browser Extension
 
-      const result =
-        await response.json()
+---
 
-      if (!response.ok) {
-        throw new Error(
-          result
-            ?.error
-            ?.message ??
-          `HTTP ${response.status}`
-        )
-      }
+# 13. 안전한 Key 관리
 
-      const answer =
-        getAnswerText(
-          result
-        )
+```text
+Frontend
+→ 자신의 Backend 호출
 
-      history.push(
-        createMessage(
-          "model",
-          answer
-        )
-      )
+Backend
+→ Environment Variable에서 Key 읽기
+→ Gemini API 호출
 
-      appendMessage(
-        "model",
-        answer
-      )
+Frontend
+← 필요한 응답만 전달
+```
 
-      promptInput.value =
-        ""
-    } catch (error) {
-      history.pop()
+---
 
-      appendMessage(
-        "error",
-        error.message
-      )
+# 14. API Endpoint
 
-      console.error(error)
-    } finally {
-      button.disabled =
-        false
+원본:
 
-      promptInput.focus()
-    }
-  }
+```javascript
+const url = (
+    "https://generativelanguage.googleapis.com/"
+    + "v1beta/models/"
+    + "gemini-3.6-flash:"
+    + "generateContent"
+)
+```
+
+Model 이름과 Endpoint 지원 여부는 API 업데이트에 따라 달라질 수 있으므로 공식 문서를 기준으로 관리한다.
+
+---
+
+# 15. Endpoint 분리
+
+```javascript
+const model = "gemini-3.6-flash"
+
+const url = (
+    "https://generativelanguage.googleapis.com/"
+    + `v1beta/models/${model}:generateContent`
 )
 ```
 
 ---
 
-# Final Checklist
+# 16. Single-turn 요청 객체
 
-## API 요청
+```javascript
+const requestData = {
+    contents: [
+        {
+            role: "user",
 
-- [ ] prompt를 trim했다.
-- [ ] 빈 질문을 차단했다.
-- [ ] POST method를 사용했다.
-- [ ] JSON content type을 지정했다.
-- [ ] JavaScript 객체를 stringify했다.
-- [ ] response body를 JSON으로 parsing했다.
-- [ ] response.ok를 검사했다.
-- [ ] error response body를 처리했다.
-- [ ] 현재 model endpoint 지원 여부를 공식 문서에서 별도로 확인했다.
-
-## Multi-turn
-
-- [ ] user message에 role을 지정했다.
-- [ ] model message에 role을 지정했다.
-- [ ] history 순서를 유지했다.
-- [ ] model answer text만 history에 저장했다.
-- [ ] 전체 API result를 history에 넣지 않았다.
-- [ ] 실패 시 user message를 rollback했다.
-- [ ] history 크기와 token limit을 고려했다.
-- [ ] 중복 요청을 막았다.
-
-## DOM
-
-- [ ] button type을 올바르게 작성했다.
-- [ ] message element 자체에 text를 넣었다.
-- [ ] parent innerText 재할당을 피했다.
-- [ ] 이전 대화를 화면에 누적했다.
-- [ ] user와 model message를 구분했다.
-- [ ] textContent를 사용했다.
-- [ ] loading과 error 상태를 표시했다.
-- [ ] 성공 후 textarea를 초기화했다.
-
-## Security
-
-- [ ] 실제 API key를 client-side source에 넣지 않았다.
-- [ ] backend proxy 구조를 검토했다.
-- [ ] key를 repository에 commit하지 않았다.
-- [ ] request quota와 abuse 방지를 고려했다.
-- [ ] 사용자 입력과 model 출력을 HTML로 실행하지 않았다.
-
-## 원본 검수
-
-- [ ] 두 실제 `21_gemini.html`만 비교했다.
-- [ ] 내 answer text 출력과 강사님 전체 result 출력을 기록했다.
-- [ ] 내 `#askResult` 추가를 기록했다.
-- [ ] 내 `type="buttn"` 오타 두 곳을 기록했다.
-- [ ] 내 append 후 parent innerText 문제를 기록했다.
-- [ ] 공통 model history 저장 문제를 기록했다.
-- [ ] 공통 response.ok 누락을 기록했다.
-- [ ] 공통 API key 빈 문자열을 기록했다.
-- [ ] model URL의 현재 유효성을 임의로 단정하지 않았다.
-- [ ] BACKUP을 분석하지 않았다.
+            parts: [
+                {
+                    text: prompt,
+                },
+            ],
+        },
+    ],
+}
+```
 
 ---
 
-# Key Summary
+# 17. `contents`
 
-- JavaScript 21번은 생성형 AI API의 single-turn과 multi-turn 요청을 다룬다.
-- 두 원본 모두 `21_gemini.html` 하나에 HTML과 JavaScript가 함께 있다.
-- `list.contents`는 대화 message history를 저장하려는 배열이다.
-- `ask` button은 현재 질문만 보내는 single-turn 요청이다.
-- `ask2` button은 이전 history를 함께 보내는 multi-turn 요청이다.
-- request body는 `contents[].parts[].text` 구조다.
-- JavaScript 객체를 JSON text로 보내기 위해 `JSON.stringify()`를 사용한다.
-- `Content-Type: application/json`은 body 형식을 알리는 header다.
-- `response.json()`은 response body를 parsing하는 Promise를 반환한다.
-- 강사님 코드는 전체 result 객체를 Console에 출력한다.
-- 내 코드는 `candidates[0].content.parts[0].text`만 직접 출력한다.
-- 내 array index `"0"` 표기는 동작할 수 있지만 `[0]`이 더 명확하다.
-- response shape가 다르면 직접 property 접근에서 TypeError가 발생할 수 있다.
-- optional chaining과 fallback 검사가 필요하다.
-- 두 원본 모두 response.ok를 검사하지 않는다.
-- HTTP 오류도 JSON body를 반환할 수 있으므로 status 처리가 필요하다.
-- 내 HTML에는 `#askResult`가 있지만 강사님 HTML에는 없다.
-- 내 코드는 빈 div를 append한 뒤 parent `innerText`를 지정해 방금 만든 div를 제거한다.
-- 내 화면 출력은 이전 대화를 누적하지 않고 마지막 answer로 교체한다.
-- multi-turn에서는 user message를 fetch 전에 history에 push한다.
-- 요청이 실패해도 user message가 history에 남을 수 있다.
-- 두 원본 모두 model history에 answer text 대신 전체 result JSON 문자열을 저장한다.
-- 다음 대화 문맥에는 실제 model answer text를 넣는 편이 적절하다.
-- 내 두 button에는 `type="buttn"` 오타가 있다.
-- 강사님 button type은 올바른 `button`이다.
-- 실제 API key를 frontend JavaScript에 넣으면 노출될 수 있다.
-- 실무에서는 backend가 key를 보관하는 구조를 검토한다.
-- 원본의 model URL이 현재 유효한지는 이 비교 작업에서 검증하지 않았다.
-- 외부 AI API를 실제 사용할 때는 공식 문서에서 model 이름과 endpoint를 확인해야 한다.
+```text
+contents
+→ 대화 Turn 배열
+```
+
+단일 질문도 Turn 하나를 가진 배열로 표현한다.
+
+---
+
+# 18. `role`
+
+```text
+user
+→ 사용자가 보낸 Turn
+
+model
+→ Model이 생성한 Turn
+```
+
+멀티턴에서는 일반적으로 두 역할이 번갈아 배치된다.
+
+---
+
+# 19. `parts`
+
+```javascript
+parts: [
+    {
+        text: prompt,
+    },
+]
+```
+
+한 Turn 안에 Text 또는 다른 입력 Part를 담는다.
+
+---
+
+# 20. Body 직렬화
+
+```javascript
+body: JSON.stringify(
+    requestData,
+)
+```
+
+`fetch()`의 Body에 JavaScript 객체를 직접 넣는 것이 아니라 JSON 문자열로 변환한다.
+
+---
+
+# 21. 원본 주석 수정
+
+원본 취지:
+
+```text
+JSON으로 날아가면 안 되기 때문에
+문자열로 변경
+```
+
+더 정확한 설명:
+
+```text
+HTTP Body에 JSON Text 형식으로 전송하기 위해
+JavaScript 객체를 JSON 문자열로 직렬화
+```
+
+---
+
+# 22. Request Header
+
+```text
+headers: {
+    "x-goog-api-key": apiKey,
+    "Content-Type": "application/json"
+}
+```
+
+---
+
+# 23. `Content-Type`
+
+```text
+application/json
+→ Request Body가 JSON Text임을 서버에 전달
+```
+
+---
+
+# 24. 단일 요청
+
+```javascript
+async function requestContent() {
+    return fetch(
+        url,
+        {
+            method: "POST",
+
+            headers: {
+                "x-goog-api-key":
+                    apiKey,
+
+                "Content-Type":
+                    "application/json",
+            },
+
+            body: JSON.stringify(
+                requestData,
+            ),
+        },
+    )
+}
+```
+
+---
+
+# 25. HTTP 상태 검사
+
+원본은 바로 `response.json()`을 호출한다.
+
+개선:
+
+```javascript
+if (!response.ok) {
+    throw new Error(
+        `HTTP ${response.status}`,
+    )
+}
+```
+
+---
+
+# 26. Error Response Body
+
+API는 실패 시에도 JSON Error Body를 반환할 수 있다.
+
+```javascript
+async function readErrorMessage(
+    response,
+) {
+    try {
+        const errorData = (
+            await response.json()
+        )
+
+        return (
+            errorData.error?.message
+            ?? `HTTP ${response.status}`
+        )
+    } catch {
+        return (
+            `HTTP ${response.status}`
+        )
+    }
+}
+```
+
+---
+
+# 27. 응답 JSON 변환
+
+```javascript
+async function parseResponse(
+    response,
+) {
+    return response.json()
+}
+```
+
+`response.json()`도 비동기 작업이다.
+
+---
+
+# 28. 원본 응답 접근
+
+```javascript
+result[
+    "candidates"
+][
+    "0"
+][
+    "content"
+][
+    "parts"
+][
+    "0"
+][
+    "text"
+]
+```
+
+배열 Index에 문자열 `"0"`을 사용할 수 있지만 일반적으로 숫자 Index를 사용한다.
+
+---
+
+# 29. Dot·Index 접근
+
+```javascript
+const text = (
+    result
+        .candidates[0]
+        .content
+        .parts[0]
+        .text
+)
+```
+
+---
+
+# 30. 안전한 응답 Text 추출
+
+```javascript
+function getResponseText(
+    result,
+) {
+    const parts = (
+        result
+            ?.candidates
+            ?.[0]
+            ?.content
+            ?.parts
+    )
+
+    if (!Array.isArray(parts)) {
+        return null
+    }
+
+    const text = parts
+        .map(
+            part => (
+                typeof part.text
+                    === "string"
+                    ? part.text
+                    : ""
+            ),
+        )
+        .join("")
+
+    return (
+        text.trim() === ""
+            ? null
+            : text
+    )
+}
+```
+
+---
+
+# 31. Candidate가 없을 수 있는 경우
+
+다음 상황에서는 예상한 Text가 없을 수 있다.
+
+- 안전 정책에 의한 차단
+- 빈 Candidate
+- API 오류 응답
+- 응답 형식 변경
+- Tool Call·다른 Part 유형
+- Model 출력 중단
+
+중첩 Property가 항상 존재한다고 가정하지 않는다.
+
+---
+
+# 32. Finish Reason 확인
+
+```javascript
+const finishReason = (
+    result
+        ?.candidates
+        ?.[0]
+        ?.finishReason
+    ?? "UNKNOWN"
+)
+```
+
+Text가 없을 때 종료 이유를 확인할 수 있다.
+
+---
+
+# 33. 원본 단일 응답 화면 출력
+
+내 코드:
+
+```javascript
+const divAdd = (
+    document.createElement(
+        "div",
+    )
+)
+
+askResult.append(divAdd)
+
+askResult.innerText = text
+```
+
+---
+
+# 34. 생성한 Div가 사라지는 이유
+
+```text
+빈 Div Append
+    ↓
+부모의 innerText 전체 재할당
+    ↓
+기존 자식 Node 제거
+    ↓
+Text Node로 교체
+```
+
+생성한 `divAdd`는 실제로 활용되지 않는다.
+
+---
+
+# 35. 단일 결과 교체
+
+최신 답변 하나만 표시할 경우:
+
+```javascript
+askResult.textContent = text
+```
+
+---
+
+# 36. 대화 Message 추가
+
+대화를 누적할 경우:
+
+```javascript
+function appendMessage(
+    container,
+    role,
+    text,
+) {
+    const message = (
+        document.createElement(
+            "article",
+        )
+    )
+
+    message.classList.add(
+        "chat-message",
+        `chat-message--${role}`,
+    )
+
+    const label = (
+        document.createElement(
+            "strong",
+        )
+    )
+
+    label.textContent = (
+        role === "user"
+            ? "사용자"
+            : "Gemini"
+    )
+
+    const body = (
+        document.createElement(
+            "p",
+        )
+    )
+
+    body.textContent = text
+
+    message.append(
+        label,
+        body,
+    )
+
+    container.append(message)
+}
+```
+
+---
+
+# 37. `textContent` 사용
+
+AI 응답도 외부 데이터다.
+
+```javascript
+body.textContent = text
+```
+
+응답을 `innerHTML`에 직접 넣지 않는다.
+
+---
+
+# 38. Markdown 응답
+
+Model 답변에 Markdown 문법이 포함될 수 있다.
+
+```text
+**강조**
+- 목록
+인라인 코드 또는 코드 블록
+```
+
+그대로 `textContent`로 표시하면 안전하지만 Markdown 스타일은 적용되지 않는다.
+
+Markdown Renderer를 사용할 경우 Sanitizing이 필요하다.
+
+---
+
+# 39. 멀티턴 User Turn 추가
+
+```javascript
+conversation.contents.push({
+    role: "user",
+
+    parts: [
+        {
+            text: prompt,
+        },
+    ],
+})
+```
+
+---
+
+# 40. History 전체 전송
+
+```javascript
+body: JSON.stringify(
+    conversation,
+)
+```
+
+이전 Turn과 현재 질문을 모두 Context로 전달한다.
+
+---
+
+# 41. 원본 Model Turn 저장
+
+원본:
+
+```javascript
+conversation.contents.push({
+    role: "model",
+
+    parts: [
+        {
+            text: JSON.stringify(
+                result,
+            ),
+        },
+    ],
+})
+```
+
+---
+
+# 42. 원본 History 저장 오류
+
+Model의 실제 답변 Text가 아니라 전체 API Response JSON 문자열을 저장한다.
+
+문제:
+
+- 불필요한 Metadata 포함
+- 다음 Prompt 크기 증가
+- Model이 자신의 답변 대신 JSON 구조를 Context로 받음
+- Token 사용량 증가
+- 대화 품질 저하
+- 응답 크기 급증
+
+---
+
+# 43. 올바른 Model Turn 저장
+
+```javascript
+conversation.contents.push({
+    role: "model",
+
+    parts: [
+        {
+            text: responseText,
+        },
+    ],
+})
+```
+
+---
+
+# 44. Role 순서
+
+정상적인 History 예:
+
+```javascript
+[
+    {
+        role: "user",
+        parts: [
+            {
+                text: "내 이름은 근욱이야.",
+            },
+        ],
+    },
+    {
+        role: "model",
+        parts: [
+            {
+                text: "반가워요, 근욱님.",
+            },
+        ],
+    },
+    {
+        role: "user",
+        parts: [
+            {
+                text: "내 이름이 뭐야?",
+            },
+        ],
+    },
+]
+```
+
+---
+
+# 45. 실패한 User Turn 처리
+
+User Turn을 먼저 History에 추가한 뒤 요청이 실패하면 실패한 질문이 History에 남는다.
+
+정책을 정해야 한다.
+
+```text
+1. 실패해도 질문 유지
+2. 실패 시 마지막 User Turn 제거
+3. Retry용 상태로 보관
+```
+
+---
+
+# 46. 실패 시 Rollback
+
+```javascript
+conversation.contents.push(
+    userTurn,
+)
+
+try {
+    // Request
+} catch (
+    error
+) {
+    conversation.contents.pop()
+    throw error
+}
+```
+
+---
+
+# 47. 중복 클릭 문제
+
+요청 중 Button을 다시 클릭하면 여러 요청이 동시에 실행될 수 있다.
+
+- 답변 순서 역전
+- History 순서 오류
+- 요청 비용 증가
+- 중복 화면 출력
+
+---
+
+# 48. Loading 상태
+
+```javascript
+askButton.disabled = true
+
+statusView.textContent = (
+    "답변을 생성하는 중입니다."
+)
+```
+
+---
+
+# 49. 상태 복구
+
+```javascript
+try {
+    // Request
+} finally {
+    askButton.disabled = false
+}
+```
+
+---
+
+# 50. 입력 초기화
+
+성공 후:
+
+```javascript
+promptInput.value = ""
+promptInput.focus()
+```
+
+실패한 경우 질문을 유지하면 사용자가 수정·재시도하기 쉽다.
+
+---
+
+# 51. Enter 전송
+
+```javascript
+promptInput.addEventListener(
+    "keydown",
+    event => {
+        if (
+            event.key === "Enter"
+            && !event.shiftKey
+        ) {
+            event.preventDefault()
+            askButton.click()
+        }
+    },
+)
+```
+
+`Shift + Enter`는 줄바꿈으로 유지할 수 있다.
+
+---
+
+# 52. 요청 함수 분리
+
+```javascript
+async function generateContent({
+    endpoint,
+    apiKey,
+    contents,
+}) {
+    const response = await fetch(
+        endpoint,
+        {
+            method: "POST",
+
+            headers: {
+                "x-goog-api-key":
+                    apiKey,
+
+                "Content-Type":
+                    "application/json",
+            },
+
+            body: JSON.stringify({
+                contents,
+            }),
+        },
+    )
+
+    if (!response.ok) {
+        const message = (
+            await readErrorMessage(
+                response,
+            )
+        )
+
+        throw new Error(message)
+    }
+
+    return response.json()
+}
+```
+
+---
+
+# 53. 단일 질문 함수
+
+```javascript
+async function askOnce(
+    prompt,
+) {
+    const result = await generateContent({
+        endpoint,
+        apiKey,
+
+        contents: [
+            {
+                role: "user",
+
+                parts: [
+                    {
+                        text: prompt,
+                    },
+                ],
+            },
+        ],
+    })
+
+    const text = getResponseText(
+        result,
+    )
+
+    if (text === null) {
+        throw new Error(
+            "답변 Text가 없습니다.",
+        )
+    }
+
+    return text
+}
+```
+
+---
+
+# 54. 멀티턴 질문 함수
+
+```javascript
+async function askWithHistory(
+    prompt,
+) {
+    const userTurn = {
+        role: "user",
+
+        parts: [
+            {
+                text: prompt,
+            },
+        ],
+    }
+
+    conversation.contents.push(
+        userTurn,
+    )
+
+    try {
+        const result = (
+            await generateContent({
+                endpoint,
+                apiKey,
+
+                contents: (
+                    conversation.contents
+                ),
+            })
+        )
+
+        const text = getResponseText(
+            result,
+        )
+
+        if (text === null) {
+            throw new Error(
+                "답변 Text가 없습니다.",
+            )
+        }
+
+        conversation.contents.push({
+            role: "model",
+
+            parts: [
+                {
+                    text,
+                },
+            ],
+        })
+
+        return text
+    } catch (
+        error
+    ) {
+        conversation.contents.pop()
+        throw error
+    }
+}
+```
+
+---
+
+# 55. `contents` 복사
+
+Request 중 원본 배열이 변경될 가능성을 줄이려면 Snapshot을 전달할 수 있다.
+
+```javascript
+contents: (
+    structuredClone(
+        conversation.contents,
+    )
+)
+```
+
+---
+
+# 56. History 초기화
+
+```javascript
+function resetConversation() {
+    conversation.contents.length = 0
+    chatView.replaceChildren()
+}
+```
+
+---
+
+# 57. 대화가 계속 길어지는 문제
+
+History를 무제한 누적하면:
+
+- Request Body 증가
+- Token 사용량 증가
+- 응답 지연
+- 비용 증가
+- Context 한도 초과 가능
+- 오래된 정보의 영향 증가
+
+---
+
+# 58. 최근 Turn만 유지
+
+```javascript
+const MAX_TURNS = 10
+
+function trimConversation() {
+    const maxContents = (
+        MAX_TURNS * 2
+    )
+
+    if (
+        conversation.contents.length
+        > maxContents
+    ) {
+        conversation.contents.splice(
+            0,
+            conversation.contents.length
+                - maxContents,
+        )
+    }
+}
+```
+
+---
+
+# 59. 대화 요약 방식
+
+오래된 대화를 단순 삭제하는 대신 요약 Turn으로 압축할 수 있다.
+
+```text
+오래된 대화
+→ 핵심 정보 요약
+→ System Instruction 또는 Context에 저장
+→ 최근 실제 Turn 유지
+```
+
+요약 과정에서도 정보 손실 가능성을 고려한다.
+
+---
+
+# 60. AbortController
+
+```javascript
+const controller = (
+    new AbortController()
+)
+
+fetch(
+    endpoint,
+    {
+        signal: controller.signal,
+    },
+)
+
+controller.abort()
+```
+
+사용자가 요청을 취소하거나 새 요청을 시작할 때 활용할 수 있다.
+
+---
+
+# 61. Timeout 구현
+
+```javascript
+const controller = (
+    new AbortController()
+)
+
+const timeoutId = setTimeout(
+    () => {
+        controller.abort()
+    },
+    30000,
+)
+
+try {
+    const response = await fetch(
+        endpoint,
+        {
+            signal: controller.signal,
+        },
+    )
+} finally {
+    clearTimeout(timeoutId)
+}
+```
+
+---
+
+# 62. Retry 주의
+
+일시적인 서버 오류에는 Retry가 도움이 될 수 있다.
+
+하지만 다음 요청을 무조건 반복하면 안 된다.
+
+- 인증 오류
+- 잘못된 Request
+- 안전 정책 차단
+- 사용량 한도 초과
+- 사용자 취소
+
+---
+
+# 63. 재시도 대상 예
+
+```text
+일시적 Network 오류
+HTTP 429
+HTTP 500
+HTTP 502
+HTTP 503
+HTTP 504
+```
+
+지수 Backoff와 최대 횟수를 둔다.
+
+---
+
+# 64. 응답 순서 보호
+
+동시에 요청할 수 있는 UI라면 요청 ID를 사용할 수 있다.
+
+```javascript
+let latestRequestId = 0
+
+async function askLatest(
+    prompt,
+) {
+    const requestId = (
+        ++latestRequestId
+    )
+
+    const text = await askOnce(
+        prompt,
+    )
+
+    if (
+        requestId
+        !== latestRequestId
+    ) {
+        return null
+    }
+
+    return text
+}
+```
+
+---
+
+# 65. UI 상태 구분
+
+```text
+Idle
+→ 질문 입력 가능
+
+Loading
+→ 답변 생성 중
+
+Success
+→ 답변 표시
+
+Empty
+→ 답변 Text 없음
+
+Error
+→ 요청 실패
+
+Blocked
+→ 안전 정책 등으로 결과 없음
+```
+
+---
+
+# 66. 접근성 상태
+
+```html
+<div
+    id="chat-status"
+    role="status"
+    aria-live="polite"
+></div>
+```
+
+답변 생성 상태를 보조기기에 전달한다.
+
+---
+
+# 67. 민감정보 전송 주의
+
+사용자 Prompt에 다음 정보가 포함되지 않도록 안내할 수 있다.
+
+- 비밀번호
+- 주민등록번호
+- 카드번호
+- API Key
+- 회사 기밀
+- 비공개 Source Code
+- 의료·법률 민감정보
+
+---
+
+# 68. Prompt Injection 기초
+
+Model 출력이나 외부 문서의 지시를 무조건 신뢰하지 않는다.
+
+특히 AI가 다음 작업을 직접 수행하게 할 경우 별도 검증이 필요하다.
+
+- 파일 삭제
+- 결제
+- Email 전송
+- Database 변경
+- 관리자 기능
+- 외부 URL 실행
+
+---
+
+# 69. Model 출력 검증
+
+생성된 Text를 화면에 표시하는 것과 실행 가능한 코드·명령으로 사용하는 것은 다르다.
+
+```text
+표시
+→ textContent
+
+HTML 렌더링
+→ Sanitizing 필요
+
+Command 실행
+→ Allowlist와 사용자 확인 필요
+```
+
+---
+
+# 70. Backend Proxy 요청
+
+Frontend:
+
+```javascript
+const response = await fetch(
+    "/api/chat",
+    {
+        method: "POST",
+
+        headers: {
+            "Content-Type":
+                "application/json",
+        },
+
+        body: JSON.stringify({
+            contents:
+                conversation.contents,
+        }),
+    },
+)
+```
+
+Frontend에는 Gemini API Key가 없다.
+
+---
+
+# 71. Backend 역할
+
+```text
+입력 검증
+API Key 보관
+사용자 인증
+Rate Limit
+Gemini API 요청
+오류 형식 통일
+응답 필터링
+사용량 기록
+```
+
+---
+
+# 72. 원본 코드와 강사님 코드 비교
+
+| 항목 | 내 코드 | 강사님 코드 |
+| --- | --- | --- |
+| Single-turn Console | 생성 Text 직접 출력 | 전체 Result 출력 |
+| Single-turn 화면 출력 | 구현 | 없음 |
+| Multiturn 주석 | 상세 | 간결 |
+| Model History | 전체 Result JSON 문자열 | 전체 Result JSON 문자열 |
+| 결과 Container | `#askResult` 존재 | 없음 |
+| Button Type | `buttn` 오타 | `button` |
+| 빈 Prompt 검사 | 없음 | 없음 |
+| HTTP Status 검사 | 없음 | 없음 |
+| API Key | 빈 문자열 | 빈 문자열 |
+
+## 72-1. 내 코드의 장점
+
+- 단일 응답 Text를 직접 찾아 출력했다.
+- 화면 출력 Container를 추가했다.
+- History 누적의 목적을 주석으로 설명했다.
+- Single-turn과 Multiturn Button을 분리했다.
+
+## 72-2. 내 코드의 개선점
+
+- Button Type 오타가 있다.
+- 빈 Prompt를 전송한다.
+- HTTP Status를 확인하지 않는다.
+- 응답 구조를 항상 존재한다고 가정한다.
+- 빈 Div를 Append한 뒤 부모 `innerText`로 제거한다.
+- Model History에 전체 Result JSON을 저장한다.
+- 요청 중 Button 상태를 관리하지 않는다.
+- API Key를 Client Header에 넣는 구조다.
+
+## 72-3. 강사님 코드의 장점
+
+- Request Header·Body·Fetch 흐름이 간결하다.
+- Single-turn과 Multiturn 구조를 비교할 수 있다.
+- `user`와 `model` Turn을 배열에 누적하는 기본 형태를 보여 준다.
+
+## 72-4. 강사님 코드의 보충점
+
+- 응답을 화면에 출력하지 않는다.
+- 실제 Model Text 대신 전체 Response JSON을 History에 저장한다.
+- 오류 Body와 HTTP Status를 처리하지 않는다.
+- 빈 Prompt·중복 요청·History 크기를 관리하지 않는다.
+- API Key 보안 설명이 필요하다.
+
+---
+
+# 73. 기존 코드에서 개선한 이유
+
+## 73-1. Button Type
+
+기존:
+
+```html
+type="buttn"
+```
+
+개선:
+
+```html
+type="button"
+```
+
+## 73-2. 응답 출력
+
+기존:
+
+```javascript
+container.append(
+    document.createElement(
+        "div",
+    ),
+)
+
+container.innerText = text
+```
+
+개선:
+
+```javascript
+appendMessage(
+    container,
+    "model",
+    text,
+)
+```
+
+## 73-3. Model History
+
+기존:
+
+```javascript
+text: JSON.stringify(result)
+```
+
+개선:
+
+```javascript
+text: responseText
+```
+
+## 73-4. API Key
+
+기존:
+
+```text
+Browser
+→ Gemini API 직접 호출
+→ Key 노출
+```
+
+개선:
+
+```text
+Browser
+→ Backend Proxy
+→ Gemini API
+```
+
+---
+
+# 74. 실무형 예제: 안전한 Chat UI
+
+```javascript
+function createChatApp({
+    form,
+    input,
+    chatView,
+    statusView,
+}) {
+    const conversation = {
+        contents: [],
+    }
+
+    let isLoading = false
+
+    async function submitPrompt(
+        prompt,
+    ) {
+        if (isLoading) {
+            return
+        }
+
+        isLoading = true
+
+        statusView.textContent = (
+            "답변을 생성하는 중입니다."
+        )
+
+        appendMessage(
+            chatView,
+            "user",
+            prompt,
+        )
+
+        const userTurn = {
+            role: "user",
+
+            parts: [
+                {
+                    text: prompt,
+                },
+            ],
+        }
+
+        conversation.contents.push(
+            userTurn,
+        )
+
+        try {
+            const response = await fetch(
+                "/api/chat",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+                    },
+
+                    body: JSON.stringify({
+                        contents:
+                            conversation
+                                .contents,
+                    }),
+                },
+            )
+
+            if (!response.ok) {
+                throw new Error(
+                    `HTTP ${response.status}`,
+                )
+            }
+
+            const data = (
+                await response.json()
+            )
+
+            if (
+                typeof data.text
+                !== "string"
+                || data.text.trim()
+                    === ""
+            ) {
+                throw new Error(
+                    "답변 Text가 없습니다.",
+                )
+            }
+
+            conversation.contents.push({
+                role: "model",
+
+                parts: [
+                    {
+                        text: data.text,
+                    },
+                ],
+            })
+
+            appendMessage(
+                chatView,
+                "model",
+                data.text,
+            )
+
+            statusView.textContent = ""
+        } catch (
+            error
+        ) {
+            conversation.contents.pop()
+
+            statusView.textContent = (
+                "답변을 불러오지 "
+                + "못했습니다."
+            )
+
+            console.error(error)
+        } finally {
+            isLoading = false
+            input.focus()
+        }
+    }
+
+    form.addEventListener(
+        "submit",
+        event => {
+            event.preventDefault()
+
+            const prompt = (
+                input.value.trim()
+            )
+
+            if (prompt === "") {
+                statusView.textContent = (
+                    "질문을 입력해주세요."
+                )
+
+                input.focus()
+                return
+            }
+
+            input.value = ""
+
+            submitPrompt(prompt)
+        },
+    )
+}
+```
+
+## 74-1. 코드에서 무엇을 사용하는 걸까?
+
+| 코드 | 사용하는 이유 |
+| --- | --- |
+| Backend Endpoint | Client API Key 노출 방지 |
+| Form Submit | Button·Enter 전송 통합 |
+| `trim()` | 빈 질문 차단 |
+| Loading Flag | 중복 요청 방지 |
+| User Turn 선출력 | 즉각적인 UI 반응 |
+| 실패 시 `pop()` | History Rollback |
+| 응답 자료형 검사 | 예상 구조 누락 처리 |
+| `textContent` | 외부 Text 안전 출력 |
+| Status View | Loading·Error 안내 |
+| `finally` | UI 상태 복구 |
+
+---
+
+# 75. 대표 오류로 이해하기
+
+## 75-1. HTTP 400·401 후 응답 접근
+
+Error JSON에는 `candidates`가 없어 `TypeError`가 발생할 수 있다.
+
+## 75-2. API Key가 빈 문자열
+
+인증 오류가 발생한다.
+
+## 75-3. Model 응답 전체를 History Text로 저장
+
+다음 요청 Context가 불필요한 JSON Metadata로 오염된다.
+
+## 75-4. Append 후 `innerText` 재할당
+
+생성한 자식 Node가 모두 제거된다.
+
+## 75-5. 중복 요청
+
+응답 순서와 History 순서가 엉킬 수 있다.
+
+## 75-6. Client에 Key 하드코딩
+
+사용자가 Key를 확인하고 악용할 수 있다.
+
+---
+
+# 76. 자주 하는 실수
+
+## 76-1. Model이 Browser 상태를 자동 기억한다고 생각
+
+Client가 History를 다시 전송해야 한다.
+
+## 76-2. 객체가 자동으로 JSON 전송된다고 생각
+
+`JSON.stringify()`가 필요하다.
+
+## 76-3. `response.json()`이 동기 함수라고 생각
+
+Promise를 반환한다.
+
+## 76-4. HTTP 오류도 Catch가 자동 처리한다고 생각
+
+`response.ok`를 확인한다.
+
+## 76-5. Candidate Text가 항상 존재한다고 생각
+
+안전 차단·빈 응답·형식 변경을 처리한다.
+
+## 76-6. 전체 Result를 Model 답변으로 저장
+
+실제 생성 Text만 History에 넣는다.
+
+## 76-7. History를 무제한 저장
+
+Token·비용·지연·Context 한도를 관리한다.
+
+## 76-8. AI 응답을 `innerHTML`에 직접 삽입
+
+`textContent` 또는 Sanitizer를 사용한다.
+
+## 76-9. API Key를 `.gitignore`만으로 보호 가능하다고 생각
+
+Browser Bundle에 들어가면 사용자에게 노출된다.
+
+## 76-10. Model 이름을 영구적인 값으로 생각
+
+설정값으로 분리하고 공식 문서를 확인한다.
+
+---
+
+# 77. 핵심 요약
+
+```text
+Prompt
+→ contents
+→ JSON.stringify()
+→ Fetch POST
+→ Response JSON
+→ Candidate Text
+```
+
+```text
+Single-turn
+→ 현재 질문만 전송
+
+Multiturn
+→ 이전 User·Model Turn
+→ 현재 User Turn
+→ 전체 History 전송
+```
+
+```text
+User Turn
+→ role: "user"
+
+Model Turn
+→ role: "model"
+```
+
+```text
+Client API Key
+→ 노출 위험
+
+Backend Proxy
+→ Key와 정책 관리
+```
+
+---
+
+# 78. 최종 체크리스트
+
+- [ ] Button Type을 올바르게 작성했는가?
+- [ ] HTML `lang`과 `title`이 문서 내용에 맞는가?
+- [ ] 빈 Prompt를 `trim()`으로 검사하는가?
+- [ ] Endpoint와 Model 이름을 설정값으로 분리했는가?
+- [ ] Request Body를 `JSON.stringify()` 하는가?
+- [ ] `Content-Type`을 설정하는가?
+- [ ] HTTP Status를 검사하는가?
+- [ ] Error Response Body를 안전하게 읽는가?
+- [ ] Candidate와 Parts 존재 여부를 검사하는가?
+- [ ] 여러 Text Part를 합칠 수 있는가?
+- [ ] Finish Reason을 확인할 수 있는가?
+- [ ] 응답을 `textContent`로 출력하는가?
+- [ ] 생성한 Message Node를 실제로 사용하는가?
+- [ ] User와 Model Turn을 교대로 저장하는가?
+- [ ] Model Turn에는 실제 답변 Text를 저장하는가?
+- [ ] 실패 시 History Rollback 정책이 있는가?
+- [ ] 요청 중 Button·Loading 상태를 관리하는가?
+- [ ] 중복 요청과 응답 순서 역전을 방지하는가?
+- [ ] Enter와 Shift+Enter를 구분할 수 있는가?
+- [ ] History 길이와 Token 사용량을 관리하는가?
+- [ ] 요청 취소와 Timeout을 처리할 수 있는가?
+- [ ] AI 응답을 실행 가능한 HTML·명령으로 바로 사용하지 않는가?
+- [ ] Client JavaScript에 API Key를 넣지 않는가?
+- [ ] Backend에서 인증·Rate Limit·오류 처리를 수행하는가?
+- [ ] 민감정보가 Prompt에 포함되지 않도록 안내하는가?
+
+---
+
+# 마무리
+
+생성형 AI API 연동의 핵심은 질문을 보내고 답변을 출력하는 것에서 끝나지 않는다.
+
+```text
+요청과 응답 구조를 정확히 이해하고
+    ↓
+User·Model History를 올바르게 관리하고
+    ↓
+빈 응답·차단·HTTP 오류를 안전하게 처리하고
+    ↓
+Loading·취소·중복 요청 상태를 제어하고
+    ↓
+API Key와 사용자 데이터를 Backend에서 보호하는 것
+```
+
+이 흐름을 이해하면 단순한 API 실습을 넘어 실제 AI Chat UI와 서비스 구조로 확장할 수 있다.
