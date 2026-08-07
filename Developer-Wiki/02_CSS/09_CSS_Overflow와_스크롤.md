@@ -1,3 +1,10 @@
+---
+title: CSS Overflow와 스크롤
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # CSS Overflow와 스크롤
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `09_CSS_Overflow와_스크롤.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `08_CSS_Position과_요소위치.md` |
-| 다음 학습 | `10_CSS_Float와_Clear.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/09_overflow.html`, `workspace_teacher/workspace_html/css/09_overflow.html` |
+| 원본 기준 | `workspace_html/css/09_overflow.html`, `workspace_teacher/workspace_html/css/09_overflow.html` |
 | 핵심 범위 | `overflow`, `hidden`, `scroll`, `auto`, `overflow-x`, `overflow-y`, `white-space: nowrap`, 가로 스크롤 |
 | 프로젝트 연결 | 카드 본문, 고정 높이 패널, 코드 영역, 모바일 탭, 가로 목록, 모달 내부 스크롤 |
 
-> 원본 CSS 09는 별도의 외부 CSS 파일 없이 `09_overflow.html` 내부 `<style>`에서 진행됩니다. 내 코드와 강사님 코드 모두 고정 크기 박스에 긴 텍스트를 넣어 `hidden`, `scroll`, `overflow-y`, `auto`의 차이를 확인하고, 마지막에는 `white-space: nowrap`과 `inline-block`을 조합한 가로 스크롤 목록을 실습합니다.
+> 이 문서는 내 코드와 강사님 코드의 `09_overflow.html`을 비교해 콘텐츠가 박스를 넘을 때 `visible`, `hidden`, `clip`, `scroll`, `auto`가 레이아웃과 스크롤 영역에 미치는 차이를 정리한다. 축별 Overflow, 가로 목록, 코드·테이블·모달 Scroll Container, 말줄임표와 접근성까지 실무 기준으로 연결한다.
 
 ---
 
@@ -822,7 +827,7 @@ width: 100px;
 
 ---
 
-# 33. My Code vs Teacher Code
+# 33. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1311,51 +1316,8 @@ body {
 
 ---
 
-# 50. 면접·복습 포인트
 
-## Q1. `overflow`의 기본값은 무엇인가요?
-
-`visible`입니다. 넘친 콘텐츠가 박스 밖으로 표시될 수 있습니다.
-
-## Q2. `hidden`, `scroll`, `auto`의 차이는 무엇인가요?
-
-`hidden`은 넘친 부분을 자르고, `scroll`은 스크롤 영역을 명시적으로 만들며, `auto`는 실제로 넘칠 때 필요한 스크롤을 제공합니다.
-
-## Q3. `overflow-y: scroll`을 사용하는 이유는 무엇인가요?
-
-세로 스크롤 영역을 항상 유지하여 전통적인 스크롤바 환경에서 스크롤바 등장에 따른 폭 변화를 줄이거나 일관된 세로 스크롤 UI를 제공할 수 있습니다.
-
-## Q4. `overflow: scroll`인데 짧은 콘텐츠를 넣은 원본 예제가 필요한 이유는 무엇인가요?
-
-콘텐츠가 넘치지 않아도 스크롤 영역이 만들어질 수 있다는 점을 `auto`와 비교하기 위해서입니다.
-
-## Q5. 원본 가로 목록에서 `white-space: nowrap`의 역할은 무엇인가요?
-
-`inline-block` 자식들이 다음 줄로 내려가지 않게 하여 부모 너비를 넘는 한 줄 콘텐츠를 만들고 가로 스크롤이 발생하게 합니다.
-
-## Q6. `overflow: hidden`이 레이아웃 해결책으로 남용되면 어떤 문제가 있나요?
-
-콘텐츠, 그림자, 포커스 outline이 잘릴 수 있고 스크롤·sticky·서식 문맥 동작에 영향을 줄 수 있습니다.
-
-## Q7. `overflow-x: auto`가 유용한 사례는 무엇인가요?
-
-모바일 테이블, 코드 블록, 가로 탭, 카드 목록처럼 콘텐츠 너비가 컨테이너보다 클 수 있는 영역입니다.
-
-## Q8. 스크롤바가 안 보이면 스크롤할 수 없는 요소인가요?
-
-반드시 그렇지는 않습니다. 운영체제나 모바일 브라우저는 overlay scrollbar를 사용해 스크롤 중에만 표시할 수 있습니다.
-
-## Q9. overflow 발생 여부를 JavaScript로 확인하는 방법은 무엇인가요?
-
-세로는 `scrollHeight > clientHeight`, 가로는 `scrollWidth > clientWidth`로 확인할 수 있습니다.
-
-## Q10. 실무에서 `overflow: auto`는 자주 사용하지 않나요?
-
-아닙니다. 제한 높이 패널, 모달, 코드 블록, 테이블 래퍼, 가로 목록 등에 매우 자주 사용됩니다. 필요한 축만 `overflow-y: auto`처럼 지정할 수도 있습니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. 기본값
 
@@ -1474,7 +1436,7 @@ div>div*5
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -1748,7 +1710,7 @@ function hasVerticalOverflow(element) {
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## 기본 동작
 
@@ -1804,7 +1766,7 @@ function hasVerticalOverflow(element) {
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - overflow는 콘텐츠가 요소의 박스보다 커져 경계를 넘는 상태다.
 - `overflow`의 기본값은 `visible`이다.

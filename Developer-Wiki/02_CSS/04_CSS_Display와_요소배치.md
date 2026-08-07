@@ -1,3 +1,10 @@
+---
+title: CSS Display와 요소 배치
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # CSS Display와 요소 배치
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `04_CSS_Display와_요소배치.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `03_CSS_박스모델.md` |
-| 다음 학습 | `05_CSS_투명도와_요소숨김.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/04_display.html`, `workspace_me/workspace_html/css/asset/css/04_display.css`, `workspace_teacher/workspace_html/css/04_dispaly.html`, `workspace_teacher/workspace_html/css/asset/css/04_display.css` |
+| 원본 기준 | `workspace_html/css/04_display.html`, `workspace_html/css/asset/css/04_display.css`, `workspace_teacher/workspace_html/css/04_dispaly.html`, `workspace_teacher/workspace_html/css/asset/css/04_display.css` |
 | 핵심 범위 | `block`, `inline`, `inline-block`, `none`, `table`, `table-cell`, `text-align`, `vertical-align`, 인라인 공백 |
 | 프로젝트 연결 | 메뉴, 버튼, 배지, 카드 목록, 가운데 정렬, 요소 숨김, 레거시 테이블형 배치 |
 
-> 이 문서는 수업 원본의 `04_display.html`과 `04_display.css`를 기준으로 작성했습니다. 원본의 실습 구조와 설명을 보존하되, HTML 유효성, 인라인 박스의 실제 동작, 접근성, 현대적인 Flex/Grid 대안을 구분하여 보완했습니다.
+> 이 문서는 내 코드와 강사님 코드의 `04_display.html`, `04_display.css`를 비교해 Block·Inline·Inline-block의 실제 배치와 정렬 방식을 정리한다. 잘못된 HTML 중첩과 인라인 박스 설명은 수정하고, 숨김 방식·접근성·Flex·Grid 대안까지 실무 기준으로 연결한다.
 
 ---
 
@@ -1535,7 +1540,7 @@ Emmet 메모라면 주석으로 남깁니다.
 
 `span` 안에 `div`를 넣는 구조는 유효하지 않습니다.
 
-단순 권장사항이 아니라 HTML 구조 오류로 설명해야 합니다.
+HTML 문법상 `span`은 일반적인 Flow Content인 `div`를 자식으로 가질 수 없습니다. Browser가 DOM을 자동 보정할 수 있으므로 작성한 중첩과 실제 DOM 구조가 달라질 수 있습니다.
 
 ## 49.4 인라인 패딩 설명
 
@@ -1663,7 +1668,7 @@ CSS 테이블 레이아웃이 실제 표의 의미를 제공하지 않는다는 
 
 ---
 
-# 52. My Code vs Teacher Code
+# 52. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -2141,51 +2146,8 @@ CSS 레이아웃 동작만 만들며 데이터 표의 의미는 제공하지 않
 
 ---
 
-# 64. 면접·복습 포인트
 
-## Q1. `block`, `inline`, `inline-block`의 차이는 무엇인가요?
-
-블록은 일반 흐름에서 새 줄에 배치되고 너비·높이를 가질 수 있습니다. 인라인은 텍스트 흐름에 참여하며 일반 비대체 요소에는 너비·높이가 블록처럼 적용되지 않습니다. 인라인 블록은 같은 줄에 배치되면서 너비·높이와 박스 여백을 가질 수 있습니다.
-
-## Q2. 블록 요소를 가로 가운데 정렬하는 방법은 무엇인가요?
-
-요소 너비가 부모보다 작아 남는 공간이 있을 때 `margin-inline: auto`를 사용할 수 있습니다.
-
-## Q3. 인라인 또는 인라인 블록 자식을 부모 안에서 가운데 정렬하려면 어떻게 하나요?
-
-부모에 `text-align: center`를 적용할 수 있습니다.
-
-## Q4. `vertical-align`은 어디에 적용되나요?
-
-인라인 수준 요소와 테이블 셀에 적용됩니다. 일반 블록 자식의 수직 가운데 정렬용 속성은 아닙니다.
-
-## Q5. 인라인 블록 사이에 공백이 생기는 이유는 무엇인가요?
-
-HTML 태그 사이의 줄바꿈과 공백이 인라인 서식 문맥의 텍스트 공백 노드로 렌더링되기 때문입니다.
-
-## Q6. `font-size: 0` 공백 제거 방식의 단점은 무엇인가요?
-
-자식 글자 크기를 복구해야 하며 상속과 `em` 기반 계산에 영향을 줄 수 있고 의도가 불명확할 수 있습니다.
-
-## Q7. `display: none`과 `visibility: hidden`의 차이는 무엇인가요?
-
-`display: none`은 레이아웃 공간을 제거하고, `visibility: hidden`은 공간을 유지한 채 보이지 않게 합니다.
-
-## Q8. `opacity: 0`은 `display: none`과 같은가요?
-
-아닙니다. 요소는 공간을 유지하고 상호작용과 접근성 노출이 남을 수 있습니다.
-
-## Q9. `display: table-cell`을 사용하는 이유는 무엇인가요?
-
-테이블 셀과 유사한 레이아웃 동작과 `vertical-align`을 사용할 수 있습니다. 실제 표 데이터 의미는 제공하지 않습니다.
-
-## Q10. `span` 안에 `div`를 넣으면 왜 문제가 되나요?
-
-`span`의 허용 콘텐츠 모델에 `div` 같은 일반 흐름 블록 콘텐츠가 맞지 않아 유효하지 않은 HTML이며 브라우저가 DOM을 자동 보정할 수 있습니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. 기본 표시 방식
 
@@ -2324,7 +2286,7 @@ Emmet 메모는 화면에 표시되지 않아야 합니다.
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -2660,7 +2622,7 @@ Flexbox가 HTML 공백을 간격으로 처리하지 않으며 `gap`으로 명확
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## 기본 표시 방식
 
@@ -2719,7 +2681,7 @@ Flexbox가 HTML 공백을 간격으로 처리하지 않으며 `gap`으로 명확
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - `display`는 요소가 레이아웃에 어떤 종류의 박스로 참여하는지를 결정한다.
 - `div`는 일반적으로 `block`, `span`은 일반적으로 `inline`이다.

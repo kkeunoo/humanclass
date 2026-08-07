@@ -1,3 +1,10 @@
+---
+title: CSS 투명도와 요소 숨김
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # CSS 투명도와 요소 숨김
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `05_CSS_투명도와_요소숨김.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `04_CSS_Display와_요소배치.md` |
-| 다음 학습 | `06_CSS_텍스트와_글꼴.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/05_opacity.html`, `workspace_teacher/workspace_html/css/05_opacity.html` |
+| 원본 기준 | `workspace_html/css/05_opacity.html`, `workspace_teacher/workspace_html/css/05_opacity.html` |
 | 핵심 범위 | `visibility: hidden`, `display: none`, `opacity`, 레이아웃 공간, 상호작용, 접근성 |
 | 프로젝트 연결 | 메뉴, 팝업, 모달, 아코디언, 로딩 상태, 페이드 전환, 시각적 숨김 |
 
-> 원본 CSS 05는 다섯 개의 문단을 사용해 `visibility: hidden`, `display: none`, `opacity: 0`의 차이를 비교하는 짧은 실습입니다. 이 문서는 원본의 비교 구조를 그대로 중심에 두고, 접근성·상호작용·전환 애니메이션·실무 상태 관리 내용은 **확장 학습**으로 구분해 보완했습니다.
+> 이 문서는 내 코드와 강사님 코드의 `05_opacity.html`을 비교해 `visibility`, `display`, `opacity`가 화면·레이아웃·Pointer·Keyboard Focus·접근성 트리에 미치는 차이를 정리한다. 단순히 보이는지 여부만 비교하지 않고, 메뉴·모달·아코디언·로딩 상태에서 목적에 맞는 숨김 방식을 선택하도록 구성한다.
 
 ---
 
@@ -1021,7 +1026,7 @@ button.addEventListener("click", () => {
 
 ---
 
-# 33. My Code 분석
+# 33. 내 코드 분석
 
 내 코드의 핵심 주석:
 
@@ -1051,7 +1056,7 @@ button.addEventListener("click", () => {
 
 ---
 
-# 34. My Code 개선점
+# 34. 내 코드 개선점
 
 ## 34.1 문서 언어
 
@@ -1121,7 +1126,7 @@ button.addEventListener("click", () => {
 
 ---
 
-# 35. Teacher Code 분석
+# 35. 강사님 코드 분석
 
 강사님 코드는 설명 주석을 최소화하고 세 속성의 화면 차이를 직접 확인하도록 구성했습니다.
 
@@ -1149,7 +1154,7 @@ button.addEventListener("click", () => {
 
 ---
 
-# 36. Teacher Code 개선점
+# 36. 강사님 코드 개선점
 
 ## 36.1 문서 언어
 
@@ -1198,7 +1203,7 @@ opacity: 0   → 완전 투명
 
 ---
 
-# 37. My Code vs Teacher Code
+# 37. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1559,51 +1564,8 @@ JavaScript와 접근성 상태를 함께 관리해야 합니다.
 
 ---
 
-# 48. 면접·복습 포인트
 
-## Q1. `display: none`과 `visibility: hidden`의 차이는 무엇인가요?
-
-`display: none`은 요소가 레이아웃 박스를 만들지 않아 공간이 사라집니다. `visibility: hidden`은 요소가 보이지 않지만 원래 공간은 유지합니다.
-
-## Q2. `opacity: 0`은 요소를 완전히 제거하나요?
-
-아닙니다. 요소는 투명할 뿐 레이아웃 공간, 포인터 영역, 키보드 포커스와 접근성 노출이 남을 수 있습니다.
-
-## Q3. 배경만 반투명하게 만들려면 어떻게 해야 하나요?
-
-부모 요소에 `opacity`를 지정하지 말고 `rgb(... / alpha)`, `rgba()` 또는 알파가 포함된 HEX 색상을 사용합니다.
-
-## Q4. 부모의 `opacity: 0.5`를 자식의 `opacity: 1`로 되돌릴 수 있나요?
-
-완전히 되돌릴 수 없습니다. 부모 전체가 하나의 결과로 합성되어 투명해지기 때문입니다.
-
-## Q5. `hidden` 속성은 어떤 역할을 하나요?
-
-현재 표시되지 않아야 하는 요소를 HTML 상태로 표현하며 일반적으로 `display: none`과 비슷하게 화면과 접근성 트리에서 제외됩니다.
-
-## Q6. `aria-hidden="true"`는 화면에서도 요소를 숨기나요?
-
-아닙니다. 주로 보조 기술에서 숨기는 접근성 상태이며 CSS 표시 여부를 자동으로 바꾸지 않습니다.
-
-## Q7. 스크린 리더에만 텍스트를 제공하려면 `display: none`을 사용해도 되나요?
-
-일반적으로 적합하지 않습니다. visually hidden 패턴을 사용합니다.
-
-## Q8. 페이드 전환에 `opacity`만 사용하면 어떤 문제가 있나요?
-
-닫힌 상태에서도 클릭 영역과 키보드 포커스가 남을 수 있어 `visibility`, `pointer-events` 또는 실제 표시 상태를 함께 관리해야 합니다.
-
-## Q9. `visibility: hidden`의 자식만 다시 보이게 할 수 있나요?
-
-자식에 `visibility: visible`을 지정할 수 있습니다. 반면 부모의 `opacity`로 투명해진 자식은 자식 `opacity: 1`만으로 완전 불투명하게 복원할 수 없습니다.
-
-## Q10. 비활성 버튼을 `opacity`만 낮춰 표현하면 충분한가요?
-
-아닙니다. 실제 `disabled` 상태나 동작 차단을 함께 적용하고 텍스트 대비도 확인해야 합니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. 원본 결과
 
@@ -1750,7 +1712,7 @@ JavaScript와 접근성 상태를 함께 관리해야 합니다.
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -2101,7 +2063,7 @@ button.addEventListener("click", () => {
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## 원본 개념
 
@@ -2155,7 +2117,7 @@ button.addEventListener("click", () => {
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - 원본 CSS 05는 `visibility: hidden`, `display: none`, `opacity: 0`을 다섯 문단으로 비교한다.
 - `visibility: hidden`은 요소를 보이지 않게 하지만 레이아웃 공간은 유지한다.

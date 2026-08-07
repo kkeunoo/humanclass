@@ -1,3 +1,10 @@
+---
+title: CSS 미디어 쿼리와 반응형
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # CSS 미디어 쿼리와 반응형 메뉴
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `14_CSS_미디어쿼리와_반응형.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `13_CSS_Transform과_요소변형.md` |
-| 다음 학습 | 이후 CSS 원본 순서 확인 |
-| 원본 기준 | `workspace_me/workspace_html/css/14_media.html`, `workspace_teacher/workspace_html/css/14_media.html` |
+| 원본 기준 | `workspace_html/css/14_media.html`, `workspace_teacher/workspace_html/css/14_media.html` |
 | 핵심 범위 | `@media`, `screen`, `max-width`, `min-width`, 모바일 메뉴, 인접 형제 선택자, `opacity`, 반응형 레이아웃 |
 | 프로젝트 연결 | 모바일 내비게이션, 햄버거 메뉴, 브레이크포인트, 데스크톱·모바일 UI 전환 |
 
-> 내 코드와 강사님 코드의 `14_media.html`은 내용이 완전히 동일합니다. 이 문서는 동일한 원본을 중복 비교하지 않고, 공통 코드의 의도와 문제점을 분석합니다. 원본의 오류나 한계는 조용히 수정하지 않고 그대로 보존한 뒤 개선 방향을 설명합니다.
+> 내 코드와 강사님 코드의 `14_media.html`은 내용이 동일하다. 이 문서는 동일한 코드를 반복 비교하지 않고, `@media`, Breakpoint, 모바일 메뉴의 동작과 한계를 분석한다. Hover에만 의존한 메뉴는 터치·키보드 환경을 고려한 Button 기반 구조로 개선하고, Viewport·Container Query·입력 환경 조건까지 실무 기준으로 연결한다.
 
 ---
 
@@ -1186,7 +1191,7 @@ CSS 미디어 쿼리에서는 일반 사용자 지정 속성을 조건값으로 
 
 ---
 
-# 48. My Code vs Teacher Code
+# 48. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1684,51 +1689,8 @@ JavaScript로 화면 변화에 따라 상태를 초기화할 수도 있지만 �
 
 ---
 
-# 60. 면접·복습 포인트
 
-## Q1. 미디어 쿼리란 무엇인가요?
-
-화면 너비, 출력 매체, 사용자 환경 같은 조건에 따라 CSS를 선택적으로 적용하는 기능입니다.
-
-## Q2. `max-width: 600px`은 무엇을 의미하나요?
-
-뷰포트 너비가 600px 이하일 때 해당 규칙을 적용합니다.
-
-## Q3. `min-width`와 `max-width`의 차이는 무엇인가요?
-
-`min-width`는 지정값 이상, `max-width`는 지정값 이하에서 적용됩니다.
-
-## Q4. 원본은 모바일 우선인가요?
-
-기본이 가로 메뉴이고 max-width에서 모바일 형태로 바뀌므로 데스크톱 우선에 가깝습니다.
-
-## Q5. `span:hover + ul`은 무엇을 선택하나요?
-
-hover 상태인 span의 바로 다음 형제 ul을 선택합니다.
-
-## Q6. 원본 메뉴가 실제 사용하기 어려운 이유는 무엇인가요?
-
-span에서 ul로 포인터를 이동하면 span hover가 해제되어 메뉴가 닫힐 수 있고, 모바일 터치에는 hover가 안정적이지 않기 때문입니다.
-
-## Q7. `opacity: 0`과 `display: none`의 차이는 무엇인가요?
-
-opacity 0은 요소와 공간이 남지만 display none은 레이아웃과 일반 접근 경로에서 요소를 제거합니다.
-
-## Q8. 메뉴 열기에 `button`을 사용해야 하는 이유는 무엇인가요?
-
-키보드 조작, 역할, 포커스, 활성화 동작을 기본 제공하기 때문입니다.
-
-## Q9. `aria-expanded`는 무엇을 전달하나요?
-
-제어하는 메뉴나 영역이 현재 열려 있는지 닫혀 있는지를 보조 기술에 전달합니다.
-
-## Q10. 브레이크포인트는 어떻게 선택하나요?
-
-특정 기기 이름보다 콘텐츠와 레이아웃이 실제로 깨지는 지점을 기준으로 선택합니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. Max-width
 
@@ -1839,7 +1801,7 @@ opacity 전환을 유지하면서 숨김 상태에서 포인터 조작을 막도
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -2202,7 +2164,7 @@ toggle.addEventListener("click", () => {
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## 미디어 쿼리 기본
 
@@ -2257,7 +2219,7 @@ toggle.addEventListener("click", () => {
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - 미디어 쿼리는 화면 크기와 사용자 환경에 따라 CSS를 선택적으로 적용한다.
 - 원본 `@media screen and (max-width: 600px)`은 화면 너비 600px 이하에서 적용된다.

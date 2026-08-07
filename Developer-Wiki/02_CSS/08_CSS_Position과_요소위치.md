@@ -1,3 +1,10 @@
+---
+title: CSS Position과 요소 위치
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # CSS Position과 요소 위치
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `08_CSS_Position과_요소위치.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `07_CSS_텍스트와_글꼴.md` |
-| 다음 학습 | `09_CSS_Overflow와_스크롤.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/08_position.html`, `workspace_me/workspace_html/css/asset/css/08_position.css`, `workspace_teacher/workspace_html/css/08_position.html`, `workspace_teacher/workspace_html/css/asset/css/08_position.css` |
+| 원본 기준 | `workspace_html/css/08_position.html`, `workspace_html/css/asset/css/08_position.css`, `workspace_teacher/workspace_html/css/08_position.html`, `workspace_teacher/workspace_html/css/asset/css/08_position.css` |
 | 핵심 범위 | `static`, `relative`, `absolute`, `fixed`, `sticky`, 기준 박스, 오프셋, `z-index`, `calc()`, CSS 변수 |
 | 프로젝트 연결 | 고정 메뉴, 맨 위로 버튼, 드롭다운, 배지, 모달, 카드 오버레이, 중앙 배치, 레이어 순서 |
 
-> 이 문서는 수업 원본의 `08_position.html`과 `08_position.css`를 기준으로 작성했습니다. 원본의 `LOVE` 박스 이동, 고정 버튼, 스티키 메뉴, `z-index`, 드롭다운, 절대 위치 중앙 정렬, CSS 변수 실습을 보존하면서 부정확하거나 지나치게 단정적인 설명은 브라우저의 실제 위치 계산 규칙에 맞게 보완했습니다.
+> 이 문서는 내 코드와 강사님 코드의 `08_position.html`, `08_position.css`를 비교해 Normal Flow와 `static`, `relative`, `absolute`, `fixed`, `sticky`의 위치 계산 방식을 정리한다. 기준 박스·Offset·Stacking Context 설명을 정확하게 보완하고, 배지·드롭다운·모달·고정 버튼 같은 실무 배치 패턴으로 연결한다.
 
 ---
 
@@ -995,7 +1000,7 @@ CSS:
 
 원본 방식은 마우스가 `.menu`를 벗어나는 순간 조건이 해제될 수 있습니다.
 
-```css
+```text
 .menu:hover + .submenu
 ```
 
@@ -1181,7 +1186,7 @@ width: calc(100%-2rem);
 
 원본은 다음처럼 나눗셈을 사용합니다.
 
-```css
+```text
 calc(400px / 2 - 100px / 2)
 ```
 
@@ -1357,7 +1362,7 @@ Grid:
 
 ---
 
-# 49. My Code 분석
+# 49. 내 코드 분석
 
 ## 49.1 장점
 
@@ -1374,7 +1379,7 @@ Grid:
 
 ---
 
-# 50. My Code 개선점
+# 50. 내 코드 개선점
 
 ## 50.1 문서 언어와 제목
 
@@ -1438,7 +1443,7 @@ top: 50px;
 
 ---
 
-# 51. Teacher Code 분석
+# 51. 강사님 코드 분석
 
 ## 51.1 장점
 
@@ -1450,7 +1455,7 @@ top: 50px;
 
 ---
 
-# 52. Teacher Code 개선점
+# 52. 강사님 코드 개선점
 
 ## 52.1 문서 언어와 제목
 
@@ -1494,7 +1499,7 @@ left: calc(50% - (100px / 2))
 
 ---
 
-# 53. My Code vs Teacher Code
+# 53. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1882,51 +1887,8 @@ Elements와 Computed 패널에서 다음을 확인합니다.
 
 ---
 
-# 64. 면접·복습 포인트
 
-## Q1. `relative`와 `absolute`의 가장 큰 차이는 무엇인가요?
-
-`relative`는 일반 흐름의 원래 공간을 유지한 채 시각적으로 이동하고, `absolute`는 일반 흐름에서 빠져 기준 containing block을 따라 배치됩니다.
-
-## Q2. 절대 위치 요소는 무엇을 기준으로 배치되나요?
-
-가까운 조상 중 위치 지정 또는 containing block을 형성하는 조상을 기준으로 하며, 적절한 조상이 없으면 초기 containing block을 사용합니다.
-
-## Q3. 기준 부모에 왜 `position: relative`를 자주 사용하나요?
-
-부모를 시각적으로 이동시키지 않으면서 절대 위치 자식의 containing block으로 만들 수 있기 때문입니다.
-
-## Q4. `fixed`와 `sticky`의 차이는 무엇인가요?
-
-`fixed`는 일반 흐름에서 빠지고 일반적으로 뷰포트에 고정됩니다. `sticky`는 원래 공간을 유지하다가 스크롤 임계점에 도달하면 컨테이너 경계 안에서 고정됩니다.
-
-## Q5. sticky에 `top`이 필요한 이유는 무엇인가요?
-
-어느 위치에 도달했을 때 붙을지 임계값을 지정해야 하기 때문입니다.
-
-## Q6. `z-index: 9999`가 항상 최상단이 아닌 이유는 무엇인가요?
-
-부모 stacking context가 다른 요소의 stacking context보다 아래에 있으면 자식의 큰 값은 그 부모 그룹 밖으로 나올 수 없기 때문입니다.
-
-## Q7. absolute 요소가 자동으로 inline-block이 되나요?
-
-단순히 `inline-block`으로 바뀐다고 설명하는 것은 부정확합니다. 위치 지정에 따라 표시 유형이 blockification되고 독립적인 위치 지정 박스로 동작합니다.
-
-## Q8. 중앙 정렬에 `calc()`보다 `transform` 방식이 유리한 경우는 언제인가요?
-
-부모와 자식의 크기가 유동적이거나 정확한 고정 크기를 알 수 없을 때 유리합니다.
-
-## Q9. 드롭다운을 hover만으로 구현하면 어떤 문제가 있나요?
-
-키보드와 터치 입력이 어렵고 열림 상태를 보조 기술에 전달하기 어렵습니다.
-
-## Q10. CSS 변수의 장점은 무엇인가요?
-
-공통 값을 한 곳에서 선언하고 여러 규칙에서 재사용하여 변경과 일관성 관리를 쉽게 합니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. 기본 위치
 
@@ -2047,7 +2009,7 @@ absolute는 주었을 때 inline-block으로 바뀜
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -2344,7 +2306,7 @@ absolute 요소는 일반 문서 흐름에서 빠지고,
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## 기본 위치
 
@@ -2409,7 +2371,7 @@ absolute 요소는 일반 문서 흐름에서 빠지고,
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - `position`은 요소가 어떤 기준으로 배치되고 스크롤에 어떻게 반응할지 결정한다.
 - 대부분 요소의 기본값은 `static`이다.

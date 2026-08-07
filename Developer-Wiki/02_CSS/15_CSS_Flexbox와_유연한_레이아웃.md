@@ -1,3 +1,10 @@
+---
+title: CSS Flexbox와 유연한 레이아웃
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # CSS Flexbox와 유연한 레이아웃
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `15_CSS_Flexbox와_유연한_레이아웃.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `14_CSS_미디어쿼리와_반응형.md` |
-| 다음 학습 | 이후 CSS 원본 순서 확인 |
-| 원본 기준 | `workspace_me/workspace/workspace_html/css/15_flex.html`, `workspace_teacher/workspace_teacher/workspace_html/css/15_flex.html` |
+| 원본 기준 | `workspace_html/css/15_flex.html`, `workspace_teacher/workspace_html/css/15_flex.html` |
 | 핵심 범위 | `display: flex`, main axis, cross axis, `flex-direction`, `flex-wrap`, `justify-content`, `align-items`, `align-content`, `order`, `flex-grow`, `flex-shrink`, `min-width` |
 | 프로젝트 연결 | 헤더, 메뉴, 버튼 그룹, 카드 목록, 중앙 정렬, 반응형 행·열 전환, 남은 공간 분배 |
 
-> 내 코드와 강사님 코드의 `15_flex.html`은 문자 내용 기준으로 완전히 동일합니다. 따라서 존재하지 않는 차이를 억지로 만들지 않고 공통 원본의 의도, 실험값, 주석, 한계를 분석합니다. 원본에서 직접 다루지 않는 `gap`, `flex-basis`, `flex` 단축 속성, `align-self`, 접근성, 반응형 실무 패턴은 **확장 학습**으로 구분합니다.
+> 내 코드와 강사님 코드의 `15_flex.html`은 내용이 동일하다. 이 문서는 동일한 코드를 반복 비교하지 않고 Flex Container와 Item, 주축·교차축, 방향·줄바꿈·정렬·크기 분배의 동작을 분석한다. `gap`, `flex-basis`, 단축 속성, 시각 순서 접근성, 반응형 Header·Card 패턴까지 실무 기준으로 연결한다.
 
 ---
 
@@ -1551,7 +1556,7 @@ basis 15rem
 
 반대로 item 합계가 container를 꽉 채우면 다음 값들의 차이가 거의 없을 수 있습니다.
 
-```css
+```text
 flex-start
 center
 space-between
@@ -1652,7 +1657,7 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 72. My Code 분석
+# 72. 내 코드 분석
 
 ## 72.1 장점
 
@@ -1678,7 +1683,7 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 73. Teacher Code 분석
+# 73. 강사님 코드 분석
 
 ## 73.1 장점
 
@@ -1700,7 +1705,7 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 74. My Code vs Teacher Code
+# 74. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -2200,51 +2205,8 @@ CSS 15의 내 코드와 강사님 코드는 완전히 동일합니다.
 
 ---
 
-# 86. 면접·복습 포인트
 
-## Q1. Flex container와 flex item은 무엇인가요?
-
-`display: flex` 또는 `inline-flex`가 적용된 부모가 flex container이고, 그 직계 자식들이 flex item입니다.
-
-## Q2. Main axis는 항상 가로인가요?
-
-아닙니다. `flex-direction`에 따라 가로 또는 세로가 됩니다.
-
-## Q3. `justify-content`는 무엇을 정렬하나요?
-
-main axis의 남은 공간을 기준으로 item 묶음을 정렬하거나 분배합니다.
-
-## Q4. `align-items`와 `align-content` 차이는 무엇인가요?
-
-`align-items`는 각 line 안의 item을 정렬하고, `align-content`는 여러 flex line 전체를 정렬합니다.
-
-## Q5. `flex-wrap: wrap`은 무엇을 하나요?
-
-main axis 공간이 부족할 때 새로운 flex line을 만들어 item을 다음 줄로 넘깁니다.
-
-## Q6. `order`는 DOM 순서를 바꾸나요?
-
-아닙니다. 시각적 배치 순서만 변경합니다.
-
-## Q7. `flex-grow: 2`는 최종 너비가 다른 item의 두 배라는 뜻인가요?
-
-아닙니다. 남는 양의 공간을 분배할 때의 비율에 관여합니다.
-
-## Q8. `flex-shrink` 계산에 영향을 주는 것은 무엇인가요?
-
-shrink 값뿐 아니라 flex base size, min-width, 콘텐츠, 전체 부족 공간 등이 영향을 줍니다.
-
-## Q9. `min-width: 0`이 필요한 경우는 언제인가요?
-
-긴 텍스트나 말줄임표가 있는 flex item이 기본 최소 콘텐츠 크기 때문에 줄어들지 않을 때 필요할 수 있습니다.
-
-## Q10. Flexbox와 Grid를 어떻게 구분하나요?
-
-한 축 중심의 정렬과 분배에는 Flexbox, 행과 열을 함께 제어하는 2차원 배치에는 Grid가 더 적합한 경우가 많습니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. Flex Container
 
@@ -2347,7 +2309,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -2614,7 +2576,7 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## Flex Container
 
@@ -2676,7 +2638,7 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - Flexbox는 flex container의 직계 자식을 flex item으로 배치한다.
 - `display: flex`는 블록 수준, `inline-flex`는 인라인 수준 container를 만든다.

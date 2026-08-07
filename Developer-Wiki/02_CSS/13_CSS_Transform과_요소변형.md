@@ -1,3 +1,10 @@
+---
+title: CSS Transform과 요소 변형
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # CSS Transform과 요소 변형
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `13_CSS_Transform과_요소변형.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `12_CSS_Transition과_상태변화.md` |
-| 다음 학습 | `14_CSS_미디어쿼리와_반응형.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/13_tranform.html`, `workspace_teacher/workspace_html/css/13_transform.html` |
+| 원본 기준 | `workspace_html/css/13_tranform.html`, `workspace_teacher/workspace_html/css/13_transform.html` |
 | 핵심 범위 | `translate()`, `scale()`, `scaleX()`, `rotate()`, 복합 transform, transform 순서, 절대 위치 중앙 정렬 |
 | 프로젝트 연결 | 카드 hover, 버튼 이동, 확대·축소, 회전 아이콘, 모달 중앙 정렬, 이미지 인터랙션 |
 
-> 내 코드의 원본 파일명은 `13_tranform.html`로 `transform`의 철자에서 `s`가 빠져 있습니다. 강사님 원본은 `13_transform.html`입니다. 이 문서는 파일명 차이를 오류로 숨기지 않고 그대로 기록하며, 코드 안의 `translate`, `scale`, `rotate`, 복합 transform, 중앙 정렬 실습을 기준으로 작성했습니다.
+> 이 문서는 내 코드의 `13_tranform.html`과 강사님 코드의 `13_transform.html`을 비교해 `translate`, `scale`, `rotate`, 복합 Transform과 중앙 정렬의 실제 동작을 정리한다. 내 파일명의 `tranform` 오타와 `scaleX()`·`scale()` 차이는 그대로 기록하고, Transform 순서·기준점·접근성·성능까지 실무 패턴으로 연결한다.
 
 ---
 
@@ -95,7 +100,7 @@ transform은 일반적으로 요소의 **시각적 표시 결과**를 바꾸며,
   color: white;
   margin: 30px;
 
-  transition: all 0.5s;
+  transition: transform 0.5s;
 }
 ```
 
@@ -134,7 +139,7 @@ transform은 일반적으로 요소의 **시각적 표시 결과**를 바꾸며,
 원본 공통 박스:
 
 ```css
-transition: all 0.5s;
+transition: transform 0.5s;
 ```
 
 hover 상태에서 transform 값이 바뀌므로 0.5초 동안 부드럽게 변형됩니다.
@@ -351,31 +356,31 @@ transform: scaleY(1.5);
 
 # 13. Scale 값의 의미
 
-```css
+```text
 scale(1)
 ```
 
 원래 크기입니다.
 
-```css
+```text
 scale(1.5)
 ```
 
 1.5배 확대합니다.
 
-```css
+```text
 scale(0.5)
 ```
 
 절반 크기로 축소합니다.
 
-```css
+```text
 scale(0)
 ```
 
 시각적으로 크기가 0이 됩니다.
 
-```css
+```text
 scale(-1)
 ```
 
@@ -416,7 +421,7 @@ grad → 그라디안
 
 대표 사용:
 
-```css
+```text
 rotate(90deg)
 rotate(0.5turn)
 ```
@@ -1017,7 +1022,7 @@ transform-origin: 100% 50%;
 
 대표 함수:
 
-```css
+```text
 rotateX()
 rotateY()
 rotateZ()
@@ -1101,7 +1106,7 @@ transition: all .5s
 권장:
 
 ```css
-transition: all 0.5s;
+transition: transform 0.5s;
 ```
 
 이후 속성을 추가할 때 문법 오류를 방지하고 코드 스타일을 일관되게 유지합니다.
@@ -1156,7 +1161,7 @@ body {
 
 ---
 
-# 48. My Code 분석
+# 48. 내 코드 분석
 
 ## 48.1 장점
 
@@ -1178,7 +1183,7 @@ body {
 
 ---
 
-# 49. Teacher Code 분석
+# 49. 강사님 코드 분석
 
 ## 49.1 장점
 
@@ -1200,7 +1205,7 @@ body {
 
 ---
 
-# 50. My Code vs Teacher Code
+# 50. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1541,51 +1546,8 @@ z-index 관계가 달라질 수 있습니다.
 
 ---
 
-# 59. 면접·복습 포인트
 
-## Q1. Transform은 레이아웃 공간을 바꾸나요?
-
-일반적으로 원래 레이아웃 공간은 유지하고 시각적 표시 결과를 변형합니다.
-
-## Q2. `translate(50%, 50%)`의 퍼센트 기준은 무엇인가요?
-
-변형되는 요소 자신의 크기입니다.
-
-## Q3. `left: 50%`와 `translateX(-50%)`는 각각 무엇을 기준으로 하나요?
-
-`left: 50%`는 부모 containing block을, `translateX(-50%)`는 요소 자신의 너비를 기준으로 합니다.
-
-## Q4. `scaleX(1.5)`와 `scale(1.5)`의 차이는 무엇인가요?
-
-`scaleX`는 가로만 확대하고, `scale` 한 값은 가로와 세로를 모두 확대합니다.
-
-## Q5. `rotate(-30deg)`의 방향은 무엇인가요?
-
-일반적으로 반시계 방향입니다.
-
-## Q6. 여러 transform 함수를 별도 선언하면 어떻게 되나요?
-
-뒤의 transform 선언이 앞 선언 전체를 덮어씁니다. 한 선언에 함께 작성해야 합니다.
-
-## Q7. Transform 함수의 순서는 중요한가요?
-
-중요합니다. 함수 순서가 좌표계와 최종 결과에 영향을 줍니다.
-
-## Q8. 절대 위치 중앙 정렬 공식은 무엇인가요?
-
-`top: 50%`, `left: 50%`, `transform: translate(-50%, -50%)`입니다.
-
-## Q9. Transform이 stacking context에 영향을 주나요?
-
-`none`이 아닌 transform은 새로운 stacking context를 만들 수 있습니다.
-
-## Q10. 일반 레이아웃 중앙 정렬에는 무엇이 더 단순한가요?
-
-겹침이 필요하지 않으면 Flexbox나 Grid가 더 단순합니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. Pixel 이동
 
@@ -1707,7 +1669,7 @@ transform이 `z-index` 문제에 영향을 줄 수 있는 이유를 설명하세
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -1979,7 +1941,7 @@ scale(1.5)
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## Transform 기본
 
@@ -2037,7 +1999,7 @@ scale(1.5)
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - `transform`은 요소를 이동, 확대·축소, 회전, 기울이는 시각적 변형 속성이다.
 - transform은 일반적으로 원래 레이아웃 공간을 유지한다.

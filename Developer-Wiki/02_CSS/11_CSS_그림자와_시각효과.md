@@ -1,3 +1,10 @@
+---
+title: CSS 그림자와 시각 효과
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # CSS 그림자와 시각 효과
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `11_CSS_그림자와_시각효과.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `10_CSS_Float와_Clear.md` |
-| 다음 학습 | `12_CSS_Transform.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/11_shadow.html`, `workspace_teacher/workspace_html/css/11_shadow.html` |
+| 원본 기준 | `workspace_html/css/11_shadow.html`, `workspace_teacher/workspace_html/css/11_shadow.html` |
 | 핵심 범위 | `text-shadow`, `box-shadow`, 오프셋, blur radius, spread radius, inset, 다중 그림자, hover 시각 효과 |
 | 프로젝트 연결 | 카드 그림자, 버튼 hover, 텍스트 강조, 포커스 효과, 모달·드롭다운 깊이 표현 |
 
-> 원본 CSS 11은 별도의 외부 CSS 파일 없이 `11_shadow.html` 내부 `<style>`에서 진행됩니다. 내 코드와 강사님 코드는 모두 `text-shadow` 두 가지, 기본 `box-shadow`, hover 시 박스 그림자를 실습합니다. 이 문서는 원본 구조를 그대로 보존하면서 그림자 문법, 접근성, 성능, hover·focus 상태, 다중 그림자는 **확장 학습**으로 구분해 보완했습니다.
+> 이 문서는 내 코드와 강사님 코드의 `11_shadow.html`을 비교해 `text-shadow`와 `box-shadow`의 Offset·Blur·Spread·Inset 동작을 정리한다. 원본의 모호한 Blur 설명과 Hover 중심 예제는 수정하고, 카드·버튼·입력창·드롭다운의 상태 표현과 접근성·성능 기준까지 실무 패턴으로 연결한다.
 
 ---
 
@@ -974,7 +979,7 @@ CSS 09에서 배운 overflow 동작과 연결됩니다.
 
 원본은 이름 색상을 사용합니다.
 
-```css
+```text
 red
 gray
 grey
@@ -1200,7 +1205,7 @@ box-shadow:
 
 ---
 
-# 43. My Code 분석
+# 43. 내 코드 분석
 
 ## 43.1 장점
 
@@ -1223,7 +1228,7 @@ box-shadow:
 
 ---
 
-# 44. Teacher Code 분석
+# 44. 강사님 코드 분석
 
 ## 44.1 장점
 
@@ -1245,7 +1250,7 @@ box-shadow:
 
 ---
 
-# 45. My Code vs Teacher Code
+# 45. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1550,51 +1555,8 @@ blur는 번짐이고 투명도는 색상의 alpha 값입니다.
 
 ---
 
-# 53. 면접·복습 포인트
 
-## Q1. `text-shadow`와 `box-shadow`의 차이는 무엇인가요?
-
-`text-shadow`는 글자 모양에 그림자를 적용하고, `box-shadow`는 요소의 박스에 그림자를 적용합니다.
-
-## Q2. 그림자 오프셋의 양수와 음수 방향은 무엇인가요?
-
-수평 양수는 오른쪽, 음수는 왼쪽입니다. 수직 양수는 아래쪽, 음수는 위쪽입니다.
-
-## Q3. Blur radius는 무엇을 하나요?
-
-그림자 가장자리의 번짐 정도를 조절합니다. 투명도는 색상 alpha로 별도 지정합니다.
-
-## Q4. `box-shadow`의 네 번째 길이값은 무엇인가요?
-
-Spread radius이며 그림자 크기를 확장하거나 축소합니다.
-
-## Q5. `inset`은 무엇인가요?
-
-박스 바깥이 아닌 안쪽에 그림자를 그립니다.
-
-## Q6. 그림자가 주변 레이아웃을 밀어내나요?
-
-아닙니다. 그림자는 일반적으로 레이아웃 공간을 차지하지 않습니다.
-
-## Q7. `gray`와 `grey`는 다른 색인가요?
-
-CSS에서는 같은 색상 키워드입니다.
-
-## Q8. Hover 카드에 focus 상태가 필요한 이유는 무엇인가요?
-
-키보드 사용자는 hover를 사용할 수 없으므로 동일한 시각적 피드백과 명확한 포커스 표시가 필요합니다.
-
-## Q9. 그림자와 `z-index`는 같은 개념인가요?
-
-아닙니다. 그림자는 시각적 효과이고, 실제 레이어 순서는 stacking context와 `z-index`가 결정합니다.
-
-## Q10. 큰 그림자 애니메이션의 문제는 무엇인가요?
-
-넓은 영역을 다시 그려야 해 많은 요소에서 반복되면 렌더링 성능이 저하될 수 있습니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. 기본 텍스트 그림자
 
@@ -1701,7 +1663,7 @@ hover 시 `translateY(-2px)` 전환을 사용하되 움직임 감소 환경에�
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -2011,7 +1973,7 @@ outline도 함께 유지하는 편이 안전합니다.
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## Text shadow
 
@@ -2070,7 +2032,7 @@ outline도 함께 유지하는 편이 안전합니다.
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - `text-shadow`는 글자에, `box-shadow`는 요소 박스에 그림자를 적용한다.
 - 수평 오프셋 양수는 오른쪽, 음수는 왼쪽이다.

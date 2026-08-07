@@ -1,3 +1,10 @@
+---
+title: CSS Float와 Clear
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # CSS Float와 Clear
 
 ## 문서 정보
@@ -6,9 +13,7 @@
 | --- | --- |
 | 문서 | `10_CSS_Float와_Clear.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `09_CSS_Overflow와_스크롤.md` |
-| 다음 학습 | `11_CSS_그림자와_시각효과.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/10_float.html`, `workspace_me/workspace_html/css/asset/css/10_float.css`, `workspace_teacher/workspace_html/css/10_float.html`, `workspace_teacher/workspace_html/css/asset/css/10_float.css` |
+| 원본 기준 | `workspace_html/css/10_float.html`, `workspace_html/css/asset/css/10_float.css`, `workspace_teacher/workspace_html/css/10_float.html`, `workspace_teacher/workspace_html/css/asset/css/10_float.css` |
 | 핵심 범위 | `float`, `clear`, clearfix, 텍스트 감싸기, 좌우 배치, 부모 높이 붕괴, 레거시 레이아웃 |
 | 프로젝트 연결 | 기사 이미지 배치, 레거시 헤더, 좌우 버튼, 기존 코드 유지보수, Flexbox 전환 |
 
@@ -577,7 +582,7 @@ HTML:
 
 원본:
 
-```css
+```text
 .clearFix:after
 ```
 
@@ -599,7 +604,7 @@ HTML:
 
 프로젝트에서는 다음처럼 이름 규칙을 통일할 수 있습니다.
 
-```css
+```text
 .clearfix
 ```
 
@@ -1006,7 +1011,7 @@ body {
 
 ---
 
-# 39. My Code 분석
+# 39. 내 코드 분석
 
 ## 39.1 장점
 
@@ -1032,7 +1037,7 @@ body {
 
 ---
 
-# 40. Teacher Code 분석
+# 40. 강사님 코드 분석
 
 ## 40.1 장점
 
@@ -1056,7 +1061,7 @@ body {
 
 ---
 
-# 41. My Code vs Teacher Code
+# 41. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1352,51 +1357,8 @@ HTML 구조가 불필요하게 늘어납니다.
 
 ---
 
-# 49. 면접·복습 포인트
 
-## Q1. Float의 본래 목적은 무엇인가요?
-
-이미지 같은 요소를 한쪽에 배치하고 뒤따르는 텍스트가 그 주변으로 흐르게 만드는 것입니다.
-
-## Q2. float 요소는 일반 흐름에 남아 있나요?
-
-일반 블록 흐름에서는 빠지지만 주변 줄 내용과 텍스트 흐름에는 영향을 줍니다.
-
-## Q3. `float: right` 요소가 여러 개면 순서가 어떻게 보이나요?
-
-먼저 등장한 요소가 가능한 가장 오른쪽을 차지하고, 뒤 요소가 그 왼쪽에 배치될 수 있습니다.
-
-## Q4. `clear: both`는 무엇을 하나요?
-
-clear가 적용된 요소가 앞선 왼쪽·오른쪽 float 아래에서 시작하도록 배치합니다.
-
-## Q5. Clearfix가 필요한 이유는 무엇인가요?
-
-자식이 모두 float일 때 부모가 자식 높이를 포함하지 못하는 문제를 해결하기 위해 사용합니다.
-
-## Q6. 원본 clearfix는 어떻게 작동하나요?
-
-부모의 `::after` 가상 요소를 만들고 `clear: both`를 적용해 float 아래까지 부모의 흐름을 확장합니다.
-
-## Q7. Clearfix의 현대적인 대안은 무엇인가요?
-
-`display: flow-root`를 사용할 수 있습니다.
-
-## Q8. float가 적용되면 요소는 inline-block이 되나요?
-
-정확히 inline-block으로 설정되는 것은 아니며 blockification 규칙에 따라 독립적인 박스처럼 동작합니다.
-
-## Q9. 새 레이아웃에 float보다 Flexbox와 Grid가 권장되는 이유는 무엇인가요?
-
-행·열 정렬, 간격, 반응형 배치를 더 명확하고 안정적으로 제어할 수 있기 때문입니다.
-
-## Q10. Float가 현재도 유용한 상황은 무엇인가요?
-
-기사 이미지 주변 텍스트 감싸기와 레거시 레이아웃 유지보수입니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. 기사 이미지
 
@@ -1521,7 +1483,7 @@ HTML에 `.coup`이 없는데 `.coup div` 규칙이 있습니다. 코드 리뷰�
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -1825,7 +1787,7 @@ body {
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## Float 기본
 
@@ -1880,7 +1842,7 @@ body {
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - float는 이미지 주변으로 텍스트를 흐르게 하는 것이 본래 목적이다.
 - `float: left`는 요소를 왼쪽에, `float: right`는 오른쪽에 배치한다.

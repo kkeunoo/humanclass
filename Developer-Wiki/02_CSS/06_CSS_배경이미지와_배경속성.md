@@ -1,3 +1,10 @@
+---
+title: CSS 배경 이미지와 배경 속성
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # CSS 배경 이미지와 배경 속성
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `06_CSS_배경이미지와_배경속성.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `05_CSS_투명도와_요소숨김.md` |
-| 다음 학습 | `07_CSS_텍스트와_글꼴.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/06_background.html`, `workspace_me/workspace_html/css/asset/css/06_background.css`, `workspace_teacher/workspace_html/css/06_background.html`, `workspace_teacher/workspace_html/css/asset/css/06_background.css` |
+| 원본 기준 | `workspace_html/css/06_background.html`, `workspace_html/css/asset/css/06_background.css`, `workspace_teacher/workspace_html/css/06_background.html`, `workspace_teacher/workspace_html/css/asset/css/06_background.css` |
 | 핵심 범위 | `background-image`, `background-repeat`, `background-size`, `background-position`, `background-attachment`, `background` 단축 속성 |
 | 프로젝트 연결 | Hero 영역, 카드 배경, 프로필 이미지, 배경 오버레이, 패턴 이미지, 고정 배경 효과 |
 
-> 이 문서는 수업 원본의 `06_background.html`과 `06_background.css`를 기준으로 작성했습니다. 원본의 배경 이미지 실습을 중심으로 정리하고, 실무에서 자주 사용하는 다중 배경, 그라디언트, 오버레이, 접근성·성능 주의사항은 **확장 학습**으로 구분해 보완했습니다.
+> 이 문서는 내 코드와 강사님 코드의 `06_background.html`, `06_background.css`를 비교해 배경색·배경 이미지·반복·크기·위치·고정·단축 속성의 실제 동작을 정리한다. 원본의 외부 이미지 의존과 `cover`·`contain` 설명을 보완하고, Hero·Card·Overlay·Gradient를 실무 패턴으로 연결한다.
 
 ---
 
@@ -876,7 +881,7 @@ background: url("image.webp") center / cover no-repeat;
 
 ---
 
-# 28. My Code와 Teacher Code의 `#back3`
+# 28. 내 코드와 강사님 코드의 `#back3`
 
 내 코드:
 
@@ -1171,7 +1176,7 @@ body {
 
 ---
 
-# 37. My Code 분석
+# 37. 내 코드 분석
 
 ## 37.1 장점
 
@@ -1187,7 +1192,7 @@ body {
 
 ---
 
-# 38. My Code 개선점
+# 38. 내 코드 개선점
 
 ## 38.1 `cover` 설명 보완
 
@@ -1233,7 +1238,7 @@ color || img || repeat || attachment || position
 
 ---
 
-# 39. Teacher Code 분석
+# 39. 강사님 코드 분석
 
 강사님 코드는 배경 속성을 다음 순서로 실습합니다.
 
@@ -1251,7 +1256,7 @@ color || img || repeat || attachment || position
 
 ---
 
-# 40. Teacher Code 개선점
+# 40. 강사님 코드 개선점
 
 ## 40.1 `http` 이미지 예제
 
@@ -1291,7 +1296,7 @@ CSS 배경을 사용하면 대체 텍스트를 제공할 수 없습니다.
 
 ---
 
-# 41. My Code vs Teacher Code
+# 41. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1648,55 +1653,8 @@ CSS 높이 또는 테스트 컨테이너를 사용합니다.
 
 ---
 
-# 52. 면접·복습 포인트
 
-## Q1. `cover`와 `contain`의 차이는 무엇인가요?
-
-둘 다 이미지 비율을 유지합니다. `cover`는 배경 영역을 빈틈없이 덮지만 이미지 일부가 잘릴 수 있고, `contain`은 이미지 전체를 보여 주지만 빈 공간이 생길 수 있습니다.
-
-## Q2. `background-repeat`의 기본값은 무엇인가요?
-
-`repeat`이며 가로와 세로 방향 모두 반복합니다.
-
-## Q3. CSS 배경 이미지 URL은 무엇을 기준으로 계산하나요?
-
-CSS 파일의 위치를 기준으로 계산합니다.
-
-## Q4. `background-position: center`는 어떤 역할을 하나요?
-
-배경 이미지를 가로와 세로 중앙에 배치합니다.
-
-## Q5. `background-attachment: fixed`는 무엇인가요?
-
-배경이 뷰포트에 고정된 것처럼 보이도록 하는 값입니다. 모바일 지원과 성능에 주의해야 합니다.
-
-## Q6. `background` 단축 속성에서 크기를 함께 쓰려면 어떻게 하나요?
-
-위치 뒤에 슬래시를 사용합니다.
-
-```css
-background: url("image.webp") center / cover no-repeat;
-```
-
-## Q7. 의미 있는 프로필 이미지에 CSS 배경을 사용하면 어떤 문제가 있나요?
-
-대체 텍스트를 제공할 수 없어 접근성 정보가 부족해집니다. 일반적으로 `<img>`가 적절합니다.
-
-## Q8. 배경 이미지 위 텍스트 대비를 높이는 방법은 무엇인가요?
-
-반투명 그라디언트 오버레이를 이미지 위 레이어로 함께 사용합니다.
-
-## Q9. `background` 단축 속성의 주의점은 무엇인가요?
-
-관련 개별 속성을 기본값으로 초기화할 수 있으므로 선언 순서와 포함값을 확인해야 합니다.
-
-## Q10. 그라디언트는 배경색인가요, 배경 이미지인가요?
-
-CSS에서는 `background-image`로 취급됩니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. 배경 이미지
 
@@ -1826,7 +1784,7 @@ CSS에서는 `background-image`로 취급됩니다.
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -2150,7 +2108,7 @@ body {
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## 기본 배경 속성
 
@@ -2202,7 +2160,7 @@ body {
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - CSS 배경은 요소 뒤에 색상과 이미지를 그리는 장식 기능이다.
 - 배경 이미지는 콘텐츠가 아니므로 대체 텍스트를 제공하지 않는다.

@@ -1,3 +1,10 @@
+---
+title: CSS 박스 모델
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # CSS 박스 모델
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `03_CSS_박스모델.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `02_CSS_단위와_색상.md` |
-| 다음 학습 | `04_CSS_배경과_테두리.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/03_box.html`, `workspace_me/workspace_html/css/asset/css/03_box.css`, `workspace_teacher/workspace_html/css/03_box.html`, `workspace_teacher/workspace_html/css/asset/css/03_box.css` |
+| 원본 기준 | `workspace_html/css/03_box.html`, `workspace_html/css/asset/css/03_box.css`, `workspace_teacher/workspace_html/css/03_box.html`, `workspace_teacher/workspace_html/css/asset/css/03_box.css` |
 | 핵심 범위 | `width`, `height`, `min-width`, `max-width`, `margin`, `padding`, `border`, `border-radius`, `box-sizing`, 가운데 정렬, 마진 상쇄 |
 | 프로젝트 연결 | 카드, 프로필 이미지, 채팅 말풍선, 반응형 컨테이너, 공통 Reset, 레이아웃 디버깅 |
 
-> 이 문서는 수업 원본의 `03_box.html`과 `03_box.css`를 기준으로 작성했습니다. 원본에서 확인되는 실습 내용과 주석은 보존하되, 브라우저 동작을 더 정확하게 설명하고 실무에서 자주 사용하는 박스 모델 패턴을 확장 학습으로 추가했습니다.
+> 이 문서는 내 코드와 강사님 코드의 `03_box.html`, `03_box.css`를 비교해 박스 크기·간격·테두리·가운데 정렬·마진 상쇄의 실제 동작을 정리한다. 원본의 부정확한 주석은 수정하고, `border-box`, `flow-root`, `gap`을 활용한 실무형 간격 설계까지 연결한다.
 
 ---
 
@@ -1547,7 +1552,7 @@ object-fit: cover;
 
 ## 52.4 반복 선언
 
-```css
+```text
 margin-top: 50px;
 margin-right: 40px;
 ...
@@ -1561,7 +1566,7 @@ margin: 30px;
 
 ## 52.5 테두리 개별 설정 덮어쓰기
 
-```css
+```text
 border-top-...
 border-left: ...
 border: 1px solid red;
@@ -1585,7 +1590,7 @@ border: 1px solid red;
 
 ---
 
-# 53. My Code vs Teacher Code
+# 53. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1953,51 +1958,8 @@ border: 1px solid red;
 
 ---
 
-# 64. 면접·복습 포인트
 
-## Q1. CSS 박스 모델의 네 영역은 무엇인가요?
-
-콘텐츠, 패딩, 테두리, 마진입니다.
-
-## Q2. 기본 `content-box`에서 `width`는 무엇을 의미하나요?
-
-콘텐츠 영역의 너비를 의미합니다. 패딩과 테두리는 바깥에 추가됩니다.
-
-## Q3. `border-box`의 장점은 무엇인가요?
-
-지정한 너비와 높이에 패딩과 테두리가 포함되어 최종 크기를 예측하기 쉽습니다.
-
-## Q4. `margin`과 `padding`의 차이는 무엇인가요?
-
-마진은 테두리 바깥의 외부 간격이고, 패딩은 콘텐츠와 테두리 사이의 내부 간격입니다.
-
-## Q5. `margin: 10px auto`는 무엇을 의미하나요?
-
-상하 마진은 10px, 좌우 마진은 자동입니다. 남는 가로 공간을 좌우가 나누어 블록 요소를 가운데 정렬할 수 있습니다.
-
-## Q6. 마진 상쇄는 언제 발생하나요?
-
-일반 블록 흐름에서 맞닿은 일부 수직 마진 사이, 부모와 첫·마지막 자식의 마진 등 특정 조건에서 발생합니다.
-
-## Q7. `overflow: hidden`으로 마진 상쇄를 해결할 때 주의점은 무엇인가요?
-
-넘치는 콘텐츠, 그림자, 포커스 표시, 드롭다운 등이 잘릴 수 있습니다.
-
-## Q8. 프로필 이미지를 원형으로 만들 때 필요한 조건은 무엇인가요?
-
-가로와 세로가 같아야 하며 `border-radius: 50%`를 사용합니다. 이미지 비율 유지를 위해 `object-fit: cover`를 함께 사용할 수 있습니다.
-
-## Q9. `min-width`와 `max-width`는 어떤 역할을 하나요?
-
-요소의 너비가 지정한 최소값보다 작아지거나 최대값보다 커지는 것을 제한합니다.
-
-## Q10. `gap`이 마진보다 유리한 경우는 언제인가요?
-
-Flex 또는 Grid 자식 사이의 일정한 간격을 부모에서 관리할 때 유리하며 마진 상쇄나 마지막 항목 예외가 없습니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. 박스 모델 계산
 
@@ -2199,7 +2161,7 @@ input {
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -2537,7 +2499,7 @@ input {
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## 박스 모델
 
@@ -2595,7 +2557,7 @@ input {
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - 대부분의 HTML 요소는 콘텐츠, 패딩, 테두리, 마진으로 구성된 박스로 계산된다.
 - 기본 `content-box`에서는 `width`와 `height`가 콘텐츠 영역만 지정한다.

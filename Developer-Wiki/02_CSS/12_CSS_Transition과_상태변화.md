@@ -1,3 +1,10 @@
+---
+title: CSS Transition과 상태 변화
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # CSS Transition과 상태 변화
 
 ## 문서 정보
@@ -6,9 +13,7 @@
 | --- | --- |
 | 문서 | `12_CSS_Transition과_상태변화.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `11_CSS_그림자와_시각효과.md` |
-| 다음 학습 | `13_CSS_Transform.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/12_transition.html`, `workspace_teacher/workspace_html/css/12_transition.html` |
+| 원본 기준 | `workspace_html/css/12_transition.html`, `workspace_teacher/workspace_html/css/12_transition.html` |
 | 핵심 범위 | `transition`, `transition-property`, `transition-duration`, `transition-timing-function`, `transition-delay`, hover 진입·해제 차이 |
 | 프로젝트 연결 | 버튼 hover, 카드 상태 변화, 메뉴 강조, 색상 전환, 크기 변화, 접근 가능한 인터랙션 |
 
@@ -206,7 +211,7 @@ hover 시 다음 값이 즉시 변경됩니다.
   width: 200px;
   height: 200px;
 
-  /* hover자체에 transition을 두면 hover자체에만 먹음 */
+  /* Transition을 Hover 상태에만 선언하면 Pointer가 올라갈 때는 전환되지만, Hover가 해제되는 순간 기본 상태에는 Transition 선언이 없어 즉시 되돌아갈 수 있습니다. */
   transition: all 0.5s;
 }
 ```
@@ -256,7 +261,7 @@ transition: all 0.5s;
 내 코드:
 
 ```text
-hover자체에 transition을 두면 hover자체에만 먹음
+Transition을 Hover 상태에만 선언하면 Pointer가 올라갈 때는 전환되지만, Hover가 해제되는 순간 기본 상태에는 Transition 선언이 없어 즉시 되돌아갈 수 있습니다.
 ```
 
 초보자 관점에서 결과를 기억하기 좋은 표현입니다.
@@ -415,7 +420,7 @@ ms → 밀리초
 
 같은 시간:
 
-```css
+```text
 0.5s
 500ms
 ```
@@ -460,7 +465,7 @@ transition: all 0.075s;
 
 대표 값:
 
-```css
+```text
 ease
 linear
 ease-in
@@ -470,7 +475,7 @@ ease-in-out
 
 기본값:
 
-```css
+```text
 ease
 ```
 
@@ -613,7 +618,7 @@ UI hover에는 `ease`, `ease-out`, `ease-in-out`을 자주 검토합니다.
 
 `all`을 사용하면 다음 변화가 모두 transition 대상이 됩니다.
 
-```css
+```text
 background-color
 border-radius
 width
@@ -642,7 +647,7 @@ Transition은 중간값을 계산할 수 있는 속성에서 자연스럽게 동
 
 예:
 
-```css
+```text
 color
 background-color
 width
@@ -1154,7 +1159,7 @@ box.addEventListener("transitionend", (event) => {
 
 ---
 
-# 43. My Code 분석
+# 43. 내 코드 분석
 
 ## 43.1 장점
 
@@ -1176,7 +1181,7 @@ box.addEventListener("transitionend", (event) => {
 
 ---
 
-# 44. Teacher Code 분석
+# 44. 강사님 코드 분석
 
 ## 44.1 장점
 
@@ -1197,7 +1202,7 @@ box.addEventListener("transitionend", (event) => {
 
 ---
 
-# 45. My Code vs Teacher Code
+# 45. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1478,51 +1483,8 @@ transition: width 0.5s;
 
 ---
 
-# 53. 면접·복습 포인트
 
-## Q1. CSS transition은 무엇인가요?
-
-한 CSS 상태에서 다른 상태로 값이 바뀔 때 중간값을 시간에 따라 자동으로 만들어 주는 기능입니다.
-
-## Q2. Transition을 기본 상태에 작성하는 이유는 무엇인가요?
-
-hover 진입뿐 아니라 hover 해제 시에도 같은 transition 선언이 유지되어 양방향 전환이 가능하기 때문입니다.
-
-## Q3. `transition: width 1s`는 무엇을 의미하나요?
-
-width 속성만 1초 동안 전환합니다.
-
-## Q4. `transition: all 0.5s`의 단점은 무엇인가요?
-
-의도하지 않은 속성까지 전환될 수 있고 이후 추가된 속성도 자동으로 애니메이션되어 디버깅과 성능 관리가 어려워질 수 있습니다.
-
-## Q5. Duration에서 `0.5s`와 `500ms`는 같은가요?
-
-같습니다.
-
-## Q6. Timing function은 무엇을 결정하나요?
-
-전환 시간 동안 변화 속도가 어떻게 진행되는지를 결정합니다.
-
-## Q7. Width와 height 대신 transform을 사용하는 이유는 무엇인가요?
-
-실제 레이아웃 크기를 변경하지 않아 주변 요소 이동과 레이아웃 계산을 줄일 수 있기 때문입니다.
-
-## Q8. Transition과 animation의 차이는 무엇인가요?
-
-Transition은 보통 상태 변화가 필요하고 두 상태 사이를 연결합니다. Animation은 keyframes로 여러 단계를 정의하고 자동 반복이나 재생을 구성할 수 있습니다.
-
-## Q9. Hover 효과에 focus 상태가 필요한 이유는 무엇인가요?
-
-키보드 사용자는 hover를 사용할 수 없으므로 같은 시각적 피드백과 포커스 위치 확인이 필요합니다.
-
-## Q10. `prefers-reduced-motion`은 왜 사용하나요?
-
-시스템에서 움직임 감소를 요청한 사용자에게 불필요한 확대, 이동, 애니메이션을 줄이기 위해 사용합니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. Width Transition
 
@@ -1633,7 +1595,7 @@ width와 height transition이 주변 요소에 미칠 수 있는 영향을 설�
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -1953,7 +1915,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## Transition 기본
 
@@ -2012,7 +1974,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - CSS transition은 두 상태 사이의 속성값 변화를 시간에 따라 부드럽게 연결한다.
 - transition이 동작하려면 시작값과 종료값이 필요하다.

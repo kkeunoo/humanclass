@@ -1,3 +1,10 @@
+---
+title: CSS 텍스트와 글꼴
+version: v2.0-final
+last_updated: 2026-08-06
+status: Completed
+---
+
 # CSS 텍스트와 글꼴
 
 ## 문서 정보
@@ -6,13 +13,11 @@
 | --- | --- |
 | 문서 | `07_CSS_텍스트와_글꼴.md` |
 | 분류 | `02_CSS` |
-| 권장 선수 학습 | `06_CSS_배경이미지와_배경속성.md` |
-| 다음 학습 | `08_CSS_Float와_Clear.md` |
-| 원본 기준 | `workspace_me/workspace_html/css/07_font.html`, `workspace_me/workspace_html/css/asset/css/07_font.css`, `workspace_teacher/workspace_html/css/07_font.html`, `workspace_teacher/workspace_html/css/asset/css/07_font.css` |
+| 원본 기준 | `workspace_html/css/07_font.html`, `workspace_html/css/asset/css/07_font.css`, `workspace_teacher/workspace_html/css/07_font.html`, `workspace_teacher/workspace_html/css/asset/css/07_font.css` |
 | 핵심 범위 | `@font-face`, `font-family`, `font-size`, `font-style`, `font-weight`, `line-height`, `letter-spacing`, `text-align`, `text-decoration`, `white-space`, `text-overflow`, `overflow-wrap`, `word-break` |
 | 프로젝트 연결 | 본문 타이포그래피, 제목 체계, 버튼·메뉴 글꼴, 한 줄 말줄임표, 긴 URL 처리, 웹폰트 성능, 접근성 |
 
-> 이 문서는 수업 원본의 `07_font.html`과 `07_font.css`를 기준으로 작성했습니다. 원본의 주석과 실험값은 보존하면서, 잘못된 HTML 중첩, `font-weight` 기본값 설명, 인라인 정렬, 단어 줄바꿈, 웹폰트 성능과 접근성은 정확한 기준으로 보완했습니다.
+> 이 문서는 내 코드와 강사님 코드의 `07_font.html`, `07_font.css`를 비교해 글꼴·크기·굵기·줄높이·자간·정렬·장식·줄바꿈의 실제 동작을 정리한다. 잘못된 HTML 중첩과 절대적인 글꼴 설명은 수정하고, 웹폰트 Fallback·가독성·말줄임표·긴 문자열 처리까지 실무 기준으로 연결한다.
 
 ---
 
@@ -1716,7 +1721,7 @@ body {
 
 ---
 
-# 56. My Code 분석
+# 56. 내 코드 분석
 
 ## 56.1 장점
 
@@ -1733,7 +1738,7 @@ body {
 
 ---
 
-# 57. My Code 개선점
+# 57. 내 코드 개선점
 
 ## 57.1 잘못된 `p > div`
 
@@ -1783,7 +1788,7 @@ letter-spacing: 0em
 
 ---
 
-# 58. Teacher Code 분석
+# 58. 강사님 코드 분석
 
 ## 58.1 장점
 
@@ -1795,7 +1800,7 @@ letter-spacing: 0em
 
 ---
 
-# 59. Teacher Code 개선점
+# 59. 강사님 코드 개선점
 
 ## 59.1 `font-weight` 기본값 오류
 
@@ -1841,7 +1846,7 @@ font-family: "OngleipParkDahyeon", Arial;
 
 ---
 
-# 60. My Code vs Teacher Code
+# 60. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -2247,51 +2252,8 @@ Flex 항목 예:
 
 ---
 
-# 71. 면접·복습 포인트
 
-## Q1. `@font-face`는 무엇인가요?
-
-외부 또는 로컬 폰트 파일을 CSS 글꼴 이름으로 등록하여 사용자 컴퓨터에 설치되지 않은 글꼴도 웹에서 사용할 수 있게 합니다.
-
-## Q2. `font-display: swap`은 무엇인가요?
-
-웹폰트가 로드되기 전에는 대체 글꼴로 텍스트를 먼저 표시하고, 로드 후 웹폰트로 교체하는 정책입니다.
-
-## Q3. `font-weight`의 기본값은 무엇인가요?
-
-`normal`이며 일반적으로 숫자 400에 해당합니다.
-
-## Q4. CSS에서 700을 지정하면 모든 폰트가 정확히 700 굵기로 표시되나요?
-
-아닙니다. 실제 폰트 파일이 해당 굵기를 제공해야 하며, 없으면 브라우저가 가까운 굵기나 합성 굵기를 사용할 수 있습니다.
-
-## Q5. 본문 `line-height`에 단위 없는 값을 자주 사용하는 이유는 무엇인가요?
-
-자식의 글자 크기가 달라져도 각 요소의 글자 크기에 비례한 줄 높이를 계산하기 쉽기 때문입니다.
-
-## Q6. `text-align: right`를 인라인 링크 자체에 지정하면 왜 이동하지 않을 수 있나요?
-
-인라인 요소는 콘텐츠 너비만큼의 영역을 가지므로 정렬할 남는 공간이 거의 없습니다. 부모 블록에 지정해야 부모 너비 안에서 정렬됩니다.
-
-## Q7. 한 줄 말줄임표에 필요한 속성은 무엇인가요?
-
-너비 제한과 함께 `white-space: nowrap`, `overflow: hidden`, `text-overflow: ellipsis`가 필요합니다.
-
-## Q8. `word-wrap: break-word`와 `word-break: break-all`의 차이는 무엇인가요?
-
-`break-word`는 긴 문자열이 넘칠 때 줄바꿈을 허용하며 정상 단어 경계를 가능한 유지합니다. `break-all`은 문자 사이 어디에서든 끊을 수 있어 영문 가독성이 떨어질 수 있습니다.
-
-## Q9. CSS로 `div`를 `h1`처럼 크게 만들면 실제 제목이 되나요?
-
-아닙니다. 모양만 비슷할 뿐 문서 구조와 접근성에서 제목 의미를 제공하지 않습니다.
-
-## Q10. 의미상 강조와 단순 기울임은 어떻게 구분하나요?
-
-의미상 강조는 `<em>`을 사용하고, 단순 시각적 기울임은 CSS `font-style`을 사용합니다.
-
----
-
-# Problems
+# 종합실습
 
 ## 문제 1. 글자 크기
 
@@ -2420,7 +2382,7 @@ Flex 항목 내부 제목의 말줄임표가 동작하도록 필요한 추가 �
 
 ---
 
-# Answers & Explanations
+# 정답과 해설
 
 ## 정답 1
 
@@ -2708,7 +2670,7 @@ select {
 
 ---
 
-# Final Checklist
+# 최종 체크리스트
 
 ## HTML 구조
 
@@ -2775,7 +2737,7 @@ select {
 
 ---
 
-# Key Summary
+# 핵심 요약
 
 - CSS 타이포그래피는 글꼴, 크기, 굵기, 줄 높이, 자간, 정렬, 장식, 줄바꿈을 함께 다룬다.
 - 원본의 `p` 안에 `div`를 넣은 구조는 유효하지 않으며 브라우저가 DOM을 자동 보정할 수 있다.
