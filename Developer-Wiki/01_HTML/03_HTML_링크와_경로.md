@@ -1,3 +1,10 @@
+---
+title: HTML 링크와 경로
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # HTML 링크와 경로
 
 ## 문서 정보
@@ -5,12 +12,14 @@
 | 항목 | 내용 |
 | --- | --- |
 | 문서 | `03_HTML_링크와_경로.md` |
-| 권장 선수 학습 | `02_HTML_기본태그.md` |
-| 다음 학습 | `04_HTML_목록태그.md` |
-| 학습 범위 | `a`, `href`, `target`, URL 스킴, 상대 경로, 루트 상대 경로, 절대 URL, 문서 내부 이동 |
-| 프로젝트 연결 | 내비게이션, 상세 페이지 이동, 외부 사이트 연결, 전화·메일 링크, 페이지 내 목차 |
+| 분류 | `01_HTML` |
+| 원본 기준 | `workspace_html/03_상대주소/03_a.html`, `workspace_teacher/workspace_html/03_상대주소/03_a.html` |
+| 핵심 범위 | `a`, `href`, `target`, `rel`, URL Scheme, 상대 경로, Root Relative Path, Absolute URL, Fragment Link, Download |
+| 학습 범위 | Link, 새 Tab, 전화·Email, Image Link, 파일 경로, 문서 내부 이동, 접근성 |
+| 프로젝트 연결 | Navigation, 상세 페이지 이동, 외부 Site 연결, 전화·Email Link, Page 내부 목차, Download |
+| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
 
-> 링크는 웹 문서를 서로 연결하는 핵심 기능입니다. 링크 자체의 문법은 단순하지만, 현재 파일의 위치와 이동할 대상의 위치를 함께 판단해야 하므로 경로 개념을 정확히 이해해야 합니다.
+> 이 문서는 내 코드와 강사님 코드의 `03_a.html`을 비교해 `a`, `href`, `target`, URL Scheme과 파일 경로의 동작을 정리한다. 원본의 빠진 `href`·`id`·`alt`, 잘못된 따옴표, `http` Link, Root Relative Path를 절대 주소라고 부른 설명은 수정하고, Link 목적·새 Tab·보안·접근성·Debugging까지 실무 기준으로 보완한다.
 
 # 학습 목표
 
@@ -137,7 +146,7 @@
 | `noopener` | 새 페이지가 원래 페이지를 제어하는 것을 방지 |
 | `noreferrer` | 이동 대상에 이전 페이지 주소가 전달되는 것을 제한 |
 
-현대 브라우저는 `_blank`에 대한 보호를 기본 제공하는 경우가 많지만, 의도를 명확히 드러내기 위해 외부 링크에 `rel="noopener noreferrer"`를 작성할 수 있습니다.
+현대 Browser는 `_blank` Link에 `noopener`에 준하는 보호를 적용하는 경우가 많지만, 지원 범위와 의도를 명확히 하기 위해 외부 Link에는 `rel="noopener"`를 명시할 수 있습니다. `noreferrer`는 Referrer 전달도 막으므로 분석 요구사항을 고려해 추가합니다.
 
 ## 3.3 모든 링크를 새 탭으로 열지 않는다
 
@@ -618,121 +627,361 @@ id="bottom"인 요소를 찾음
 
 # 15. 내 코드와 강사님 코드 비교
 
-## 15.1 공통 학습 내용
+두 원본은 외부 Link, 새 Tab, URL Scheme, Image Link, 상대 경로, Root Relative Path, Page 내부 이동을 같은 순서로 실습한다.
 
-두 코드 모두 다음 내용을 실습합니다.
+## 15.1 기본 문서 구조
 
-- 외부 사이트 링크
-- 새 탭 열기
-- `tel:`과 `mailto:`
-- 이미지 링크
-- 같은 프로젝트 안의 다른 파일 이동
-- 상대 경로와 루트 상대 경로
-- 문서 내부 위·아래 이동
-
-## 15.2 주요 차이 비교
-
-| 항목 | 내 코드 | 강사님 코드 | 검토 |
-| --- | --- | --- | --- |
-| 위쪽 제목 | `id="top"` 지정 | `id="top"` 지정 | 둘 다 적절 |
-| 아래 이동 링크 | `href="#bottom"` 작성 | `href` 없음 | 내 코드가 실제 이동 가능 |
-| 아래쪽 대상 | `id="bottom"` 지정 | `id` 없음 | 내 코드가 내부 이동 완성 |
-| 구글 URL | `https://google.com` | `http://google.com` | `https` 권장 |
-| 이미지 링크 | `target="_blank""` 오타 | 기본 현재 탭 | 내 코드 따옴표 수정 필요 |
-| 이미지 대체 텍스트 | 없음 | 없음 | 두 코드 모두 `alt` 보완 필요 |
-| 외부 새 탭 보안 | `rel` 없음 | `rel` 없음 | 둘 다 보완 가능 |
-| 상대 경로 설명 | 비교적 상세 | 핵심만 간결 | 학습 노트에서는 내 설명이 유용 |
-| 반복 `br` | 50개 | 50개 | 내부 이동 실습용으로만 허용 |
-
-## 15.3 내 코드의 장점
-
-내 코드는 문서 내부 이동을 실제로 완성했습니다.
+두 코드 모두 HTML5 기본 구조를 사용한다.
 
 ```html
-<h1 id="top">여기는 맨 위</h1>
-<a href="#bottom">맨 아래로</a>
-
-<strong id="bottom">여기는 맨 아래</strong>
-<a href="#top">맨 위로</a>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+        <title>Document</title>
+    </head>
+</html>
 ```
 
-`href="#bottom"`과 `id="bottom"`이 연결되어 아래로 이동할 수 있습니다.
-
-또한 상대 주소와 절대 주소에 관한 설명을 상세하게 기록하여 복습할 때 이해하기 쉽습니다.
-
-## 15.4 내 코드에서 수정할 부분
-
-### 잘못된 따옴표
-
-```html
-<a href="https://comic.naver.com/..." target="_blank"">
-```
-
-수정합니다.
-
-```html
-<a
-  href="https://comic.naver.com/..."
-  target="_blank"
-  rel="noopener noreferrer"
->
-```
-
-### 이미지 `alt` 누락
-
-```html
-<img src="https://image-comic.pstatic.net/...jpg">
-```
-
-수정합니다.
-
-```html
-<img
-  src="https://image-comic.pstatic.net/...jpg"
-  alt="웹툰 상세 페이지로 이동"
->
-```
-
-### 문서 언어
-
-한글 문서라면 다음과 같이 작성합니다.
+본문이 한국어이므로 다음처럼 문서 언어를 맞추는 편이 적절하다.
 
 ```html
 <html lang="ko">
 ```
 
-## 15.5 강사님 코드에서 보완할 부분
-
-강사님 코드의 다음 링크는 `href`가 없으므로 아래로 이동하지 않습니다.
+`<title>Document</title>`도 실제 Page 목적을 드러내는 제목으로 바꾼다.
 
 ```html
+<title>HTML 링크와 경로 실습</title>
+```
+
+## 15.2 복원 메모와 설명 수준
+
+내 코드에는 다음 복원 메모가 있다.
+
+```html
+<!-- 0723_HTML_상대주소/절대주소_restore -->
+```
+
+또한 Emmet, Viewport, 새 Tab·새 Window 조작, 상대 경로 기호에 관한 설명이 강사님 코드보다 상세하다.
+
+복원 이력은 학습 개념과 직접 관련이 없다면 Git Commit이나 별도 작업 기록으로 분리하는 편이 문서 집중도를 높인다.
+
+## 15.3 아래로 이동하는 Link
+
+### 내 코드
+
+```html
+<h1 id="top">여기는 맨 위</h1>
+<a href="#bottom">맨 아래로</a>
+```
+
+```html
+<strong id="bottom">
+    여기는 맨 아래
+</strong>
+
+<a href="#top">맨 위로</a>
+```
+
+`href`와 `id`가 연결되어 위·아래 이동이 모두 동작한다.
+
+### 강사님 코드
+
+```html
+<h1 id="top">맨 위</h1>
 <a>맨 아래로</a>
 ```
 
-아래쪽 요소에도 `id`가 없습니다.
-
 ```html
 <strong>여기 맨 아래임</strong>
+<a href="#top">맨 위로</a>
 ```
 
-수정하면 다음과 같습니다.
+아래로 이동하는 `a`에 `href`가 없고 아래쪽 대상에도 `id`가 없다. 따라서 Text는 보이지만 아래로 이동하는 Link는 아니다.
+
+개선:
 
 ```html
-<a href="#bottom">맨 아래로</a>
+<a href="#bottom">
+    맨 아래로
+</a>
 
-<strong id="bottom">여기 맨 아래</strong>
+<strong id="bottom">
+    여기 맨 아래
+</strong>
 ```
 
-## 15.6 학습 코드와 실무 코드
+## 15.4 Google 주소의 Protocol
 
-수업 코드의 목적은 링크와 경로의 동작을 빠르게 확인하는 것입니다. 실무에서는 다음 사항을 추가로 고려합니다.
+### 내 코드
 
-- 외부 새 탭 링크의 `rel`
-- 이미지의 `alt`
-- 정확한 `lang`
-- 반복 `br` 대신 CSS 레이아웃
-- 구체적인 링크 텍스트
-- 유효한 URL과 경로 테스트
+```html
+<a
+    href="https://google.com"
+    target="_blank"
+>
+    구글
+</a>
+```
+
+### 강사님 코드
+
+```html
+<a
+    href="http://google.com"
+    target="_blank"
+>
+    구글
+</a>
+```
+
+가능하면 암호화된 연결인 `https://`를 명시한다.
+
+```html
+<a href="https://www.google.com/">
+    Google
+</a>
+```
+
+## 15.5 새 Tab Link와 `rel`
+
+두 코드 모두 외부 Link에 `target="_blank"`를 사용하지만 `rel`은 없다.
+
+```html
+<a
+    href="https://www.google.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+>
+    Google
+</a>
+```
+
+`noopener`는 새 Page와 원래 Page의 Window 연결을 끊는 의도를 나타낸다. `noreferrer`는 Referrer 전달도 제한하므로 분석 요구사항을 고려해 선택한다.
+
+모든 외부 Link를 새 Tab으로 열 필요는 없다. 사용자의 탐색 흐름과 Service 정책을 기준으로 결정한다.
+
+## 15.6 전화와 Email Link
+
+두 코드 모두 `tel:`과 `mailto:`를 올바른 방향으로 실습한다.
+
+```html
+<a href="tel:+821012345678">
+    010-1234-5678
+</a>
+
+<a href="mailto:study@example.com">
+    Email 보내기
+</a>
+```
+
+실제 문서에는 개인 전화번호와 Email을 그대로 공개하기 전에 개인정보 노출 범위를 확인한다.
+
+## 15.7 Image Link의 따옴표 오류
+
+내 코드에는 `target` 뒤에 큰따옴표가 하나 더 있다.
+
+```html
+<a
+    href="https://comic.naver.com/..."
+    target="_blank""
+>
+```
+
+올바른 형식:
+
+```html
+<a
+    href="https://comic.naver.com/..."
+    target="_blank"
+    rel="noopener noreferrer"
+>
+```
+
+잘못된 따옴표는 뒤 Attribute와 Tag 구조를 Browser가 예상과 다르게 해석하게 만들 수 있다.
+
+## 15.8 Image의 `alt` 누락
+
+두 코드 모두 Link 안의 Image에 `alt`가 없다.
+
+```html
+<img
+    src="https://image-comic.pstatic.net/...jpg"
+>
+```
+
+Image가 Link의 유일한 Content라면 `alt`가 Link 목적을 전달해야 한다.
+
+```html
+<a href="https://comic.naver.com/...">
+    <img
+        src="./images/webtoon-thumbnail.jpg"
+        alt="웹툰 작품 목록 보기"
+    >
+</a>
+```
+
+`alt`에 “이미지”라고만 쓰기보다 클릭했을 때 어디로 이동하는지 드러낸다.
+
+## 15.9 외부 Image URL 의존성
+
+두 코드 모두 다른 Site의 Image URL을 직접 사용한다.
+
+```html
+<img
+    src="https://image-comic.pstatic.net/...jpg"
+    alt="웹툰 작품 목록 보기"
+>
+```
+
+학습 실험에는 사용할 수 있지만 실제 Project에서는 다음 문제가 있다.
+
+```text
+상대 Site의 파일 변경·삭제
+외부 요청 제한
+성능과 Cache 제어 어려움
+저작권·사용 권한
+```
+
+사용 권한을 확인한 Image를 Project 내부나 관리 가능한 Storage에서 제공하는 방식을 우선 검토한다.
+
+## 15.10 같은 Project 내부 Link
+
+두 코드 모두 같은 상위 폴더의 `01_hello.html`을 현재 폴더에 있는 것처럼 작성한다.
+
+```html
+<a href="01_hello.html">
+    01_hello.html
+</a>
+```
+
+실제 현재 파일 위치는 다음과 같다.
+
+```text
+workspace_html/
+├── 01_hello.html
+└── 03_상대주소/
+    └── 03_a.html
+```
+
+따라서 `03_a.html` 기준으로는 부모 폴더로 이동해야 한다.
+
+```html
+<a href="../01_hello.html">
+    HTML 기초 Page
+</a>
+```
+
+경로는 Link Text나 원래 의도만 보고 판단하지 않고 **현재 파일의 실제 위치**를 기준으로 계산한다.
+
+## 15.11 `../asset/detail.html`
+
+두 코드 모두 다음 상대 경로를 사용한다.
+
+```html
+<a href="../asset/detail.html">
+    Detail Page 이동
+</a>
+```
+
+현재 폴더가 `workspace_html/03_상대주소/`이고 `asset`이 `workspace_html/asset/`에 있다면 올바른 흐름이다.
+
+```text
+03_상대주소/03_a.html
+→ ../
+→ workspace_html/
+→ asset/
+→ detail.html
+```
+
+실제 대상 파일이 존재하는지도 반드시 확인한다.
+
+## 15.12 `/asset/detail.html`의 정확한 이름
+
+두 코드의 주석은 `/`로 시작하는 주소를 “절대 주소” 범주에 포함한다.
+
+```html
+<a href="/asset/detail.html">
+    절대주소 Detail Page
+</a>
+```
+
+더 정확한 구분:
+
+```text
+https://example.com/asset/detail.html
+→ Absolute URL
+
+/asset/detail.html
+→ Root Relative URL
+
+../asset/detail.html
+→ Relative URL
+```
+
+`/asset/detail.html`은 Protocol과 Host를 포함하지 않으며 현재 Site Root를 기준으로 하는 **Root Relative Path**다.
+
+Local File을 직접 열 때와 Development Server에서 실행할 때 기준이 달라질 수 있으므로 Server 환경에서 확인한다.
+
+## 15.13 Protocol Relative URL
+
+원본 주석에는 `//`로 시작하는 주소도 소개된다.
+
+```html
+<a href="//example.com">
+    Example
+</a>
+```
+
+현재 Page의 Protocol을 따라가지만 현대 Project에서는 보안과 의도를 명확히 하기 위해 `https://`를 직접 작성하는 편이 일반적이다.
+
+```html
+<a href="https://example.com/">
+    Example
+</a>
+```
+
+## 15.14 반복 `<br>`
+
+두 코드 모두 Page 내부 이동 거리를 만들기 위해 `<br>`을 50개 사용한다.
+
+```html
+<br><br><br><br><br>
+```
+
+Fragment Link 이동을 눈으로 확인하는 학습 실험으로는 사용할 수 있지만 실제 Layout 높이와 여백은 CSS로 만든다.
+
+```html
+<section class="long-content">
+    중간 Content
+</section>
+```
+
+```css
+.long-content {
+    min-height: 100vh;
+}
+```
+
+## 15.15 원본 비교 요약
+
+| 항목 | 내 코드 | 강사님 코드 | 개선 기준 |
+| --- | --- | --- | --- |
+| 아래 이동 | `href="#bottom"`과 `id` 있음 | `href`와 대상 `id` 없음 | Fragment와 대상 ID 연결 |
+| Google | `https` | `http` | 가능한 경우 `https` |
+| 새 Tab 보안 | `rel` 없음 | `rel` 없음 | 목적에 맞게 `noopener` 검토 |
+| Image Link | 따옴표 오류 | 현재 Tab | Attribute 문법 검수 |
+| Image `alt` | 없음 | 없음 | Link 목적을 나타내는 `alt` |
+| 내부 파일 경로 | `01_hello.html` | `01_hello.html` | 실제 위치상 `../01_hello.html` 검토 |
+| `/asset/...` 설명 | 절대 주소 | 절대 주소 | Root Relative Path로 구분 |
+| 반복 `<br>` | 50개 | 50개 | Layout은 CSS |
+| `lang` | `en` | `en` | 한국어 문서는 `ko` |
+| 외부 Image | Hotlink | Hotlink | 권한·안정성·성능 확인 |
 
 # 16. 개선된 통합 예제
 
@@ -952,33 +1201,8 @@ product-detail.html
 
 페이지 이동을 위한 메뉴는 `a`가 적절합니다. JavaScript 동작만 실행하는 메뉴 버튼과 구분해야 합니다.
 
-# 19. 면접·복습 포인트
 
-## Q1. 상대 경로와 절대 URL의 차이는 무엇인가요?
-
-상대 경로는 현재 문서의 위치를 기준으로 대상 파일을 찾습니다. 절대 URL은 프로토콜과 도메인을 포함한 완전한 주소이므로 현재 문서 위치와 관계없이 같은 대상을 가리킵니다.
-
-## Q2. `./`와 `../`의 차이는 무엇인가요?
-
-`./`는 현재 폴더, `../`는 한 단계 위의 부모 폴더를 의미합니다.
-
-## Q3. `/asset/detail.html`은 무엇을 기준으로 하나요?
-
-현재 웹사이트의 루트를 기준으로 합니다. 현재 문서가 어느 하위 폴더에 있어도 도메인과 포트 뒤의 `/asset/detail.html`을 가리킵니다.
-
-## Q4. `target="_blank"`는 무엇인가요?
-
-링크를 새 탭이나 새 창에서 열도록 지정합니다. 외부 링크에서는 보안과 의도를 위해 `rel="noopener noreferrer"`를 함께 고려합니다.
-
-## Q5. `a`와 `button`은 어떻게 구분하나요?
-
-다른 문서나 위치로 이동하면 `a`, 현재 화면에서 기능을 실행하면 `button`을 사용합니다.
-
-## Q6. 페이지 내부 이동은 어떻게 구현하나요?
-
-대상 요소에 고유한 `id`를 부여하고 링크의 `href`에 `#id값`을 작성합니다.
-
-# 20. Problems
+# 19. 종합실습
 
 ## Level 1
 
@@ -1134,7 +1358,7 @@ project/
 
 ```
 
-# 21. Answers
+# 20. 정답과 해설
 
 ## 문제 1 정답
 
@@ -1276,7 +1500,7 @@ project/
 
 문구와 파일명은 달라질 수 있습니다. 중요한 점은 이동 목적에 맞는 `href`, 고유한 `id`, 이미지의 `alt`, 새 탭 링크의 속성을 올바르게 작성하는 것입니다.
 
-# 22. 최종 체크리스트
+# 21. 최종 체크리스트
 
 - [ ] 링크에 실제 이동 목적이 있다면 `href`를 작성했는가?
 - [ ] 링크 텍스트만 읽어도 이동 목적을 이해할 수 있는가?
@@ -1291,7 +1515,7 @@ project/
 - [ ] 같은 `id`를 중복해서 사용하지 않았는가?
 - [ ] 반복 `br`을 실제 레이아웃용으로 사용하지 않았는가?
 
-# 23. 핵심 요약
+# 22. 핵심 요약
 
 ```text
 a                     → 다른 문서나 위치로 이동하는 링크

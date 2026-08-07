@@ -1,3 +1,10 @@
+---
+title: HTML 시맨틱 태그와 페이지 구조
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # HTML 시맨틱 태그와 페이지 구조
 
 ## 문서 정보
@@ -5,12 +12,14 @@
 | 항목 | 내용 |
 | --- | --- |
 | 문서 | `08_HTML_시맨틱태그와_페이지구조.md` |
-| 권장 선수 학습 | `07_HTML_폼과_입력요소.md` |
-| 다음 학습 | `02_CSS/01_CSS_선택자와_적용방법.md` |
-| 학습 범위 | 시맨틱 HTML, `header`, `nav`, `main`, `section`, `article`, `aside`, `footer`, `div`, 제목 구조, 접근성, 문서 윤곽 |
-| 프로젝트 연결 | 랜딩 페이지, 블로그, 뉴스, 포트폴리오, 관리자 화면, 반응형 웹 레이아웃 |
+| 분류 | `01_HTML` |
+| 원본 기준 | 독립된 `08_*.html` 원본 없음 — HTML 01~07 학습 내용을 연결한 확장 단원 |
+| 핵심 범위 | Semantic HTML, `header`, `nav`, `main`, `section`, `article`, `aside`, `footer`, Heading Structure, Landmark, 접근성 |
+| 학습 범위 | Page 구조, 콘텐츠 영역 구분, 문서 제목 계층, Navigation·Article·Aside 선택 기준 |
+| 프로젝트 연결 | Landing Page, Blog, News, Portfolio, 관리자 화면, 반응형 Web Layout |
+| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
 
-> 이 문서는 HTML 01~07에서 익힌 요소를 실제 웹페이지 구조로 조립하는 마무리 단원입니다. 원본 수업 자료에는 독립된 08번 HTML 파일이 없으므로, 앞선 학습 내용을 연결하기 위한 확장 문서로 구성했습니다.
+> HTML 수업 원본에는 독립된 `08_*.html` 파일이 없다. 따라서 이 문서는 존재하지 않는 내 코드·강사님 코드 차이를 만들지 않고 HTML 01~07에서 학습한 Heading, Link, List, Table, Media, Form 구조를 실제 Page 골격으로 연결한다. Semantic Element를 많이 쓰는 것보다 콘텐츠의 역할에 맞는 Element를 선택하고 Heading·Landmark·접근성 구조를 일관되게 만드는 것을 목표로 한다.
 
 # 학습 목표
 
@@ -1199,25 +1208,171 @@ HTML에서는 메뉴 항목의 관계를 목록으로 표현하고, CSS에서는
 
 시맨틱 페이지 구조와 표 내부의 시맨틱 구조를 함께 사용합니다.
 
-# 38. 내 코드와 강사님 코드 연결
+# 38. 원본 수업 코드와의 연결
 
-원본 HTML 수업 파일은 `01_hello.html`부터 `07_form.html`까지 구성되어 있습니다.
+HTML 08번은 독립된 원본 실습 파일이 없다.
 
-독립된 `08`번 시맨틱 HTML 파일은 확인되지 않았습니다.
+```text
+HTML 01
+→ 기본 문서 구조
 
-따라서 이 문서는 다음 기존 학습 내용을 하나의 페이지 구조로 통합합니다.
+HTML 02
+→ Heading·Paragraph·Text 의미
 
-| 기존 단원 | 08번에서의 연결 |
-| --- | --- |
-| 01 문서 구조 | HTML5 전체 문서 골격 |
-| 02 기본 태그 | 제목과 본문 구조 |
-| 03 링크와 경로 | 내비게이션과 페이지 이동 |
-| 04 목록 태그 | 메뉴와 콘텐츠 목록 |
-| 05 테이블 | 데이터 구역 |
-| 06 이미지와 미디어 | 콘텐츠 내부 미디어 |
-| 07 폼 | 문의·가입·검색 구역 |
+HTML 03
+→ Link·Navigation
 
-이 문서의 시맨틱 태그 설명과 실무 예제는 앞선 자료를 연결하기 위한 확장 내용입니다.
+HTML 04
+→ List·Menu 구조
+
+HTML 05
+→ Table Data 구조
+
+HTML 06
+→ Image·Media
+
+HTML 07
+→ Form·Input
+
+HTML 08
+→ 위 구조를 Semantic Page로 조립
+```
+
+따라서 이 단원에서는 내 코드와 강사님 코드의 “08번 차이”를 비교하지 않는다. 대신 앞선 원본에서 반복해서 확인한 구조를 Semantic Element에 연결한다.
+
+## 38.1 Heading과 `header`
+
+앞선 문서에서 사용한 `h1`~`h6`는 단순 글자 크기가 아니라 문서 제목 계층이다.
+
+```html
+<header class="site-header">
+    <h1>Developer Wiki</h1>
+</header>
+```
+
+`header`를 사용한다고 자동으로 제목이 생기지는 않는다. 필요한 Heading은 직접 작성한다.
+
+## 38.2 Link·List와 `nav`
+
+Navigation Link 묶음은 보통 List와 함께 구성할 수 있다.
+
+```html
+<nav aria-label="주요 메뉴">
+    <ul>
+        <li>
+            <a href="./html.html">
+                HTML
+            </a>
+        </li>
+
+        <li>
+            <a href="./css.html">
+                CSS
+            </a>
+        </li>
+    </ul>
+</nav>
+```
+
+모든 Link 묶음을 무조건 `nav`로 만들 필요는 없다. Page의 주요 Navigation 영역인지 판단한다.
+
+## 38.3 Table은 Semantic Layout 대체물이 아니다
+
+Table은 행·열 관계가 있는 Data에 사용한다.
+
+```html
+<main>
+    <section aria-labelledby="course-title">
+        <h2 id="course-title">
+            과정 현황
+        </h2>
+
+        <table>
+            ...
+        </table>
+    </section>
+</main>
+```
+
+Page 전체 Layout을 Table로 구성하지 않는다.
+
+## 38.4 Media와 `figure`
+
+Image와 Caption이 하나의 독립된 Content Unit이면 `figure`를 사용할 수 있다.
+
+```html
+<article>
+    <h2>프로젝트 소개</h2>
+
+    <figure>
+        <img
+            src="./images/project.webp"
+            alt="교육 과정 대시보드 화면"
+        >
+
+        <figcaption>
+            반응형 교육 과정 대시보드
+        </figcaption>
+    </figure>
+</article>
+```
+
+모든 Image에 `figure`가 필요한 것은 아니다.
+
+## 38.5 Form과 `main`
+
+Login·Search·Contact Form도 Page의 의미 구조 안에 배치한다.
+
+```html
+<main>
+    <section aria-labelledby="contact-title">
+        <h2 id="contact-title">
+            문의하기
+        </h2>
+
+        <form>
+            ...
+        </form>
+    </section>
+</main>
+```
+
+`section`은 Form을 감싸기 위한 장식 Wrapper가 아니라 독립된 주제 영역일 때 사용한다.
+
+## 38.6 `div`는 여전히 필요하다
+
+Semantic Element로 의미를 표현할 수 없는 순수 Layout Wrapper에는 `div`가 적합하다.
+
+```html
+<section>
+    <h2>추천 과정</h2>
+
+    <div class="course-grid">
+        ...
+    </div>
+</section>
+```
+
+```text
+section
+→ 주제와 의미를 가진 영역
+
+div
+→ 별도 의미 없이 구조·Style을 위한 Group
+```
+
+## 38.7 원본 연결 요약
+
+| 앞선 단원 | 배운 구조 | 08번에서 연결되는 의미 |
+| --- | --- | --- |
+| 01 | 기본 Document | `header`·`main`·`footer` Page 골격 |
+| 02 | Heading·Text | Heading Hierarchy와 Section 제목 |
+| 03 | Link | `nav`와 주요 Navigation |
+| 04 | List | Menu·Navigation List |
+| 05 | Table | Semantic Data 영역 |
+| 06 | Media | `figure`·`figcaption`과 Article Content |
+| 07 | Form | 의미 있는 Section 내부 Form |
+| 08 | 통합 | Semantic Page Structure |
 
 # 39. 통합 프로젝트 예제
 
@@ -1503,41 +1658,8 @@ Elements 탭에서 실제 DOM 구조와 브라우저의 자동 보정 결과를 
 - 반복되는 페이지 공통 영역과 페이지별 본문이 구분되는가?
 - CSS를 적용하지 않아도 읽는 순서가 자연스러운가?
 
-# 45. 면접·복습 포인트
 
-## Q1. 시맨틱 HTML이란 무엇인가요?
-
-요소의 이름과 구조를 통해 콘텐츠의 역할과 의미를 표현하는 HTML 작성 방식입니다.
-
-## Q2. `div`와 `section`의 차이는 무엇인가요?
-
-`div`는 특별한 의미가 없는 일반 컨테이너입니다. `section`은 제목을 붙일 수 있는 하나의 주제 구역을 나타냅니다.
-
-## Q3. `section`과 `article`의 차이는 무엇인가요?
-
-`section`은 문서 안의 주제 구역이고, `article`은 독립적으로 배포하거나 재사용할 수 있는 콘텐츠입니다.
-
-## Q4. 한 페이지에 `header`와 `footer`를 여러 번 사용할 수 있나요?
-
-가능합니다. 페이지 전체뿐 아니라 `article`이나 `section`의 머리말과 바닥글에도 사용할 수 있습니다.
-
-## Q5. `main`의 역할은 무엇인가요?
-
-현재 페이지에서 반복되지 않는 핵심 콘텐츠를 나타냅니다.
-
-## Q6. 시맨틱 태그가 CSS 스타일을 자동으로 제공하나요?
-
-일부 브라우저 기본 스타일이 있을 수 있지만, 시맨틱 요소의 핵심 목적은 모양이 아니라 의미와 구조입니다.
-
-## Q7. 제목 태그를 글자 크기로 선택하면 안 되는 이유는 무엇인가요?
-
-제목 태그의 숫자는 문서 계층을 나타냅니다. 글자 크기는 CSS로 조절해야 합니다.
-
-## Q8. 모든 링크를 `nav` 안에 넣어야 하나요?
-
-아닙니다. `nav`는 주요 탐색 링크 묶음에 사용합니다.
-
-# Problems
+# 45. 종합실습
 
 ## 문제 1. 기본 페이지 골격
 
@@ -1657,7 +1779,7 @@ Developer Wiki 홈 화면의 HTML 골격을 작성하세요.
 - 사이트 푸터
 - 자연스러운 제목 단계
 
-# Answers & Explanations
+# 46. 정답과 해설
 
 ## 정답 1
 
@@ -1938,7 +2060,39 @@ Developer Wiki 홈 화면의 HTML 골격을 작성하세요.
 </footer>
 ```
 
-# 핵심 요약
+
+# 47. 최종 체크리스트
+
+- [ ] Page의 주요 Content를 하나의 `main` 영역으로 구분했는가?
+- [ ] `main`을 Page 안에 중첩하지 않는가?
+- [ ] `header`와 `footer`를 Page 전체 또는 Section 문맥에 맞게 사용하는가?
+- [ ] 주요 Navigation에 `nav`를 사용하는가?
+- [ ] 모든 Link 묶음을 무조건 `nav`로 만들지 않는가?
+- [ ] `section`에 독립된 주제와 필요한 Heading이 있는가?
+- [ ] 단순 Style Wrapper에 `section` 대신 `div`를 고려했는가?
+- [ ] 독립적으로 배포·재사용 가능한 Content에 `article`을 고려했는가?
+- [ ] 보조 Content에 `aside`를 사용하는가?
+- [ ] Heading을 글자 크기 때문에 선택하지 않는가?
+- [ ] Heading Level이 콘텐츠 계층을 반영하는가?
+- [ ] `h1` 이후 하위 Heading 구조가 이해 가능한가?
+- [ ] Semantic Element가 자동으로 CSS Style을 해결한다고 오해하지 않는가?
+- [ ] 같은 `header`, `nav`, `footer`가 문맥에 따라 여러 번 존재할 수 있음을 이해하는가?
+- [ ] 주요 Landmark가 중복될 때 필요하면 Accessible Name을 제공하는가?
+- [ ] `aria-label`을 보이는 Heading 대신 무조건 사용하지 않는가?
+- [ ] Link와 Button의 역할을 구분하는가?
+- [ ] Navigation List에 의미 있는 Link Text를 사용하는가?
+- [ ] Table을 Page Layout 용도로 사용하지 않는가?
+- [ ] Image와 Caption의 관계가 있을 때 `figure`·`figcaption`을 검토하는가?
+- [ ] Form을 의미 있는 Page 영역 안에 배치하는가?
+- [ ] Semantic Tag를 많이 쓰는 것 자체를 목표로 하지 않는가?
+- [ ] CSS를 꺼도 콘텐츠 구조와 읽는 순서가 이해 가능한가?
+- [ ] Keyboard와 Screen Reader에서 Landmark·Heading 구조를 확인했는가?
+- [ ] HTML Validator와 DevTools로 잘못된 중첩을 검수했는가?
+- [ ] 독립된 08번 원본 파일이 없다는 사실을 문서에서 명확히 기록했는가?
+
+---
+
+# 48. 핵심 요약
 
 - 시맨틱 HTML은 태그를 통해 콘텐츠의 의미와 역할을 표현한다.
 - HTML은 구조와 의미를, CSS는 디자인과 배치를 담당한다.

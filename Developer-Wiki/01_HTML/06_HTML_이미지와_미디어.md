@@ -1,3 +1,10 @@
+---
+title: HTML 이미지와 미디어
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # HTML 이미지와 미디어
 
 ## 문서 정보
@@ -5,12 +12,14 @@
 | 항목 | 내용 |
 | --- | --- |
 | 문서 | `06_HTML_이미지와_미디어.md` |
-| 권장 선수 학습 | `05_HTML_테이블.md` |
-| 다음 학습 | `07_HTML_폼과_입력요소.md` |
-| 학습 범위 | `img`, `src`, `alt`, `width`, `height`, `figure`, `figcaption`, `picture`, `source`, `audio`, `video`, `iframe` |
-| 프로젝트 연결 | 프로필 이미지, 상품 썸네일, 배너, 영상 강의, 포트폴리오, 반응형 이미지, 외부 콘텐츠 삽입 |
+| 분류 | `01_HTML` |
+| 원본 기준 | `workspace_html/06_img.html`, `workspace_teacher/workspace_html/06_img.html` |
+| 핵심 범위 | `img`, `src`, `alt`, `width`, `height`, `figure`, `picture`, `srcset`, `video`, `audio`, `iframe` |
+| 학습 범위 | 이미지 경로, 대체 Text, 비율, 반응형 Image, Video·Audio·외부 Media 삽입 |
+| 프로젝트 연결 | Profile, 상품 Image, Banner, Portfolio, 강의 Video, 지도·YouTube Embed |
+| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
 
-> 이미지와 미디어는 화면을 보기 좋게 만드는 장식만이 아닙니다. 올바른 경로, 대체 텍스트, 크기 정보, 재생 제어, 반응형 처리까지 함께 고려해야 접근성과 성능을 갖춘 콘텐츠가 됩니다.
+> 이 문서는 내 코드와 강사님 코드의 `06_img.html`을 비교해 `img`, `src`, `alt`, `width`, `height`, `video`, `controls`의 기본 동작을 정리한다. 원본의 `alt` 설명, 고정 Width·Height로 인한 비율 왜곡, 외부 Media URL 의존성, `iframe` Comment 예제를 교정하고 반응형 Image·Caption·Video·Audio·Embed 접근성과 성능까지 연결한다.
 
 # 학습 목표
 
@@ -955,90 +964,383 @@ rc="asset/photo.png" alt="예제 이미지">
 - 기본 재생 컨트롤
 - 반복 재생
 
-# 37. 내 코드 vs 강사님 코드
+# 37. 내 코드와 강사님 코드 비교
 
-## 37.1 공통점
+두 원본은 같은 SpongeBob Image 두 개와 외부 MP4 Video를 사용한다. 내 코드는 `alt`, Image 비율, Browser Resource Loading, `iframe`, `controls`에 대한 Comment를 추가했고 강사님 코드는 Markup 자체를 더 간결하게 작성했다.
 
-두 코드 모두 다음 내용을 포함합니다.
+## 37.1 기본 문서 구조
 
-```html
-<img src="asset/Spongebob-Christmas-PNG-Picture.png" alt="스폰지밥이 웃고있는 사진">
-```
+두 코드 모두 HTML5 기본 구조를 사용한다.
 
 ```html
-<video
-  controls="controls"
-  loop="loop"
-  src="https://www.w3schools.com/tags/movie.mp4">
-</video>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+        <title>Document</title>
+    </head>
+</html>
 ```
 
-공통 학습 목표는 이미지 경로, 대체 텍스트, 크기 지정, 영상 재생 옵션을 확인하는 것입니다.
-
-## 37.2 내 코드에 추가된 설명
-
-내 코드에는 다음 학습 메모가 추가되어 있습니다.
-
-- `alt`는 접근성을 위한 대체 텍스트라는 설명
-- 너비나 높이 한쪽만 지정하면 비율이 유지된다는 설명
-- 이미지도 경로를 통해 파일을 내려받아 출력한다는 설명
-- `iframe`의 개념과 유튜브 임베드 예시
-- `controls` 같은 옵션이 접근성에 도움이 된다는 설명
-
-이러한 주석은 복습할 때 개념을 떠올리는 데 도움이 됩니다.
-
-## 37.3 강사님 코드의 장점
-
-강사님 코드는 주석이 적고 핵심 예제가 간결하게 정리되어 있습니다.
-
-```html
-<img
-  src="asset/Spongebob-Christmas-PNG-Picture.png"
-  alt="스폰지밥이 웃고있는 사진"
-  width="200"
-  height="300">
-```
-
-예제 구조가 짧아 태그와 속성의 형태를 빠르게 확인하기 좋습니다.
-
-## 37.4 내 코드의 개선점
-
-### `lang` 수정
-
-원본 문서는 한국어 콘텐츠이므로 다음처럼 작성하는 것이 자연스럽습니다.
+본문이 한국어이므로 다음처럼 문서 언어를 맞추는 편이 적절하다.
 
 ```html
 <html lang="ko">
 ```
 
-### 대체 텍스트 띄어쓰기
+Page 제목도 목적이 드러나도록 작성한다.
 
 ```html
-alt="스폰지밥이 웃고 있는 모습"
+<title>HTML 이미지와 미디어 실습</title>
 ```
 
-`웃고있는`보다 `웃고 있는`으로 띄어 쓰는 것이 자연스럽습니다.
+## 37.2 복원 메모
 
-### 이미지 비율 확인
+내 코드에는 다음 개인 작업 기록이 있다.
 
 ```html
-width="200"
-height="300"
+<!-- 0723_HTML_img/video_restore -->
 ```
 
-두 값을 함께 지정할 때 원본 비율과 일치하는지 확인해야 합니다. 비율 확인이 어렵다면 CSS의 `height: auto`를 사용할 수 있습니다.
+학습 개념과 직접 관련이 없다면 Git Commit이나 별도 작업 기록으로 분리하는 편이 문서 집중도를 높인다.
 
-### `br` 대신 CSS 간격 사용
+## 37.3 `alt` 설명
 
-여러 미디어 요소 사이의 디자인 간격은 `gap`이나 `margin`으로 처리합니다.
+내 코드에는 다음 설명이 있다.
 
-### 불리언 속성 간소화
+```html
+<!-- img를 사용할 때 alt
+     (이미지가 없습니다, 무슨 이미지가 있었는지 등)는
+     사용하는것이 좋음 -->
+```
+
+또한 다음 Comment도 있다.
+
+```html
+<!-- alt는 대체텍스트이며,
+     웹 접근성에 이롭게 하기 위해 적어놓는 것 -->
+```
+
+핵심 방향은 맞지만 `alt`는 단순히 “이미지가 없습니다”라고 알려주는 Text가 아니다.
+
+```text
+alt
+→ Image가 전달하는 정보·기능을 Text로 대체
+```
+
+좋은 예:
+
+```html
+<img
+    src="./asset/spongebob.png"
+    alt="스폰지밥이 웃고 있는 모습"
+>
+```
+
+Image가 장식용이면 다음처럼 빈 `alt`를 사용할 수 있다.
+
+```html
+<img
+    src="./asset/decorative-line.svg"
+    alt=""
+>
+```
+
+Screen Reader가 파일명이나 불필요한 정보를 읽지 않도록 Image 목적에 따라 결정한다.
+
+## 37.4 첫 번째 Image
+
+두 코드 모두 다음 Image를 사용한다.
+
+```html
+<img
+    src="asset/Spongebob-Christmas-PNG-Picture.png"
+    alt="스폰지밥이 웃고있는 사진"
+>
+```
+
+구조는 같다. 다만 File Name은 공백·대문자·긴 이름을 피하고 Project 규칙에 맞게 단순화할 수 있다.
+
+```html
+<img
+    src="./asset/spongebob-christmas.png"
+    alt="스폰지밥이 웃고 있는 모습"
+>
+```
+
+`./`는 필수는 아니지만 현재 폴더 기준이라는 의도를 드러낼 수 있다.
+
+## 37.5 Attribute 줄바꿈
+
+강사님 코드는 두 번째 Image의 Attribute를 여러 줄로 나눈다.
+
+```html
+<img
+    src="asset/Spongebob-Christmas-PNG-Picture.png"
+    alt="스폰지밥이 웃고있는 사진"
+    width="200"
+    height="300"
+>
+```
+
+내 코드는 같은 내용을 한 줄로 작성한다.
+
+```html
+<img src="asset/Spongebob-Christmas-PNG-Picture.png" alt="스폰지밥이 웃고있는 사진" width="200" height="300">
+```
+
+두 방식 모두 유효하다. Attribute가 많아지면 한 줄씩 정렬하는 편이 Diff와 가독성에 유리하다.
+
+내 코드의 다음 Comment는 방향은 맞다.
+
+```html
+<!-- 속성은 줄바꿈할 수 있으나
+     src 같은 하나의 속성 이름 자체를 나눌 수는 없음 -->
+```
+
+다음처럼 Attribute 경계에서 줄바꿈한다.
+
+```html
+<img
+    src="./asset/image.png"
+    alt="설명"
+>
+```
+
+## 37.6 Width와 Height 비율
+
+두 코드 모두 다음 값을 지정한다.
+
+```html
+<img
+    src="asset/Spongebob-Christmas-PNG-Picture.png"
+    alt="스폰지밥이 웃고있는 사진"
+    width="200"
+    height="300"
+>
+```
+
+내 코드 Comment에는 “너비나 높이를 하나만 지정하면 원본 비율을 유지한다”는 설명이 있다. 이 설명은 핵심적으로 맞다.
+
+하지만 원본처럼 **원본 비율과 다른 `width`와 `height`를 동시에 강제하면 Image가 찌그러질 수 있다.**
+
+```html
+<img
+    src="./asset/spongebob.png"
+    alt="스폰지밥이 웃고 있는 모습"
+    width="200"
+>
+```
+
+또는 CSS에서 다음처럼 처리한다.
+
+```css
+.media-image {
+    max-width: 100%;
+    height: auto;
+}
+```
+
+다만 HTML의 `width`와 `height`를 모두 생략하는 것이 항상 더 좋은 것은 아니다. 원본 Image 비율과 일치하는 실제 크기를 HTML Attribute로 제공하면 Browser가 Load 전에 Layout 공간을 확보해 Layout Shift를 줄일 수 있다.
+
+```html
+<img
+    src="./asset/spongebob.png"
+    alt="스폰지밥이 웃고 있는 모습"
+    width="800"
+    height="600"
+>
+```
+
+CSS에서 표시 크기를 유연하게 조절한다.
+
+## 37.7 Browser Resource Loading 설명
+
+내 코드에는 Browser가 Image나 Video Resource를 가져와 표시한다는 Comment가 추가되어 있다.
+
+```html
+<!-- img태그도 해당 링크로 가서
+     다운받아온 후 출력 -->
+```
+
+개념상 Browser가 `src` URL로 HTTP Request를 보내 Resource를 가져오는 방향은 맞다.
+
+더 정확한 흐름:
+
+```text
+HTML Parse
+→ src 발견
+→ Resource Request
+→ 응답 수신
+→ Decode
+→ Layout·Paint
+```
+
+Browser Cache, CORS, CSP, MIME Type, Network 오류에 따라 표시 결과가 달라질 수 있다.
+
+## 37.8 `<br>` 반복
+
+두 코드 모두 Image 사이에 `<br>`을 사용한다.
+
+```html
+<img ...>
+<br>
+<img ...>
+<br>
+```
+
+학습 중 줄을 구분하는 데는 단순하지만 실제 Layout 간격은 CSS로 처리한다.
+
+```css
+.media-list {
+    display: grid;
+    gap: 1rem;
+}
+```
+
+## 37.9 `iframe` 예제
+
+내 코드에는 Comment 처리된 YouTube Embed가 추가되어 있다.
+
+```html
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/..."
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+></iframe>
+```
+
+강사님 코드에는 `iframe` 예제가 없다.
+
+내 코드의 다음 설명은 비유로는 이해하기 쉽지만 기술적으로 단순화되어 있다.
+
+```text
+iframe
+→ 내 Browser 안에 또 다른 Browser를 연다
+```
+
+더 정확한 설명:
+
+```text
+iframe
+→ 현재 HTML Document 안에
+  다른 Browsing Context와 Document를 삽입
+```
+
+외부 Site는 `X-Frame-Options`, CSP `frame-ancestors` 등에 따라 Embed를 차단할 수 있다.
+
+`frameborder`는 오래된 Presentational Attribute이므로 Border는 CSS로 처리한다.
+
+## 37.10 Video 구조
+
+두 코드 모두 같은 외부 Video URL을 사용한다.
+
+```html
+<video
+    controls="controls"
+    loop="loop"
+    src="https://www.w3schools.com/tags/movie.mp4"
+></video>
+```
+
+Boolean Attribute는 값 없이 작성할 수 있다.
+
+```html
+<video
+    controls
+    loop
+    src="https://www.w3schools.com/tags/movie.mp4"
+></video>
+```
+
+기능은 같다.
+
+## 37.11 `controls`와 접근성
+
+내 코드에는 다음 Comment가 있다.
+
+```html
+<!-- 웹 접근성을 용이하게 하기 위해
+     controls등 옵션값은 넣어주는편이 좋음 -->
+```
+
+사용자가 직접 Play·Pause·Volume·Seek를 조작해야 하는 일반 Video에는 `controls`가 중요하다.
+
+하지만 `controls` Attribute 하나만으로 모든 Video 접근성이 해결되는 것은 아니다.
+
+추가로 검토할 항목:
+
+```text
+자막
+→ track kind="captions"
+
+음성 정보
+→ 필요 시 Audio Description
+
+자동 재생
+→ 최소화
+
+Keyboard 조작
+→ Player 동작 확인
+
+대체 Content
+→ 지원하지 않는 Browser 안내
+```
+
+## 37.12 `loop`
+
+두 코드 모두 `loop`를 사용한다.
 
 ```html
 <video controls loop>
 ```
 
-`controls="controls"`, `loop="loop"`도 동작하지만 속성명만 작성해도 됩니다.
+반복 재생이 학습 목적에는 문제 없지만 긴 영상이나 중요한 Content에서는 사용자의 예상과 다를 수 있다. 반복이 실제 UX 요구사항인지 확인한다.
+
+## 37.13 외부 Video URL 의존성
+
+두 코드 모두 다음 외부 Resource를 직접 사용한다.
+
+```html
+src="https://www.w3schools.com/tags/movie.mp4"
+```
+
+학습 예제로는 편리하지만 실제 Project에서는 다음을 고려한다.
+
+```text
+외부 Site의 파일 삭제·변경
+Traffic·Hotlink 정책
+Network Latency
+CORS·CSP
+사용 권한
+```
+
+Project가 관리하는 Storage·CDN을 사용하는 편이 예측 가능하다.
+
+## 37.14 내 코드와 강사님 코드 비교 요약
+
+| 항목 | 내 코드 | 강사님 코드 | 개선 기준 |
+| --- | --- | --- | --- |
+| 복원 메모 | 있음 | 없음 | 작업 기록과 학습 내용 분리 |
+| `alt` 설명 | 상세 | Markup만 있음 | Image 목적·정보를 대체하는 Text |
+| Image Attribute | 한 줄 | 여러 줄 | Attribute가 많으면 여러 줄 권장 |
+| `width`·`height` | `200 × 300` | `200 × 300` | 원본 비율과 일치하거나 CSS로 유연 처리 |
+| Browser Loading 설명 | 있음 | 없음 | Request·Decode·Paint 흐름으로 보완 |
+| `<br>` | 사용 | 사용 | Layout 간격은 CSS |
+| `iframe` | Comment 예제 있음 | 없음 | Embedded Browsing Context로 설명 |
+| `video controls` | 접근성 Comment 있음 | Markup만 있음 | Control·Caption 등 종합 검토 |
+| Boolean Attribute | `controls="controls"` | `controls="controls"` | `controls`처럼 축약 가능 |
+| 외부 Video URL | 사용 | 사용 | 안정성·권한·성능 확인 |
+| `lang` | `en` | `en` | 한국어 문서는 `ko` |
 
 # 38. 개선된 전체 예제
 
@@ -1350,41 +1652,8 @@ img {
 - 불필요한 외부 `iframe`이 여러 개 로드되지 않는가?
 - 영상의 `preload` 설정이 적절한가?
 
-# 48. 면접·복습 포인트
 
-## Q1. `src`와 `alt`의 차이는 무엇인가요?
-
-`src`는 이미지 파일의 위치를 지정하고, `alt`는 이미지를 볼 수 없을 때 이미지의 의미를 대신 전달합니다.
-
-## Q2. 장식용 이미지에도 `alt`를 작성해야 하나요?
-
-장식용 이미지는 `alt=""`로 작성해 보조 기술이 불필요하게 읽지 않도록 합니다.
-
-## Q3. 이미지 비율이 깨지는 이유는 무엇인가요?
-
-원본 비율과 다른 `width`, `height` 값을 동시에 강제로 지정했기 때문입니다.
-
-## Q4. `figure`는 언제 사용하나요?
-
-이미지, 그래프, 코드처럼 본문에서 독립적으로 참조할 수 있는 콘텐츠와 설명을 하나의 단위로 묶을 때 사용합니다.
-
-## Q5. `picture`의 목적은 무엇인가요?
-
-화면 조건이나 이미지 형식에 따라 브라우저가 적절한 이미지 파일을 선택하도록 할 때 사용합니다.
-
-## Q6. `video`에 `controls`가 중요한 이유는 무엇인가요?
-
-사용자가 재생, 일시 정지, 탐색, 볼륨을 직접 제어할 수 있게 하기 때문입니다.
-
-## Q7. `iframe`에 `title`이 필요한 이유는 무엇인가요?
-
-스크린 리더 사용자가 삽입된 외부 문서의 목적을 이해할 수 있도록 하기 위해서입니다.
-
-## Q8. `loading="lazy"`를 모든 이미지에 적용해도 되나요?
-
-아닙니다. 첫 화면에서 즉시 보여야 하는 핵심 이미지에는 오히려 표시를 늦출 수 있으므로 위치와 목적을 고려해야 합니다.
-
-# 49. Problems
+# 48. 종합실습
 
 ## 문제 1. 기본 이미지 작성
 
@@ -1481,7 +1750,7 @@ project/
 - `br` 대신 CSS 간격
 - 반응형 크기
 
-# 50. Answers & Explanations
+# 49. 정답과 해설
 
 ## 정답 1
 
@@ -1718,6 +1987,36 @@ project/
 </body>
 </html>
 ```
+
+
+# 50. 최종 체크리스트
+
+- [ ] 정보성 Image에 목적을 설명하는 `alt`를 제공하는가?
+- [ ] 장식용 Image에는 상황에 맞게 `alt=""`를 사용하는가?
+- [ ] File Name 자체를 `alt`로 사용하지 않는가?
+- [ ] Link Image의 `alt`가 이동 목적을 설명하는가?
+- [ ] Image `src` 경로를 현재 HTML File 위치 기준으로 계산했는가?
+- [ ] 외부 Image URL의 변경·삭제·사용 권한 문제를 고려하는가?
+- [ ] 원본 비율과 다른 Width·Height를 동시에 강제하지 않는가?
+- [ ] Layout Shift를 줄이기 위해 실제 비율에 맞는 `width`·`height` Attribute 제공을 검토했는가?
+- [ ] CSS에서 반응형 Image에 `max-width: 100%`, `height: auto`를 검토했는가?
+- [ ] `figure`와 `figcaption`이 실제 Caption 관계일 때 사용하는가?
+- [ ] 화면 조건에 따라 다른 Image가 필요하면 `picture`를 검토했는가?
+- [ ] 해상도별 Image가 필요하면 `srcset`을 검토했는가?
+- [ ] 첫 화면 핵심 Image에 무조건 `loading="lazy"`를 적용하지 않는가?
+- [ ] 일반 Video에 사용자가 조작할 수 있는 `controls`를 제공하는가?
+- [ ] Video에 자막이 필요하면 `track`을 제공하는가?
+- [ ] 자동 재생을 꼭 필요한 경우에만 사용하는가?
+- [ ] `loop`가 실제 UX 요구사항인지 확인했는가?
+- [ ] 여러 Video Format이 필요하면 `source` Element를 사용하는가?
+- [ ] `iframe`에 내용을 설명하는 `title`을 제공하는가?
+- [ ] 외부 Embed가 CSP·X-Frame-Options로 차단될 수 있음을 고려하는가?
+- [ ] `frameborder` 같은 오래된 Presentational Attribute 대신 CSS를 사용하는가?
+- [ ] 반복 `<br>`로 Media 간격을 만들지 않는가?
+- [ ] 외부 Media의 성능·권한·안정성을 확인하는가?
+- [ ] 한국어 문서라면 `lang="ko"`를 사용하는가?
+
+---
 
 # 51. 핵심 요약
 

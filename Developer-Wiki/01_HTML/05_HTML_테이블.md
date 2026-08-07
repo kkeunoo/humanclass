@@ -1,3 +1,10 @@
+---
+title: HTML 테이블
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # HTML 테이블
 
 ## 문서 정보
@@ -5,12 +12,14 @@
 | 항목 | 내용 |
 | --- | --- |
 | 문서 | `05_HTML_테이블.md` |
-| 권장 선수 학습 | `04_HTML_목록태그.md` |
-| 다음 학습 | `06_HTML_이미지와_미디어.md` |
-| 학습 범위 | `table`, `caption`, `thead`, `tbody`, `tfoot`, `tr`, `th`, `td`, `colspan`, `rowspan`, `scope` |
+| 분류 | `01_HTML` |
+| 원본 기준 | `workspace_html/05_table.html`, `workspace_teacher/workspace_html/05_table.html` |
+| 핵심 범위 | `table`, `caption`, `thead`, `tbody`, `tfoot`, `tr`, `th`, `td`, `scope`, `colspan`, `rowspan`, `colgroup` |
+| 학습 범위 | 표 구조, 제목 셀과 데이터 셀, 셀 병합, 접근성, 반응형 Table |
 | 프로젝트 연결 | 게시판, 관리자 화면, 통계표, 가격표, 일정표, 데이터 비교 |
+| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
 
-> HTML 테이블은 화면을 배치하는 레이아웃 도구가 아니라, 행과 열 사이의 관계를 가진 데이터를 표현하는 요소입니다. 표의 구조를 올바르게 작성하면 사람뿐 아니라 스크린 리더와 검색 엔진도 데이터의 관계를 더 정확하게 이해할 수 있습니다.
+> 이 문서는 내 코드와 강사님 코드의 `05_table.html`을 비교해 `table`, `tr`, `th`, `td`, `caption`, `thead`, `tbody`, `colspan`, `rowspan`의 역할을 정리한다. 원본의 잘못된 `summary`, 닫는 Tag 오류, Presentational Attribute, 숨겨진 `caption`, 행별 셀 개수 설명을 수정하고 접근성과 반응형 Table 처리까지 연결한다.
 
 # 학습 목표
 
@@ -753,84 +762,394 @@ tr의 직접 자식은 th 또는 td로 구성한다.
 
 # 21. 내 코드와 강사님 코드 비교
 
-## 21.1 공통점
+두 원본은 기본 Table, Header Cell, 행·열 병합, `caption`, `thead`, `tbody`, 크기 속성을 같은 순서로 실습한다. 내 코드는 설명과 게시판 Table 예제가 더 많고, 강사님 코드는 짧은 기본 예제 중심이다.
 
-두 코드 모두 다음 학습 흐름을 포함합니다.
+## 21.1 기본 문서 구조
 
-- `tr`, `td`, `th`의 기본 구조
-- 행마다 셀 개수를 맞추는 원리
-- 첫 행 또는 첫 열에 제목 셀 사용
-- `rowspan`, `colspan` 병합
-- `caption`, `thead`, `tbody`를 이용한 구조화
-- `width`, `height`가 같은 행과 열에 영향을 주는 현상 확인
-
-## 21.2 차이점
-
-| 항목 | 내 코드 | 강사님 코드 |
-| --- | --- | --- |
-| 주석 | 복습 내용을 추가하여 더 상세함 | 수업 핵심 중심으로 간결함 |
-| 표 예시 | 게시판 형태의 추가 예시 포함 | 핵심 예제까지만 포함 |
-| `caption` | `hidden` 적용 | 화면에 표시 |
-| 셀 닫기 | `th`를 `td`로 닫는 오타 존재 | 해당 오타 없음 |
-| 크기 예제 | 게시판 열 너비 예제까지 확장 | 단순 2행 예제로 설명 |
-| `summary` | `hidden` 적용 | 화면에 표시 |
-
-## 21.3 내 코드의 장점
-
-- 수업 중 들은 설명을 주석으로 복원해 복습하기 좋습니다.
-- 게시판 예제로 실제 사용 장면을 추가했습니다.
-- 셀 병합 시 셀을 제거하는 과정을 주석으로 남겼습니다.
-- 테이블의 열 너비가 공유된다는 점을 직접 확인했습니다.
-
-## 21.4 내 코드의 개선점
-
-- `th`와 `td`의 닫는 태그가 일치하는지 검수해야 합니다.
-- 실습용 표현 속성과 실무 권장 CSS를 구분해야 합니다.
-- `caption hidden`이 접근성 정보까지 숨길 수 있다는 점을 고려해야 합니다.
-- 유효하지 않은 `summary` 사용을 그대로 복제하지 않아야 합니다.
-- 게시판 예제에서 첫 번째 빈 제목 셀에 의미 있는 제목을 제공해야 합니다.
-- 여러 행에 반복된 번호 `23`처럼 실제 의도가 불분명한 데이터는 검토해야 합니다.
-
-## 21.5 강사님 코드의 장점
-
-- 기본 요소부터 병합까지 단계가 명확합니다.
-- 과도하게 복잡한 예제 없이 핵심 개념을 빠르게 확인할 수 있습니다.
-- 열과 행의 셀 개수를 맞추는 원리를 주석으로 강조합니다.
-
-## 21.6 강사님 코드의 개선점
-
-- `summary`는 `table` 내부에서 사용할 수 없으므로 제거해야 합니다.
-- `border`, `width`, `height` 같은 표현 속성은 CSS 방식과 함께 구분해 설명하는 것이 좋습니다.
-- `th`에 `scope`를 추가하면 접근성 관계가 더 명확해집니다.
-- 문서 언어가 한국어라면 `<html lang="ko">`가 더 적절합니다.
-
-## 21.7 최종 권장안
-
-수업 예제의 단계적 구조는 유지하되, 최종 복습 코드는 다음 기준으로 개선합니다.
+두 코드 모두 HTML5 기본 구조를 사용한다.
 
 ```html
-<table class="board-table">
-  <caption>공지사항 게시글 목록</caption>
-  <thead>
-    <tr>
-      <th scope="col">번호</th>
-      <th scope="col">제목</th>
-      <th scope="col">작성자</th>
-      <th scope="col">작성일</th>
-      <th scope="col">조회 수</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>23</td>
-      <td><a href="post-23.html">UI 구현 사전평가 안내</a></td>
-      <td>관리자</td>
-      <td><time datetime="2026-06-23">2026.06.23.</time></td>
-      <td>1</td>
-    </tr>
-  </tbody>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+        <title>Document</title>
+    </head>
+</html>
+```
+
+본문이 한국어이므로 다음처럼 맞추는 편이 적절하다.
+
+```html
+<html lang="ko">
+```
+
+Page 제목도 목적을 드러내게 작성한다.
+
+```html
+<title>HTML 테이블 실습</title>
+```
+
+## 21.2 복원 메모
+
+내 코드에는 다음 개인 작업 기록이 있다.
+
+```html
+<!-- 0723_HTML_table(tr/th/td)_restore -->
+```
+
+학습 개념과 직접 관련이 없다면 Git Commit이나 별도 작업 기록으로 분리하는 편이 문서 집중도를 높인다.
+
+## 21.3 `td`와 `th` 설명
+
+내 코드는 `td`를 “한 칸”, `th`를 “컬럼 또는 열의 제목”이라고 설명한다.
+
+```text
+td
+→ 일반 데이터 셀
+
+th
+→ 행 또는 열의 제목 셀
+```
+
+`th`는 열 제목뿐 아니라 행 제목에도 사용할 수 있다.
+
+```html
+<tr>
+    <th scope="row">
+        이름
+    </th>
+    <td>홍길동</td>
+</tr>
+```
+
+기본 굵기와 가운데 정렬은 Browser 기본 Style일 뿐 핵심 의미가 아니다.
+
+## 21.4 행별 셀 개수 차이
+
+두 코드 모두 두 번째 Table의 두 번째 행에 Cell을 하나 더 추가한다.
+
+```html
+<tr>
+    <td>내용2-1</td>
+    <td>내용2-2</td>
+    <td>내용2-3</td>
+    <td>내용2-4</td>
+</tr>
+```
+
+첫 번째 행에는 세 Cell만 있다.
+
+```html
+<tr>
+    <th>내용1</th>
+    <th>내용2</th>
+    <th>내용3</th>
+</tr>
+```
+
+Browser가 Table을 완전히 깨뜨리는 것은 아니지만, 행별 Column 관계가 달라져 Data 의미와 정렬이 모호해진다.
+
+```text
+중요한 기준
+→ 각 행의 Cell 수가 무조건 같아야 한다
+
+정확한 기준
+→ colspan·rowspan까지 고려했을 때
+  논리적인 Column Grid가 일관되어야 한다
+```
+
+## 21.5 지역·이름 예제 Content 차이
+
+### 내 코드
+
+```html
+<tr>
+    <th>지역</th>
+    <td>천안</td>
+    <td>평택</td>
+</tr>
+
+<tr>
+    <th>이름</th>
+    <td>홍길동</td>
+    <td>김길동</td>
+</tr>
+```
+
+### 강사님 코드
+
+```html
+<tr>
+    <th>지역</th>
+    <td>천안</td>
+    <td>통영</td>
+</tr>
+
+<tr>
+    <th>이름</th>
+    <td>민수</td>
+    <td>개똥</td>
+</tr>
+```
+
+Content만 다르고 구조는 같다. 첫 번째 Cell이 행 제목이라면 `scope="row"`를 추가하는 편이 관계를 더 명확히 전달한다.
+
+```html
+<th scope="row">지역</th>
+```
+
+## 21.6 셀 병합 설명
+
+내 코드는 병합을 다음처럼 설명한다.
+
+```html
+<!-- col(컬럼)span(간격) 컬럼의 간격
+     row(행)span(간격) 열의 간격 -->
+```
+
+`span`은 간격이 아니라 **몇 개의 Cell 영역을 차지하는지**를 나타낸다.
+
+```text
+colspan="2"
+→ 가로 방향 두 Column 차지
+
+rowspan="2"
+→ 세로 방향 두 Row 차지
+```
+
+원본처럼 모든 Cell을 먼저 작성한 뒤 병합되는 Cell을 제거하는 방식은 Grid를 확인하기 쉬운 학습 방법이다.
+
+## 21.7 `caption`
+
+### 내 코드
+
+```html
+<caption hidden>
+    테이블 내용에 대한 설명을 함
+</caption>
+```
+
+### 강사님 코드
+
+```html
+<caption>
+    테이블 내용에 대한 설명
+</caption>
+```
+
+`caption`은 Table의 제목 또는 설명을 제공한다. 내 코드처럼 `hidden`을 사용하면 시각적으로도 숨겨지고 일반적으로 접근성 Tree에서도 제외될 수 있어 제목 제공 목적이 사라질 수 있다.
+
+보이게 제공하는 기본 예:
+
+```html
+<caption>
+    게시글 목록
+</caption>
+```
+
+시각적으로만 숨기고 Screen Reader에는 제공하려면 `hidden`이 아니라 Visually Hidden CSS Pattern을 사용한다.
+
+## 21.8 잘못된 `<summary>`
+
+두 코드 모두 `table` 안에 `summary`를 작성한다.
+
+```html
+<summary>
+    제목, 작성자
+</summary>
+```
+
+`summary`는 `details`의 Summary를 나타내는 Element이며 `table`의 직접 자식으로 사용하는 설명 요소가 아니다.
+
+올바른 사용:
+
+```html
+<details>
+    <summary>
+        자세히 보기
+    </summary>
+
+    <p>추가 내용</p>
+</details>
+```
+
+Table 설명은 `caption`, 주변 Heading, 본문 Text, 필요 시 ARIA 연결을 사용한다.
+
+## 21.9 `thead`와 `tbody`
+
+두 코드 모두 다음 구조를 사용한다.
+
+```html
+<table>
+    <thead>
+        <tr>
+            <th>제목</th>
+            <th>작성자</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>제목1</td>
+            <td>작성자1</td>
+        </tr>
+    </tbody>
 </table>
 ```
+
+`thead`와 `tbody`는 화면에 별도의 선을 자동으로 만드는 요소가 아니라 Table Row Group의 의미 구조를 제공한다.
+
+내 코드 주석의 “세로일 경우는 묶지 못함”보다는 다음처럼 설명하는 편이 정확하다.
+
+```text
+thead
+→ Column Header 중심의 Row Group
+
+tbody
+→ 주요 Data Row Group
+
+tfoot
+→ 합계·요약 Row Group
+```
+
+행 제목은 `tbody` 안에서도 `th scope="row"`로 작성할 수 있다.
+
+## 21.10 `border` Attribute
+
+두 코드 모두 다음 방식을 사용한다.
+
+```html
+<table border="1">
+```
+
+학습 중 Cell 경계를 빠르게 보는 데는 편하지만 실제 Style은 CSS로 분리한다.
+
+```html
+<table class="data-table">
+```
+
+```css
+.data-table {
+    border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+    border: 1px solid #cccccc;
+}
+```
+
+## 21.11 `width`와 `height` Attribute
+
+두 코드 모두 Cell에 크기 속성을 작성한다.
+
+```html
+<th
+    width="200"
+    height="100"
+>
+    첫번째
+</th>
+```
+
+```html
+<td
+    width="250"
+    height="50"
+>
+    두번째
+</td>
+```
+
+`width`, `height` 같은 Presentational Attribute보다 CSS를 사용한다.
+
+```css
+.data-table__label {
+    width: 12.5rem;
+    min-height: 6.25rem;
+}
+```
+
+Table의 실제 Column Width는 Cell Content, Table Layout Algorithm, 병합, CSS Width의 영향을 함께 받으므로 한 Cell의 값만으로 독립적으로 결정되지 않을 수 있다.
+
+## 21.12 내 코드의 게시판 Table
+
+내 코드에는 강사님 코드에 없는 게시판 목록 예제가 추가되어 있다.
+
+```html
+<table border="1">
+    <thead>
+        <tr>
+            <th width="30"></td>
+            <th width="250">제목</th>
+            <th width="50">작성자</th>
+            <th width="150">작성일</th>
+            <th width="50">조회</th>
+        </tr>
+    </thead>
+</table>
+```
+
+첫 번째 Header Cell은 다음처럼 잘못 닫혀 있다.
+
+```html
+<th width="30"></td>
+```
+
+올바른 구조:
+
+```html
+<th scope="col">
+    번호
+</th>
+```
+
+빈 Header를 남기기보다 Column 목적을 명확한 Text로 제공한다.
+
+## 21.13 게시판 Data의 반복값
+
+내 코드 게시판 예제는 번호 `23`과 같은 제목을 여러 행에 반복한다.
+
+학습 구조에는 문제가 없지만 실제 Data 관계를 확인하려면 각 행이 구분되는 값이 더 적절하다.
+
+```html
+<tr>
+    <td>23</td>
+    <td>UI 구현 사전평가</td>
+    <td>이름1</td>
+    <td>2026-06-23</td>
+    <td>1</td>
+</tr>
+```
+
+날짜는 의미를 명확히 하기 위해 `time` Element도 사용할 수 있다.
+
+```html
+<time datetime="2026-06-23">
+    2026.06.23.
+</time>
+```
+
+## 21.14 원본 비교 요약
+
+| 항목 | 내 코드 | 강사님 코드 | 개선 기준 |
+| --- | --- | --- | --- |
+| 복원 메모 | 있음 | 없음 | 작업 기록과 학습 내용 분리 |
+| `td` 설명 | 상세 | 간단 | 일반 Data Cell로 설명 |
+| `th` 설명 | 열 제목 중심 | 열 제목 중심 | 행·열 제목 모두 가능 |
+| 행별 Cell | 3개와 4개 혼합 | 3개와 4개 혼합 | 논리적 Column Grid 유지 |
+| 지역·이름 Data | 천안·평택·홍길동·김길동 | 천안·통영·민수·개똥 | 구조 차이 없음 |
+| `caption` | `hidden` | 표시 | Table 제목은 접근 가능하게 제공 |
+| `summary` | `hidden` 사용 | 표시 | `table` 직접 자식으로 사용 불가 |
+| `border` | 사용 | 사용 | CSS로 분리 |
+| `width`·`height` | 사용 | 사용 | CSS로 분리 |
+| 게시판 예제 | 있음 | 없음 | `th` 닫는 Tag 오류 수정 |
+| `lang` | `en` | `en` | 한국어 문서는 `ko` |
 
 # 22. 대표 실무 예제: 게시판 목록
 
@@ -1208,37 +1527,8 @@ JavaScript로 정렬 기능을 추가한다면 현재 정렬 상태를 `aria-sor
 </th>
 ```
 
-# 29. 면접·복습 포인트
 
-## Q1. `th`와 `td`의 차이는 무엇인가요?
-
-`th`는 행이나 열의 제목을 나타내고, `td`는 일반 데이터를 나타냅니다. 단순한 기본 스타일 차이가 아니라 의미와 접근성 관계의 차이입니다.
-
-## Q2. `thead`, `tbody`, `tfoot`은 왜 사용하나요?
-
-표의 제목 영역, 주요 데이터 영역, 요약 영역을 의미적으로 구분하여 구조를 명확하게 만들기 위해 사용합니다.
-
-## Q3. `colspan`과 `rowspan`의 차이는 무엇인가요?
-
-`colspan`은 가로 방향의 여러 열을 병합하고, `rowspan`은 세로 방향의 여러 행을 병합합니다.
-
-## Q4. `scope` 속성은 왜 필요한가요?
-
-`th`가 어느 범위의 제목인지 명확하게 알려 주어 보조 기술이 제목과 데이터 셀의 관계를 이해하는 데 도움을 줍니다.
-
-## Q5. 테이블로 페이지 레이아웃을 만들면 안 되는 이유는 무엇인가요?
-
-테이블은 표 형식 데이터의 관계를 표현하는 요소입니다. 레이아웃에 사용하면 문서 의미가 잘못되고 반응형 설계와 접근성, 유지보수가 어려워집니다.
-
-## Q6. `caption`과 `summary`의 차이는 무엇인가요?
-
-`caption`은 표의 제목이며 `table` 안에서 사용합니다. `summary`는 접고 펼치는 `details` 요소의 제목입니다.
-
-## Q7. 테이블이 모바일 화면보다 넓으면 어떻게 처리하나요?
-
-표를 가로 스크롤 컨테이너로 감싸는 방법을 우선 검토합니다. 데이터 성격에 따라 모바일용 카드 구조를 별도로 제공할 수도 있습니다.
-
-# 30. Problems
+# 29. 종합실습
 
 ## Level 1
 
@@ -1361,7 +1651,7 @@ JavaScript로 정렬 기능을 추가한다면 현재 정렬 상태를 `aria-sor
 - 데이터가 없을 때 사용할 안내 행도 별도로 작성
 - 모바일에서 가로 스크롤 가능하도록 CSS 작성
 
-# 31. Answers
+# 30. 정답과 해설
 
 ## 문제 1 정답
 
@@ -1574,7 +1864,7 @@ JavaScript로 정렬 기능을 추가한다면 현재 정렬 상태를 `aria-sor
 }
 ```
 
-# 32. 최종 체크리스트
+# 31. 최종 체크리스트
 
 - [ ] 표 형식 데이터에만 `table`을 사용했는가?
 - [ ] 모든 데이터 셀이 `tr` 안에 있는가?
@@ -1590,7 +1880,7 @@ JavaScript로 정렬 기능을 추가한다면 현재 정렬 상태를 `aria-sor
 - [ ] 모바일에서 표가 잘리지 않도록 처리했는가?
 - [ ] 빈 제목 셀에 의미 있는 설명을 제공했는가?
 
-# 33. 핵심 요약
+# 32. 핵심 요약
 
 - `table`은 행과 열의 관계를 가진 데이터를 표현합니다.
 - `tr`은 행, `th`는 제목 셀, `td`는 데이터 셀입니다.

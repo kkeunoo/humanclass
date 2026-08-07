@@ -1,3 +1,10 @@
+---
+title: HTML 폼과 입력 요소
+version: v2.0-final
+last_updated: 2026-08-07
+status: Completed
+---
+
 # HTML 폼과 입력 요소
 
 ## 문서 정보
@@ -5,10 +12,10 @@
 | 항목 | 내용 |
 | --- | --- |
 | 문서 | `07_HTML_폼과_입력요소.md` |
-| 권장 선수 학습 | `06_HTML_이미지와_미디어.md` |
-| 다음 학습 | `08_HTML_시맨틱태그와_페이지구조.md` |
+| 분류 | `01_HTML` |
 | 학습 범위 | `form`, `input`, `button`, `label`, `select`, `option`, `textarea`, `name`, `value`, `placeholder`, `readonly`, `disabled`, `checked`, `selected`, `GET`, `POST` |
 | 프로젝트 연결 | 로그인, 회원가입, 검색, 설문, 주문, 문의, 관리자 입력 화면 |
+| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
 
 > 폼은 사용자가 입력한 데이터를 서버로 전달하는 구조입니다. 화면에 입력 칸을 보이게 만드는 것만으로는 충분하지 않으며, 각 값에 이름을 붙이고 올바른 전송 방식과 접근성까지 함께 설계해야 합니다.
 
@@ -1361,18 +1368,422 @@ POST를 실제로 처리하려면 다음과 같은 서버가 필요합니다.
 
 코드를 직접 실행하면서 각 요소가 화면에서 어떻게 동작하는지 확인하기에 적합합니다.
 
-# 32. 내 코드 vs 강사님 코드
+# 32. 내 코드와 강사님 코드 비교
 
-| 비교 항목 | 내 코드 | 강사님 코드 |
-| --- | --- | --- |
-| 주석 | 개념과 관찰 내용이 상세함 | 핵심 설명 중심 |
-| `form` 중첩 주의 | 직접 기록함 | 코드에서는 중첩하지 않음 |
-| `readonly` / `disabled` | 전송 차이를 설명함 | 각 요소를 실습함 |
-| 잘못된 속성 실습 | `value123`을 작성해 결과 확인 | 올바른 `value` 사용 |
-| 라디오 `checked` | 성별 그룹은 하나만 선택되도록 수정 | 성별 두 항목 모두 `checked` |
-| `textarea` | 태그 사이 공백 문제를 일부 개선 | `<br>`과 주석이 그대로 들어가는 예 포함 |
-| POST | Live Server의 405 가능성을 설명 | POST 폼 자체를 실습 |
-| 학습 성격 | 복습 주석이 풍부함 | 수업 진행용 예제 중심 |
+두 원본은 Text Input, Button, Checkbox, Radio, Select, Label, Textarea, Date·Number·Range Input, GET·POST Form을 같은 흐름으로 실습한다. 내 코드는 설명 Comment가 많고 일부 오류를 수정했지만, 새로운 오타와 부정확한 설명도 함께 존재한다.
+
+## 32.1 기본 문서 구조
+
+두 코드 모두 HTML5 기본 구조를 사용한다.
+
+```html
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+        <title>Document</title>
+    </head>
+</html>
+```
+
+본문이 한국어이므로 `lang="ko"`를 사용하는 편이 적절하다.
+
+```html
+<html lang="ko">
+```
+
+Page 제목도 목적이 드러나게 작성한다.
+
+```html
+<title>HTML Form과 입력 요소 실습</title>
+```
+
+## 32.2 복원 메모
+
+내 코드에는 다음 개인 작업 기록이 있다.
+
+```html
+<!-- 0723_HTML_form/label_restore -->
+```
+
+학습 개념과 직접 관련이 없다면 Git Commit이나 별도 작업 기록으로 분리하는 편이 문서 집중도를 높인다.
+
+## 32.3 Form 중첩
+
+내 코드에는 다음 설명이 있다.
+
+```html
+<!-- 한 페이지에 form은 여러개 생성할 수 있으나,
+     form안에 form은 넣지 않기 -->
+```
+
+핵심적으로 맞다. HTML에서는 `form` 안에 다른 `form`을 중첩하면 안 된다.
+
+## 32.4 `input` 기본 Type
+
+두 코드 모두 다음 예제를 포함한다.
+
+```html
+<input>
+```
+
+`type`을 생략하면 기본값은 `text`다. 실무에서는 의도를 분명하게 하기 위해 다음처럼 명시하는 편이 읽기 쉽다.
+
+```html
+<input type="text">
+```
+
+## 32.5 `value`와 `placeholder`
+
+강사님 코드는 두 속성을 각각 실습하고, 내 코드는 함께 작성한 예제도 추가한다.
+
+```html
+<input
+    type="text"
+    value="초기값"
+    placeholder="플레이스홀더"
+>
+```
+
+`value`는 실제 Form 값이고 `placeholder`는 값이 비어 있을 때 보이는 보조 안내 Text다. Placeholder는 Label을 대체하지 않는다.
+
+## 32.6 `readonly`와 `disabled`
+
+내 코드의 다음 설명은 핵심 차이를 잘 잡고 있다.
+
+```text
+readonly
+→ 수정 불가
+→ 일반적으로 제출 값에 포함
+
+disabled
+→ 조작 불가
+→ Form 제출 값에서 제외
+```
+
+단, `readonly`는 모든 Input Type에 적용되는 것은 아니다.
+
+## 32.7 잘못된 `value123`
+
+내 코드에는 다음 오타가 있다.
+
+```html
+<input
+    type="submit"
+    value123="전송"
+>
+```
+
+`value123`은 표준 `input` Attribute가 아니므로 Submit Button Label을 설정하지 못한다.
+
+```html
+<input
+    type="submit"
+    value="전송"
+>
+```
+
+Unknown Attribute가 DOM에 남아도 표준 기능이 생기는 것은 아니다.
+
+## 32.8 `button`의 기본 Type
+
+두 코드 모두 다음 구조를 사용한다.
+
+```html
+<button>
+    submit
+</button>
+```
+
+Form 내부 `button`의 기본 Type은 `submit`이다. 일반 동작 Button은 다음처럼 명시한다.
+
+```html
+<button type="button">
+    메뉴 열기
+</button>
+```
+
+## 32.9 Image Button
+
+Image가 Button의 유일한 Content라면 Button 목적을 Accessible Name으로 전달해야 한다.
+
+```html
+<button
+    type="button"
+    aria-label="상품 상세 보기"
+>
+    <img
+        src="./asset/product.png"
+        alt=""
+    >
+</button>
+```
+
+## 32.10 Checkbox의 `name`과 `value`
+
+내 코드는 모든 Coffee Checkbox에 `value`를 지정하지만 강사님 코드는 마지막 Checkbox에 `value`가 없다.
+
+`value`를 생략한 Checkbox가 체크되면 일반적으로 기본값 `"on"`이 제출된다. Server에서 의미 있는 값을 처리하려면 명시적으로 작성한다.
+
+```html
+<input
+    type="checkbox"
+    name="coffee"
+    value="ice"
+>
+```
+
+## 32.11 Radio Group과 중복 `checked`
+
+내 코드는 Gender Radio 중 하나에만 `checked`를 둔다.
+
+강사님 코드는 같은 `name="gender"` Group의 두 Radio에 모두 `checked`를 작성한다.
+
+```html
+<input
+    type="radio"
+    name="gender"
+    value="여자"
+    checked
+>
+
+<input
+    type="radio"
+    name="gender"
+    value="남자"
+    checked
+>
+```
+
+같은 Radio Group에서는 하나만 기본 선택 상태가 되도록 작성한다.
+
+## 32.12 Radio의 `value`
+
+`china` Radio는 두 코드 모두 `value`가 없다.
+
+```html
+<input
+    type="radio"
+    name="china"
+    value="jjajang"
+>
+짜장면
+```
+
+Label Text와 제출되는 `value`를 구분한다.
+
+## 32.13 Select와 Multiple
+
+강사님 코드에는 `양식11111111` 같은 테스트 문자열이 있고 내 코드는 일반적인 `양식`으로 정리했다.
+
+Multiple Select는 Desktop에서 Ctrl·Shift로 조작할 수 있지만 Touch 환경에서는 방식이 다를 수 있다. 실제 Form에서는 `name`도 지정해야 제출된다.
+
+## 32.14 Label 연결
+
+두 코드 모두 중첩 Label과 `for`·`id` 연결 방식을 실습한다.
+
+```html
+<input
+    type="checkbox"
+    id="pearl"
+>
+
+<label for="pearl">
+    펄 추가
+</label>
+```
+
+원본의 `id="perl"`은 Pearl을 의미한다면 `pearl`처럼 명확한 이름을 사용할 수 있다.
+
+## 32.15 Textarea 내부 Markup
+
+강사님 코드에는 다음 내용이 있다.
+
+```html
+<textarea>
+    미리
+    보여줄 글<br>
+    <!-- 주석 -->
+</textarea>
+```
+
+Textarea 내부는 일반 HTML Markup 영역이 아니라 Text Value로 처리되므로 `<br>`과 Comment 문자열도 초기 값의 일부처럼 취급될 수 있다.
+
+```html
+<textarea
+    name="message"
+    placeholder="내용을 입력하세요"
+></textarea>
+```
+
+내 코드는 해당 Markup을 제거했다.
+
+## 32.16 “Textarea는 title과 동일” 설명
+
+내 코드에는 다음 Comment가 있다.
+
+```text
+textarea는 안에 있는 모든걸 그대로 보여줌
+(title과 동일함)
+```
+
+두 Element는 목적이 다르다.
+
+```text
+textarea
+→ 여러 줄 사용자 입력 Control
+
+title
+→ Document Metadata의 Page 제목
+```
+
+일부 Parsing 특성만 비슷할 뿐 동일한 Element가 아니다.
+
+## 32.17 Reset Button
+
+Reset은 “처음 Page에 들어왔던 상태”로 무조건 되돌리는 것이 아니라 Form Control의 초기 Default Value로 되돌린다.
+
+```html
+<input
+    type="reset"
+    value="초기화"
+>
+```
+
+사용자가 작성한 값을 실수로 지울 수 있어 실무에서는 신중하게 사용한다.
+
+## 32.18 Number Input의 `e`
+
+일부 Browser의 `type="number"`는 지수 표기를 위해 `e`, `E`, 부호 등을 입력 과정에서 허용할 수 있다.
+
+```text
+1e3
+→ 1000
+```
+
+따라서 Client 입력 제한만 믿지 말고 Server Validation도 수행한다.
+
+## 32.19 `name`과 제출 데이터
+
+내 코드의 설명처럼 `name`이 없는 Successful Form Control은 Key·Value Pair로 제출되지 않는다.
+
+```html
+<input
+    type="text"
+    name="song"
+>
+```
+
+```text
+song=사용자입력값
+```
+
+`id`와 `name`의 역할을 구분한다.
+
+## 32.20 GET
+
+GET Form은 제출 값을 Query String으로 표현한다.
+
+```text
+?song=값&singer=값
+```
+
+검색·필터처럼 공유·Bookmark가 유용하고 민감하지 않은 조회 조건에 적합하다.
+
+## 32.21 POST
+
+POST는 Form Data를 Request Body에 담는다. “주소는 변경되지 않는다”는 표현은 항상 보장되지 않는다. Server가 Redirect를 반환하면 URL이 바뀔 수 있다.
+
+또한 POST 자체가 암호화를 의미하지 않는다.
+
+```text
+HTTPS
+→ 전송 구간 암호화
+
+POST
+→ URL Query가 아닌 Request Body 사용
+```
+
+## 32.22 `action` 오타
+
+강사님 Comment에는 다음 오타가 있다.
+
+```text
+acrion 기본값 : 현재 내 주소
+```
+
+정확한 Attribute 이름은 `action`이다.
+
+`action`을 생략하면 현재 Document URL이 제출 대상이 된다.
+
+## 32.23 Naver와 Google 검색 Form
+
+두 코드 모두 외부 Search Service가 기대하는 Query Parameter 이름을 사용한다.
+
+```html
+<form
+    method="get"
+    action="https://www.google.com/search"
+>
+    <input
+        type="text"
+        name="q"
+    >
+</form>
+```
+
+외부 Service Parameter는 변경될 수 있으므로 실제 사용 시 공식 문서를 확인한다.
+
+## 32.24 Live Server와 POST 405
+
+내 코드에는 다음 설명이 있다.
+
+```text
+Live Server는 현재 post를 지원하지 않기 때문에
+405 에러
+```
+
+정확히는 현재 사용 중인 정적 개발 Server가 해당 URL의 POST Method를 처리하지 않기 때문이다.
+
+```text
+Browser
+→ POST Request
+
+Static Server
+→ 해당 Route의 POST 미지원
+
+결과
+→ 405 Method Not Allowed
+```
+
+Form 자체의 오류는 아니다. POST를 처리하려면 Server Application이나 API Endpoint가 필요하다.
+
+## 32.25 반복 `<br>`
+
+강사님 코드 마지막에는 많은 `<br>`이 반복된다. 화면 간격과 Page 높이는 CSS Margin·Padding·Layout으로 처리한다.
+
+## 32.26 원본 비교 요약
+
+| 항목 | 내 코드 | 강사님 코드 | 개선 기준 |
+| --- | --- | --- | --- |
+| 복원 메모 | 있음 | 없음 | 작업 기록과 학습 내용 분리 |
+| Form 설명 | 상세 | 간단 | 중첩 금지·제출 구조 명확화 |
+| `value+placeholder` | 있음 | 없음 | 실제 값과 안내 Text 구분 |
+| `readonly`·`disabled` | 전송 차이 설명 | Markup만 있음 | Disabled는 제출 제외 |
+| Submit | `value123` 오류 | 정상 | 표준 `value` 사용 |
+| Checkbox | 모든 `value` 있음 | 마지막 `value` 없음 | 의미 있는 `value` 명시 |
+| Gender Radio | `checked` 하나 | `checked` 둘 | Group 기본 선택 하나 |
+| Textarea | Markup 제거 | `<br>`·Comment 포함 | 내부는 Text Value |
+| Reset 설명 | 상세 | Markup만 있음 | Default Value로 복원 |
+| GET·POST | 상세 | 간단 | Query·Body·HTTPS 구분 |
+| `action` | 정확 | `acrion` 오타 | 표준 이름 사용 |
+| POST 405 | 설명 있음 | 없음 | 정적 Server Method 미지원 |
+| 반복 `<br>` | 없음 | 다수 | Layout은 CSS |
+| `lang` | `en` | `en` | 한국어는 `ko` |
 
 # 33. 강사님 코드에서 주의해서 볼 부분
 
@@ -1818,37 +2229,8 @@ GET 폼을 제출한 뒤 주소의 쿼리 문자열을 확인합니다.
 </form>
 ```
 
-# 41. 면접·복습 포인트
 
-## Q1. `id`와 `name`의 차이는 무엇인가요?
-
-`id`는 문서에서 요소를 식별하고 `label`, CSS, JavaScript와 연결할 때 사용합니다. `name`은 폼 전송 시 서버가 값을 구분하는 키입니다.
-
-## Q2. `readonly`와 `disabled`의 가장 중요한 차이는 무엇인가요?
-
-둘 다 사용자가 수정할 수 없지만, `readonly` 값은 일반적으로 전송되고 `disabled` 값은 전송되지 않습니다.
-
-## Q3. 체크박스와 라디오 버튼의 차이는 무엇인가요?
-
-체크박스는 여러 항목을 동시에 선택하거나 아무것도 선택하지 않을 수 있습니다. 라디오 버튼은 같은 `name` 그룹 안에서 하나만 선택합니다.
-
-## Q4. 폼 안의 `button` 기본 타입은 무엇인가요?
-
-`submit`입니다. 제출 목적이 아닌 버튼은 `type="button"`을 명시해야 합니다.
-
-## Q5. POST는 왜 무조건 안전한 방식이 아닌가요?
-
-주소창에 값이 보이지 않을 뿐 자동 암호화되는 것은 아닙니다. HTTPS, 인증, 권한 확인, 서버 검증이 함께 필요합니다.
-
-## Q6. `placeholder`를 `label` 대신 사용하면 안 되는 이유는 무엇인가요?
-
-사용자가 입력을 시작하면 안내 문구가 사라져 항목의 목적을 확인하기 어렵고 접근성도 나빠질 수 있습니다.
-
-## Q7. 왜 서버에서도 입력값을 검증해야 하나요?
-
-HTML 속성과 JavaScript 검증은 사용자가 우회하거나 조작할 수 있기 때문입니다.
-
-# Problems
+# 41. 종합실습
 
 ## 문제 1. 기본 입력 폼
 
@@ -1992,7 +2374,7 @@ HTML 속성과 JavaScript 검증은 사용자가 우회하거나 조작할 수 �
 
 접근성을 고려해 `label`, `fieldset`, `legend`를 사용하세요.
 
-# Answers & Explanations
+# 42. 정답과 해설
 
 ## 정답 1
 
@@ -2300,7 +2682,40 @@ HTML 속성과 JavaScript 검증은 사용자가 우회하거나 조작할 수 �
 </form>
 ```
 
-# 핵심 요약
+
+# 43. 최종 체크리스트
+
+- [ ] `form`을 다른 `form` 안에 중첩하지 않는가?
+- [ ] 모든 Input의 목적에 맞는 `type`을 명시했는가?
+- [ ] 제출해야 하는 Control에 `name`을 작성했는가?
+- [ ] `id`와 `name`의 역할을 구분하는가?
+- [ ] `value`와 `placeholder`의 차이를 설명할 수 있는가?
+- [ ] Placeholder를 Label 대신 사용하지 않는가?
+- [ ] `readonly`와 `disabled`의 제출 차이를 이해하는가?
+- [ ] Unknown Attribute 오타를 검수했는가?
+- [ ] 일반 Button에 `type="button"`을 명시했는가?
+- [ ] Checkbox에 의미 있는 `value`를 제공했는가?
+- [ ] Radio Group의 `name`이 같고 기본 `checked`는 하나뿐인가?
+- [ ] Radio에도 의미 있는 `value`를 제공했는가?
+- [ ] 모든 Form Control에 연결된 `label`이 있는가?
+- [ ] `for`와 `id` 값이 정확히 일치하는가?
+- [ ] Multiple Select가 실제 UX에 적합한지 검토했는가?
+- [ ] Textarea 내부에 HTML Tag를 구조용으로 작성하지 않는가?
+- [ ] Reset Button이 정말 필요한지 확인했는가?
+- [ ] `min`, `max`, `step`을 입력 목적에 맞게 설정했는가?
+- [ ] `required`, `minlength`, `maxlength`, `pattern` 등 기본 Validation을 검토했는가?
+- [ ] GET에는 민감한 정보를 넣지 않는가?
+- [ ] POST가 자동 암호화를 의미하지 않는다는 점을 이해하는가?
+- [ ] 개인정보 전송에는 HTTPS를 사용하는가?
+- [ ] `action`의 제출 Endpoint가 실제로 해당 Method를 지원하는가?
+- [ ] 405 오류를 Form 문법 오류와 Server Method 오류로 구분할 수 있는가?
+- [ ] Client Validation만 믿지 않고 Server Validation을 수행하는가?
+- [ ] 반복 `<br>` 대신 CSS로 Form 간격을 처리하는가?
+- [ ] 한국어 문서라면 `lang="ko"`를 사용하는가?
+
+---
+
+# 44. 핵심 요약
 
 - `form`은 사용자 입력값을 서버로 전달하는 범위를 정의한다.
 - 폼 데이터의 기본 구조는 `name=value`이다.
