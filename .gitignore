@@ -18,3 +18,5 @@ workspace_python/Wiki_test.py
 
 workspace_python/__pycache_*
 workspace_python/fn/__pycache*
+
+workspace_sql/학습용자료*
