@@ -1191,6 +1191,8 @@ where e.deptno = 10 and e.sal > (
 
 
 select * from emp;
+select * from dept;
+select * from salgrade;
 desc emp;
 desc dept;
 desc salgrade;
