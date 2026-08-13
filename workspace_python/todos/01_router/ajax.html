@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        window.onload = () => {
+            document.querySelector('#todo').addEventListener('click', function() {
+                
+                id = document.querySelector('#id').value
+                item = document.querySelector('#item').value
+                param = {
+                    id: id,
+                    // 제이슨에서 앞뒤가 똑같으면 : 생략하고 하나만 쓰기도 함
+                    item
+                }
+                
+                fetch('http://127.0.0.1:8000/todo',{
+                    // post형식은 get과 다르게 body에 담아서 들어감 (get은 주소에 값을 담아서)
+                    method: 'POST',
+                    headers : {
+                        "Content-Type": "application/json"
+                    },
+                    body : JSON.stringify(param)
+                }).then(function(response){
+                    return response.json()
+                }).then(function(data){
+                    console.log(data)
+                }).catch(function(err){
+                    console.error(err)
+                })
+            })
+
+            document.querySelector('#todo2').addEventListener('click', function() {
+
+                // Promise는 성공, 실패의 2가지 인자값을 받음 (fetch는 promise를 돌려주는 객체)
+                // Promise에는 resolve, reject가 나오는데 reject는 try,catch나 then을 썼을 때 값 확인 가능
+                new Promise(function(resolve, reject){
+                    setTimeout(function(){
+                        try{
+                            console.log('지금이니!!')
+                            resolve('resolve메세지')
+                        } catch (e) {
+                            reject("reject메세지")
+                        }
+                    }, 1000)
+                }).then(function(data){
+                    console.log('then에서 출력', data)
+                }).catch(function(data){
+                    console.error('catch에서 출력', data)
+                })
+            })
+
+            // await는 promise가 끝날 때 까지 기다려주지만, function앞에 async를 사용해야 사용할 수 있음
+            // then 없이 사용할 수 있다 (Promise를 포함한 객체만 사용이 가능)
+            document.querySelector('#todo3').addEventListener('click', async function() {
+                console.log('시작 전')
+                // setTimeout은 쓰게되면 안에 setTimeout..계속 써야하지만, 에로우로 하게 된다면
+                // 여러 줄 복사해서 쓰면 그대로 1초 이후마다 반복되게 할 수 있음
+                // const data = await new Promise(function(resolve, reject){
+                //     setTimeout(function(){
+                //         try{
+                //             console.log('지금이니!!')
+                //             resolve('resolve메세지')
+                //         } catch (e) {
+                //             reject("reject메세지")
+                //         }
+                //     }, 1000)
+                // })
+
+                await new Promise( resolve => setTimeout(resolve, 1000))
+                console.log('이후', data)
+            })
+
+            document.querySelector('#todo4').addEventListener('click', async function() {
+                
+                id = document.querySelector('#id').value
+                item = document.querySelector('#item').value
+                param = {
+                    id: id,
+                    item
+                }
+                
+                // promise를 사용하면 'await'를 써주면 됨
+                let response = await fetch('http://127.0.0.1:8000/todo',{
+                    method: 'POST',
+                    headers : {
+                        "Content-Type": "application/json"
+                    },
+                    body : JSON.stringify(param)
+                })
+                console.log(response)
+                console.log('-----------------------')
+                console.log(await response.json())
+            })
+        }
+    </script>
+</head>
+<body>
+    <form method="GET" action="http://127.0.0.1:8000/todo/param2">
+        ID: <input type="text" name="id"><br>
+        Item : <input type="text" name="item"><br>
+        <br>
+        <input type="submit" value="전송">
+    </form>
+
+    <div>
+        ID: <input type="text" name="id" id="id"><br>
+        Item : <input type="text" name="item" id="item"><br>
+        <button type="button" id="todo">todo추가</button><br>
+        <button type="button" id="todo2">todo추가-동기1</button><br>
+        <button type="button" id="todo3">todo추가-동기2</button><br>
+        <button type="button" id="todo4">todo추가-동기3</button><br>
+    </div>
+</body>
+</html>
