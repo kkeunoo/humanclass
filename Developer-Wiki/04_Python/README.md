@@ -195,7 +195,7 @@ Python 문서를 완료하면 **직접 작성 → 실행 → 비교 → 문제 �
 
 | Previous | Home | Next |
 |:---:|:---:|:---:|
-| [⚡ JavaScript](../03_JavaScript/README.md) | [🏠 Developer-Wiki](../README.md) | [🏠 Developer-Wiki](../README.md) |
+| [⚡ JavaScript](../03_JavaScript/README.md) | [🏠 Developer-Wiki](../README.md) | [🗄️ SQL](../05_SQL/README.md) |
 
 ---
 

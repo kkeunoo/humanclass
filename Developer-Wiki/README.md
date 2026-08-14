@@ -22,7 +22,8 @@
 | 🎨 CSS | 17 | ✅ Complete | [Open](./02_CSS/README.md) |
 | ⚡ JavaScript | 25 | ✅ Complete | [Open](./03_JavaScript/README.md) |
 | 🐍 Python | 23 | ✅ Complete | [Open](./04_Python/README.md) |
-| **Total** | **75** | **Complete** | **4 Subjects** |
+| 🗄️ SQL | 20 | ✅ Complete | [Open](./05_SQL/README.md) |
+| **Total** | **95** | **Complete** | **5 Subjects** |
 
 > 문서 수는 각 Subject의 `README.md`를 제외한 실제 Markdown 파일을 기준으로 계산합니다. `99_` Reference 문서도 실제 문서 수에는 포함합니다.
 
@@ -38,6 +39,8 @@
 ⚡ JavaScript
    ↓
 🐍 Python
+   ↓
+🗄️ SQL / Database
    ↓
 ☕ Java
    ↓
@@ -64,6 +67,7 @@
 | 02 | 🎨 CSS | HTML 구조를 Layout과 Visual Interface로 표현 | [Open](./02_CSS/README.md) |
 | 03 | ⚡ JavaScript | Web Page에 Logic과 Interaction을 연결 | [Open](./03_JavaScript/README.md) |
 | 04 | 🐍 Python | Programming 문법과 문제 해결의 기초 | [Open](./04_Python/README.md) |
+| 05 | 🗄️ SQL | MariaDB 기반 데이터 조회·설계·변경과 실무 Query | [Open](./05_SQL/README.md) |
 
 ---
 
@@ -75,6 +79,7 @@
 | 🎨 CSS | [16 CSS 실무 코딩스타일](./02_CSS/16_CSS_실무_코딩스타일.md) | [17 CSS 종합실습](./02_CSS/17_CSS_종합실습.md) |
 | ⚡ JavaScript | [23 JavaScript 실무 코딩스타일](./03_JavaScript/23_JavaScript_실무_코딩스타일.md) | [24 JavaScript 종합실습](./03_JavaScript/24_JavaScript_종합실습.md) |
 | 🐍 Python | [19 Python 실무 코딩스타일](./04_Python/19_Python_실무_코딩스타일.md) | [20 Python 종합실습](./04_Python/20_Python_종합실습.md) |
+| 🗄️ SQL | [19 SQL 실무 코딩스타일](./05_SQL/19_SQL_실무_코딩스타일.md) | [20 SQL 종합실습](./05_SQL/20_SQL_종합실습.md) |
 
 ---
 
@@ -143,15 +148,17 @@ Developer-Wiki/
 │   └── README.md + 학습 문서
 ├── 03_JavaScript/
 │   └── README.md + 학습 문서 + Reference
-└── 04_Python/
-    └── README.md + 학습 문서 + Reference
+├── 04_Python/
+│   └── README.md + 학습 문서 + Reference
+└── 05_SQL/
+    └── README.md + 학습 문서
 ```
 
 ---
 
 ## 📌 Wiki Policy
 
-- 학습 순서는 `01_HTML → 02_CSS → 03_JavaScript → 04_Python`을 유지합니다.
+- 학습 순서는 `01_HTML → 02_CSS → 03_JavaScript → 04_Python → 05_SQL`을 유지합니다.
 - 각 Subject README의 Section 순서와 Navigation 형식을 통일합니다.
 - 실제 파일명을 그대로 사용해 Markdown Link를 작성합니다.
 - 실무 코딩 스타일과 종합실습 파일을 파일 정렬 순서로 추측하지 않습니다.

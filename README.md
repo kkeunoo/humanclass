@@ -26,7 +26,8 @@
 | 🎨 CSS | 17 | [Open](./Developer-Wiki/02_CSS/README.md) |
 | ⚡ JavaScript | 25 | [Open](./Developer-Wiki/03_JavaScript/README.md) |
 | 🐍 Python | 23 | [Open](./Developer-Wiki/04_Python/README.md) |
-| **Total** | **75** | [Developer-Wiki](./Developer-Wiki/README.md) |
+| 🗄️ SQL | 20 | [Open](./Developer-Wiki/05_SQL/README.md) |
+| **Total** | **95** | [Developer-Wiki](./Developer-Wiki/README.md) |
 
 ---
 
@@ -34,8 +35,8 @@
 
 ```text
 HTML → CSS → JavaScript → Python → SQL / Database
-                              ↓
-                            Java
+                                      ↓
+                                    Java
                               ↓
                        JSP / Servlet
                               ↓
@@ -60,6 +61,7 @@ HTML → CSS → JavaScript → Python → SQL / Database
 | 02 | 🎨 CSS | [Open](./Developer-Wiki/02_CSS/README.md) |
 | 03 | ⚡ JavaScript | [Open](./Developer-Wiki/03_JavaScript/README.md) |
 | 04 | 🐍 Python | [Open](./Developer-Wiki/04_Python/README.md) |
+| 05 | 🗄️ SQL | [Open](./Developer-Wiki/05_SQL/README.md) |
 
 ---
 
@@ -105,7 +107,8 @@ workspace/
 │   ├── 01_HTML/
 │   ├── 02_CSS/
 │   ├── 03_JavaScript/
-│   └── 04_Python/
+│   ├── 04_Python/
+│   └── 05_SQL/
 ├── workspace_html/
 ├── workspace_python/
 ├── workspace_sql/
