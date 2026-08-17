@@ -20,3 +20,7 @@ workspace_python/__pycache_*
 workspace_python/fn/__pycache*
 
 workspace_sql/학습용자료*
+
+workspace_python/todos/01_router/__pycache__/
+
+__pycache__/
