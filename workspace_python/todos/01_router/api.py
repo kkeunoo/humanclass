@@ -5,17 +5,18 @@ from todo import todo_router
 
 app = FastAPI()
 
+# CORS error : 크로스 도메인 에러 해결 코드
 app.add_middleware (
     CORSMiddleware,
     # allow_origins는 어디에서 들어오던지 다 허용, IP를 입력하면 해당 IP만 접근할 수 있도록 가능
-    # methods(방식), headers(json등)도 모두 허용하겠다
+    # methods(방식_POST,GET등), headers(json등)도 모두 허용하겠다
     allow_origins = ["*"],
     allow_methods = ["*"],
     allow_headers = ["*"]
 )
 
 @app.get("/")
-def welcome() -> dict:
+def welcome() -> dict: # -> dict는 딕셔너리 형태로 리턴하도록
     return {
         "message" : "Hello World2"
     }
