@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        .container {
+            /* border: 1px solid red; */
+            height: 100vh;
+            display: flex;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container #form1 {
+            border: 5px solid lightblue;
+            border-radius: 10px;
+            width: 500px;
+            /* height: 300px; */
+        }
+
+        .container #form1 #id,
+        .container #form1 #item {
+            width: 240px;
+        }
+
+        .container #form1 #btnDiv {
+            margin: 20px;
+
+        }
+
+        .container #form1 #add,
+        .container #form1 #cancle {
+            width: 150px;
+            border: 1px solid black;
+            border-radius: 10px;
+        }
+
+        .container #form1 #add:hover,
+        .container #form1 #cancle:hover {
+            font-weight: bold;
+            width: 75px;
+            cursor: pointer;
+            transition: 1s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="form1" method="post" action="http://127.0.0.1:8000/create">
+            <h1>추가 페이지</h1>
+            아이디 : <input type="text" name="id" id="id" placeholder="비어있는 값은 입력하실 수 없습니다."><br>
+            아이템 : <input type="text" name="item" id="item" placeholder="비어있는 값은 입력하실 수 없습니다."><br>
+            <div id="btnDiv">
+                <input type="submit" value="추가" name="add" id="add">
+                <a href="http://127.0.0.1:8000/read">
+                    <input type="button" value="취소" name="cancle" id="cancle">
+                </a>
+            </div>
+        </form>
+    </div>
+    {{ list }}
+</body>
+</html>
