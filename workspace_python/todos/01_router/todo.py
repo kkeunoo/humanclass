@@ -7,7 +7,7 @@ todo_list = []
 
 @todo_router.post('/todo')
 # add_todo(todo: dict) 는 딕셔너리로 타입 지정하는 것
-async def add_todo(todo: dict) -> dict :
+async def add_todo(todo: dict) -> dict : # -> dict는 return 값 형식 검증
     print('todo:', todo)
     todo_list.append(todo)
     return { # post또는 get으로 요청을 준 client에게 돌려주는 return 값
@@ -48,11 +48,10 @@ async def todoParamPost(id : int = Form(), item : str = Form()) -> dict :
 @todo_router.delete('/todo/param2')
 # 아래처럼 method를 받으면 get, post 두 가지 방식 모두 사용할 수 있음
 # req: Request = req의 형태가 Request로
+# Request에는 path도 있는데, path를 사용 시 포트 이후 ? 앞까지의 주소를 얻어올 수 있음
 async def todoParam(req: Request) -> dict : 
     if req.method == 'GET' :
         data = req.query_params
-    else :
-        data = await req.form()
 
     id = data.get('id')
     item = data.get('item')
@@ -171,6 +170,59 @@ def add_todo43(todo: Todo) -> dict :
     return { 
         'code': 'SUCC 200 OK'
     }
+
+# 주소에도 값을 넣어 값을 서버가 받을 수 있다
+@todo_router.get('/todo/{todo_id}')
+async def get_single_todo(todo_id : int) -> dict :
+    print('todo_id :', todo_id)
+    for todo in todo_list :
+        if todo.id == todo_id:
+            return {
+                "todo" : todo
+            }
+        
+    return {
+        "message" : "없는 ID 입니다"
+    }
+
+# Valid, Validate 유효성 검증
+from fastapi import Path
+@todo_router.get('/todo2/{todo_id}') # Path(gt=10, le=100) : 10초과 100이하
+async def get_single_todo2(todo_id : int = Path(gt=10, le=100)) -> dict : # gt(greater than) = 10으로 10보다 크다로 사용할 수 있음
+    print('todo_id :', todo_id)
+    for todo in todo_list :
+        if todo.id == todo_id:
+            return {
+                "todo" : todo
+            }
+        
+    return {
+        "message" : "없는 ID 입니다"
+    }
+
+from typing import Annotated # Annotated : 주석이라는 뜻
+
+# 변수에 넣어서 가져다 쓸 수 있음
+ValidTodoId = Annotated[int, Path(ge=10)]
+@todo_router.get('/todo3/{todo_id}') 
+# async def get_single_todo3(todo_id : Annotated[int, Path(ge=10)]) -> dict : # Annotated에 자료형, Path를 넣어 검증가능
+async def get_single_todo3(todo_id : ValidTodoId) -> dict : 
+    print('todo_id :', todo_id)
+    for todo in todo_list :
+        if todo.id == todo_id:
+            return {
+                "todo" : todo
+            }
+        
+    return {
+        "message" : "없는 ID 입니다"
+    }
+
+# GET방식일 때 Path와 달리 경로변수가 아닌 것들은 Query 사용 (?뒤에 오는 query string)
+from fastapi import Query
+@todo_router.get('/todo4') 
+def todo4(id:int = Query(gt=0, lt=10000)) :
+    print(id)
 
 print(2, __name__)#
 if __name__ == '__main__' :

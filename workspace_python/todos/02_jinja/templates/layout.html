@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            {% block title %}
+            {% endblock %}
+        </title>
+        <style>
+            .container {
+                width: 1000px;
+                margin: 0 auto;
+            }
+
+            .container header {
+                border: 1px solid red;
+                height: 100px;
+            }
+
+            .container footer {
+                border: 1px solid red;
+                height: 150px;
+            }
+
+            .container .wrap {
+                display: flex;
+            }
+            .container .wrap .menu {
+                border: 1px solid red;
+                width: 150px;
+            }
+            .container .wrap .main {
+                border: 1px solid blue;
+                background-color: lightblue;
+                /* flex-grow: 1; */
+            }
+            {% block css %}{% endblock %}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- <header>
+                <div>logo, menu</div>
+            </header> -->
+            {# include로 쓰거나, block으로 써도 됨 #}
+            {% include 'header.html' %}
+    
+            <div class="wrap">
+                <div class="menu">
+                    왼쪽 메뉴1 - {{ like }}<br>
+                    왼쪽 메뉴2<br>
+                    왼쪽 메뉴3<br>
+                    왼쪽 메뉴4
+                </div>
+                <div class="main">
+                    컨텐츠 영역<br>
+                    <!-- block 시작 -->
+                    {# 자식이 덮어 쓸 블럭(youtube에서 덮어 씀) #}
+                    {% block youtube %}
+                        Content Test Layout
+                    {% endblock %}
+                    <!-- block 끝 -->
+                </div>
+                <div>
+                    {% block star %}
+                    {% endblock %}
+                </div>
+                <div>
+                    {% block bookmark %}
+                    {% endblock %}
+                </div>
+                <div>
+                    {% block filter %}
+                    {% endblock %}
+                </div>
+            </div>
+            
+            <div>
+                {% block macro %}
+                {% endblock %}
+            </div>
+    
+            <footer>
+                <div>회사 정보</div>
+            </footer>
+        </div>
+    </body>
+</html>

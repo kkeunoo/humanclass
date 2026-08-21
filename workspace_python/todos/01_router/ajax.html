@@ -121,6 +121,51 @@
                 })
                 
             })
+
+            // document.querySelector('#todoGET').addEventListener('click', function() {
+            //     todoID = document.querySelector('#todoID').values
+            //     todoITEM = document.querySelector('#todoITEM').values
+                
+            //     fetch('http://127.0.0.1:8000/todo/c', {
+            //         method: 'GET'
+            //     }).then(function(respone){
+            //         return respone.json()
+            //     }).then(function(data){
+            //         console.log(data)
+            //     }).catch(function(err){
+            //         console.error(err)
+            //     })
+            // })
+
+            document.querySelector('#todoPUT').addEventListener('click', async function(){
+
+                id = document.querySelector('#todoID').value
+                item = document.querySelector('#todoITEM').value
+
+                const response = await fetch(
+                    `http://127.0.0.1:8000/crud/u?todoID=${id}&todoITEM=${item}`,{
+                    method: 'PUT'
+                })
+                console.log(response)
+
+                const result = await response.json()
+                console.log(result)
+            })
+
+            document.querySelector('#todoDELETE').addEventListener('click',async function(){
+
+                id = document.querySelector('#todoID').value
+                // item = document.querySelector('#todoITEM').value
+
+                const response = await fetch(
+                    `http://127.0.0.1:8000/crud/d?todoID=${id}`,{
+                    method: 'DELETE'
+                })
+                console.log(response)
+
+                const result = await response.json()
+                console.log(result)
+            })
         }
     </script>
 </head>
@@ -171,5 +216,39 @@
         Value2 : <input type="text" id="value2">
         <button type="button" id="valueButton">전송</button>
     </div>
+
+    <!-- <hr>
+    <div>
+        ID: <input type="text" name="todoID" id="todoID"><br>
+        Item : <input type="text" name="todoITEM" id="todoITEM"><br>
+        <button type="button" id="todoGET">추가</button><br>
+    </div> -->
+
+    <hr>
+    <h2>CRUD문제풀이</h1>
+    <form method="POST" action="http://127.0.0.1:8000/crud/c">
+        아이디 : <input type="text" name="todoID"><br>
+        아이템 : <input type="text" name="todoITEM">
+        <input type="submit" value="POST">
+    </form><br>
+    <form method="GET" action="http://127.0.0.1:8000/crud/r">
+        아이디 : <input type="text" name="todoID">
+        <input type="submit" value="GET">
+    </form><br>
+    <div>
+        아이디 : <input type="text" name="todoID" id="todoID"><br>
+        아이템 : <input type="text" name="todoITEM" id="todoITEM">
+        <input type="button" value="PUT" id="todoPUT">
+    </div><br>
+    <div>
+        아이디 : <input type="text" name="todoID" id="todoID">
+        <!-- ITEM : <input type="text" name="todoITEM"><br> -->
+        <input type="button" value="DELETE" id="todoDELETE">
+    </div><br>
+    <hr>
+    
 </body>
+
+
+
 </html>
