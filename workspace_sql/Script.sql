@@ -1199,7 +1199,65 @@ desc salgrade;
 
 commit;
 
+select * from emp3;
+
+insert into emp3
+select * from emp;
 
 
+-- update emp3
+-- set sal = sal * 1.1
+-- where deptno = 30
+
+drop table emp3;
+drop table dept3;
+
+select * from dept;
+
+select * from emp3;
+select * from dept3;
+
+select * from emp_pr;
+drop table emp_pr;
+
+insert into emp_pr
+values (
+	1000, 
+	'홍길동', 
+	'MANAGER', 
+	2000, 
+	'2026-08-09', 
+	5300,
+	100,
+	10
+);
+
+insert into emp_pr
+values (
+	2000, 
+	'김사장', 
+	'PRESIDENT', 
+	2000, 
+	'2026-08-01', 
+	6000,
+	100,
+	20
+);
+
+insert into emp_pr
+values (
+	3000, 
+	'박장사', 
+	'SALES', 
+	2000, 
+	'2026-08-15', 
+	4000,
+	100,
+	30
+);
+
+commit;
+
+select * from emp_pr;
 
 

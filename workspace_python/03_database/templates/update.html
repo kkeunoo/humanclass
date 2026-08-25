@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <!-- <form method="get" action="http://127.0.0.1:8000/emp/update/done"> -->
+        <form method="post" action="/emp/update">
+            empno : {{ empno }}<br>
+            ename : <input type="text" name="ename" value="{{ename}}"><br>
+            job : <input type="text" name="job" value="{{job}}"><br>
+            mgr : <input type="text" name="mgr" value="{{mgr}}"><br>
+            hiredate : <input type="date" name="hiredate" value="{{hiredate}}"><br>
+            <!-- hiredate : <input type="text" name="hiredate" value="{{hiredate}} "><br> -->
+            sal : <input type="text" name="sal" value="{{sal}}"><br>
+            comm : <input type="text" name="comm" value="{{comm}}"><br>
+            deptno : <input type="text" name="deptno" value="{{ deptno }}"><br>
+            <input type="hidden" name="empno" value="{{empno}}">
+            <input type="submit" value="수정완료" name="update">
+            <a href="/emp/detail?empno={{ empno }}">
+                <input type="button" value="취소">
+            </a>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        {{ emp_list }}
+        <h1>상세 목록 조회</h1>
+        <table border=1>
+            <thead>
+                <tr>
+                    <th>EMPNO</th>
+                    <th>ENAME</th>
+                    <th>JOB</th>
+                    <th>MGR</th>
+                    <th>HIREDATE</th>
+                    <th>SAL</th>
+                    <th>COMM</th>
+                    <th>DEPTNO</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ empno }}</td>
+                    <td>{{ ename }}</td>
+                    <td>{{ job }}</td>
+                    <td>{{ mgr }}</td>
+                    <td>{{ hiredate }}</td>
+                    <td>{{ sal }}</td>
+                    <td>{{ comm }}</td>
+                    <td>{{ deptno }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <form method="post" action="/emp/delete">
+            <input type="hidden" value="{{ empno }}" name="empno">
+            <input type="submit" value="삭제" name="delete">
+            <a href="/emp/update?empno={{empno}}">
+                <input type="button" value="수정" name="update">
+            </a>
+            <a href="/emp/select">
+                <input type="button" value="전체 목록으로">
+            </a>
+        </form>
+    </body>
+</html>
