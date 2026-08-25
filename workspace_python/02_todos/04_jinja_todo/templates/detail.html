@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        .container {
+            /* border: 1px solid red; */
+            height: 100vh;
+            display: flex;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container #form1 {
+            border: 5px solid lightblue;
+            border-radius: 10px;
+            width: 500px;
+            /* height: 300px; */
+
+        }
+        
+        .container #form1 #btnDiv {
+            margin: 20px;
+
+        }
+
+        .container #form1 #moveAll {
+            width: 304px;
+            border: 1px solid black;
+            border-radius: 10px;
+        }
+
+        .container #form1 #delete,
+        .container #form1 #modify {
+            width: 150px;
+            border: 1px solid black;
+            border-radius: 10px;
+        }
+
+        .container #form1 #delete:hover,
+        .container #form1 #modify:hover {
+            cursor: pointer;
+            width: 75px;
+            font-weight: bold;
+            transition: 1s;
+        }
+        .container #form1 #moveAll:hover {
+            cursor: pointer;
+            width: 152px;
+            font-weight: bold;
+            transition: 1s;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="form1" method="post" action="http://127.0.0.1:8000/update">
+            <h1>상세 페이지</h1>
+            아이디 : {{ id }}<br>
+            아이템 : {{ item }}<br>
+            <div id="btnDiv">
+                <div>
+                    <a href="http://127.0.0.1:8000/read">
+                        <input type="button" value="전체 목록으로 이동" name="moveAll" id="moveAll">
+                    </a>
+                </div>
+                <div>
+                    <input type="hidden" name="id" id="id" value="{{ id }}">
+                    <input type="hidden" name="item" id="item" value="{{ item }}">
+                    <input type="submit" value="수정" name="modify" id="modify">
+                    <a href="http://127.0.0.1:8000/delete/{{ id }}">
+                        <input type="button" value="삭제" name="delete" id="delete">
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

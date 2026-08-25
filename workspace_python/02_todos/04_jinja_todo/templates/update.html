@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        .container {
+            /* border: 1px solid red; */
+            height: 100vh;
+            display: flex;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container #form1 {
+            border: 5px solid lightblue;
+            border-radius: 10px;
+            width: 500px;
+            /* height: 300px; */
+        }
+        
+        .container #form1 #btnDiv {
+            margin: 20px;
+
+        }
+
+        .container #form1 #cancle,
+        .container #form1 #modify {
+            width: 150px;
+            border: 1px solid black;
+            border-radius: 10px;
+        }
+
+        .container #form1 #cancle:hover,
+        .container #form1 #modify:hover {
+            width: 75px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 1s;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="form1" method="post" action="http://127.0.0.1:8000/read">
+            <h1>수정 페이지</h1>
+            아이디 : {{ id }}<br>
+            아이템 : <input type="text" name="item" value="{{ item }}"><br>
+            <div id="btnDiv">
+                <div>
+                    <input type="hidden" name="id" id="id" value="{{ id }}">
+                    <input type="submit" value="수정완료" name="modify" id="modify">
+                    <a href="http://127.0.0.1:8000/detail?id={{ id }}&item={{ item }}">
+                        <input type="button" value="취소" name="cancle" id="cancle">
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

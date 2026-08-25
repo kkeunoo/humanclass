@@ -1,0 +1,143 @@
+{% extends 'layout.html' %}
+
+{#
+{% block youtube %}
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        동영상1
+    </body>
+</html>
+{% endblock %}
+#}
+
+{% block youtube %}
+{{ super() }} {# super()로 부모값을 살릴 수 있음 #}
+<div>
+    동영상1  : 좋아요 <span>{{ like }}</span>
+</div>
+{% endblock %}
+
+{% block title %}
+    동영상 페이지
+{% endblock %}
+
+{% block star %}
+<div>
+    {# 
+        아래처럼 서버에 있는 변수를 받아 if를 사용할 수 있음
+        단, 0은 False로 치기 때문에 주의해야 함 
+    #}
+    {% if star %}
+        star를 전달 받았다<br>
+
+        {% if star >= 0 %}
+            별점이 있습니다.<br>
+        {% endif %}
+        {#
+            만약 {% if star2 >= 0 %} 처럼 받지 않은 변수를
+            비교하면 'undefined' 오류 발생
+        #}
+    {% endif %}
+
+    {# 단순히 존재 여부만 볼 때에는 전달 받지 않은 변수도 오류 발생하지 않음 #}
+    {% if star2 %}
+        star2를 전달 받았다<br>
+    {% endif %}
+
+    {% if star2 %}
+        star2가 참이다<br>
+    {% else %}
+        star2가 거짓이다<br>
+    {% endif %}
+
+    <hr>
+    star2 : {{ star2 }}<br> {# 변수가 없어도 에러나지 않고 출력되지 않음 #}
+    star2 : {{ star2 | default('기본값') }}<br> {# |로 필터를 사용할 수 있음 #}
+    star2 : {{ star2 | d('기본값') }}<br> 
+    <hr>
+
+    {% if star > 3 %}
+        별점이 높아요 : {{ star }}
+    {% elif star == 3 %}
+        별점이 중간 : {{ star }}
+    {% elif star <= 2 and star >= 0 %}
+        별점이 낮아요 : {{ star }}
+    {% else %}
+        별점이 이상해요 : {{ star }}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block bookmark %}
+    bookmark 블럭<br>
+    {% for bm in bookmark %}
+        <div>
+            {{ loop.index }}. {{ bm }} {{ loop.first }} {{ loop.last }}
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block filter %}
+    {# 변수로 받았다는 가정하에 실행 #}
+    {{ '하드코딩한 글씨' | length }}<br>
+    {{ '하드코딩한 글씨' | length > 10 }}<br> <!-- True/False -->
+    {{ '하드코딩한 글씨' | truncate(4, True, '...', 2) }}<br>
+    {{ "3.14" | int }}<br>
+    {{ "15000" | price }}원<br>
+
+    {{ '2026-08-20' | format_date }}<br>
+
+    {{ '<h1>그냥 HTML</h1>' }}<br>
+    {{ '<h1>Markup 거친 HTML</h1>' | n2br }}<br>
+    {{ 'abc\n123\n한글' }}<br>
+    {{ 'abc\n123\n한글' | n2br }}<br>
+{% endblock %}
+
+{# 이런 형태로도 css칸에 block을 넣어 별도 css를 적용시킬 수 있음 #}
+{% block css %}
+.card {
+    width: 100px;
+    border: 1px solid black;
+    margin: 20px;
+    padding: 10px;
+    display: inline-block;
+}
+{% endblock %}
+
+{# 외부 파일 한 곳에 macro를 모아두고 import하여 사용하는 방법 #}
+{% import 'macros.html' as macros %}
+
+{% block macro %}
+    <!-- <div class="card">
+        <h2>제목</h2>
+        <div>
+            내용
+        </div>
+    </div> -->
+
+    {{ render_card('제목1', '내용1') }}
+    {{ render_card('제목2', '내용2') }}
+    {{ macros.render_card2('제목3', '내용3') }}
+{% endblock %}
+
+{# 아래처럼 macro의 형식을 만들어놓고 인자값만 준다면 위처럼 편하게 사용 가능 #}
+{% macro render_card(title, text) %}
+    <div class="card">
+        <h2>{{ title }}</h2>
+        <div>
+            {{ text }}
+        </div>
+        <div>
+            {{ like }}
+        </div>
+    </div>
+{% endmacro %}
+
+{# layout을 불러온 뒤에 글을 넣는다고 해도, 나오지 않으며 layout만 출력 됨 #}
+<div>쌩으로 쓰면 이거어디들어가나요 - 안나온다</div>
