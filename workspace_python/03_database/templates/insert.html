@@ -4,18 +4,26 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
+        <script>
+            let count = {{ count }}
+
+            if( count == 0 ) {
+                alert('추가에 실패했습니다.')
+            }
+
+        </script>
     </head>
     <body>
         <form method="post" action="/emp/insert">
-            <!-- empno : <input type="text" name="empno"><br> -->
+            empno : <input type="text" name="empno"><br>
             ename : <input type="text" name="ename"><br>
             job : <input type="text" name="job"><br>
-            mgr : <input type="text" name="mgr"><br>
+            mgr : <input type="number" name="mgr"><br>
             <!-- hiredate : <input type="text" name="hiredate"><br> -->
             hiredate : <input type="date" name="hiredate"><br>
-            sal : <input type="text" name="sal"><br>
-            comm : <input type="text" name="comm"><br>
-            deptno : <input type="text" name="deptno"><br>
+            sal : <input type="number" name="sal"><br>
+            comm : <input type="number" name="comm"><br>
+            deptno : <input type="number" name="deptno"><br>
             <input type="submit" value="추가" name="insert">
             <a href="/emp/select">
                 <input type="button" value="취소">

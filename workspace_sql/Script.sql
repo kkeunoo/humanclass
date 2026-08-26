@@ -1260,4 +1260,14 @@ commit;
 
 select * from emp_pr;
 
+sql = select * from emp_pr;
+
+select * from emp3;
+select * from dept3;
+
+insert into emp3
+select * from emp;
+
+insert into dept3
+select * from dept;
 

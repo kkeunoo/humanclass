@@ -11,12 +11,12 @@
             empno : {{ empno }}<br>
             ename : <input type="text" name="ename" value="{{ename}}"><br>
             job : <input type="text" name="job" value="{{job}}"><br>
-            mgr : <input type="text" name="mgr" value="{{mgr}}"><br>
+            mgr : <input type="number" name="mgr" value="{{mgr}}"><br>
             hiredate : <input type="date" name="hiredate" value="{{hiredate}}"><br>
             <!-- hiredate : <input type="text" name="hiredate" value="{{hiredate}} "><br> -->
-            sal : <input type="text" name="sal" value="{{sal}}"><br>
-            comm : <input type="text" name="comm" value="{{comm}}"><br>
-            deptno : <input type="text" name="deptno" value="{{ deptno }}"><br>
+            sal : <input type="number" name="sal" value="{{sal}}"><br>
+            comm : <input type="number" name="comm" value="{{comm}}"><br>
+            deptno : <input type="number" name="deptno" value="{{ deptno }}"><br>
             <input type="hidden" name="empno" value="{{empno}}">
             <input type="submit" value="수정완료" name="update">
             <a href="/emp/detail?empno={{ empno }}">

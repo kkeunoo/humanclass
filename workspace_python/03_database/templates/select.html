@@ -4,6 +4,12 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
+        <!-- <script>
+            let count = {{ count }}
+            if( count != 0 ) {
+                alert('추가에 성공했습니다.')
+            }
+        </script> -->
     </head>
     <body>
         <h1>전체 목록 조회</h1>
@@ -23,21 +29,33 @@
             <tbody>
                 {% if emp_list %}
                     {% for li in emp_list %}
-                        <tr>
-                            <td>
-                                <!-- <a href="http://127.0.0.1:8000/emp/detail?empno={{ li.empno }}&ename={{ li.ename }}&job={{ li.job }}&mgr={{ li.mgr }}&hiredate={{ li.hiredate }}&sal={{ li.sal }}&comm={{ li.comm }}&deptno={{ li.deptno }}"> -->
-                                <a href="/emp/detail?empno={{ li.empno }}">
-                                    {{ li.empno }}
-                                </a>
-                            </td>
-                            <td>{{ li.ename }}</td>
-                            <td>{{ li.job }}</td>
-                            <td>{{ li.mgr }}</td>
-                            <td>{{ li.hiredate }}</td>
-                            <td>{{ li.sal }}</td>
-                            <td>{{ li.comm }}</td>
-                            <td>{{ li.deptno }}</td>
-                        </tr>
+                    <tr>
+                        <td>
+                            <!-- <a href="http://127.0.0.1:8000/emp/detail?empno={{ li.empno }}&ename={{ li.ename }}&job={{ li.job }}&mgr={{ li.mgr }}&hiredate={{ li.hiredate }}&sal={{ li.sal }}&comm={{ li.comm }}&deptno={{ li.deptno }}"> -->
+                            <a href="/emp/detail?empno={{ li.empno }}">
+                                {{ li.empno }}
+                            </a>
+                        </td>
+                        <td>{{ li.ename }}</td>
+                        <td>{{ li.job }}</td>
+                        <td>
+                        {% if li.mgr == None %}
+                            -
+                        {% else %}
+                        {{ li.mgr }}
+                        {% endif %}
+                        </td>
+                        <td>{{ li.hiredate }}</td>
+                        <td>{{ li.sal }}</td>
+                        <td>
+                        {% if li.comm == None %}
+                            -
+                        {% else %}
+                        {{ li.comm }}
+                        {% endif %}
+                        </td>
+                        <td>{{ li.deptno }}</td>
+                    </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
