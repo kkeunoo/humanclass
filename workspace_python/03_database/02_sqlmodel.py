@@ -25,7 +25,7 @@ templates = Jinja2Templates(directory='templates/')
 # DATABASE_URL = 'SQL+DRIVER(pymysql)://ID:PW@IP:PORT/DATABASE명
 # SQLite는 한 번에 한 곳에서만 접속이 가능해서, {"check_same_thred": False} 를 사용하기도 함
 DATABASE_URL = 'mysql+pymysql://root:human1234$@127.0.0.1:3306/human'
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(DATABASE_URL, echo=True) # echo로 cmd에 실행 한 SQL문이 나오도록 설정
 # engine = create_engine(
 #     DATABASE_URL, 
 #     echo=True, 
