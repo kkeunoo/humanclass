@@ -1,6 +1,6 @@
 ---
 title: HTML 종합실습
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -2331,3 +2331,10 @@ Validator와 실제 Browser에서 검수하는 것
 ```
 
 이 구조를 이해하고 직접 수정할 수 있다면 HTML Tag를 암기하는 단계를 넘어, 실제 Web Page의 정보 구조와 접근성을 설계할 수 있다.
+# V3 브라우저 해석 추적 카드 — 요구사항에서 문서·요청·접근성까지
+
+실습은 콘텐츠 목록을 먼저 만들고 제목 계층과 시맨틱 영역을 정한 뒤 링크·이미지·표·폼을 의미에 맞게 배치한다. 그 다음 CSS와 JavaScript가 연결될 class/id를 최소한으로 추가한다.
+
+정상 화면뿐 아니라 이미지 404, 긴 텍스트, 빈 필수 입력, 키보드 탐색, 좁은 viewport를 시험한다. Elements의 DOM, Network 요청, Accessibility 역할·이름을 결과 기록에 포함한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/01~07 전체 원본과 과제·평가 자료를 결합한 종합 확장`에서 실제 DOM·요청·접근성 차이를 확인한다.

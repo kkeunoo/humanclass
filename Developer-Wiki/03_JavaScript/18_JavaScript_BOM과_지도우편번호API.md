@@ -1,6 +1,6 @@
 ---
 title: JavaScript BOM과 지도·우편번호 API
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/18_map.html`, `workspace_teacher/workspace_html/javascript/18_map.html` |
 | 핵심 범위 | BOM, `window`, `location`, `history`, `window.open()`, Popup, Kakao Postcode, Kakao Rough Map |
 | 실습 범위 | URL 확인·이동·새로고침, 뒤로·앞으로 이동, Popup 열기, 주소·우편번호 검색, 지도 삽입 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 18번은 브라우저 창과 주소·방문 기록을 제어하는 BOM 기능을 학습한 뒤, 외부 주소 검색·지도 Embed 기능으로 연결한다.  
 > 외부 서비스는 네트워크·서비스 정책·Script 로드 상태에 영향을 받으므로 성공뿐 아니라 실패 처리도 함께 설계해야 한다.
@@ -1566,3 +1566,10 @@ HTTPS와 새 창 보안을 고려하고
 ```
 
 이 흐름을 이해하면 이후 JSON·AJAX·Fetch 문서에서 외부 데이터와 브라우저 화면을 더 안정적으로 연결할 수 있다.
+# V3 실행 추적 카드 — window 기능/사용자 선택 → 외부 API → 콜백 결과
+
+BOM은 `window`, `location`, `history`, `navigator` 등 브라우저 환경을 다룬다. 지도·우편번호 API는 외부 스크립트가 제공한 객체를 호출하고 사용자 선택 결과를 콜백으로 받는다.
+
+팝업 호출 직후에는 주소가 없고 선택 콜백 안에서 값이 생긴다. 외부 스크립트 미로딩, 팝업 차단, 키·도메인 설정 오류를 Console과 Network에서 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/18_map.html`에서 실제 사용 위치와 차이를 확인한다.

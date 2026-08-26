@@ -1,6 +1,6 @@
 ---
 title: JavaScript 종합실습
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2823,3 +2823,10 @@ JavaScript 종합실습의 핵심은 기능을 많이 넣는 것이 아니다.
 ```
 
 이 프로젝트를 이해하고 직접 수정할 수 있다면 JavaScript 기초 문법을 넘어, 작은 실무형 Frontend 기능을 구조적으로 구현할 수 있다.
+# V3 실행 추적 카드 — 요구사항 → 상태 모델 → 이벤트 → 렌더링 → 저장/통신
+
+실습은 정상 화면만 보지 않고 초기 상태, 사용자 행동, 상태 변화, DOM 반영, 네트워크, 실패 복구를 시간 순서로 기록한다.
+
+정상값·빈 값·경계값·중복 동작을 테스트하고 Console 오류 없음, Elements 상태, Network 요청을 함께 캡처한다. 완성 예시는 암기보다 요구사항을 바꿔 재작성한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/01~22 전체 원본을 결합한 종합 확장`에서 실제 사용 위치와 차이를 확인한다.

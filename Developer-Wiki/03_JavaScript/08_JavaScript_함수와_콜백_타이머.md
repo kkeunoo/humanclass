@@ -1,6 +1,6 @@
 ---
 title: JavaScript 함수와 콜백·타이머
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/08_function.html`, `workspace_teacher/workspace_html/javascript/08_function.html` |
 | 핵심 범위 | 함수 선언·호출, 매개변수, 반환값, 스코프, 기본 매개변수, 익명 함수, 함수 참조, 콜백, 정렬 함수, 타이머 |
 | 실습 범위 | 넓이 계산, 중첩 호출, 콜백 실행, 숫자 정렬, 지연 실행, 반복 타이머, 예약 취소 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > 함수와 콜백·타이머를 이해하는 데 필요한 핵심 코드만 발췌하고, 실행 순서·반환값·스코프·비동기 예약의 차이를 함께 설명한다.
@@ -1726,3 +1726,10 @@ clearInterval()
 ```
 
 이 흐름을 이해하면 이후 화살표 함수, 이벤트 처리, 비동기 작업을 더 자연스럽게 학습할 수 있다.
+# V3 실행 추적 카드 — 함수 등록 → 호출/예약 → 콜백 실행
+
+함수 정의와 호출은 다르다. `setTimeout(callback, delay)`는 함수를 즉시 실행하지 않고 최소 지연 뒤 실행할 작업으로 등록하며 현재 호출 스택이 끝난 뒤 처리된다.
+
+`console.log("A"); setTimeout(()=>console.log("B"),0); console.log("C");`는 `A`, `C`, `B` 순이다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/08_function.html`에서 실제 사용 위치와 차이를 확인한다.

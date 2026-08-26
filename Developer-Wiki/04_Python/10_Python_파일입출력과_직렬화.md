@@ -1,6 +1,6 @@
 ---
 title: Python 파일 입출력과 직렬화
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1842,3 +1842,26 @@ with문으로 자원을 정리하고
 ```
 
 이 흐름을 이해하면 이후 모듈·예외 처리·클래스에서 프로그램 데이터를 더 안정적으로 저장하고 불러올 수 있다.
+
+# V3 동작 백과 보강 — 경로에서 Python 객체까지
+
+상대 경로는 소스 파일 위치가 아니라 현재 작업 폴더를 기준으로 해석된다. `open()`은 운영체제에 파일 열기를 요청하고 파일 객체를 반환한다. 읽기 메서드는 디스크의 바이트를 지정 인코딩으로 해석해 문자열로 돌려준다. `with` 블록을 벗어나면 예외 여부와 관계없이 파일을 닫는다.
+
+```python
+from pathlib import Path
+
+path = Path("memo.txt")
+with path.open("w", encoding="utf-8") as file:
+    file.write("Python\n")
+with path.open("r", encoding="utf-8") as file:
+    text = file.read()
+print(repr(text))
+```
+
+```text
+'Python\n'
+```
+
+파일이 없으면 `FileNotFoundError`, 권한이 없으면 `PermissionError`, 인코딩이 맞지 않으면 `UnicodeDecodeError`가 날 수 있다. JSON은 언어 간 교환에 유리하고, pickle은 Python 객체 복원에 편하지만 신뢰하지 않는 파일을 읽으면 안 된다.
+
+**원본 연결:** 내 코드 `workspace_python/10_file.py`, 강사님 코드 `workspace_python/_10_file.py`의 텍스트·바이너리 파일, `with`, pickle/JSON 예제를 기반으로 한다.

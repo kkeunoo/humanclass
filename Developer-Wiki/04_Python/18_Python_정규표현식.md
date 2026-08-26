@@ -1,6 +1,6 @@
 ---
 title: Python 정규표현식
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2168,3 +2168,18 @@ $
 ```
 
 이 원리를 이해하면 복잡해 보이는 패턴도 작은 단위로 나누어 읽고 작성할 수 있다.
+
+# V3 동작 백과 보강 — 패턴 검사와 Match 객체
+
+정규표현식은 문자열 규칙이다. `search`는 전체에서 첫 일치, `match`는 시작 위치, `fullmatch`는 전체 문자열의 일치를 검사한다.
+
+```python
+import re
+result = re.search(r"\d{3}-\d{4}-\d{4}", "문의: 010-1234-5678")
+print(result.group())
+print(result.span())
+```
+
+출력은 `010-1234-5678`과 `(4, 17)`이다. 불일치 결과는 Match 객체가 아닌 `None`이므로 바로 `.group()`을 호출하면 `AttributeError`가 난다. 먼저 `if result:`로 확인한다.
+
+**원본 연결:** `03_string.py`의 문자열 검색·치환을 확장한 **Wiki 확장 학습**이며 원본에 별도 정규식 수업이 있었다고 단정하지 않는다.

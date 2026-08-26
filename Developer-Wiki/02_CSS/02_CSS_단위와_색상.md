@@ -1,6 +1,6 @@
 ---
 title: CSS 단위와 색상
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_me/workspace_html/css/02_단위.html`, `workspace_teacher/workspace_html/css/02_단위.html` |
 | 핵심 범위 | `px`, `%`, `em`, `rem`, `vw`, `vh`, `vmin`, `vmax`, 색상 이름, HEX, RGB, RGBA, 알파 채널, 상속 |
 | 프로젝트 연결 | 글자 크기 체계, 반응형 레이아웃, 전체 화면 섹션, 디자인 토큰, 투명 배경 |
-| 문서 형식 | CSS Developer-Wiki V2 확정 형식 |
+| 문서 형식 | CSS Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 단위·색상 실습을 함께 비교합니다. 원본의 실제 오류를 바로잡고, 같은 개념이 반응형 레이아웃과 디자인 시스템에서 어떻게 사용되는지 실무 예제로 연결합니다.
 
@@ -2855,3 +2855,10 @@ body {
 - 원본 강사님 코드의 세 번째 `em` 요소는 실제로 `rem`을 사용하며 독립된 `rem` 구역은 없다.
 - 내 코드는 별도의 `#rem` 구역을 추가해 세 단위의 차이를 비교하기 쉽게 보완했다.
 - 실무에서는 크기와 색상을 CSS 사용자 지정 속성으로 관리하면 일관성과 유지보수가 좋아진다.
+# V3 렌더링 추적 카드 — 단위의 기준과 최종 계산값
+
+`px`, `%`, `em`, `rem`, `vw`, `vh`는 기준이 다르며 브라우저는 부모 크기, 글자 크기, viewport를 이용해 사용값을 계산한다. 색상은 이름·hex·rgb(a)·hsl(a) 등으로 표현한다.
+
+루트가 16px일 때 `2rem`은 32px다. 자식의 `2em`은 그 요소의 계산된 font-size 기준이라 문맥에 따라 달라진다. Computed에서 실제 px 값과 색상값을 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/02_단위.html`에서 실제 선택자·계산값·화면 차이를 확인한다.

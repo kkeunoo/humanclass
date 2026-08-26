@@ -1,6 +1,6 @@
 ---
 title: JavaScript 문자열과 문자열 메서드
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/10_string.html`, `workspace_teacher/workspace_html/javascript/10_string.html` |
 | 핵심 범위 | 문자열 길이, 검색, 치환, 정규표현식, 자르기, 분리, 공백 제거, 문자열 불변성 |
 | 실습 범위 | 이메일 ID 추출, 주민번호 성별 코드, 날짜 문자열 분석, 이메일 마스킹 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > 문자열을 검색·치환·분리·가공하는 데 필요한 핵심 코드만 발췌하고, 잘못된 입력과 개인정보 마스킹까지 함께 설명한다.
@@ -1643,3 +1643,10 @@ repeat()
 ```
 
 이 흐름을 이해하면 이후 객체와 DOM 문서에서 사용자 입력과 화면 문자열을 더 안전하게 처리할 수 있다.
+# V3 실행 추적 카드 — 문자열 입력 → 검색/변환 → 새 문자열
+
+문자열은 불변이므로 메서드 결과는 새 문자열이다. `trim`, `replace`, `toUpperCase` 결과를 계속 쓰려면 저장해야 한다.
+
+`const s=" hi "; console.log(s.trim().toUpperCase(), s.length);`는 `HI 4`다. 없는 위치의 문자 접근과 `indexOf`의 `-1`을 구분한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/10_string.html`에서 실제 사용 위치와 차이를 확인한다.

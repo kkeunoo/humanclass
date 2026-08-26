@@ -1,6 +1,6 @@
 ---
 title: JavaScript 연산자
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/02_op.html`, `workspace_teacher/workspace_html/javascript/02_op.html` |
 | 핵심 범위 | 산술 연산자, 증감 연산자, 전위·후위 연산, 논리 연산자, 비교 연산자, 엄격한 동등 비교, 삼항 조건 연산자 |
 | 실습 범위 | 구매 가능 수량, 할인 가격, 자리수 버림, 소수점 처리, 화폐 분배 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > 각 연산자의 동작을 이해하는 데 필요한 코드만 발췌하고, 실행 순서·반환값·형 변환·실무 개선 방향을 함께 설명한다.
@@ -1806,3 +1806,10 @@ value++
 ```
 
 이 흐름을 이해하면 이후 조건문에서 비교식과 논리식을 더 안전하게 작성할 수 있다.
+# V3 실행 추적 카드 — 피연산자 → 강제 변환 → 결과
+
+연산자는 좌우 값의 자료형을 보고 계산하며 일부는 암묵적 형 변환을 일으킨다. 비교는 예측 가능한 `===`, `!==`를 기본으로 삼는다.
+
+`console.log("5" + 1, "5" - 1, 5 === "5")`의 결과는 `51 4 false`다. 괄호로 우선순위를 명확히 하고 `NaN`은 `Number.isNaN()`으로 검사한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/02_op.html`에서 실제 사용 위치와 차이를 확인한다.

@@ -1,6 +1,6 @@
 ---
 title: JavaScript DOM 폼 요소와 입력값 처리
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/13_dom_form.html`, `workspace_teacher/workspace_html/javascript/13_dom_form.html` |
 | 핵심 범위 | `input.value`, 비밀번호 입력, 날짜 입력, `checked`, 라디오 버튼, 체크박스, `select.value`, `textarea.value`, 줄바꿈 처리 |
 | 실습 범위 | 입력값 읽기·변경, 오늘 날짜 설정, 선택값 조회, 체크 상태 변경, Textarea 미리보기 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > 폼 요소의 현재값과 선택 상태를 읽고 변경하는 데 필요한 핵심 코드만 발췌하고, 잘못된 입력·보안·접근성·렌더링 안전성까지 함께 설명한다.
@@ -1761,3 +1761,10 @@ change 이벤트
 ```
 
 이 흐름을 이해하면 이후 이벤트 문서에서 입력·선택·제출 동작을 더 안전하게 연결할 수 있다.
+# V3 실행 추적 카드 — 사용자 입력 → value 문자열 → 검증/변환 → 반영
+
+폼 값은 사용자가 입력 요소에 넣고 브라우저가 `value` 문자열로 제공한다. 숫자 입력도 기본 value는 문자열이며 빈 값과 0을 구분해야 한다.
+
+`Number(input.value)` 전후와 `Number.isNaN` 결과를 Console에 남긴다. 요소 미선택은 TypeError, 숫자 변환 실패는 주로 NaN으로 나타난다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/13_dom_form.html`에서 실제 사용 위치와 차이를 확인한다.

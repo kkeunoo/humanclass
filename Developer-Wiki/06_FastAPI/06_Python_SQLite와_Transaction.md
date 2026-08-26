@@ -1,6 +1,6 @@
 ---
 title: Python SQLite와 Transaction
-version: v2.0-final
+version: v3.0-final
 last_updated: 2026-08-25
 status: Completed
 ---
@@ -52,6 +52,34 @@ Application
 
 Python 표준 Library에 `sqlite3`가 포함되므로 일반적으로 별도 pip 설치가 필요 없다.
 
+## 1.1 sqlite.db는 어디에 만들어지는가?
+
+```python
+sqlite3.connect('sqlite.db')
+```
+
+상대 경로는 Python Process의 현재 작업 Directory를 기준으로 해석된다.
+
+```text
+현재 Directory가 05_SQLite
+→ 05_SQLite/sqlite.db
+
+다른 Directory에서 Python 실행
+→ 예상과 다른 위치에 sqlite.db가 생성될 수 있음
+```
+
+안정적인 경로:
+
+```python
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+DB_PATH = BASE_DIR / 'sqlite.db'
+connection = sqlite3.connect(DB_PATH)
+```
+
+같은 이름의 DB File이 여러 곳에 생기면 “Table이 없다”, “Data가 보이지 않는다”는 혼동이 발생할 수 있다.
+
 ---
 
 # 2. Connection과 Cursor
@@ -74,6 +102,31 @@ connection.close()
 ```
 
 변수명은 `connect`보다 객체의 의미가 명확한 `connection` 또는 `conn`을 권장한다.
+
+## 2.1 실제 동작 순서
+
+```text
+sqlite3.connect()
+→ DB File 열기 또는 새로 만들기
+→ Connection 객체 반환
+
+connection.cursor()
+→ 해당 연결에 묶인 Cursor 생성
+
+cursor.execute(sql, values)
+→ SQL과 값을 SQLite Engine에 전달
+
+fetchone()/fetchall()
+→ 조회 결과를 Python 값으로 가져오기
+
+commit()/rollback()
+→ 변경 확정 또는 취소
+
+close()
+→ OS Resource와 DB 연결 해제
+```
+
+Cursor가 DB File 자체는 아니다. SQL을 실행하고 결과 위치를 관리하는 객체이며 실제 연결과 Transaction은 Connection이 관리한다.
 
 ---
 
@@ -130,6 +183,38 @@ Parameter Binding의 핵심은 다음과 같다.
 
 원본 Comment의 “자료형을 한 번 걸러 변환한다”는 표현은 일부 방향은 맞지만, Pydantic처럼 업무 규칙을 검증하는 기능은 아니다. ID 범위나 문자열 길이는 별도 검증이 필요하다.
 
+## 4.1 값은 어떻게 SQL에 들어가는가?
+
+Python Code:
+
+```python
+sql = 'INSERT INTO dept (deptno, dname, loc) VALUES (?, ?, ?)'
+values = (10, '1강의실', '천안')
+print('sql:', sql)
+print('values:', values)
+cursor.execute(sql, values)
+```
+
+Terminal:
+
+```text
+sql: INSERT INTO dept (deptno, dname, loc) VALUES (?, ?, ?)
+values: (10, '1강의실', '천안')
+```
+
+Driver 내부 흐름:
+
+```text
+SQL 구조와 Tuple을 별도 인자로 받음
+→ 첫 번째 ?에 10 Binding
+→ 두 번째 ?에 '1강의실' Binding
+→ 세 번째 ?에 '천안' Binding
+→ SQLite가 INSERT 실행
+→ 아직 Commit 전이면 Transaction의 미확정 변경
+```
+
+값을 문자열 치환해 완성된 SQL을 직접 만드는 방식이 아니다.
+
 ---
 
 # 5. 한 개짜리 Tuple
@@ -164,6 +249,37 @@ rows = cursor.fetchall()
 
 `fetchone()`은 결과가 여러 건이어도 첫 Row만 가져온다. “한 건만 있어야 한다”는 검증을 대신하지 않으므로 SQL 조건과 Constraint를 함께 확인한다.
 
+## 6.1 실제 반환 형태
+
+Table Data:
+
+```text
+10 | 1강의실 | 천안
+20 | 2강의실 | 수원
+```
+
+```python
+one = cursor.fetchone()
+print(one, type(one))
+```
+
+```text
+(10, '1강의실', '천안') <class 'tuple'>
+```
+
+다시 SQL을 실행한 후:
+
+```python
+all_rows = cursor.fetchall()
+print(all_rows, type(all_rows))
+```
+
+```text
+[(10, '1강의실', '천안'), (20, '2강의실', '수원')] <class 'list'>
+```
+
+`fetchone()`을 먼저 호출하고 같은 Cursor에서 `fetchall()`을 호출하면 첫 Row 다음의 남은 결과만 가져온다는 점에 주의한다.
+
 ---
 
 # 7. sqlite3.Row와 Dict
@@ -183,6 +299,25 @@ result = [dict(row) for row in rows]
 ```
 
 `row_factory`는 Cursor 생성 전에 Connection에 설정하는 것이 명확하다.
+
+## 7.1 변환 과정과 출력
+
+```python
+row = cursor.fetchone()
+print(row)
+print(row['deptno'])
+print(dict(row))
+```
+
+예시 출력:
+
+```text
+<sqlite3.Row object at 0x...>
+20
+{'deptno': 20, 'dname': '2강의실', 'loc': '수원'}
+```
+
+`sqlite3.Row`는 Column 순서와 Column 이름 접근을 모두 지원한다. JSON이나 Pydantic에 넘기기 전 `dict(row)`로 명확히 변환할 수 있다.
 
 ---
 
@@ -291,6 +426,50 @@ B 계좌 입금
 
 둘 중 하나만 반영되면 안 되므로 함께 Commit하거나 함께 Rollback해야 한다.
 
+## 11.1 DB에서 실제 상태가 바뀌는 시점
+
+```python
+connection.execute(
+    'UPDATE dept SET dname = ? WHERE deptno = ?',
+    ('새 강의실', 10),
+)
+print('UPDATE 실행 완료, 아직 Commit 전')
+connection.commit()
+print('Commit 완료')
+```
+
+```text
+execute 직후
+→ 현재 Connection에서는 변경값을 볼 수 있음
+→ 아직 Transaction이 확정되지 않은 상태
+
+commit 이후
+→ 변경 확정
+→ 다음 Transaction 경계 시작 가능
+```
+
+오류가 발생하면:
+
+```python
+try:
+    connection.execute(...)
+    connection.execute(...)
+    connection.commit()
+except Exception as error:
+    print('error:', error)
+    connection.rollback()
+    print('rollback 완료')
+```
+
+Terminal 예시:
+
+```text
+error: UNIQUE constraint failed: dept.deptno
+rollback 완료
+```
+
+Rollback 후에는 같은 Transaction에서 수행한 미확정 변경이 취소된다.
+
 ---
 
 # 12. Commit과 Rollback
@@ -357,6 +536,29 @@ import sqlite3
 with closing(sqlite3.connect('sqlite.db')) as connection:
     with connection:
         connection.execute(...)
+```
+
+## 13.1 정상 종료와 예외 종료
+
+정상 종료:
+
+```text
+with Block 진입
+→ UPDATE 실행
+→ 예외 없이 Block 종료
+→ Connection Context Manager가 Commit
+→ Connection은 여전히 별도 Close 필요
+```
+
+예외 종료:
+
+```text
+with Block 진입
+→ 첫 SQL 실행
+→ 다음 SQL에서 예외
+→ Connection Context Manager가 Rollback
+→ 예외는 바깥으로 전달
+→ Connection은 별도 Close 필요
 ```
 
 ---
@@ -430,6 +632,58 @@ def update_department(deptno: int, dname: str) -> int:
 | DB Lock | Connection 장기 유지 | Transaction을 짧게 유지하고 Close |
 | `dict(row)` 오류 | Row Factory 미설정 | Cursor 전에 `row_factory` 설정 |
 | Rollback이 안 됨 | 이미 Commit 완료 | Commit 이전에만 Rollback 가능 |
+
+---
+
+## 17.1 수업 원본에서 다시 찾기
+
+| 배운 개념 | 내 코드 함수 | 강사님 코드 함수 | 다시 확인할 내용 |
+| --- | --- | --- | --- |
+| DB 연결·Table 생성 | `create_dept()` | `create_dept()` | Connect, Cursor, DDL, Commit, Close |
+| Parameter Insert | `insert_dept()` | `insert_dept()` | `?`와 Tuple Binding |
+| 전체 조회 | `select_dept()` | `select_dept()` | `fetchall()`의 List·Tuple 결과 |
+| 한 건 조회 | `select_dept_20()` | 같은 함수 | `(20,)`, `fetchone()` |
+| Row → Dict | `select_dict()` | 같은 함수 | `row_factory`, `dict(row)` |
+| 전체 Dict 변환 | `select_all_dict()` | 같은 함수 | 반복문과 List Comprehension |
+| Row → DTO | `select_all_class()` | 같은 함수 | `DeptDTO(**dict(row))` |
+| WHERE Update | `update_dept()`의 주석 Code | 같은 위치 | 한 Row 수정 |
+| 전체 Update 위험 | `update_dept()`의 실행 Code | 같은 위치 | WHERE 누락과 `rowcount` |
+| Transaction Context | `update_with()` | `update_with()` | 정상 Commit·예외 Rollback, Close 별도 |
+| Transaction 메모 | 2026-08-24 개인 메모 | 다음 DB 수업으로 확장 | 업무 단위와 경계 |
+
+## 17.2 실행 전 주의
+
+현재 `sqlite.py` 하단에는 여러 함수 호출이 활성화되어 있어 파일을 한 번 실행하면 조회뿐 아니라 전체 Update도 실행된다.
+
+```python
+select_dept_20()
+select_dict()
+select_all_dict()
+select_all_class()
+update_dept()
+update_with()
+select_all_class()
+```
+
+복습할 때는 한 번에 하나만 활성화한다.
+
+```python
+if __name__ == '__main__':
+    select_all_class()
+```
+
+실행 전후 확인:
+
+```text
+1. 실행할 함수 한 개 확인
+2. 함수 내부 SQL과 WHERE 확인
+3. 실행 전 SELECT 결과 출력
+4. SQL 실행
+5. rowcount 출력
+6. Commit 또는 Rollback 확인
+7. 실행 후 SELECT 결과 비교
+8. Connection Close 확인
+```
 
 ---
 

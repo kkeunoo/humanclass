@@ -1,6 +1,6 @@
 ---
 title: CSS Position과 요소 위치
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2398,3 +2398,10 @@ absolute 요소는 일반 문서 흐름에서 빠지고,
 - 겹침이 필요 없는 일반 중앙 정렬은 Flexbox나 Grid가 더 적절하다.
 - `:root`의 CSS 사용자 지정 속성은 공통 값을 한 곳에서 관리하게 한다.
 - 원본의 `body { width: 200vw; height: 200vh; }`는 스크롤 실습용이며 최종 프로젝트에서는 필요성을 검토해야 한다.
+# V3 렌더링 추적 카드 — containing block과 좌표 계산
+
+`relative`는 정상 위치를 기준으로 이동하며 원래 자리도 남는다. `absolute`는 보통 가장 가까운 positioned 조상을 기준으로 배치되고, 없으면 초기 containing block까지 올라간다. `fixed`는 주로 viewport 기준이다.
+
+absolute 요소가 엉뚱한 위치에 있으면 부모의 `position:relative`, offset 속성, 실제 containing block을 확인한다. `z-index`는 쌓임 맥락 안에서 비교된다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/08_position.html 및 asset/css/08_position.css`에서 실제 선택자·계산값·화면 차이를 확인한다.

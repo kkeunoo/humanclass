@@ -13,7 +13,7 @@
 | 실습 테이블 | `EMP`, `DEPT`, `SALGRADE` |
 | 선수 학습 | `SELECT`, `WHERE`, `GROUP BY`, Subquery |
 | 다음 학습 | Outer Join과 Self Join |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 원본 `Script.sql`의 기존 쉼표 방식 Join과 ANSI JOIN 학습 흐름을 함께 보존했다. 실무 작성은 관계 조건과 Filtering 조건을 분리할 수 있는 명시적 `JOIN ... ON` 문법을 기본으로 한다.
 
@@ -956,3 +956,70 @@ JOIN의 핵심은 문법보다 **Table 사이의 관계와 결과 Row 수를 예
 ```text
 13_SQL_Outer_JOIN과_Self_JOIN.md
 ```
+
+---
+
+## 🔬 V3 동작 백과 — 서로 다른 Table의 Row는 어떻게 한 Row가 되는가?
+
+```sql
+SELECT e.empno, e.ename, e.deptno, d.dname
+FROM emp AS e
+JOIN dept AS d
+  ON d.deptno = e.deptno;
+```
+
+입력 관계:
+
+```text
+EMP:  SMITH, DEPTNO=20
+DEPT: DEPTNO=20, DNAME=RESEARCH
+```
+
+논리 흐름:
+
+```text
+EMP Row와 DEPT Row 후보 비교
+→ ON d.deptno = e.deptno 평가
+→ 20 = 20 True
+→ 두 Row의 Column을 한 Result Row로 결합
+```
+
+결과:
+
+```text
+7369 | SMITH | 20 | RESEARCH
+```
+
+### JOIN 조건이 없을 때
+
+EMP 14행, DEPT 4행이라면 Cartesian Product는 최대 다음 Row를 만든다.
+
+```text
+14 × 4 = 56행
+```
+
+결과가 갑자기 많아지면 JOIN 누락이나 1:N 관계를 먼저 확인한다.
+
+### ON과 WHERE
+
+```text
+ON
+→ 어떤 Row끼리 관계를 맺는지 정의
+
+WHERE
+→ 관계가 만들어진 뒤 어떤 Result Row를 남길지 제한
+```
+
+INNER JOIN에서는 일부 조건을 서로 옮겨도 결과가 같을 수 있지만 관계 조건과 검색 조건을 구분하면 읽기 쉽고 Outer JOIN에서 의미가 보존된다.
+
+### 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 Anchor | 강사님 코드 Anchor |
+| --- | --- | --- |
+| ANSI INNER JOIN | `from emp e join dept d` | 같은 Query |
+| ON | `on(e.deptno = d.deptno)` | `on (e.deptno = d.deptno)` |
+| 기존 쉼표 Join | `from emp e, dept d` | Join 초기 구간 |
+| Non-Equi | `salgrade`와 급여 범위 | 같은 실습 |
+| 다중 Table | JOIN이 두 번 이상인 Query | 다중 Join 구간 |
+
+각 Table을 따로 조회해 PK·FK 값과 Row 수를 확인하고, JOIN 후 Row 수가 왜 그렇게 나왔는지 설명한다.

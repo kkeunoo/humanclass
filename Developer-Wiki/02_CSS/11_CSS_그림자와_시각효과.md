@@ -1,6 +1,6 @@
 ---
 title: CSS 그림자와 시각 효과
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -2057,3 +2057,10 @@ outline도 함께 유지하는 편이 안전합니다.
 - 그림자만으로 선택이나 오류 상태를 전달하지 않는다.
 - 큰 blur 그림자를 많은 요소에서 애니메이션하면 렌더링 성능이 저하될 수 있다.
 - 그림자 토큰을 CSS 변수로 관리하면 프로젝트의 시각적 깊이를 일관되게 유지할 수 있다.
+# V3 렌더링 추적 카드 — 박스·글자 외곽의 페인팅
+
+`box-shadow`는 요소 박스 주변, `text-shadow`는 글자 형태 주변에 그려진다. offset, blur, spread, color 순서와 inset 여부가 결과를 바꾼다.
+
+레이아웃 크기는 보통 그림자 때문에 커지지 않으므로 잘림은 부모 overflow를 확인한다. 과한 blur와 넓은 그림자는 페인트 비용과 가독성에 영향을 준다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/11_shadow.html`에서 실제 선택자·계산값·화면 차이를 확인한다.

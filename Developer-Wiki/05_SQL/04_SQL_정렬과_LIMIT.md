@@ -1,6 +1,6 @@
 ---
 title: SQL 정렬과 LIMIT
-version: v2.0-final
+version: v3.0-final
 last_updated: 2026-08-12
 status: Completed
 ---
@@ -19,7 +19,7 @@ status: Completed
 | 핵심 범위 | `ORDER BY`, `ASC`, `DESC`, 다중 정렬, Alias 정렬, Column Position 정렬, `LIMIT`, Offset |
 | 학습 범위 | Result Set 정렬, 우선순위 정렬, 상위 N개 조회, Paging 기초 |
 | 다음 범위 제외 | Aggregate Function, 문자열·숫자·날짜 Function |
-| 문서 형식 | SQL Developer-Wiki V2 확정 형식 |
+| 문서 형식 | SQL Developer-Wiki V3 백과사전 형식 |
 
 > 이 문서는 `Script.sql`의 `ORDER BY`와 `LIMIT` 학습 구간을 기준으로 Result Set을 정렬하고 필요한 Row 수만 조회하는 방법을 정리한다.  
 > 특히 **정렬을 지정하지 않은 SELECT의 Row 순서는 보장되지 않는다**는 점과, `LIMIT`을 Top-N·Paging에 사용할 때 안정적인 `ORDER BY`가 왜 필요한지를 함께 다룬다.
@@ -1469,3 +1469,69 @@ Paging에서는 같은 정렬 규칙을 계속 유지하는 것
 ```
 
 이 기준을 이해하면 이후 Aggregate Function에서 “가장 큰 값”, “가장 작은 값”, “상위 결과”를 다룰 때도 Query의 의미를 정확하게 구분할 수 있다.
+# V3 동작 백과 — 정렬 후 일부 Row는 어떻게 선택되는가?
+
+## 왜 배워야 하는가?
+
+Table의 물리적 저장 순서는 조회 결과 순서를 보장하지 않는다. “최고 급여”, “최근 글”, “두 번째 Page”처럼 순서가 요구사항에 포함되면 `ORDER BY`가 필요하다.
+
+```sql
+SELECT empno, ename, sal
+FROM emp
+ORDER BY sal DESC, empno ASC
+LIMIT 3;
+```
+
+```text
+FROM에서 Row 구성
+→ SELECT 값 생성
+→ sal 큰 값부터 정렬
+→ sal이 같으면 empno 작은 값부터 정렬
+→ 정렬 결과의 앞 3행만 선택
+```
+
+입력:
+
+```text
+EMPNO | ENAME | SAL
+7902  | FORD  | 3000
+7788  | SCOTT | 3000
+7839  | KING  | 5000
+```
+
+결과:
+
+```text
+7839 | KING  | 5000
+7788 | SCOTT | 3000
+7902 | FORD  | 3000
+```
+
+Tie-breaker인 `empno`가 없으면 동점 Row의 상대 순서는 보장되지 않는다.
+
+## Paging의 실제 계산
+
+```text
+Page Size = 10
+Page 1 Offset = (1 - 1) × 10 = 0
+Page 2 Offset = (2 - 1) × 10 = 10
+Page 3 Offset = (3 - 1) × 10 = 20
+```
+
+```sql
+ORDER BY empno
+LIMIT 10 OFFSET 20;
+```
+
+항상 안정적인 정렬 기준과 함께 사용한다.
+
+## 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 검색 Anchor | 강사님 코드 검색 Anchor |
+| --- | --- | --- |
+| 기본 정렬 | `order by` | `-- order by` 이후 |
+| 내림차순 | `desc` | `desc` |
+| 다중 정렬 | 쉼표가 있는 `order by` | 같은 구간 |
+| 상위 Row | `limit` | `limit` |
+
+Result Grid에서 첫 Row·마지막 Row·동점 순서를 확인해 정렬 의도와 일치하는지 검증한다.

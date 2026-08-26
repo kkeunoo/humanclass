@@ -1,6 +1,6 @@
 ---
 title: HTML 시맨틱 태그와 페이지 구조
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -17,7 +17,7 @@ status: Completed
 | 핵심 범위 | Semantic HTML, `header`, `nav`, `main`, `section`, `article`, `aside`, `footer`, Heading Structure, Landmark, 접근성 |
 | 학습 범위 | Page 구조, 콘텐츠 영역 구분, 문서 제목 계층, Navigation·Article·Aside 선택 기준 |
 | 프로젝트 연결 | Landing Page, Blog, News, Portfolio, 관리자 화면, 반응형 Web Layout |
-| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
+| 문서 형식 | HTML Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > HTML 수업 원본에는 독립된 `08_*.html` 파일이 없다. 따라서 이 문서는 존재하지 않는 내 코드·강사님 코드 차이를 만들지 않고 HTML 01~07에서 학습한 Heading, Link, List, Table, Media, Form 구조를 실제 Page 골격으로 연결한다. Semantic Element를 많이 쓰는 것보다 콘텐츠의 역할에 맞는 Element를 선택하고 Heading·Landmark·접근성 구조를 일관되게 만드는 것을 목표로 한다.
 
@@ -2109,3 +2109,10 @@ Developer Wiki 홈 화면의 HTML 골격을 작성하세요.
 - 페이지 이동에는 `a`, 현재 화면 동작에는 `button`을 사용한다.
 - CSS 없이도 콘텐츠 순서와 구조가 이해되어야 한다.
 - 원본 HTML 자료는 01~07까지이며, 이 08번 문서는 앞선 단원을 실무형 페이지 구조로 연결한 확장 문서다.
+# V3 브라우저 해석 추적 카드 — 콘텐츠 역할을 DOM과 접근성 트리에 전달
+
+`header`, `nav`, `main`, `article`, `section`, `aside`, `footer`는 모양이 아니라 영역의 의미를 표현한다. 브라우저와 보조 기술은 이 구조로 문서 탐색 단서를 얻는다.
+
+페이지의 주된 `main`은 보통 하나이며 `section`에는 내용을 설명하는 제목이 필요하다. div만 사용한 화면과 시맨틱 구조의 Accessibility Tree·랜드마크를 비교한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/01~07 원본을 페이지 구조 관점에서 재구성한 Wiki 확장 학습`에서 실제 DOM·요청·접근성 차이를 확인한다.

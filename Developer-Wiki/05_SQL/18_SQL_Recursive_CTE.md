@@ -13,7 +13,7 @@
 | 실습 Table | `EMP`, `CATEGORY_PRACTICE` |
 | 선수 학습 | CTE, `UNION ALL`, Self Join, `CASE`, 문자열·날짜 함수 |
 | 다음 학습 | SQL 실무 코딩 스타일 |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 원본 `Script.sql`의 Index와 AUTO_INCREMENT 다음 Recursive CTE 범위를 기준으로 구성했다. `EMP.MGR → EMP.EMPNO` 관계를 이용해 조직 계층을 탐색하고 무한 재귀·자료형 확장 문제까지 MariaDB 기준으로 보완했다.
 
@@ -1429,3 +1429,46 @@ Recursive CTE의 핵심은 반복 문법이 아니라 **출발점, 다음 Row를
 ```text
 19_SQL_실무_코딩스타일.md
 ```
+
+---
+
+## 🔬 V3 동작 백과 — 재귀 Result는 반복마다 어떻게 늘어나는가?
+
+```sql
+WITH RECURSIVE numbers AS (
+    SELECT 1 AS n
+    UNION ALL
+    SELECT n + 1 FROM numbers WHERE n < 5
+)
+SELECT n FROM numbers;
+```
+
+```text
+Anchor → 1
+1차 → 2
+2차 → 3
+3차 → 4
+4차 → 5
+다음 n < 5 False → 종료
+```
+
+최종 Result는 `1, 2, 3, 4, 5`다.
+
+조직도에서는 Anchor가 최상위 Row를 만들고, Recursive Member가 이전 단계의 `EMPNO`와 다음 사원의 `MGR`을 연결하면서 Level과 Path를 늘린다.
+
+종료 조건이나 관계가 잘못되면 Cycle과 과도한 반복이 발생한다. Path가 길어질 때는 Anchor에서 충분한 길이로 `CAST`한다.
+
+```sql
+CAST(ename AS CHAR(1000)) AS path
+```
+
+### 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 Anchor | 강사님 코드 Anchor |
+| --- | --- | --- |
+| 재귀 시작 | `with recursive emp_recu` | 같은 Query |
+| Anchor | CTE의 첫 SELECT | 같은 위치 |
+| 반복 Member | `union all` 뒤 SELECT | 같은 위치 |
+| 조직 연결 | `mgr`, `empno` 관계 | 계층 Query |
+
+작은 종료값과 Level·Path Column을 출력해 반복 단계를 먼저 확인한다.

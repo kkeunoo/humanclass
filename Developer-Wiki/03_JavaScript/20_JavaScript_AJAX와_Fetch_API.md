@@ -1,6 +1,6 @@
 ---
 title: JavaScript AJAX와 Fetch API
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/20_ajax.html`, `workspace_html/javascript/asset/js/20_ajax.js`, 강사님 동일 파일 |
 | 핵심 범위 | AJAX, `XMLHttpRequest`, JSON 응답, 공공데이터 API, 데이터 필터·그룹화, Fetch, Promise, `async/await`, 오류 처리, Debugger |
 | 실습 범위 | 회원 조회, 상대 HTML 요청, 날씨 데이터 가공, Table 렌더링, Fetch 요청, 로딩·오류·중복 요청 처리 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 20번은 HTML과 연결된 외부 JavaScript 파일을 함께 확인한다.  
 > 강사님 코드는 `XMLHttpRequest`, 기상청 초단기예보, 시간별 그룹화, Fetch 흐름을 구현하고, 내 코드는 회원 Table과 날씨 출력 문제를 추가로 시도했다. 이 문서에서는 실제 오류를 보존해 비교한 뒤 안전한 구현으로 개선한다.
@@ -2067,3 +2067,10 @@ HTTP·Network·Parse 오류를 각각 처리하고
 ```
 
 이 흐름을 이해하면 실제 프로젝트에서 회원 목록·검색 결과·날씨·상품·게시글 같은 서버 데이터를 안정적으로 화면에 연결할 수 있다.
+# V3 실행 추적 카드 — 요청 생성 → 서버 처리 → Response → 본문 변환 → DOM
+
+`fetch`는 Promise를 즉시 반환한다. 응답이 오면 Response를 받고 `json()` 같은 비동기 본문 변환을 거친다. HTTP 404/500은 자동으로 reject되지 않을 수 있어 `response.ok`를 검사한다.
+
+Console에는 단계별 값, Network에는 URL·메서드·상태·응답을 확인한다. CORS, 네트워크 실패, JSON 형식 오류를 서로 구분한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/20_ajax.html, asset/js/20_ajax.js`에서 실제 사용 위치와 차이를 확인한다.

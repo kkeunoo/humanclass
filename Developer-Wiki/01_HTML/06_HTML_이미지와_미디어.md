@@ -1,6 +1,6 @@
 ---
 title: HTML 이미지와 미디어
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -17,7 +17,7 @@ status: Completed
 | 핵심 범위 | `img`, `src`, `alt`, `width`, `height`, `figure`, `picture`, `srcset`, `video`, `audio`, `iframe` |
 | 학습 범위 | 이미지 경로, 대체 Text, 비율, 반응형 Image, Video·Audio·외부 Media 삽입 |
 | 프로젝트 연결 | Profile, 상품 Image, Banner, Portfolio, 강의 Video, 지도·YouTube Embed |
-| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
+| 문서 형식 | HTML Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `06_img.html`을 비교해 `img`, `src`, `alt`, `width`, `height`, `video`, `controls`의 기본 동작을 정리한다. 원본의 `alt` 설명, 고정 Width·Height로 인한 비율 왜곡, 외부 Media URL 의존성, `iframe` Comment 예제를 교정하고 반응형 Image·Caption·Video·Audio·Embed 접근성과 성능까지 연결한다.
 
@@ -2035,3 +2035,10 @@ project/
 - `iframe`은 외부 문서를 삽입하며 `title`, 반응형 처리, 권한과 보안을 함께 확인해야 합니다.
 - `br`은 문장 안의 의미 있는 줄바꿈에 사용하고 디자인 간격은 CSS로 처리합니다.
 - 이미지와 미디어는 마크업뿐 아니라 접근성, 성능, 반응형 디자인을 함께 고려해야 합니다.
+# V3 브라우저 해석 추적 카드 — 자원 URL 요청과 대체 콘텐츠
+
+`img src`를 만나면 브라우저는 이미지 URL을 계산해 별도 요청한다. `alt`는 이미지 로드 실패 문구만이 아니라 이미지를 보지 못할 때 전달할 대체 의미다. 장식 이미지는 빈 alt를 고려한다.
+
+Network에서 최종 이미지 URL, 상태 코드, MIME type을 확인한다. width/height를 제공하면 로드 전 공간을 확보해 레이아웃 이동을 줄일 수 있다. 링크 이미지의 alt는 링크 목적을 설명해야 한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/06_img.html 및 asset의 이미지 파일`에서 실제 DOM·요청·접근성 차이를 확인한다.

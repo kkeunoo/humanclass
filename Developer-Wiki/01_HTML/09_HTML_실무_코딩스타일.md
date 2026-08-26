@@ -1,6 +1,6 @@
 ---
 title: HTML 실무 코딩 스타일
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -17,7 +17,7 @@ status: Completed
 | 핵심 범위 | Semantic 구조, Heading, Link·Button, List, Table, Media, Form, 접근성, 네이밍, 주석, 검수 |
 | 예제 형식 | Before → After → 개선 이유 → 실무 선택 기준 |
 | 종합실습 | 별도 문서 `10_HTML_종합실습.md`에서 관리 |
-| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
+| 문서 형식 | HTML Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 새로운 HTML Tag를 추가로 외우는 문서가 아니다.  
 > HTML 01~08에서 학습한 Document Structure, Text, Link, List, Table, Media, Form, Semantic Element를 **실제 Project에서는 어떤 기준으로 선택하고 조합하는지** 설명한다.
@@ -2477,3 +2477,10 @@ Validator와 실제 Browser에서 검수하는 것
 좋은 HTML은 단순히 Browser에 렌더링되는 Markup이 아니다.
 
 **사람과 Browser, Search Engine, Screen Reader, CSS, JavaScript가 같은 구조를 이해할 수 있도록 Content의 의미를 명확하게 표현하는 문서**다.
+# V3 브라우저 해석 추적 카드 — 유효하고 읽히며 접근 가능한 마크업
+
+실무 HTML은 올바른 중첩, 예측 가능한 들여쓰기, 의미에 맞는 요소, 고유한 id, 설명적인 링크 텍스트를 사용한다. CSS나 JavaScript 편의를 위해 의미를 훼손하지 않는다.
+
+마우스 없이 Tab·Enter·Space로 기능을 시험하고 label, alt, heading, landmark를 확인한다. Validator 오류와 브라우저 자동 보정 DOM을 함께 보고 원인을 수정한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/01~07 내 코드와 강사님 코드 전체를 재검토하는 Wiki 확장 기준`에서 실제 DOM·요청·접근성 차이를 확인한다.

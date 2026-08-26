@@ -1,6 +1,6 @@
 ---
 title: JavaScript DOM 콘텐츠 생성과 스타일 조작
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/12_dom_content.html`, `workspace_teacher/workspace_html/javascript/12_dom_content.html` |
 | 핵심 범위 | `textContent`, `innerText`, `innerHTML`, `createElement()`, `append()`, `appendChild()`, `prepend()`, `before()`, `after()`, 인라인 스타일, `getComputedStyle()` |
 | 실습 범위 | 카운터, 실시간 시계, 동적 표 생성, 게시판 행 생성, 클래스 개수 세기, 빈 요소 채우기 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > DOM 콘텐츠를 읽고 변경하며, 요소를 생성·삽입하고, 스타일을 조작하는 데 필요한 핵심 코드만 발췌해 설명한다.
@@ -1602,3 +1602,10 @@ Node를 작은 단위로 생성해 조립하고
 ```
 
 이 흐름을 이해하면 이후 이벤트 문서에서 사용자 동작에 따라 안전하게 화면을 갱신할 수 있다.
+# V3 실행 추적 카드 — 데이터 → 노드 생성 → DOM 연결 → 렌더링
+
+`createElement`만으로는 화면에 나타나지 않으며 `append` 등으로 문서 트리에 연결해야 한다. `textContent`는 텍스트, `innerHTML`은 HTML을 파싱한다.
+
+새 `li`를 만들고 textContent 설정 후 append하면 Elements에 노드가 생기고 화면 목록에 표시된다. 외부 입력을 innerHTML에 넣으면 XSS 위험이 있다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/12_dom_content.html`에서 실제 사용 위치와 차이를 확인한다.

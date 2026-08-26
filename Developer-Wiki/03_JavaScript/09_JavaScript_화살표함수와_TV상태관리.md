@@ -1,6 +1,6 @@
 ---
 title: JavaScript 화살표 함수와 TV 상태 관리
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/09_arrow.html`, `09_1_tv.html`, 강사님 동일 파일 |
 | 핵심 범위 | 함수 표현식, 즉시 실행 함수, 화살표 함수, 반환 축약, 쉼표 연산자, `this`, 상태 변수, 범위 제한, 순환, 토글 |
 | 실습 범위 | TV 전원, 채널 직접 변경·증감, 볼륨 조절, 음소거, 상태 검증과 리팩토링 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 09번은 `09_arrow.html`과 `09_1_tv.html` 두 파일을 하나로 통합한다.  
 > 첫 파일은 화살표 함수 문법을, 두 번째 파일은 여러 함수가 하나의 TV 상태를 공유하고 변경하는 구조를 다룬다.
@@ -1694,3 +1694,10 @@ this가 필요한지 판단하고
 ```
 
 이 흐름을 이해하면 이후 객체와 메서드 문서에서 상태와 동작을 더 자연스럽게 하나의 객체로 묶을 수 있다.
+# V3 실행 추적 카드 — 이벤트 → 상태 변경 → 화면 표현
+
+화살표 함수는 간결한 함수 표현식이지만 자체 `this`를 만들지 않는다. TV 예제는 전원·채널 상태를 먼저 바꾸고 그 상태를 DOM이나 Console에 표현하는 흐름으로 읽는다.
+
+상태 객체를 출력 전후로 비교한다. 객체 메서드에서 동적 `this`가 필요하면 일반 함수와 화살표 함수의 차이를 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/09_arrow.html, 09_1_tv.html`에서 실제 사용 위치와 차이를 확인한다.

@@ -1,6 +1,6 @@
 ---
 title: JavaScript 조건문과 Switch
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/03_if.html`, `workspace_teacher/workspace_html/javascript/03_if.html` |
 | 핵심 범위 | 조건식, Truthy/Falsy, `if`, `else if`, `else`, 중첩 조건문, `switch`, 다중 `case`, 난수 범위, 입력값 검증 |
 | 실습 범위 | 양수·음수, 홀수·짝수, 큰 수, 교통수단, 가위바위보, 범위 판정, 계절, 온도, 시간 계산, 369게임, 좌표 판정 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > 조건문을 이해하는 데 필요한 핵심 코드와 문제 풀이만 발췌하고, 실행 순서·오류 원인·입력값 검증·실무 개선 방향을 함께 설명한다.
@@ -1964,3 +1964,10 @@ Math.random()
 ```
 
 이 흐름을 이해하면 이후 반복문과 함수에서 프로그램의 동작을 더 안정적으로 제어할 수 있다.
+# V3 실행 추적 카드 — 조건 평가 → 한 실행 경로 선택
+
+`if`는 truthy/falsy를 평가하고 첫 참 분기만 실행한다. `switch`는 표현식과 case를 엄격 비교하며 `break`가 없으면 다음 case까지 이어진다.
+
+`const value="1"; switch(value){case 1: console.log("숫자"); break; default: console.log("불일치");}`는 `불일치`를 출력한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/03_if.html`에서 실제 사용 위치와 차이를 확인한다.

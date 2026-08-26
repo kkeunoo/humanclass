@@ -1,6 +1,6 @@
 ---
 title: CSS 종합실습
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -2346,3 +2346,10 @@ Mobile·Keyboard·Touch·Reduced Motion 환경을 고려하고
 ```
 
 이 페이지를 이해하고 직접 확장할 수 있다면 CSS 속성을 외우는 단계를 넘어, 실제 반응형 UI를 구조적으로 설계할 수 있다.
+# V3 렌더링 추적 카드 — 요구사항에서 반응형 화면까지
+
+먼저 DOM 구조와 레이아웃 영역을 정하고 박스 모델, typography, 색상, 상태, 반응형 순으로 구축한다. 각 단계에서 넓은 화면과 좁은 화면을 검증한다.
+
+정상 콘텐츠뿐 아니라 긴 제목, 빈 이미지, 큰 글자 확대, 키보드 focus, overflow를 시험한다. 완성 화면 비교와 함께 Computed·Layout 근거를 기록한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/01~15 전체 원본과 실습 폴더를 결합한 종합 확장`에서 실제 선택자·계산값·화면 차이를 확인한다.

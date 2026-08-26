@@ -1,6 +1,6 @@
 ---
 title: JavaScript 배열과 배열 메서드
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/06_array.html`, `workspace_teacher/workspace_html/javascript/06_array.html` |
 | 핵심 범위 | 배열 생성, 인덱스, 길이, 다차원 배열, 값 추가·삭제, 정렬, 복사, 검색, 문자열 변환 |
 | 실습 범위 | 음식 목록 순회, 쿼리스트링 분석, 이메일 도메인 추출, 미완주자 찾기, 좌석 예약, 로또 번호 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > 배열의 생성·접근·변경·검색·정렬에 필요한 핵심 코드만 발췌하고, 원본 변경 여부와 잘못된 풀이의 개선 방향을 함께 설명한다.
@@ -1750,3 +1750,10 @@ split()
 ```
 
 이 흐름을 이해하면 이후 날짜·함수·DOM 문서에서도 여러 데이터를 효과적으로 관리할 수 있다.
+# V3 실행 추적 카드 — 배열 참조 → 메서드 실행 → 원본/새 배열
+
+배열은 객체이므로 다른 변수에 대입하면 같은 배열을 공유한다. `push`, `splice`, `sort`는 원본을 바꾸고 `map`, `filter`, `slice`는 새 배열을 반환한다.
+
+`const a=[1,2]; const b=a; b.push(3); console.log(a);`는 `[1,2,3]`이다. 반환값과 원본 변경을 따로 출력해 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/06_array.html`에서 실제 사용 위치와 차이를 확인한다.

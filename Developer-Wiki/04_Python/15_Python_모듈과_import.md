@@ -1,6 +1,6 @@
 ---
 title: Python 모듈과 import
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1626,3 +1626,26 @@ decode()
 ```
 
 이 흐름을 이해하면 앞으로 더 큰 Python 프로젝트와 패키지 구조를 훨씬 체계적으로 관리할 수 있다.
+
+# V3 동작 백과 보강 — `import`가 파일을 찾고 실행하는 과정
+
+`import module`을 만나면 Python은 먼저 `sys.modules` 캐시를 확인하고, 없으면 import 검색 경로에서 모듈을 찾는다. 모듈 파일의 최상위 코드를 한 번 실행해 모듈 객체를 만들고 캐시에 저장한 뒤 현재 이름 공간에 연결한다. 같은 프로세스에서 다시 import하면 보통 최상위 코드를 다시 실행하지 않는다.
+
+```python
+# helper.py
+print("helper 로드")
+value = 10
+
+# main.py
+import helper
+print(helper.value)
+```
+
+```text
+helper 로드
+10
+```
+
+파일을 직접 실행하면 `__name__ == "__main__"`, 다른 파일에서 가져오면 모듈명이 된다. 그래서 실행 전용 코드는 `if __name__ == "__main__":` 아래에 둔다. 모듈을 찾지 못하면 `ModuleNotFoundError`다.
+
+**원본 연결:** 내 코드 `workspace_python/15_module.py`, 강사님 코드 `workspace_python/_15_module.py`와 관련 `fn` 모듈 파일의 import 방식을 기반으로 한다.

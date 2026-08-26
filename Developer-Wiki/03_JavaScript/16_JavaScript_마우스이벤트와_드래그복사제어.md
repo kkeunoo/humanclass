@@ -1,6 +1,6 @@
 ---
 title: JavaScript 마우스 이벤트와 드래그·복사 제어
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/16_event_mouse.html`, `workspace_html/javascript/asset/js/16_event_mouse.js`, 강사님 동일 파일 |
 | 핵심 범위 | `contextmenu`, `selectstart`, `copy`, Mouse Event, 좌표계, Hover, `mousemove`, Drag, `resize`, Pointer Event |
 | 실습 범위 | 우클릭·선택 제어, 복사 출처 추가, 좌표 출력, 커서 추적 이미지, Drag Box, Viewport 크기 표시 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 16번은 HTML과 실제 연결된 외부 JavaScript 파일을 함께 확인한다.  
 > 마우스 이벤트의 발생 순서와 좌표계를 이해하고, 복사 제어·커서 추적·직접 Drag 기능을 안전하고 현대적인 방식으로 개선한다.
@@ -1753,3 +1753,10 @@ Mouse·Touch·Pen을 함께 지원하는 구조로 확장하는 것
 ```
 
 이 흐름을 이해하면 이후 폼 이벤트와 이벤트 전파 문서에서 더 복잡한 사용자 상호작용을 안정적으로 구현할 수 있다.
+# V3 실행 추적 카드 — 포인터 동작 → 좌표/대상 → 상태 변경
+
+mousedown·mousemove·mouseup은 서로 다른 시점의 이벤트다. 드래그는 눌림 상태와 시작 좌표를 저장하고 이동 중 차이를 계산한 뒤 놓을 때 정리한다.
+
+Console에 event.type, clientX/Y, 눌림 상태를 함께 출력하면 실제 순서를 볼 수 있다. document 수준의 종료 처리 누락은 드래그 상태가 남는 원인이다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/16_event_mouse.html, asset/js/16_event_mouse.js`에서 실제 사용 위치와 차이를 확인한다.

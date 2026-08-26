@@ -1,6 +1,6 @@
 ---
 title: Python 튜플과 불변 자료형
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1544,3 +1544,25 @@ list()
 ```
 
 값의 추가·삭제가 필요한 목록은 리스트를 사용하고, 작고 고정된 값 묶음은 튜플을 고려한다.
+
+# V3 동작 백과 보강 — 튜플 생성과 언패킹
+
+튜플을 만드는 핵심 문법은 괄호가 아니라 쉼표다. `(1)`은 정수지만 `(1,)`은 원소 하나인 튜플이다. 튜플은 생성 후 원소의 위치를 바꿀 수 없으므로 좌표, RGB, 함수가 반환하는 고정 묶음처럼 구조가 유지되어야 하는 값에 적합하다.
+
+```python
+point = (10, 20)
+x, y = point
+print(type((10)))
+print(type((10,)))
+print(x, y)
+```
+
+```text
+<class 'int'>
+<class 'tuple'>
+10 20
+```
+
+언패킹할 변수 수와 원소 수가 다르면 `ValueError`다. 튜플 자체는 불변이지만 내부 원소가 리스트라면 그 리스트 내용은 변경될 수 있으므로 “튜플 안의 모든 것이 절대 변하지 않는다”로 이해하면 안 된다.
+
+**원본 연결:** 내 코드 `workspace_python/05_tuple.py`, 강사님 코드 `workspace_python/_05_tuple.py`의 생성, 단일 튜플, 인덱싱, 언패킹 예제를 기반으로 한다.

@@ -1,6 +1,6 @@
 ---
 title: JavaScript Gemini API와 멀티턴 대화
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/21_gemini.html`, `workspace_teacher/workspace_html/javascript/21_gemini.html` |
 | 핵심 범위 | Gemini API, POST 요청, Header, JSON Body, 응답 구조, 멀티턴 History, 오류·보안·UI 상태 |
 | 실습 범위 | 단일 질문, 대화 누적, 응답 렌더링, 중복 요청 방지, Backend Proxy 구조 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 21번은 생성형 AI API에 질문을 전송하고 응답을 화면에 표시하는 흐름을 다룬다.  
 > 원본의 API Key는 빈 문자열이며 실제 Key를 문서나 Client JavaScript에 추가하지 않는다.
@@ -1889,3 +1889,10 @@ API Key와 사용자 데이터를 Backend에서 보호하는 것
 ```
 
 이 흐름을 이해하면 단순한 API 실습을 넘어 실제 AI Chat UI와 서비스 구조로 확장할 수 있다.
+# V3 실행 추적 카드 — 사용자 메시지 → 요청 본문 → API 응답 → 대화 상태·화면
+
+멀티턴은 이전 user/model 메시지를 배열 상태에 누적해 다음 요청에 포함한다. 전송 전 UI 상태, 요청 중 로딩, 성공·실패 후 복구를 구분한다.
+
+API 키를 프런트 코드에 두면 사용자에게 노출된다. Network에서 요청·응답을 확인하되 키와 개인정보를 기록하거나 Wiki에 넣지 않는다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/21_gemini.html`에서 실제 사용 위치와 차이를 확인한다.

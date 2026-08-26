@@ -1,6 +1,6 @@
 ---
 title: SQL WHERE와 조건연산자
-version: v2.0-final
+version: v3.0-final
 last_updated: 2026-08-12
 status: Completed
 ---
@@ -19,7 +19,7 @@ status: Completed
 | 핵심 범위 | `WHERE`, 비교연산자, `AND`, `OR`, `NOT`, 연산자 우선순위, `BETWEEN`, `IN`, `NOT IN` |
 | 학습 범위 | Row Filtering, 숫자·문자 조건, 복합 조건, 범위 조건, 다중 값 조건 |
 | 다음 범위 제외 | `LIKE`, `IS NULL`, `ORDER BY`, `LIMIT` |
-| 문서 형식 | SQL Developer-Wiki V2 확정 형식 |
+| 문서 형식 | SQL Developer-Wiki V3 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `Script.sql`에서 `WHERE` 조건식부터 `IN`, `NOT IN`까지를 비교해 정리한다.  
 > 원본의 조건식 자체는 대부분 올바르지만, **문자열 대/소문자 비교 설명**, `AND`·`OR` 우선순위 해석, `BETWEEN`의 포함 범위, `NOT`과 `!=`·`<>`의 관계를 더 정확하게 보완한다.
@@ -1607,3 +1607,76 @@ AND / OR 관계를 결정하고
 ```
 
 이 흐름을 이해하면 다음 단계인 `LIKE`, Pattern 검색, `NULL` 조건도 훨씬 자연스럽게 확장할 수 있다.
+# V3 동작 백과 — WHERE는 어떤 Row를 남기는가?
+
+## 왜 배워야 하는가?
+
+Table 전체가 아니라 필요한 Row만 읽어야 업무 질문에 답하고, 불필요한 Data 처리와 위험한 전체 수정·삭제를 피할 수 있다.
+
+## 조건값은 어디서 오는가?
+
+SQL에 직접 작성할 수도 있고 Application의 검색 Form·API Parameter에서 전달받을 수도 있다.
+
+```sql
+SELECT empno, ename, deptno, sal
+FROM emp
+WHERE deptno = 20
+  AND sal >= 1000;
+```
+
+```text
+FROM emp에서 후보 Row 구성
+→ Row마다 deptno = 20 평가
+→ True인 Row에 sal >= 1000 평가
+→ 두 조건이 모두 True인 Row만 유지
+→ SELECT Column으로 Result 생성
+```
+
+입력:
+
+```text
+ENAME | DEPTNO | SAL
+SMITH | 20     | 800
+JONES | 20     | 2975
+ALLEN | 30     | 1600
+```
+
+결과:
+
+```text
+JONES | 20 | 2975
+```
+
+SMITH는 급여 조건이 False이고 ALLEN은 부서 조건이 False라 제외된다.
+
+## AND·OR의 실제 평가
+
+```sql
+WHERE deptno = 20
+   OR deptno = 30 AND sal >= 2000
+```
+
+`AND`가 먼저 평가되므로 다음과 같다.
+
+```text
+deptno = 20 OR (deptno = 30 AND sal >= 2000)
+```
+
+의도가 “20·30번 부서 모두 급여 2000 이상”이라면 괄호가 필요하다.
+
+```sql
+WHERE (deptno = 20 OR deptno = 30)
+  AND sal >= 2000;
+```
+
+## 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 검색 Anchor | 강사님 코드 검색 Anchor |
+| --- | --- | --- |
+| 기본 조건 | `where deptno = 20` | 같은 Query |
+| AND·OR | `and`, `or` 조건 실습 | 같은 조건 구간 |
+| 범위 | `between` | `between` |
+| 목록 | ` in (` | ` in (` |
+| 부정 | `not in`, `!=`, `<>` | 같은 연산자 구간 |
+
+실행 전 조건을 말로 읽고, 실행 후 예상 Row와 실제 Row가 같은지 비교한다.

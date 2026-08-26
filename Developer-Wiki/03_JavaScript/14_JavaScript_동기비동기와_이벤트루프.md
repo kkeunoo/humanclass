@@ -9,7 +9,7 @@
 | 원본 기준 | `workspace/workspace_html/javascript/14_async.html`, `workspace_teacher/workspace_html/javascript/14_async.html` |
 | 핵심 범위 | 동기 실행, 함수 호출 순서, 호출 스택, `setTimeout()`, 0ms 지연, 비동기 callback, task queue, event loop, 실행 순서 예측 |
 | 실습 범위 | 함수 호출 순서, 0ms 타이머, 여러 타이머, Microtask·Task 순서, 타이머 취소, Loading 상태 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `14_async.html`을 직접 비교해 작성했습니다. 두 파일은 `fn1()` → `fn2()` → `fn3()`의 동기 호출 흐름과 `setTimeout(..., 0)` callback의 비동기 실행 순서를 보여 줍니다. 내 코드는 설명이 훨씬 많고, 주석 처리된 단일 timeout 예제와 timeout 두 개의 실행 순서를 별도로 설명합니다. 원본에는 “같은 setTimeout 0이면 동기화된 것”이라는 표현과 “동기화가 안 되어 있다”라는 다소 부정확한 설명이 있으므로 원문은 보존하고 이벤트 루프 관점에서 정확히 보완합니다.
 
@@ -1554,3 +1554,10 @@ E callback 실행
 - timeout ID를 저장하면 `clearTimeout()`으로 취소할 수 있다.
 - 강사님 코드의 직접 `"3"` 출력은 주석 처리되어 있고 실제 `"3"`은 timeout callback에서 출력된다.
 - 내 코드의 `1-3-2` 예제도 현재는 주석 처리되어 실제 실행되지 않는다.
+# V3 실행 추적 카드 — 동기 스택 → Web API → 작업 큐 → 콜백
+
+JavaScript는 현재 호출 스택을 먼저 비운다. 타이머·이벤트·네트워크 완료 콜백은 준비되더라도 스택이 빌 때까지 기다린다. Promise 반응 작업은 일반 타이머보다 먼저 처리되는 microtask다.
+
+동기 `A`, Promise의 `B`, 0ms 타이머의 `C`를 등록하면 보통 `A`, `B`, `C` 순이다. 지연시간은 정확한 실행 보장 시간이 아니다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/14_async.html`에서 실제 사용 위치와 차이를 확인한다.

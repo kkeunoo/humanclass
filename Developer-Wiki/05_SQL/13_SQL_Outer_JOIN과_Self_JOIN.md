@@ -13,7 +13,7 @@
 | 실습 테이블 | `EMP`, `DEPT` |
 | 선수 학습 | ANSI `INNER JOIN`, `ON`, `WHERE`, Subquery, `UNION` |
 | 다음 학습 | DDL과 제약조건 |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 원본 `Script.sql`의 기존 방식 Join과 ANSI JOIN 다음 범위를 기준으로 구성했다. `EMP.MGR`은 같은 `EMP` Table의 `EMPNO`를 논리적으로 참조하므로 사원–관리자 Self Join에 사용한다.
 
@@ -1023,3 +1023,77 @@ Outer Join은 단순히 NULL을 만드는 문법이 아니라 **어느 집합을
 ```text
 14_SQL_DDL과_제약조건.md
 ```
+
+---
+
+## 🔬 V3 동작 백과 — 일치하지 않는 Row와 같은 Table의 관계
+
+### LEFT JOIN에서 NULL이 만들어지는 과정
+
+```sql
+SELECT d.deptno, d.dname, e.ename
+FROM dept AS d
+LEFT JOIN emp AS e
+  ON e.deptno = d.deptno;
+```
+
+```text
+DEPT Row를 기준으로 모두 유지
+→ 같은 DEPTNO의 EMP 검색
+→ 있으면 결합 Row 생성
+→ 없으면 EMP 쪽 Column을 NULL로 채움
+```
+
+```text
+DEPTNO | DNAME      | ENAME
+10     | ACCOUNTING | CLARK
+40     | OPERATIONS | NULL
+```
+
+여기서 `NULL`은 EMP Table에 NULL 사원명이 저장됐다는 뜻이 아니라 **JOIN 상대 Row가 없어서 Result에 만들어진 NULL**이다.
+
+### ON과 WHERE가 결과를 바꾸는 이유
+
+```sql
+-- 기준 부서는 유지하고 조건에 맞는 사원만 연결
+LEFT JOIN emp AS e
+  ON e.deptno = d.deptno
+ AND e.sal >= 3000
+```
+
+```sql
+-- JOIN 후 sal 조건이 True인 Row만 유지
+LEFT JOIN emp AS e
+  ON e.deptno = d.deptno
+WHERE e.sal >= 3000
+```
+
+두 번째 Query는 상대가 없는 Row의 `e.sal`이 NULL이므로 WHERE에서 제외되어 Outer JOIN 의미가 약해진다.
+
+### Self Join
+
+```sql
+SELECT e.ename AS employee, m.ename AS manager
+FROM emp AS e
+LEFT JOIN emp AS m
+  ON m.empno = e.mgr;
+```
+
+같은 EMP Table을 `e`와 `m`이라는 두 역할로 읽는다.
+
+```text
+사원 Row의 MGR
+→ 관리자 역할 m의 EMPNO와 비교
+→ 관리자 이름 연결
+```
+
+### 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 Anchor | 강사님 코드 Anchor |
+| --- | --- | --- |
+| LEFT JOIN | `left join` | `left join` |
+| RIGHT JOIN | `right join` | `right join` |
+| Self Join | `mgr`와 `empno`를 연결하는 Query | 같은 실습 |
+| Outer 조건 위치 | ON·WHERE 비교 Query | Outer Join 구간 |
+
+기준 Table이 무엇인지 먼저 말하고, 일치하지 않은 Row가 어느 쪽 NULL로 나타나는지 예상한 뒤 실행한다.

@@ -1,6 +1,6 @@
 ---
 title: JavaScript 반복문과 배열 순회
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/04_for.html`, `04_1_pyramid.html`, 강사님 동일 파일 |
 | 핵심 범위 | `for`, 누적 계산, 중첩 반복문, `break`, `continue`, `for...in`, `for...of`, `forEach()`, `map()`, `filter()`, `sort()` |
 | 실습 범위 | 역순 출력, 홀짝 표시, 홀수 개수, 구구단, 주사위 조합, 로또 난수, 주차장 탐색, 문자열 패턴, 피라미드 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > 반복문의 실행 구조와 배열 순회 방식에 필요한 코드만 발췌하고, 결과·선택 기준·오류 원인·실무 개선 방향을 함께 설명한다.
@@ -1638,3 +1638,10 @@ row * 2 - 1
 ```
 
 이 흐름을 이해하면 이후 배열 메서드와 함수에서 데이터를 더 효율적으로 처리할 수 있다.
+# V3 실행 추적 카드 — 반복 대상 → 현재 값 → 본문 → 다음 값
+
+`for`는 초기화·조건·본문·증감 순으로 반복한다. `for...of`는 값, `for...in`은 키를 제공하므로 배열 값 순회에는 보통 `for...of`를 쓴다.
+
+`for (const value of [10,20]) console.log(value);`는 두 줄에 `10`, `20`을 출력한다. 인덱스 경계는 `i < array.length`로 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/04_for.html, 04_1_pyramid.html 및 내 코드의 추가 반복 실습`에서 실제 사용 위치와 차이를 확인한다.

@@ -1,6 +1,6 @@
 ---
 title: Python 시퀀스와 슬라이싱
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1721,3 +1721,24 @@ str, tuple
 ```
 
 이 흐름을 이해하면 이후 딕셔너리·조건문·반복문에서도 데이터의 위치와 범위를 더 정확하게 다룰 수 있다.
+
+# V3 동작 백과 보강 — 인덱스와 슬라이스 계산
+
+문자열·리스트·튜플은 순서를 공유하므로 `value[index]`와 `value[start:stop:step]` 규칙을 함께 쓴다. 인덱스는 원소 하나를 선택하고 범위를 벗어나면 `IndexError`다. 슬라이스의 `stop`은 포함하지 않으며 범위를 넘어도 가능한 부분만 반환한다.
+
+```python
+data = [10, 20, 30, 40, 50]
+print(data[1])
+print(data[1:4])
+print(data[::-1])
+```
+
+```text
+20
+[20, 30, 40]
+[50, 40, 30, 20, 10]
+```
+
+리스트 슬라이스는 새 바깥 리스트를 만들지만 내부 객체 참조는 공유할 수 있다. 문자열과 튜플은 슬라이스 결과도 불변이고, 리스트만 슬라이스 대입으로 원본 범위를 바꿀 수 있다.
+
+**원본 연결:** 내 코드 `workspace_python/06_sequence.py`, 강사님 코드 `workspace_python/_06_sequence.py`의 `range`, 인덱싱, 슬라이싱, 시퀀스 연산 예제를 기반으로 한다.

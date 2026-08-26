@@ -1,6 +1,6 @@
 ---
 title: JavaScript 실무 코딩 스타일
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -17,7 +17,7 @@ status: Completed
 | 핵심 범위 | 네이밍, `const`·`let`, 조건문, 함수 분리, 배열·객체, DOM, 이벤트, 비동기, API, 저장소, 보안, 모듈화 |
 | 예제 형식 | Before → After → 실행 결과 → 개선 이유 → 실무 선택 기준 |
 | 종합실습 | 별도 문서 `24_JavaScript_종합실습.md`에서 관리 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 새로운 문법을 배우는 문서가 아니다.  
 > JavaScript 01~22번에서 학습한 문법과 Browser API를 **실무에서는 왜, 어떻게 선택하고 조합하는지** 설명하는 기준 문서다.
@@ -2735,3 +2735,10 @@ JavaScript 실무 코딩 스타일의 핵심은 최신 문법을 많이 사용�
 좋은 JavaScript 코드는 단순히 실행되는 코드가 아니다.
 
 **다른 개발자가 빠르게 이해하고, 기능을 안전하게 변경하고, 잘못된 상태를 쉽게 발견할 수 있는 코드**다.
+# V3 실행 추적 카드 — 입력 경계 → 작은 책임 → 명시적 오류·결과
+
+읽기 좋은 코드는 이름, 실행 시점, 상태 소유자, 부수 효과를 드러낸다. DOM 선택·검증·상태 변경·렌더링·네트워크를 함수 책임별로 나누면 디버깅이 쉬워진다.
+
+01~22번 내 코드와 강사님 코드를 Console·Elements·Network 근거로 비교한다. `var`의 무조건적 교체보다 스코프와 재할당 의도를 보고 `const`/`let`을 선택한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/01~22 전체 원본`에서 실제 사용 위치와 차이를 확인한다.

@@ -1,6 +1,6 @@
 ---
 title: CSS 박스 모델
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2583,3 +2583,10 @@ input {
 - Flex와 Grid의 `gap`은 자식 사이 간격을 부모에서 안정적으로 관리한다.
 - 원본의 `body { margin: 0; }`은 간단한 Reset의 일부이며 전체 Reset CSS와 같지는 않다.
 - 내 코드는 강사님 코드보다 설명이 풍부하지만 일부 주석 오타와 과도하게 단정한 설명을 수정할 필요가 있다.
+# V3 렌더링 추적 카드 — 콘텐츠에서 바깥 크기까지
+
+모든 요소는 content, padding, border, margin 영역으로 계산된다. 기본 content-box는 width가 콘텐츠만 뜻하고 border-box는 padding과 border를 지정 너비 안에 포함한다.
+
+width 200px, 좌우 padding 20px, 좌우 border 5px라면 content-box 바깥 너비는 250px다. DevTools Box Model에서 각 영역을 직접 대조한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/03_box.html 및 asset/css/03_box.css`에서 실제 선택자·계산값·화면 차이를 확인한다.

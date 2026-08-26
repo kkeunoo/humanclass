@@ -1,6 +1,6 @@
 ---
 title: CSS Overflow와 스크롤
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1793,3 +1793,10 @@ function hasVerticalOverflow(element) {
 - 실제 overflow는 `scrollHeight > clientHeight`, `scrollWidth > clientWidth`로 검사할 수 있다.
 - 원본의 `div>div*5`는 화면에 노출되는 Emmet 문자열이므로 주석으로 처리한다.
 - 반복 `<br>`는 최종 코드에서 CSS 여백이나 최소 높이로 대체한다.
+# V3 렌더링 추적 카드 — 콘텐츠 크기와 박스 경계
+
+콘텐츠가 지정 박스보다 클 때 overflow가 처리 방식을 정한다. `hidden`은 넘친 부분을 자르고, `auto`는 필요할 때 스크롤을 제공하며, 축별 속성도 사용할 수 있다.
+
+overflow 효과에는 제한할 width/height 또는 max-size가 필요하다. Box Model의 박스 크기와 scrollWidth/clientWidth 등을 함께 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/09_overflow.html`에서 실제 선택자·계산값·화면 차이를 확인한다.

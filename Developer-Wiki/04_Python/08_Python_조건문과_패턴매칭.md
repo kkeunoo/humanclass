@@ -1,6 +1,6 @@
 ---
 title: Python 조건문과 패턴 매칭
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1600,3 +1600,26 @@ case _
 ```
 
 이 흐름을 이해하면 이후 반복문과 함수 안에서 프로그램의 동작을 더 명확하게 제어할 수 있다.
+
+# V3 동작 백과 보강 — 조건이 실행 경로를 고르는 과정
+
+`if`는 조건식의 결과를 참/거짓으로 평가한다. `False`, `None`, 숫자 `0`, 빈 문자열과 빈 컬렉션은 거짓으로 취급된다. 첫 번째로 참이 된 분기의 블록만 실행되고 나머지는 건너뛴다. `match`는 대상 값을 위에서 아래의 패턴과 비교해 첫 일치 분기를 실행한다.
+
+```python
+score = 85
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+else:
+    grade = "C"
+print(grade)
+```
+
+```text
+B
+```
+
+넓은 조건을 먼저 두면 뒤의 세부 조건에 도달하지 못한다. 사용자 입력을 비교할 때는 `input()` 결과가 문자열임을 기억해 먼저 변환하거나 문자열로 비교한다.
+
+**원본 연결:** 내 코드 `workspace_python/08_if.py`, 강사님 코드 `workspace_python/_08_if.py`의 비교, 논리 연산, `if-elif-else`, 패턴 매칭 예제를 기반으로 한다.

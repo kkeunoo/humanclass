@@ -1,6 +1,6 @@
 ---
 title: SQL LIKE와 NULL
-version: v2.0-final
+version: v3.0-final
 last_updated: 2026-08-12
 status: Completed
 ---
@@ -19,7 +19,7 @@ status: Completed
 | 핵심 범위 | `LIKE`, `%`, `_`, `NOT LIKE`, `IS NULL`, `IS NOT NULL`, `NULL` 비교, `NOT IN`과 `NULL` |
 | 학습 범위 | 문자열 Pattern Matching, Wildcard, NULL 조건식, Unknown 비교 |
 | 다음 범위 제외 | `ORDER BY`, `LIMIT`, Aggregate Function |
-| 문서 형식 | SQL Developer-Wiki V2 확정 형식 |
+| 문서 형식 | SQL Developer-Wiki V3 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `Script.sql`에서 `LIKE`와 `NULL` 조건을 비교해 정리한다.  
 > `%`, `_`의 의미와 Pattern 검색을 정리하고, `NULL = NULL`이 True가 아닌 이유, `IS NULL`·`IS NOT NULL`의 필요성, `NOT IN`에 `NULL`이 섞일 때 발생할 수 있는 문제까지 연결한다.
@@ -1407,3 +1407,81 @@ IS NULL / IS NOT NULL을 사용하는 것
 ```
 
 이 기준을 이해하면 다음 단계의 `ORDER BY`, `LIMIT`, Function, Aggregate Query에서도 조건 결과를 훨씬 정확하게 해석할 수 있다.
+# V3 동작 백과 — Pattern과 Unknown은 어떻게 평가되는가?
+
+## LIKE가 필요한 이유
+
+사용자가 이름 전체를 정확히 모르는 검색, 접두어·접미어·포함 검색을 처리한다.
+
+```sql
+SELECT ename
+FROM emp
+WHERE ename LIKE 'S%';
+```
+
+```text
+'S%' Pattern
+→ 첫 Character는 S
+→ 뒤에는 0글자 이상 허용
+
+SMITH → True
+SCOTT → True
+ALLEN → False
+```
+
+`_`는 정확히 한 글자다.
+
+```text
+'_A%'
+→ 첫 글자는 무엇이든 한 글자
+→ 두 번째 글자는 A
+→ 그 뒤는 0글자 이상
+```
+
+## NULL은 왜 비교연산자로 찾지 못하는가?
+
+```sql
+WHERE comm = NULL
+```
+
+```text
+COMM 값과 “알 수 없는 값” 비교
+→ True 또는 False를 결정할 수 없음
+→ Unknown
+→ WHERE는 True만 남기므로 Row 제외
+```
+
+따라서 상태를 검사한다.
+
+```sql
+WHERE comm IS NULL;
+```
+
+## NOT IN과 NULL 실제 결과
+
+```sql
+WHERE deptno NOT IN (10, NULL)
+```
+
+개념적으로:
+
+```text
+deptno <> 10 AND deptno <> NULL
+→ 두 번째 비교가 Unknown
+→ 전체가 True가 되지 못함
+→ 예상과 달리 Row가 나오지 않을 수 있음
+```
+
+Subquery의 `NOT IN`을 사용할 때도 반환값에 `NULL`이 있는지 확인한다.
+
+## 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 검색 Anchor | 강사님 코드 검색 Anchor |
+| --- | --- | --- |
+| Prefix LIKE | `ename like 'S%` | 같은 Query |
+| `%`, `_` | `like` Pattern 연습 | LIKE 구간 |
+| NULL 조회 | `is null` | `is null` |
+| NULL 제외 | `is not null` | 같은 Query |
+| 잘못된 비교 | `= null` | NULL 비교 구간 |
+
+Result가 0행이면 “Data가 없음”으로 단정하지 말고 Pattern, Collation과 Unknown 평가를 확인한다.

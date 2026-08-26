@@ -1,6 +1,6 @@
 ---
 title: SQL 기초와 SELECT
-version: v2.0-final
+version: v3.0-final
 last_updated: 2026-08-12
 status: Completed
 ---
@@ -18,7 +18,7 @@ status: Completed
 | DBMS | MariaDB |
 | 핵심 범위 | SQL Comment, Table 조회, `SELECT`, `*`, Column 선택, `DISTINCT`, Alias, 산술식, 상수 조회, `NULL` 산술 |
 | 학습 범위 | SQL 실행 구조, 실습 Table 이해, SELECT List 작성, 결과 Column 이름 변경, 중복 제거 |
-| 문서 형식 | SQL Developer-Wiki V2 확정 형식 |
+| 문서 형식 | SQL Developer-Wiki V3 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `Script.sql` 초반부를 비교해 SQL Comment, 실습 Table, `SELECT`, Column 선택, `DISTINCT`, Alias, 산술식과 `NULL` 연산을 정리한다.  
 > `[DB]학습용_emp 신규-mariadb.sql`은 `EMP`, `DEPT`, `BONUS`, `SALGRADE`를 준비하는 **실습 환경 기준 자료**로만 사용하고, 실제 학습 흐름은 `Script.sql`을 중심으로 분석한다.
@@ -1646,3 +1646,72 @@ SQL의 첫 단계에서 가장 중요한 것은 복잡한 문법을 외우는 �
 를 명확하게 표현하는 것이다.
 
 `SELECT`와 `FROM`, 필요한 Column 선택, `DISTINCT`, Alias, Expression과 `NULL`의 기본 동작을 정확히 이해하면 이후 `WHERE`, Function, Grouping, Subquery, JOIN으로 자연스럽게 확장할 수 있다.
+
+---
+
+# V3 동작 백과 — SELECT는 Data를 어떻게 가져오는가?
+
+## 왜 배워야 하는가?
+
+모든 조회 Query는 `SELECT`에서 시작한다. 단순히 문법을 외우는 것이 아니라 “어느 Table의 어느 Row에서 어떤 값을 Result Column으로 만들 것인가”를 이해해야 이후 조건, 집계와 JOIN을 해석할 수 있다.
+
+## Data가 들어오고 결과가 나오는 과정
+
+```sql
+SELECT empno, ename, sal * 12 AS annual_sal
+FROM emp;
+```
+
+```text
+SQL Client에서 Query 작성·실행
+→ MariaDB가 문법과 Table·Column 존재 여부 확인
+→ FROM emp에서 Row를 읽음
+→ 각 Row의 empno, ename을 선택
+→ 각 Row마다 sal * 12 계산
+→ annual_sal이라는 Result Column 이름 지정
+→ Result Set을 SQL Client Grid에 반환
+```
+
+입력 Row가 다음과 같다면:
+
+```text
+EMPNO | ENAME | SAL
+7369  | SMITH | 800
+7499  | ALLEN | 1600
+```
+
+결과는 다음과 같다.
+
+```text
+EMPNO | ENAME | ANNUAL_SAL
+7369  | SMITH | 9600
+7499  | ALLEN | 19200
+```
+
+Alias는 원본 Table Column명을 바꾸지 않고 Result Grid의 이름만 바꾼다.
+
+## NULL을 실제로 계산하면
+
+```sql
+SELECT empno, sal, comm, sal + comm AS total_pay
+FROM emp;
+```
+
+```text
+SAL=1250, COMM=300  → TOTAL_PAY=1550
+SAL=800,  COMM=NULL → TOTAL_PAY=NULL
+```
+
+`NULL`은 0이 아니라 “값을 알 수 없음”이므로 합계도 알 수 없다는 결과가 된다.
+
+## 수업 원본에서 다시 찾기
+
+| 개념 | 내 `Script.sql` 검색 기준 | 강사님 `Script.sql` 검색 기준 |
+| --- | --- | --- |
+| 전체 조회 | `select * from emp;` | `select * from emp;` |
+| Column 선택 | `select empno, ename` | 같은 SELECT 구간 |
+| 중복 제거 | `distinct` | `distinct` |
+| Alias | ` as ` | Alias 실습 구간 |
+| 산술식 | `sal * 12` | 급여 계산 실습 구간 |
+
+Query를 다시 실행할 때 SQL Client의 Result Grid에서 **Row 수, Column명, NULL 표시, 계산값**을 함께 확인한다.

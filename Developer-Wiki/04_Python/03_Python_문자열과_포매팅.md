@@ -1,6 +1,6 @@
 ---
 title: Python 문자열과 포매팅
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1474,3 +1474,24 @@ zfill()
 ```
 
 이 흐름을 익히면 사용자 입력, 파일 데이터, 웹 응답, 로그 메시지를 더 안정적으로 처리할 수 있다.
+
+# V3 동작 백과 보강 — 문자열 객체가 처리되는 방식
+
+문자열은 순서가 있는 불변 시퀀스다. 인덱싱은 한 문자를, 슬라이싱은 범위에 해당하는 새 문자열을 반환한다. `replace`, `upper`, `strip`도 원본을 직접 바꾸지 않고 새 문자열을 반환하므로 결과를 계속 쓰려면 변수에 다시 연결해야 한다.
+
+```python
+raw = "  python  "
+clean = raw.strip().upper()
+message = f"원본 길이={len(raw)}, 결과={clean}"
+print(message)
+print(raw)
+```
+
+```text
+원본 길이=10, 결과=PYTHON
+  python  
+```
+
+f-string은 `{}` 안 표현식을 출력 시점에 계산해 문자열에 삽입한다. 존재하지 않는 인덱스는 `IndexError`, 문자열 원소에 직접 대입하면 `TypeError`가 발생한다.
+
+**원본 연결:** 내 코드 `workspace_python/03_string.py`, 강사님 코드 `workspace_python/_03_string.py`의 인덱싱, 검색·치환, 분리·결합, 포매팅 예제를 기반으로 한다.

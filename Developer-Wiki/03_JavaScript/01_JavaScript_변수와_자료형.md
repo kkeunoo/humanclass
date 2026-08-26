@@ -1,6 +1,6 @@
 ---
 title: JavaScript 변수와 자료형
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/01_var.html`, `workspace_teacher/workspace_html/javascript/01_var.html` |
 | 핵심 범위 | JavaScript 실행, 주석, 콘솔, `var`, `let`, `const`, 동적 타입, `undefined`, `Infinity`, `NaN`, Boolean, 문자열, 템플릿 리터럴, 형 변환, 산술 계산 |
 | 실습 범위 | 변수 선언·재할당, 문자열과 숫자 변환, 단위 계산, 회식비 분배, 브라우저 대화상자 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 한 번에 나열하지 않는다.  
 > 변수와 자료형을 이해하는 데 필요한 부분만 발췌하고, 코드의 실행 결과·차이·오류 원인·실무 개선 방향을 함께 설명한다.
@@ -2097,3 +2097,10 @@ const와 let을 올바르게 선택하고
 ```
 
 이 기본 흐름을 이해하면 다음 연산자 문서에서 값의 비교와 논리 판단을 더 안정적으로 작성할 수 있다.
+# V3 실행 추적 카드 — 리터럴/입력 → 값과 변수
+
+`let`은 재할당 가능, `const`는 이름의 재할당을 막는다. `prompt()`와 폼의 `value`는 숫자처럼 보여도 문자열이므로 계산 전 `Number()` 등으로 변환한다.
+
+`const raw = "10"; console.log(raw + 1, Number(raw) + 1, typeof raw);`의 Console 결과는 `101 11 string`이다. 선언 전 접근, 잘못된 변환에서 `ReferenceError` 또는 `NaN`을 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/01_var.html`에서 실제 사용 위치와 차이를 확인한다.

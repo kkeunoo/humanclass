@@ -1,6 +1,6 @@
 ---
 title: Python 실무 코딩 스타일
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -3378,3 +3378,19 @@ Guard Clause
 ```
 
 Pythonic한 코드는 단순히 짧은 코드가 아니라, **Python을 사용하는 개발자가 자연스럽게 읽고 예상할 수 있는 코드**다.
+
+# V3 동작 백과 보강 — 읽히는 코드의 판단 기준
+
+좋은 스타일은 값의 흐름과 실패 지점을 예측하게 한다. 이름은 역할과 단위를 드러내고, 함수는 한 책임을 가지며, 외부 입력은 경계에서 검증한다.
+
+```python
+def calculate_total(prices: list[int]) -> int:
+    if any(price < 0 for price in prices):
+        raise ValueError("가격은 0 이상이어야 합니다.")
+    return sum(prices)
+print(calculate_total([1000, 2000]))
+```
+
+출력은 `3000`이다. 타입 힌트는 기본적으로 런타임 검증기가 아니므로 외부 입력은 별도로 검증한다.
+
+**원본 연결:** `01_hello.py`부터 `15_module.py`까지의 내 코드와 `_01_hello.py`부터 `_15_module.py`까지의 강사님 코드를 다시 검토하는 기준이다.

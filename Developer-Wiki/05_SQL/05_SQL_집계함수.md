@@ -1,6 +1,6 @@
 ---
 title: SQL 집계함수
-version: v2.0-final
+version: v3.0-final
 last_updated: 2026-08-13
 status: Completed
 ---
@@ -18,7 +18,7 @@ status: Completed
 | DBMS | MariaDB |
 | 핵심 범위 | `COUNT`, `SUM`, `AVG`, `MAX`, `MIN`, `DISTINCT`, `NULL`과 집계 |
 | 다음 범위 제외 | 문자열·숫자·날짜 Function, `GROUP BY`, `HAVING` |
-| 문서 형식 | SQL Developer-Wiki V2 확정 형식 |
+| 문서 형식 | SQL Developer-Wiki V3 백과사전 형식 |
 
 > 여러 Row를 하나의 요약 결과로 계산하는 집계함수를 정리한다. 특히 `COUNT(*)`와 `COUNT(column)`, `NULL`, `DISTINCT`의 차이를 정확하게 구분한다.
 
@@ -826,3 +826,68 @@ DISTINCT 필요 여부 판단
 ```
 
 이 기준을 이해하면 이후 `GROUP BY`에서 부서별·직무별처럼 Group을 나누어 집계하는 Query로 자연스럽게 확장할 수 있다.
+# V3 동작 백과 — 여러 Row가 하나의 값이 되는 과정
+
+## 왜 배워야 하는가?
+
+업무에서는 원본 Row 자체뿐 아니라 사원 수, 급여 합계, 평균, 최고·최저처럼 요약된 수치가 필요하다.
+
+입력:
+
+```text
+ENAME | COMM
+ALLEN | 300
+WARD  | 500
+SMITH | NULL
+```
+
+```sql
+SELECT
+    COUNT(*) AS row_count,
+    COUNT(comm) AS comm_count,
+    SUM(comm) AS comm_sum,
+    AVG(comm) AS comm_avg
+FROM emp;
+```
+
+계산 과정:
+
+```text
+COUNT(*)
+→ 모든 Row 수 = 3
+
+COUNT(comm)
+→ NULL이 아닌 COMM 수 = 2
+
+SUM(comm)
+→ 300 + 500 = 800
+
+AVG(comm)
+→ (300 + 500) / 2 = 400
+→ NULL Row는 분모에서도 제외
+```
+
+결과:
+
+```text
+ROW_COUNT | COMM_COUNT | COMM_SUM | COMM_AVG
+3         | 2          | 800      | 400
+```
+
+`AVG(IFNULL(comm, 0))`는 `(300+500+0)/3`이므로 의미가 달라진다. NULL을 0으로 바꾸는 것이 업무 정의에 맞는지 먼저 판단한다.
+
+## 원본 Row와 집계 Row
+
+Aggregate만 조회하면 여러 입력 Row가 보통 한 Result Row로 축약된다. 원본의 `ename`을 함께 SELECT하면 어떤 사원 이름을 표시해야 하는지 결정할 수 없으므로 `ONLY_FULL_GROUP_BY` 오류 또는 비결정적 결과가 발생할 수 있다.
+
+## 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 검색 Anchor | 강사님 코드 검색 Anchor |
+| --- | --- | --- |
+| COUNT | `select count(ename)` | 같은 Query |
+| 전체 Row | `count(*)` | `count(*)` |
+| 합계·평균 | `sum(`, `avg(` | 같은 함수 구간 |
+| 최고·최저 | `max(`, `min(` | 같은 함수 구간 |
+| 중복 제외 | `count(distinct` | DISTINCT 집계 구간 |
+
+집계 결과를 볼 때 NULL 포함 여부, 입력 Row 수, 분모와 Result Row 수를 함께 기록한다.

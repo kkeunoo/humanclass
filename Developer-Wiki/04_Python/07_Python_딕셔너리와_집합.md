@@ -1,6 +1,6 @@
 ---
 title: Python 딕셔너리와 집합
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1721,3 +1721,25 @@ set(values)
 ```
 
 이 흐름을 이해하면 이후 조건문·반복문·함수에서 구조화된 데이터를 더 자연스럽게 처리할 수 있다.
+
+# V3 동작 백과 보강 — 키 조회와 중복 제거
+
+딕셔너리는 해시 가능한 키와 값의 연결을 저장한다. `d[key]`는 키의 해시를 이용해 값을 찾고, 없으면 `KeyError`다. `d.get(key, default)`는 키가 없을 때 기본값을 반환한다. 집합도 해시를 사용해 같은 값을 한 번만 보관하므로 포함 검사와 중복 제거에 적합하다.
+
+```python
+student = {"name": "Kim", "score": 80}
+student["score"] = 90
+print(student["score"])
+print(student.get("grade", "미정"))
+print(set([1, 1, 2, 3]))
+```
+
+```text
+90
+미정
+{1, 2, 3}
+```
+
+집합의 출력 순서에 의존하면 안 된다. `{}`는 빈 딕셔너리이고 빈 집합은 `set()`으로 만든다.
+
+**원본 연결:** 내 코드 `workspace_python/07_dict.py`, 강사님 코드 `workspace_python/_07_dict.py`의 딕셔너리 CRUD, 반복, 집합 연산 예제를 기반으로 한다.

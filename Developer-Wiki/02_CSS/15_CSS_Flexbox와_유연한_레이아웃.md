@@ -1,6 +1,6 @@
 ---
 title: CSS Flexbox와 유연한 레이아웃
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -2666,3 +2666,10 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 - 원본의 Emmet 문자열은 실제 화면에 텍스트로 표시된다.
 - 내 코드와 강사님 코드의 CSS 15 원본은 완전히 동일하다.
 - 한 축 중심의 정렬에는 Flexbox, 행과 열을 함께 제어할 때는 Grid가 더 적합할 수 있다.
+# V3 렌더링 추적 카드 — 주축·교차축과 남는 공간 분배
+
+flex container가 된 부모는 자식을 flex item으로 배치한다. `flex-direction`이 주축을 정하고 justify-content는 주축, align-items는 교차축 정렬을 담당한다.
+
+item의 기본 `min-width:auto` 때문에 긴 콘텐츠가 줄지 않을 수 있어 필요하면 `min-width:0`을 검토한다. Layout 패널 overlay로 축, gap, item 크기를 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/15_flex.html`에서 실제 선택자·계산값·화면 차이를 확인한다.

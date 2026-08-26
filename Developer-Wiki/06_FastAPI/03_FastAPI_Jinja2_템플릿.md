@@ -1,6 +1,6 @@
 ---
 title: FastAPI Jinja2 템플릿
-version: v2.0-final
+version: v3.0-final
 last_updated: 2026-08-25
 status: Completed
 ---
@@ -55,6 +55,45 @@ MSG: {{ msg }}
 
 `{{ msg }}` 자리에 FastAPI가 전달한 값이 들어간 HTML을 Browser가 받는다.
 
+## 1.1 왜 Template Engine이 필요한가?
+
+일반 HTML 파일은 저장된 내용만 보여준다.
+
+```html
+<h1>고정된 제목</h1>
+```
+
+사용자 이름, DB 조회 결과, 현재 날짜처럼 Request마다 달라지는 값을 화면에 넣으려면 Python Data와 HTML을 결합해야 한다.
+
+```jinja2
+<h1>{{ username }}님</h1>
+```
+
+```text
+username='kim'
+→ <h1>kim님</h1>
+
+username='lee'
+→ <h1>lee님</h1>
+```
+
+## 1.2 Jinja 문법은 어디에서 실행되는가?
+
+Jinja 문법은 Browser에서 실행되지 않는다. Server에서 HTML을 만들 때 실행된다.
+
+```text
+Server에 저장된 Template
+<h1>{{ msg }}</h1>
+        ↓ Jinja Rendering
+완성된 HTML
+<h1>안녕하세요</h1>
+        ↓ HTTP Response
+Browser가 받는 내용
+<h1>안녕하세요</h1>
+```
+
+Browser의 Page Source에는 일반적으로 `{{ msg }}`가 아니라 치환이 끝난 결과가 보인다. JavaScript가 Jinja를 해석하는 것이 아니다.
+
 ---
 
 # 2. 설치와 기본 설정
@@ -105,6 +144,72 @@ YOUR IP: {{ ip }}<br>
 MSG: {{ msg }}
 ```
 
+## 3.2 값은 어디서 만들어져 어떻게 들어오는가?
+
+주소창:
+
+```text
+http://127.0.0.1:8000/hello
+```
+
+처리 흐름:
+
+```text
+1. Browser가 GET /hello Request 전송
+2. Uvicorn이 Request 수신
+3. FastAPI Router가 hello() 선택
+4. FastAPI가 현재 Request 객체를 request 인자에 주입
+5. request.client.host에서 Client Host 조회
+6. Python Dict로 Context 생성
+7. Jinja2가 templates/home.html 읽기
+8. {{ ip }}, {{ msg }}를 Context 값으로 치환
+9. Content-Type: text/html Response 생성
+10. Browser가 완성된 HTML Rendering
+```
+
+Python에서 확인:
+
+```python
+@app.get('/hello')
+def hello(request: Request):
+    context = {
+        'ip': request.client.host,
+        'msg': '안녕?',
+    }
+    print('context:', context)
+    return templates.TemplateResponse(request, 'home.html', context)
+```
+
+Terminal 예시:
+
+```text
+context: {'ip': '127.0.0.1', 'msg': '안녕?'}
+INFO: 127.0.0.1:53124 - "GET /hello HTTP/1.1" 200 OK
+```
+
+Browser 결과 예시:
+
+```text
+hello world
+YOUR IP: 127.0.0.1
+MSG: 안녕?
+```
+
+## 3.3 Request가 필요한 이유
+
+`TemplateResponse`는 현재 Request와 연결된 URL 생성, Middleware, Application Context 등을 처리하기 위해 Request 객체를 받는다. 또한 수업처럼 Client IP를 Context에 넣을 때도 사용한다.
+
+```text
+request 인자
+→ Jinja 변수 전체를 담는 객체가 아님
+→ 현재 HTTP Request 자체
+
+세 번째 Context Dict
+→ Template 변수로 사용할 업무 Data
+```
+
+두 역할을 혼동하지 않는다.
+
 ---
 
 # 4. Jinja 표현식과 주석
@@ -153,6 +258,30 @@ HTML 주석은 Rendering 결과에 남을 수 있다.
 {{ star2 | d('기본값') }}
 ```
 
+## 5.1 실제 값에 따른 출력
+
+FastAPI Context:
+
+```python
+{'star': 4}
+```
+
+Jinja 조건:
+
+```jinja2
+{% if star > 3 %}
+    별점이 높아요: {{ star }}
+{% endif %}
+```
+
+Rendering 결과:
+
+```html
+별점이 높아요: 4
+```
+
+Context의 `star`가 숫자가 아니라 문자열 `'4'`라면 숫자 `3`과 비교할 때 오류가 날 수 있다. Jinja에 전달하기 전에 Python과 Pydantic 단계에서 Type을 확정하는 것이 좋다.
+
 ---
 
 # 6. 반복문과 Loop 변수
@@ -173,6 +302,40 @@ HTML 주석은 Rendering 결과에 남을 수 있다.
 | `loop.index0` | 0부터 시작하는 순번 |
 | `loop.first` | 첫 번째 반복 여부 |
 | `loop.last` | 마지막 반복 여부 |
+
+## 6.1 실제 Rendering 결과
+
+Context:
+
+```python
+{'bookmark': ['동영상1', '동영상2', '동영상3']}
+```
+
+Template:
+
+```jinja2
+{% for item in bookmark %}
+{{ loop.index }}. {{ item }}
+{% endfor %}
+```
+
+결과:
+
+```text
+1. 동영상1
+2. 동영상2
+3. 동영상3
+```
+
+List가 비어 있을 때의 결과도 명시하려면 `for ... else`를 사용할 수 있다.
+
+```jinja2
+{% for item in bookmark %}
+    {{ item }}
+{% else %}
+    저장된 동영상이 없습니다.
+{% endfor %}
+```
 
 ---
 
@@ -215,6 +378,21 @@ HTML 주석은 Rendering 결과에 남을 수 있다.
 - `block`: 자식이 채우거나 덮어쓸 영역
 - `super()`: 부모 Block의 기존 내용 유지
 - Block 밖의 일반 HTML은 상속 구조에서 기대한 위치에 출력되지 않을 수 있다.
+
+## 7.3 어떤 파일이 어떤 순서로 합쳐지는가?
+
+```text
+youtube.html 요청
+→ {% extends 'layout.html' %} 확인
+→ layout.html을 전체 뼈대로 사용
+→ layout.html의 include 위치에 header.html 삽입
+→ youtube.html의 title Block으로 부모 title 교체
+→ youtube.html의 content Block으로 부모 content 교체
+→ super()가 있으면 부모 Block 내용도 유지
+→ 최종 HTML 한 개 생성
+```
+
+Template 파일 여러 개가 Browser로 각각 전달되는 것이 아니다. Server에서 합쳐진 최종 HTML Response 한 개가 전달된다.
 
 ---
 
@@ -305,6 +483,38 @@ templates.env.filters['format_date'] = format_date
 
 내 코드는 함수명과 Filter 이름을 `format_date`로 통일했다. 강사님 코드는 `format_data`를 사용하므로 오타로 단정하기보다 실제 등록 이름과 Template 사용 이름이 일치하는지가 중요하다.
 
+## 11.3 Filter 실행 시점과 값
+
+```jinja2
+{{ '15000' | price }}원
+```
+
+동작 순서:
+
+```text
+문자열 '15000'
+→ price('15000') 호출
+→ int('15000')
+→ f'{15000:,}'
+→ '15,000'
+→ HTML에 '15,000원' 출력
+```
+
+Debugging할 때 Filter 함수 안에서 입력과 출력을 확인할 수 있다.
+
+```python
+def price(value):
+    result = f'{int(value):,}'
+    print('price input:', value, 'output:', result)
+    return result
+```
+
+Terminal:
+
+```text
+price input: 15000 output: 15,000
+```
+
 ---
 
 # 12. Autoescape와 Markup
@@ -390,6 +600,40 @@ def videos(request: Request):
 | Block 밖 내용이 안 보임 | 상속 Template 구조 위반 | 모든 Page 내용을 Block 안에 작성 |
 | Filter를 찾지 못함 | 등록명과 사용명 불일치 | `env.filters` Key 확인 |
 | HTML이 그대로 보임 | Autoescape 작동 | 안전한 Data만 제한적으로 Markup 처리 |
+
+---
+
+## 15.1 수업 원본에서 다시 찾기
+
+| 배운 개념 | 내 코드 파일·함수 | 강사님 코드 파일·함수 | 다시 확인할 내용 |
+| --- | --- | --- | --- |
+| Template 설정 | `02_jinja/api.py` 상단 | 같은 위치 | `Jinja2Templates(directory=...)` |
+| Context 전달 | `hello()` | `hello()` | Request IP와 Message가 HTML로 이동 |
+| 여러 Data 전달 | `youtube()` | `youtube()` | 숫자와 List Context |
+| 변수·주석 | `templates/home.html` | 같은 파일 | `{{ }}`, `{# #}` |
+| Layout 상속 | `youtube.html`, `layout.html` | 같은 파일 | `extends`, `block`, `super()` |
+| 공통 조각 | `layout.html`의 `include` | 같은 위치 | `header.html` 삽입 |
+| 조건·반복 | `youtube.html`의 `star`, `bookmark` Block | 같은 위치 | `if`, `for`, `loop` |
+| 기본 Filter | `youtube.html`의 `filter` Block | 같은 위치 | `length`, `truncate`, `int`, `default` |
+| 금액 Filter | `api.py`의 `price()` | 같은 함수 | 입력값과 `15,000` 결과 |
+| 날짜 Filter | `api.py`의 `format_date()` | `format_data()` | Filter 등록명과 사용명 일치 |
+| HTML 줄바꿈 | `api.py`의 `n2br()` | 같은 함수 | Escape와 Markup 위험 |
+| Macro | `youtube.html`, `macros.html` | 같은 파일 | 내부 Macro와 Import Macro |
+
+## 15.2 직접 재현하기
+
+```text
+GET /hello
+→ Terminal Context 출력
+→ Browser 완성 HTML 확인
+→ Page Source에서 {{ msg }}가 남아 있는지 확인
+
+GET /youtube
+→ 조건문 결과 확인
+→ bookmark 반복 결과 확인
+→ 가격·날짜 Filter 결과 확인
+→ Layout, Header, 자식 Block 합성 결과 확인
+```
 
 ---
 

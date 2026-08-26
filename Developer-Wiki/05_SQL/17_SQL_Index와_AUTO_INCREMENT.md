@@ -13,7 +13,7 @@
 | 실습 Table | `EMP_INDEX_TEST`, `BOARD_PRACTICE` |
 | 선수 학습 | PK·Unique·FK, DML, Transaction |
 | 다음 학습 | Recursive CTE |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 원본 `Script.sql`에서 Transaction 다음에 이어지는 Index, Index Hint, AUTO_INCREMENT 범위를 기준으로 구성했다. Index는 “만들면 무조건 빨라지는 기능”이 아니며 실행 계획과 실제 Data로 검증한다.
 
@@ -1137,3 +1137,56 @@ Index의 목적은 Index 자체를 사용하는 것이 아니라 중요한 Query
 ```text
 18_SQL_Recursive_CTE.md
 ```
+
+---
+
+## 🔬 V3 동작 백과 — Index 탐색과 자동 번호 생성
+
+Index가 없으면 조건에 맞는 Row를 찾기 위해 많은 Row를 순서대로 비교할 수 있다. B-Tree Index는 정렬된 구조에서 탐색 범위를 줄이고 실제 Row 위치를 찾는다.
+
+```sql
+EXPLAIN
+SELECT * FROM emp2 WHERE empno = 7900;
+```
+
+```text
+possible_keys → 후보 Index
+key           → 실제 선택 Index
+type          → 접근 방식
+rows          → 읽을 것으로 예상한 Row
+Extra         → 추가 처리
+```
+
+Index가 있다고 반드시 사용되는 것은 아니다. Data 양, 선택도, 조건식, 함수 적용과 통계 정보를 바탕으로 Optimizer가 판단한다.
+
+### Composite Index
+
+```sql
+CREATE INDEX idx_emp_dept_job ON emp2 (deptno, job);
+```
+
+```text
+WHERE deptno = 20                       → 활용 가능성
+WHERE deptno = 20 AND job = 'CLERK'    → 두 Column 활용 가능성
+WHERE job = 'CLERK'                    → 왼쪽 Column 부재로 제한 가능
+```
+
+### AUTO_INCREMENT
+
+```sql
+INSERT INTO todo (title) VALUES ('SQL 공부');
+SELECT LAST_INSERT_ID();
+```
+
+MariaDB가 Connection의 최근 생성 ID를 제공한다. Rollback·실패·삭제로 Gap이 생길 수 있어 연속 번호를 보장하는 기능은 아니다.
+
+### 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 Anchor | 강사님 코드 Anchor |
+| --- | --- | --- |
+| Index 생성 | `-- index 생성`, `create index` | `-- index` 이후 |
+| 확인·계획 | `show index`, `explain` | 같은 구간 |
+| 자동 번호 | `auto_increment` | AUTO_INCREMENT 실습 |
+| 최근 ID | `last_insert_id` | 같은 구간 |
+
+Index 전후 동일 Query의 EXPLAIN을 비교해야 사용 여부를 확인할 수 있다.

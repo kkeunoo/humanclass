@@ -13,7 +13,7 @@
 | 실습 테이블 | `EMP`, `DEPT`, `SALGRADE` |
 | 선수 학습 | `SELECT`, `WHERE`, 집계함수, `GROUP BY`, `HAVING`, `UNION` |
 | 다음 학습 | JOIN |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 원본 `Script.sql`에서 `UNION / UNION ALL` 다음에 이어지는 Subquery 범위를 기준으로 구성했다. 수업 예제를 보존하면서 “Subquery는 한 행만 반환해야 한다” 같은 과도한 일반화는 Scalar Subquery에만 해당하도록 바로잡았다.
 
@@ -1028,3 +1028,80 @@ Subquery의 핵심은 중첩 자체가 아니라 **안쪽 Query가 몇 행·몇 
 ```text
 12_SQL_JOIN.md
 ```
+
+---
+
+## 🔬 V3 동작 백과 — 안쪽 Query의 결과가 바깥 조건이 되는 과정
+
+```sql
+SELECT empno, ename, sal
+FROM emp
+WHERE sal > (
+    SELECT AVG(sal)
+    FROM emp
+);
+```
+
+개념적 실행:
+
+```text
+Subquery 실행
+→ EMP 전체 AVG(sal) 계산
+→ 예: 2073.21 한 값 반환
+
+Outer Query 실행
+→ EMP Row마다 sal > 2073.21 평가
+→ True인 Row만 Result에 포함
+```
+
+Subquery만 먼저 실행하면 입력값을 확인할 수 있다.
+
+```sql
+SELECT AVG(sal) FROM emp;
+```
+
+### Scalar와 다중 Row의 차이
+
+```text
+= (Subquery)
+→ Subquery가 한 Row·한 Column을 반환해야 함
+
+IN (Subquery)
+→ Subquery가 여러 Row·한 Column을 반환할 수 있음
+```
+
+Scalar 위치에서 여러 Row가 반환되면 “Subquery returns more than 1 row” 오류가 발생한다.
+
+### Correlated Subquery
+
+```sql
+SELECT e.ename, e.deptno, e.sal
+FROM emp AS e
+WHERE e.sal > (
+    SELECT AVG(i.sal)
+    FROM emp AS i
+    WHERE i.deptno = e.deptno
+);
+```
+
+```text
+Outer Row e 한 건 선택
+→ e.deptno를 안쪽 Query에 전달
+→ 같은 부서 평균 계산
+→ e.sal과 비교
+→ 다음 Outer Row에서 반복
+```
+
+논리적으로 Row마다 연관 평가되므로 실행 계획과 대체 JOIN·Window Function 가능성을 검토한다.
+
+### 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 Anchor | 강사님 코드 Anchor |
+| --- | --- | --- |
+| Scalar | `select` 안의 `select` 또는 평균 비교 | Subquery 구간 |
+| IN | `in ( select` | 같은 실습 |
+| ANY·ALL | ` any `, ` all ` | 다중 Row 비교 구간 |
+| EXISTS | `exists (` | EXISTS 구간 |
+| Correlated | 안쪽 WHERE에서 바깥 Alias 참조 | 연관 Subquery 구간 |
+
+Debugging은 가장 안쪽 Query부터 독립 실행하고 반환 Row 수·Column 수·NULL을 확인한다.

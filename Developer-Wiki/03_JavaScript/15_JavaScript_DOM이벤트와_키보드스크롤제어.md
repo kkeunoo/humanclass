@@ -1,6 +1,6 @@
 ---
 title: JavaScript DOM 이벤트와 키보드·스크롤 제어
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/15_event.html`, `workspace_html/javascript/asset/js/15_event.js`, 강사님 동일 파일 |
 | 핵심 범위 | 페이지 로드, 이벤트 등록·해제, 클릭, 키보드, 포커스, 스크롤, 방향키 이동 |
 | 실습 범위 | 버튼 이벤트 비교, 로그인 검증, Enter 처리, 맨 위 이동, 스크롤 감지, 이미지 이동 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 15번은 HTML 파일만이 아니라 연결된 외부 JavaScript 파일까지 함께 확인해야 한다.  
 > 원본의 실제 실행 흐름과 내 코드·강사님 코드 차이를 비교하고, 중복 초기화·오류 문구·구식 Keyboard API·안전하지 않은 로그 출력을 개선한다.
@@ -1901,3 +1901,10 @@ DOM이 준비된 시점에 초기화하고
 ```
 
 이 흐름을 이해하면 이후 마우스 이벤트와 이벤트 전파 문서에서 더 복잡한 사용자 상호작용을 안정적으로 구현할 수 있다.
+# V3 실행 추적 카드 — 브라우저 이벤트 생성 → 리스너 호출 → 기본동작/DOM 변경
+
+`addEventListener`는 콜백을 등록할 뿐 즉시 실행하지 않는다. 이벤트 발생 시 브라우저가 Event 객체를 전달하며 `target`, 키 정보, 스크롤 위치를 읽을 수 있다.
+
+키 입력 때만 콜백 Console이 찍히는지, `preventDefault()` 전후 기본 동작이 달라지는지 확인한다. 등록 전에 요소가 null인지도 검사한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/15_event.html, asset/js/15_event.js`에서 실제 사용 위치와 차이를 확인한다.

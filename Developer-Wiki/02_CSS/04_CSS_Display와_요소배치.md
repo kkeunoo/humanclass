@@ -1,6 +1,6 @@
 ---
 title: CSS Display와 요소 배치
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2709,3 +2709,10 @@ Flexbox가 HTML 공백을 간격으로 처리하지 않으며 `gap`으로 명확
 - 원본의 `-webkit-` 주석은 벤더 접두사와 요소 숨김을 혼합한 부정확한 설명이다.
 - 강사님 HTML 파일명 `04_dispaly.html`에는 `display` 철자 오타가 있다.
 - 원본의 Emmet 문자열과 반복 `<br>`는 최종 문서 콘텐츠에서 정리해야 한다.
+# V3 렌더링 추적 카드 — 박스 생성 방식과 정상 흐름
+
+`display`는 요소가 어떤 박스를 만들고 주변 요소와 어떻게 배치되는지 정한다. block은 새 줄과 가용 너비, inline은 문장 흐름, inline-block은 인라인 배치와 크기 지정을 결합한다.
+
+`display:none`은 박스 자체가 없어 주변이 자리를 채운다. inline 요소에 width가 기대대로 적용되지 않으면 Computed display와 실제 박스 크기를 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/04_display.html 및 asset/css/04_display.css`에서 실제 선택자·계산값·화면 차이를 확인한다.

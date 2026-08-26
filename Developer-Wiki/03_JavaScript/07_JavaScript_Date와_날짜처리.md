@@ -1,6 +1,6 @@
 ---
 title: JavaScript Date와 날짜 처리
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/07_date.html`, `workspace_teacher/workspace_html/javascript/07_date.html` |
 | 핵심 범위 | `Date`, 현재 시각, 날짜 구성 요소, ISO 문자열, UTC, timestamp, 실행 시간 측정, 특정 날짜 생성, 날짜 변경 |
 | 실습 범위 | 현재 날짜 출력, 로컬 날짜 형식화, 날짜 차이 계산, 실행 시간 측정, 예약 만료일 계산 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > `Date` 객체의 생성·조회·변경·시간대 처리에 필요한 핵심 코드만 발췌하고, 실행 환경에 따라 달라지는 값과 날짜 처리 시 주의점을 함께 설명한다.
@@ -1464,3 +1464,10 @@ new Date(
 ```
 
 이 흐름을 이해하면 예약 시각, 작성 일시, 만료 시간, 경과 시간 같은 실제 기능을 더 안전하게 구현할 수 있다.
+# V3 실행 추적 카드 — 입력 문자열/현재 시각 → Date → 표시 문자열
+
+`Date`는 내부적으로 특정 시점을 밀리초 기준으로 다루며 표시 때 지역 시간대가 개입한다. 월 인덱스 생성자는 0부터 시작한다.
+
+`new Date(2025,0,1).getMonth()`는 `0`이다. 잘못된 날짜는 `Invalid Date`가 될 수 있고 서버 교환에는 시간대가 명확한 ISO 형식을 우선한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/07_date.html`에서 실제 사용 위치와 차이를 확인한다.

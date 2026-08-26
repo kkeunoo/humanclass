@@ -1,6 +1,6 @@
 ---
 title: JavaScript Discord Webhook과 XMLHttpRequest
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/22_discord.html`, `workspace_teacher/workspace_html/javascript/22_discord.html` |
 | 핵심 범위 | Discord Webhook, `XMLHttpRequest`, POST 요청, JSON Header, Payload, 상태 코드, Network Error, Credential 보안 |
 | 실습 범위 | Textarea 메시지 전송, 입력 검증, 중복 요청 방지, 상태 표시, Backend Proxy, Fetch 전환 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 22번은 Textarea에 입력한 메시지를 Discord Webhook으로 전송하는 과정을 다룬다.  
 > 강사님 원본에는 실제 Webhook URL이 포함되어 있었지만, Webhook URL은 메시지 전송 권한을 가진 Credential이므로 이 문서에는 원문을 재노출하지 않는다.
@@ -1501,3 +1501,10 @@ Webhook Credential을 Backend에서 안전하게 보호하는 것
 ```
 
 이 흐름을 이해하면 Discord 알림뿐 아니라 Slack·Teams·사내 알림 시스템 같은 Webhook 기반 연동도 더 안전하게 구현할 수 있다.
+# V3 실행 추적 카드 — 폼/데이터 → HTTP 요청 → 상태 변화 → 성공·실패 처리
+
+XMLHttpRequest는 readyState 변화와 status를 통해 진행을 관찰한다. Webhook URL은 쓰기 권한을 가진 비밀값이므로 공개 저장소나 브라우저 배포 코드에 그대로 두면 안 된다.
+
+상태 4에서 HTTP 상태와 응답을 확인하고 Network에서도 요청을 검증한다. 실습 문서에는 실제 Webhook 토큰 대신 자리표시자를 사용한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/22_discord.html`에서 실제 사용 위치와 차이를 확인한다.

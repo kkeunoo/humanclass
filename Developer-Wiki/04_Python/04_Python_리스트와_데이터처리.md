@@ -1,6 +1,6 @@
 ---
 title: Python 리스트와 데이터 처리
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2395,3 +2395,27 @@ map()
 ```
 
 이 흐름을 이해하면 이후 튜플·딕셔너리·집합과 반복문을 더 자연스럽게 연결할 수 있다.
+
+# V3 동작 백과 보강 — 리스트의 참조와 변경
+
+리스트는 여러 객체의 참조를 순서대로 보관하는 변경 가능한 객체다. `append(x)`는 `x` 하나를 끝에 넣고, `extend(iterable)`은 반복 가능한 값의 원소를 차례로 넣는다. 두 메서드는 원본 리스트를 바꾸며 반환값은 `None`이다.
+
+```python
+a = [1, 2]
+b = a
+c = a.copy()
+a.append(3)
+print(a)
+print(b)
+print(c)
+```
+
+```text
+[1, 2, 3]
+[1, 2, 3]
+[1, 2]
+```
+
+`b = a`는 복사가 아니라 같은 리스트를 가리키는 이름을 하나 더 만든다. `copy()`는 새 바깥 리스트를 만들지만 내부에 중첩된 객체까지 복제하는 깊은 복사는 아니다. 인덱스 범위를 벗어나면 `IndexError`가 발생한다.
+
+**원본 연결:** 내 코드 `workspace_python/04_list.py`, 강사님 코드 `workspace_python/_04_list.py`의 생성, 추가·삭제, 정렬, 반복 처리 예제를 기반으로 한다.

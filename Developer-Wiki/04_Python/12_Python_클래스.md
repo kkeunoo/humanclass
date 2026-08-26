@@ -1,6 +1,6 @@
 ---
 title: Python 클래스
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2806,3 +2806,29 @@ __속성
 ```
 
 이 핵심 흐름을 이해해야 이후의 상속, 다형성, 추상 클래스와 같은 객체지향 개념도 자연스럽게 연결할 수 있다.
+
+# V3 동작 백과 보강 — 클래스 정의에서 메서드 호출까지
+
+클래스 문을 실행하면 클래스 객체가 만들어진다. `Person("Kim")`처럼 호출하면 보통 `__new__`가 인스턴스를 만들고 `__init__`가 초기 상태를 설정한다. `person.introduce()`는 클래스에서 메서드를 찾아 인스턴스를 첫 인수 `self`로 자동 전달한다.
+
+```python
+class Person:
+    species = "human"
+    def __init__(self, name):
+        self.name = name
+    def introduce(self):
+        return f"저는 {self.name}입니다."
+
+person = Person("Kim")
+print(person.name)
+print(person.introduce())
+```
+
+```text
+Kim
+저는 Kim입니다.
+```
+
+인스턴스 속성은 객체별 상태이고 클래스 속성은 클래스 수준에서 공유된다. 초기화하지 않은 속성을 읽으면 `AttributeError`다.
+
+**원본 연결:** 내 코드 `workspace_python/12_class.py`, 강사님 코드 `workspace_python/_12_class.py`의 생성자, 인스턴스·클래스 속성, 메서드, 객체 관계 예제를 기반으로 한다.

@@ -1,6 +1,6 @@
 ---
 title: JavaScript JSON과 객체 직렬화
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/19_json.html`, `workspace_teacher/workspace_html/javascript/19_json.html` |
 | 핵심 범위 | 객체 Literal, Property 접근, 중첩 객체, Property 추가·수정·삭제, `JSON.stringify()`, `JSON.parse()`, 객체 배열, 객체 순회 |
 | 실습 범위 | 객체 조회·변경, 직렬화·역직렬화, JSON 오류 처리, 객체 배열 출력, Local Storage 저장 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 원본은 JavaScript 객체를 반복해서 “JSON”이라고 표현한다.  
 > 이 문서에서는 **JavaScript 객체 값**과 **JSON 형식의 문자열**을 정확히 분리하고, 저장·전송 과정에서 어떤 값이 사라지거나 변환되는지 함께 설명한다.
@@ -1785,3 +1785,10 @@ JSON 처리의 핵심은 객체에 `JSON.stringify()`를 적용하는 것에서 
 ```
 
 이 흐름을 이해하면 다음 AJAX·Fetch 문서에서 서버와 주고받는 데이터를 더 정확하게 처리할 수 있다.
+# V3 실행 추적 카드 — JS 값 ↔ JSON 문자열
+
+`JSON.stringify`는 객체를 전송·저장 가능한 문자열로 만들고 `JSON.parse`는 문자열을 JS 값으로 복원한다. 함수와 undefined 등은 그대로 보존되지 않는다.
+
+`const text=JSON.stringify({name:"Kim"}); console.log(typeof text, JSON.parse(text).name);`은 `string Kim`이다. 잘못된 JSON은 SyntaxError다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/19_json.html`에서 실제 사용 위치와 차이를 확인한다.

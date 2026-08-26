@@ -13,7 +13,7 @@
 | 실습 Table | `DEPT_TEST`, `EMP_TEST` |
 | 선수 학습 | Table·Column·자료형, JOIN, NULL |
 | 다음 학습 | DML: `INSERT`, `UPDATE`, `DELETE` |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 원본 `Script.sql`의 JOIN 다음 DDL과 제약조건 범위를 기준으로 구성했다. 실습용 기존 `EMP`, `DEPT`를 직접 변경하지 않고 별도의 `_TEST` Table을 사용한다.
 
@@ -961,3 +961,50 @@ DDL은 문법을 실행하는 순간 Database 구조와 Data 수명주기를 바
 ```text
 15_SQL_DML.md
 ```
+
+---
+
+## 🔬 V3 동작 백과 — Table 구조와 규칙은 어떻게 적용되는가?
+
+DDL은 Data를 담는 그릇과 Database가 강제할 규칙을 정의한다.
+
+```sql
+CREATE TABLE todo (
+    todo_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(100) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'READY',
+    user_id BIGINT,
+    CONSTRAINT fk_todo_user
+        FOREIGN KEY (user_id) REFERENCES user_account(user_id)
+);
+```
+
+```text
+SQL 문법 확인
+→ Table 이름 중복 확인
+→ Column 이름·자료형·길이 등록
+→ PRIMARY KEY Index와 중복 금지 규칙 생성
+→ NOT NULL·DEFAULT 규칙 등록
+→ FOREIGN KEY 대상 Table·Column 확인
+→ Schema Metadata에 Table 생성
+```
+
+`title=NULL`을 입력하면 NOT NULL 검증에서 거부되고, 존재하지 않는 `user_id`를 입력하면 FOREIGN KEY 검증에서 거부된다. 제약조건은 Application 검증이 누락되어도 Database의 마지막 경계에서 잘못된 Data를 막는다.
+
+DDL 뒤에는 성공 Message만 보지 않고 실제 구조를 확인한다.
+
+```sql
+SHOW CREATE TABLE todo;
+DESCRIBE todo;
+```
+
+### 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 Anchor | 강사님 코드 Anchor |
+| --- | --- | --- |
+| CREATE TABLE | `-- DDL의 시작`, `create table` | `create table emp2` |
+| PK·FK | `primary key`, `foreign key` | 제약조건 구간 |
+| ALTER | `alter table` | 같은 Query |
+| DROP·TRUNCATE | `drop table`, `truncate` | 같은 DDL 구간 |
+
+ALTER 전에는 기존 Data가 새 자료형과 제약조건을 만족하는지 먼저 조회한다.

@@ -1,6 +1,6 @@
 ---
 title: HTML 링크와 경로
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -17,7 +17,7 @@ status: Completed
 | 핵심 범위 | `a`, `href`, `target`, `rel`, URL Scheme, 상대 경로, Root Relative Path, Absolute URL, Fragment Link, Download |
 | 학습 범위 | Link, 새 Tab, 전화·Email, Image Link, 파일 경로, 문서 내부 이동, 접근성 |
 | 프로젝트 연결 | Navigation, 상세 페이지 이동, 외부 Site 연결, 전화·Email Link, Page 내부 목차, Download |
-| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
+| 문서 형식 | HTML Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `03_a.html`을 비교해 `a`, `href`, `target`, URL Scheme과 파일 경로의 동작을 정리한다. 원본의 빠진 `href`·`id`·`alt`, 잘못된 따옴표, `http` Link, Root Relative Path를 절대 주소라고 부른 설명은 수정하고, Link 목적·새 Tab·보안·접근성·Debugging까지 실무 기준으로 보완한다.
 
@@ -1533,3 +1533,10 @@ download              → 파일 다운로드 요청
 ```
 
 > 경로 문제를 해결하는 가장 확실한 방법은 주소를 외우는 것이 아니라, 현재 파일과 대상 파일의 위치를 폴더 구조로 그린 뒤 한 단계씩 이동하는 것입니다.
+# V3 브라우저 해석 추적 카드 — 현재 문서 URL에서 목적 URL 계산
+
+브라우저는 `href`를 현재 문서 URL과 결합해 최종 URL을 만든 뒤 링크 활성화 시 이동하거나 요청한다. `./`, `../`, 루트 상대, 절대 URL은 기준점이 다르다.
+
+현재 파일이 `/docs/index.html`일 때 `../img/a.png`는 `/img/a.png`로 해석된다. 클릭 후 주소창과 Network의 실제 URL·404 상태를 확인한다. 새 창 링크에는 목적과 보안 속성도 검토한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/03_상대주소/03_a.html 및 asset/detail.html`에서 실제 DOM·요청·접근성 차이를 확인한다.

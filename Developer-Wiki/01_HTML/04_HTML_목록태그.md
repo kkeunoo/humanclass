@@ -1,6 +1,6 @@
 ---
 title: HTML 목록 태그
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -17,7 +17,7 @@ status: Completed
 | 핵심 범위 | `ul`, `ol`, `li`, `dl`, `dt`, `dd`, 중첩 목록, 목록과 Link, Marker, 접근성 |
 | 학습 범위 | 순서 없는 목록, 순서 있는 목록, 설명 목록, 중첩 구조, Navigation 목록 |
 | 프로젝트 연결 | Navigation, 메뉴, Category, 순위, 작업 절차, FAQ, 용어 설명 |
-| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
+| 문서 형식 | HTML Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `04_ul.html`을 비교해 `ul`, `ol`, `li`, `dl`, `dt`, `dd`의 의미와 중첩 규칙을 정리한다. 원본의 `<title>` Comment 설명, `ol`을 거의 사용하지 않는다는 표현, 외부 Link의 `http`, 새 Tab 보안, 가로 목록 CSS를 정확하게 보완하고 목록을 화면 모양이 아닌 항목 관계와 순서 의미에 따라 선택하도록 구성한다.
 
@@ -1446,3 +1446,10 @@ display: flex       → 가로 메뉴 배치에 자주 사용
 ```
 
 > 목록 태그를 선택할 때는 화면에 점이나 숫자가 필요한지를 먼저 생각하지 않습니다. 항목 사이에 순서가 있는지, 용어와 설명의 관계인지, 하나의 관련된 집합인지를 판단한 뒤 의미에 맞는 요소를 선택해야 합니다.
+# V3 브라우저 해석 추적 카드 — 목록 의미와 부모·자식 규칙
+
+`ul`은 순서가 중요하지 않은 목록, `ol`은 순서가 의미 있는 목록이며 직접 자식은 `li`여야 한다. 설명 목록은 `dl`, 용어는 `dt`, 설명은 `dd`로 묶는다.
+
+목록 기호를 없애려고 div로 바꾸지 말고 CSS로 모양을 조절한다. 중첩 목록은 부모 `li` 안에 새 목록을 두며 Elements에서 실제 계층과 Accessibility Tree의 list/listitem 역할을 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/04_ul.html`에서 실제 DOM·요청·접근성 차이를 확인한다.

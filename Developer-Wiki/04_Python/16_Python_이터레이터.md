@@ -1,6 +1,6 @@
 ---
 title: Python 이터레이터
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1478,3 +1478,18 @@ for문 내부
 ```
 
 이 원리를 이해하면 다음 문서에서 다룰 제너레이터의 `yield`가 왜 필요한지 자연스럽게 연결할 수 있다.
+
+# V3 동작 백과 보강 — `iter()`와 `next()`의 실제 계약
+
+이터러블은 이터레이터를 제공하고, 이터레이터는 현재 위치를 기억하며 다음 값을 하나씩 제공한다. `for`문도 내부적으로 이 계약을 사용한다.
+
+```python
+it = iter([10, 20])
+print(next(it))
+print(next(it))
+print(next(it))
+```
+
+앞의 두 호출은 `10`, `20`을 출력하고 세 번째 호출은 종료 신호인 `StopIteration`을 발생시킨다. `for`문은 이 신호를 정상 종료로 처리한다. 소비한 위치는 자동으로 돌아가지 않는다.
+
+**원본 연결:** `09_for.py`의 반복문과 `10_file.py`의 순차 읽기 원리를 풀어낸 **Wiki 확장 학습**이며, 별도 수업 원본이 있다고 추정하지 않는다.

@@ -1,6 +1,6 @@
 ---
 title: CSS 투명도와 요소 숨김
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2139,3 +2139,10 @@ button.addEventListener("click", () => {
 - 내 코드의 `민들`은 주석 오타이며, `visibility`와 `opacity`를 동일하다고 한 설명은 실무 관점에서 보완해야 한다.
 - 강사님 코드의 `opacity: 0.7`과 내 코드의 `opacity: 0.3`은 서로 다른 부분 투명도 실험값이다.
 - 숨김 방식은 공간, 상호작용, 접근성, 애니메이션 목적에 따라 선택해야 한다.
+# V3 렌더링 추적 카드 — 보임·공간·상호작용의 차이
+
+`display:none`은 레이아웃에서 제거하고, `visibility:hidden`은 공간을 남긴 채 숨기며, `opacity:0`은 투명하지만 박스와 포인터 대상이 남을 수 있다.
+
+세 방식을 나란히 적용해 주변 요소 이동과 클릭 가능 여부를 확인한다. 단순히 '안 보인다'만으로 같은 기능이라 판단하면 안 된다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/05_opacity.html`에서 실제 선택자·계산값·화면 차이를 확인한다.

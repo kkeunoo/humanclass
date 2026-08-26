@@ -13,7 +13,8 @@
 | 조회 실습 | `EMP`, `DEPT`, `SALGRADE` |
 | 변경 실습 | `_PRACTICE` 전용 Table |
 | 선수 학습 | SQL 01~19 전체 |
-| 문서 버전 | V2 Final |
+| 문서 버전 | V3 Encyclopedia |
+| V3 개정 | 입력 Data·중간 Result·실행 결과·원본 위치를 함께 기록하는 학습 복원 형식 |
 
 > 조회 문제는 학습용 Sample Table을 사용한다. DDL·DML·Transaction 문제는 원본 `EMP`, `DEPT`를 직접 변경하지 않고 별도 `_PRACTICE` Table에서 실행한다.
 
@@ -1205,7 +1206,7 @@ SQL 학습의 완성은 문법을 많이 기억하는 것이 아니라 **요구�
 
 ---
 
-## 📎 SQL V2 Series 완료
+## 📎 SQL V3 Series 완료
 
 ```text
 01 SQL 기초와 SELECT
@@ -1230,4 +1231,42 @@ SQL 학습의 완성은 문법을 많이 기억하는 것이 아니라 **요구�
 20 종합실습
 ```
 
-SQL Developer-Wiki V2 01~20 완성.
+SQL Developer-Wiki V3 01~20 학습 복원 과정 완성.
+
+---
+
+## 🔬 V3 종합실습 실행 기록법
+
+### 수업 원본으로 돌아가기
+
+내 코드와 강사님 코드의 `workspace_sql/Script.sql`에서 문제의 핵심 Keyword를 검색하고, 해당 Query 앞의 문제 Comment와 뒤의 확인 Query까지 함께 읽는다. 종합실습의 답과 원본이 다르면 결과 Row·NULL·중복·경계값을 기준으로 실제 차이를 설명한다.
+
+정답 Query만 저장하지 않고 다음을 함께 기록한다.
+
+```text
+1. 문제를 자신의 말로 다시 설명
+2. 예상 Result Column 작성
+3. 기준 Table·관계 Column 기록
+4. 입력 Row 확인 Query 실행
+5. Query를 한 단계씩 조립
+6. 단계별 Row·Group 수 기록
+7. 최종 Result Grid 기록
+8. NULL·중복·경계값·동점 Test
+9. 실패 Query와 Error Message 기록
+10. 내 코드·강사님 코드 비교
+11. 개선 Query와 이유 작성
+12. EXPLAIN 또는 Transaction 결과 확인
+```
+
+예를 들어 “부서별 최고 급여와 사원 수”를 풀 때는 먼저 부서·급여순 원본 Row를 조회하고, 그다음 `GROUP BY`, `MAX`, `COUNT`를 추가한다. 사원이 없는 부서까지 보여야 한다면 EMP만 Grouping하는 답으로 충분하지 않으며 DEPT 기준 LEFT JOIN이 필요하다는 추가 질문까지 이어가야 한다.
+
+### V3 최종 체크리스트
+
+- [ ] 입력 Table과 예상 Result Column을 먼저 기록했다.
+- [ ] Query를 단계별로 실행하고 Row·Group 수를 확인했다.
+- [ ] NULL·중복·0행·경계값·동점을 Test했다.
+- [ ] 실패 Query와 Error Message를 함께 기록했다.
+- [ ] 내 코드와 강사님 코드의 원본 위치를 찾았다.
+- [ ] DML은 변경 전후와 Affected Rows를 확인했다.
+- [ ] Transaction은 Commit·Rollback 결과를 확인했다.
+- [ ] Index는 EXPLAIN으로 실제 선택 여부를 확인했다.

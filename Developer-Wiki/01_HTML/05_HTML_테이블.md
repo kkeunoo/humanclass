@@ -1,6 +1,6 @@
 ---
 title: HTML 테이블
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -17,7 +17,7 @@ status: Completed
 | 핵심 범위 | `table`, `caption`, `thead`, `tbody`, `tfoot`, `tr`, `th`, `td`, `scope`, `colspan`, `rowspan`, `colgroup` |
 | 학습 범위 | 표 구조, 제목 셀과 데이터 셀, 셀 병합, 접근성, 반응형 Table |
 | 프로젝트 연결 | 게시판, 관리자 화면, 통계표, 가격표, 일정표, 데이터 비교 |
-| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
+| 문서 형식 | HTML Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `05_table.html`을 비교해 `table`, `tr`, `th`, `td`, `caption`, `thead`, `tbody`, `colspan`, `rowspan`의 역할을 정리한다. 원본의 잘못된 `summary`, 닫는 Tag 오류, Presentational Attribute, 숨겨진 `caption`, 행별 셀 개수 설명을 수정하고 접근성과 반응형 Table 처리까지 연결한다.
 
@@ -1892,3 +1892,10 @@ JavaScript로 정렬 기능을 추가한다면 현재 정렬 상태를 `aria-sor
 - `summary`는 표 요소가 아니라 `details`의 요약 요소입니다.
 - 실습용 `border`, `width`, `height` 속성은 실무에서 CSS로 대체합니다.
 - 테이블은 페이지 레이아웃이 아니라 데이터 표현에 사용합니다.
+# V3 브라우저 해석 추적 카드 — 행·열 관계를 접근 가능한 표로 구성
+
+표는 2차원 데이터를 표현한다. `caption`은 표의 목적, `thead/tbody/tfoot`은 행 그룹, `th`는 제목 셀, `td`는 데이터 셀이다. `scope`는 제목 셀과 데이터의 관계를 명확하게 한다.
+
+`rowspan`, `colspan`은 시각적 병합뿐 아니라 각 행의 전체 열 개수가 일관되도록 계산해야 한다. Elements에서 행별 셀 구조를 확인하고 레이아웃 목적으로 table을 사용하지 않는다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/05_table.html`에서 실제 DOM·요청·접근성 차이를 확인한다.

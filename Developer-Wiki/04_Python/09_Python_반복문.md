@@ -1,6 +1,6 @@
 ---
 title: Python 반복문
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1593,3 +1593,26 @@ random.randint(a, b)
 ```
 
 이 흐름을 이해하면 이후 함수에서 반복 로직을 분리하고, 클래스와 파일 처리에서 여러 데이터를 안정적으로 다룰 수 있다.
+
+# V3 동작 백과 보강 — 반복 가능한 값이 하나씩 들어오는 과정
+
+`for item in values`는 `values`에서 이터레이터를 얻고 다음 값을 요청해 `item`에 연결한 뒤 블록을 실행한다. 값이 끝나면 정상 종료한다. `break`는 즉시 반복문을 빠져나가고, `continue`는 남은 본문을 건너뛰고 다음 값을 요청한다.
+
+```python
+total = 0
+for number in range(1, 4):
+    total += number
+    print(number, total)
+print("끝", total)
+```
+
+```text
+1 1
+2 3
+3 6
+끝 6
+```
+
+`while`은 본문 전후에 조건에 쓰이는 값이 어떻게 바뀌는지 확인해야 무한 반복을 막을 수 있다. 반복문 `else`는 `break` 없이 정상 종료했을 때만 실행된다.
+
+**원본 연결:** 내 코드 `workspace_python/09_for.py`, 강사님 코드 `workspace_python/_09_for.py`의 `for`, `range`, 중첩 반복, `while`, 제어문 예제를 기반으로 한다.

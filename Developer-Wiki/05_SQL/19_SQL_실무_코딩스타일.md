@@ -13,7 +13,7 @@
 | 적용 범위 | `SELECT`, JOIN, CTE, DDL, DML, Transaction, Index |
 | 선수 학습 | SQL 01~18 전체 |
 | 다음 학습 | SQL 종합실습 |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 이 문서는 새 문법을 추가하는 단원이 아니라 지금까지 학습한 SQL을 협업 가능한 Production Code로 정리하는 기준이다. 팀 Convention이 있다면 팀 규칙을 우선하되, 한 Repository 안에서는 일관성을 유지한다.
 
@@ -1177,3 +1177,61 @@ DML
 ```text
 20_SQL_종합실습.md
 ```
+
+---
+
+## 🔬 V3 백과사전식 SQL 작성 절차
+
+자연어 요구사항:
+
+```text
+20·30번 부서에서 급여 1500 이상인 사원의
+부서별 인원과 평균 급여를 구하고
+평균 급여가 높은 순서로 보여 주세요.
+```
+
+분해:
+
+```text
+기준 Table → EMP
+대상 Row   → DEPTNO IN (20, 30), SAL >= 1500
+Group      → DEPTNO
+출력       → DEPTNO, COUNT(*), AVG(SAL)
+정렬       → AVG(SAL) DESC, DEPTNO ASC
+```
+
+```sql
+SELECT
+    e.deptno,
+    COUNT(*) AS employee_count,
+    ROUND(AVG(e.sal), 2) AS average_salary
+FROM emp AS e
+WHERE e.deptno IN (20, 30)
+  AND e.sal >= 1500
+GROUP BY e.deptno
+ORDER BY average_salary DESC, e.deptno ASC;
+```
+
+단계별로 `FROM·WHERE → GROUP BY·COUNT → AVG → ORDER BY` 순서로 추가하며 중간 Row와 Group 수를 기록한다.
+
+### 원본으로 돌아가기
+
+`Script.sql`에서 Keyword 한 줄만 찾지 말고 앞의 문제 Comment, 입력 Data 확인 Query와 다음 Result 확인 Query를 함께 읽는다.
+
+```text
+SELECT 문제 → 예상 Column·Row 기록
+DML 문제   → 같은 WHERE의 SELECT 선행
+JOIN 문제  → 각 Table과 관계 Column 확인
+집계 문제  → Group 전 대상 Row 확인
+성능 문제  → EXPLAIN 전후 비교
+```
+
+### Review 질문
+
+- NULL·중복·0행·경계값·동점을 예상했는가?
+- JOIN으로 Row가 증가하거나 사라지지 않는가?
+- WHERE 없는 UPDATE·DELETE가 아닌가?
+- Parameter Binding을 사용하는가?
+- Transaction 경계가 업무 단위와 같은가?
+- Index는 실행 계획으로 검증했는가?
+- 다음 학습자가 입력부터 결과까지 재현할 수 있는가?

@@ -13,7 +13,7 @@
 | 실습 Table | `DEPT_PRACTICE`, `EMP_PRACTICE` |
 | 선수 학습 | DDL, 제약조건, `SELECT`, `WHERE`, Subquery, JOIN |
 | 다음 학습 | Transaction: `COMMIT`, `ROLLBACK` |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 원본 `Script.sql`의 DDL 다음 DML 범위를 기준으로 구성했다. 기존 학습용 `EMP`, `DEPT`를 직접 변경하지 않고 복제하거나 별도로 만든 실습 Table에서 실행한다.
 
@@ -1068,3 +1068,47 @@ DML의 핵심은 문법보다 **정확히 어떤 Row가 어떤 값으로 바뀌�
 ```text
 16_SQL_Transaction.md
 ```
+
+---
+
+## 🔬 V3 동작 백과 — 입력값이 실제 Row 변경으로 이어지는 과정
+
+```sql
+UPDATE dept2
+SET loc = 'BUSAN'
+WHERE deptno = 50;
+```
+
+```text
+WHERE로 대상 Row 탐색
+→ SET Expression 계산
+→ 자료형·제약조건 검사
+→ 일치 Row 변경
+→ Affected Rows 반환
+→ Transaction Commit 시 확정
+```
+
+안전한 실행:
+
+```text
+1. 같은 WHERE로 SELECT
+2. 예상 PK와 Row 수 기록
+3. Transaction 시작
+4. INSERT·UPDATE·DELETE 실행
+5. Affected Rows 확인
+6. 변경 후 SELECT
+7. 맞으면 COMMIT, 아니면 ROLLBACK
+```
+
+INSERT는 입력값을 Column 위치에 연결한 뒤 PK·FK·NOT NULL 등을 검사한다. DELETE는 부모 Row를 참조하는 자식 Row가 있으면 FK 정책에 따라 거부되거나 정의한 참조 동작을 수행한다.
+
+### 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 Anchor | 강사님 코드 Anchor |
+| --- | --- | --- |
+| INSERT | `insert into dept2` | 같은 Query |
+| UPDATE | `update dept2` | UPDATE 구간 |
+| DELETE | `delete from` | DELETE 구간 |
+| 영향 Row | 실행 결과·Row Count Comment | DML 실습 구간 |
+
+원본 EMP·DEPT가 아니라 복사한 실습 Table에서 변경 Query를 재현한다.

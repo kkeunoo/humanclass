@@ -1,6 +1,6 @@
 ---
 title: SQL 문자열 함수
-version: v2.0-final
+version: v3.0-final
 last_updated: 2026-08-13
 status: Completed
 ---
@@ -19,7 +19,7 @@ status: Completed
 | 핵심 범위 | `LOWER`, `UPPER`, `LENGTH`, `CHAR_LENGTH`, `SUBSTRING`, `SUBSTR`, `REPLACE`, `LPAD`, `RPAD`, `TRIM`, `CONCAT`, `CONCAT_WS` |
 | 학습 범위 | 문자열 길이, 대소문자 변환, 부분 문자열, 치환, Padding, 공백 제거, 문자열 결합 |
 | 다음 범위 제외 | 숫자 함수, 날짜 함수, NULL 함수, `CASE` |
-| 문서 형식 | SQL Developer-Wiki V2 확정 형식 |
+| 문서 형식 | SQL Developer-Wiki V3 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `Script.sql` 문자열 함수 구간을 비교해 정리한다.  
 > 원본의 `LENGTH`를 단순히 “글자 수”라고 설명한 부분을 보완해 **Byte 길이와 Character 길이의 차이**를 구분하고, `SUBSTRING`의 1-based 위치, `LPAD/RPAD`의 잘림 동작, `CONCAT`과 `NULL`, Oracle의 `||`와 MariaDB의 차이까지 실무 관점으로 연결한다.
@@ -1244,3 +1244,73 @@ DB에서 처리할지 Application에서 처리할지 판단
 ```
 
 이 기준을 이해하면 다음 숫자·날짜·NULL 함수도 단순 암기가 아니라 **입력 → 변환 → Result** 흐름으로 이해할 수 있다.
+# V3 동작 백과 — 문자열은 Row마다 어떻게 변환되는가?
+
+문자열 함수는 원본 Column을 자동 수정하지 않는다. SELECT 과정에서 각 Row의 입력값으로 새로운 Result 값을 만든다.
+
+```sql
+SELECT
+    ename,
+    LOWER(ename) AS lower_name,
+    CHAR_LENGTH(ename) AS char_count,
+    CONCAT(ename, ' 사원') AS label
+FROM emp
+WHERE empno = 7369;
+```
+
+입력:
+
+```text
+EMPNO=7369, ENAME='SMITH'
+```
+
+함수 실행:
+
+```text
+LOWER('SMITH')        → 'smith'
+CHAR_LENGTH('SMITH')  → 5
+CONCAT('SMITH',' 사원') → 'SMITH 사원'
+```
+
+결과:
+
+```text
+ENAME | LOWER_NAME | CHAR_COUNT | LABEL
+SMITH | smith      | 5          | SMITH 사원
+```
+
+## Byte 수와 글자 수
+
+```sql
+SELECT LENGTH('한글'), CHAR_LENGTH('한글');
+```
+
+UTF-8 환경의 대표 결과:
+
+```text
+LENGTH('한글')      → 6 Byte
+CHAR_LENGTH('한글') → 2 Character
+```
+
+문자 수 제한에는 `CHAR_LENGTH`, 저장 크기 확인에는 `LENGTH`의 의미를 검토한다.
+
+## 함수와 Index
+
+```sql
+WHERE LOWER(ename) = 'smith'
+```
+
+Column에 함수를 적용하면 일반 Index를 그대로 활용하기 어려울 수 있다. 먼저 Collation과 저장 규칙을 확인하고 실행 계획으로 검증한다.
+
+## 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 검색 Anchor | 강사님 코드 검색 Anchor |
+| --- | --- | --- |
+| 대소문자 | `select lower('Human')` | 같은 Query |
+| 길이 | `length(`, `char_length(` | 문자열 길이 구간 |
+| 추출 | `substring(` | `substring(` |
+| 치환 | `replace(` | `replace(` |
+| Padding | `lpad(`, `rpad(` | 같은 함수 구간 |
+| 결합 | `concat(` | `concat(` |
+
+각 함수는 입력값, 반환값, NULL 입력 결과와 원본 Data 변경 여부를 따로 확인한다.

@@ -1,6 +1,6 @@
 ---
 title: CSS Transition과 상태 변화
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -1997,3 +1997,10 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 - 색상 변화만으로 선택이나 상태를 전달하지 않는다.
 - 움직임에 민감한 사용자를 위해 `prefers-reduced-motion`을 고려한다.
 - transition은 장식적 개선이며 핵심 기능의 실행을 지연시키지 않아야 한다.
+# V3 렌더링 추적 카드 — 상태 전후 계산값 사이 보간
+
+transition은 이벤트 자체가 아니라 CSS 속성의 이전 계산값과 새 계산값 사이를 시간에 따라 보간한다. hover나 class 변경으로 값이 달라져야 시작된다.
+
+`display:none`처럼 중간값을 만들 수 없는 속성은 일반 transition 대상이 아니다. 지속시간, 대상 속성, 시작·종료값과 prefers-reduced-motion을 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/12_transition.html`에서 실제 선택자·계산값·화면 차이를 확인한다.

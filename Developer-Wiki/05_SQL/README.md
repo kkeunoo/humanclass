@@ -5,6 +5,46 @@
 > 관계형 Database의 조회·집계·관계·변경·Transaction 기초  
 > 실제 MariaDB 수업·실습 코드를 기반으로 SQL의 동작 원리, 코드 비교, 오류 분석, 안전한 작성 방식을 하나의 학습 흐름으로 정리합니다.
 
+> **V3 목표:** 이미 SQL을 아는 사람을 위한 요약이 아니라, 시간이 지나 내용을 잊어도 입력 Data부터 MariaDB 처리 과정과 Result Grid까지 다시 재현할 수 있는 개인 강의 백과사전입니다.
+
+---
+
+## 🧱 SQL V3 백과사전 규칙
+
+각 개념은 다음 질문에 답할 수 있어야 완료로 판단합니다.
+
+```text
+이 SQL 개념은 무엇인가?
+왜 배워야 하는가?
+어떤 업무 질문을 해결하는가?
+입력 Table에는 어떤 Row와 Column이 있는가?
+Query는 어느 단계부터 실행되는가?
+MariaDB가 Row·Group·관계를 어떻게 판단하는가?
+중간 단계에는 어떤 Data가 남는가?
+최종 Result Grid의 Column·Row는 무엇인가?
+NULL·중복·0행·경계값·동점에서는 어떻게 되는가?
+실패 Query는 어떤 Error를 내는가?
+내 Script.sql과 강사님 Script.sql의 어디에서 사용했는가?
+안전하게 다시 사용하려면 어떻게 개선하는가?
+```
+
+SQL에서는 화면에 최종 결과만 보이기 때문에 내부 흐름을 놓치기 쉽습니다. V3 문서는 가능한 한 다음 형태로 Query를 해부합니다.
+
+```text
+업무 요구사항
+→ 입력 Table·Sample Row
+→ SQL 작성
+→ FROM·JOIN
+→ WHERE
+→ GROUP BY·Aggregate
+→ HAVING
+→ SELECT Expression
+→ DISTINCT
+→ ORDER BY
+→ LIMIT
+→ Result Grid
+```
+
 ---
 
 ## 📌 학습 목표
@@ -137,7 +177,7 @@ EMP.SAL BETWEEN SALGRADE.LOSAL AND SALGRADE.HISAL
 
 ## 🔍 원본 비교 기준
 
-SQL V2 문서는 사용자 `workspace_sql/Script.sql`과 강사님 `workspace_sql/Script.sql`을 함께 검토하여 구성했습니다.
+SQL V3 문서는 사용자 `workspace_sql/Script.sql`과 강사님 `workspace_sql/Script.sql`을 함께 검토하여 구성했습니다.
 
 - 실제로 존재하는 코드 차이만 비교합니다.
 - 단순 Formatting 차이와 결과가 달라지는 Logic 차이를 구분합니다.
@@ -225,13 +265,27 @@ Document Information
         ↓
 Learning Objectives
         ↓
+What & Why
+        ↓
+Input Table & Sample Rows
+        ↓
 Core Concepts
         ↓
 Syntax & Examples
         ↓
+Logical Processing Flow
+        ↓
+Intermediate Rows / Groups
+        ↓
+Result Grid & Affected Rows
+        ↓
+NULL / Duplicate / Boundary Cases
+        ↓
 Practical Usage
         ↓
 Code Comparison
+        ↓
+Original Script Search Anchors
         ↓
 Corrections & Improvements
         ↓
@@ -247,6 +301,39 @@ Key Summary
 ```
 
 > 실제 원본이나 비교 대상이 없는 항목은 존재하지 않는 차이를 만들지 않고 해당 주제의 동작 원리와 검수 내용을 중심으로 구성합니다.
+
+### 실행 결과 기록 규칙
+
+```text
+SELECT
+→ Result Column명, Row 수, Sample Row, NULL 표시를 기록
+
+INSERT·UPDATE·DELETE
+→ 변경 전 SELECT, Affected Rows, 변경 후 SELECT를 기록
+
+Transaction
+→ Session, Commit 전, Commit 후, Rollback 후 상태를 기록
+
+Index
+→ EXPLAIN의 possible_keys, key, type, rows, Extra를 기록
+
+오류
+→ 실패 Query, Error Message, 원인, 수정 Query를 함께 기록
+```
+
+### 원본 수업 연결 규칙
+
+각 문서의 “수업 원본에서 다시 찾기” 또는 “원본 Anchor” 표는 다음 용도로 사용합니다.
+
+```text
+문서에서 개념 이해
+→ Script.sql에서 검색 Anchor 찾기
+→ 앞뒤 문제 Comment 읽기
+→ 내 Query 직접 실행
+→ 강사님 Query 실행
+→ Result 차이 비교
+→ 개선 Query 재작성
+```
 
 ---
 
@@ -283,7 +370,7 @@ SQL 문서를 완료하면 다음 흐름으로 Database 문제를 설명하고 �
 
 | Previous | Home | Next |
 |:---:|:---:|:---:|
-| [🐍 Python](../04_Python/README.md) | [🏠 Developer-Wiki](../README.md) | [🏠 Developer-Wiki](../README.md) |
+| [🐍 Python](../04_Python/README.md) | [🏠 Developer-Wiki](../README.md) | [⚡ FastAPI](../06_FastAPI/README.md) |
 
 ---
 

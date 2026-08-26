@@ -1,6 +1,6 @@
 ---
 title: Python 출력과 주석
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1121,3 +1121,21 @@ print()로 실행 결과 확인
 ```
 
 이 기본 흐름을 익히면 이후 변수·조건문·반복문·함수에서 코드가 어떤 순서로 실행되는지 더 쉽게 확인할 수 있다.
+
+# V3 동작 백과 보강 — `print()`가 화면에 보이기까지
+
+`print("A", 10, sep="-")`에서 문자열과 정수는 소스 코드에서 만들어진 인수다. Python은 `print`를 호출하고 각 값을 문자열 표현으로 바꾼 뒤 `sep`로 연결하며, 기본 `end="\n"`을 붙여 표준 출력(stdout)으로 보낸다. 터미널은 그 표준 출력을 화면에 표시한다.
+
+```python
+name = "Python"
+print("학습", name, sep=": ", end="!\n")
+# 이 줄은 실행되지 않는다.
+```
+
+```text
+학습: Python!
+```
+
+주석은 설명용 텍스트라 실행 결과가 없다. 반면 잘못된 들여쓰기는 블록의 소속을 바꾸거나 `IndentationError`를 일으킨다. 출력이 예상과 다르면 값뿐 아니라 `sep`, `end`, 이스케이프 문자, 실행 순서를 함께 확인한다.
+
+**원본 연결:** 내 코드 `workspace_python/01_hello.py`, 강사님 코드 `workspace_python/_01_hello.py`의 `print`, 주석, 들여쓰기 예제를 기반으로 한다.

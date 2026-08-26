@@ -1,6 +1,6 @@
 ---
 title: HTML 기초와 문서 구조
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/01_hello.html`, `workspace_teacher/workspace_html/01_hello.html` |
 | 핵심 범위 | HTML 역할, 일반 Text와 요소, Tag, Element, Attribute, Comment, 기본 문서 구조, `src`, `title`, `alt` |
 | 프로젝트 연결 | 모든 웹 페이지의 기본 구조, 이미지 대체 Text, 문서 제목, 경로와 Debugging |
-| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
+| 문서 형식 | HTML Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드의 `01_hello.html`을 비교해 일반 Text와 HTML 요소, Tag·Element·Attribute·Comment의 차이를 정리한다. 원본의 `src`·`title` 실습은 유지하되, 이미지의 `alt`, 기본 문서 구조, 외부 이미지 의존성과 `title`의 접근성 한계까지 실무 기준으로 보완한다.
 
@@ -47,6 +47,14 @@ HTML은 프로그래밍 언어처럼 계산이나 조건 처리를 주목적으�
 <h1>웹 개발 학습</h1>
 <p>HTML은 웹 페이지의 구조를 만듭니다.</p>
 ```
+# V3 브라우저 해석 추적 카드 — 문서 수신에서 DOM 생성까지
+
+`<!doctype html>`은 브라우저가 표준 모드로 문서를 해석하도록 알린다. `html`은 문서 루트, `head`는 메타데이터와 자원 연결, `body`는 사용자에게 제공할 콘텐츠 구조다. 브라우저는 소스를 위에서 아래로 파싱하면서 DOM 노드를 만든다.
+
+`meta charset="UTF-8"`은 문자를 올바르게 해석하는 데 중요하고 `title`은 탭 제목과 문서 식별에 쓰인다. Elements에서 소스와 실제 DOM을 비교하고 잘못된 중첩이 자동 보정되었는지 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/01_hello.html`에서 실제 DOM·요청·접근성 차이를 확인한다.
+
 
 브라우저는 태그를 그대로 출력하지 않고 각 요소의 의미에 맞게 화면을 구성합니다.
 

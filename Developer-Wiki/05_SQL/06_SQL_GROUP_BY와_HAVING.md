@@ -1,6 +1,6 @@
 # SQL GROUP BY와 HAVING
 
-> **V2 Final** · MariaDB · EMP 실습 기준  
+> **V3 Encyclopedia** · MariaDB · EMP 실습 기준  
 > 선수 학습: `05_SQL_집계함수.md`
 
 ## 문서 정보
@@ -863,3 +863,68 @@ FROM
 ```
 
 이 구조가 잡히면 복잡한 집계 문제도 단계별로 분해해서 해결할 수 있다.
+# V3 동작 백과 — Row가 Group으로 묶이고 다시 걸러지는 과정
+
+## 왜 배워야 하는가?
+
+전체 평균 한 개가 아니라 부서별·직무별 통계를 만들려면 어떤 Row끼리 같은 집단인지 정의해야 한다.
+
+입력:
+
+```text
+ENAME | DEPTNO | SAL
+SMITH | 20     | 800
+JONES | 20     | 2975
+ALLEN | 30     | 1600
+WARD  | 30     | 1250
+```
+
+```sql
+SELECT deptno, COUNT(*) AS emp_count, AVG(sal) AS avg_sal
+FROM emp
+WHERE sal >= 1000
+GROUP BY deptno
+HAVING COUNT(*) >= 2
+ORDER BY deptno;
+```
+
+실제 논리 흐름:
+
+```text
+FROM emp
+→ WHERE sal >= 1000: SMITH 제외
+→ GROUP BY deptno: 20번 Group, 30번 Group 생성
+→ COUNT·AVG: Group별 계산
+→ HAVING COUNT(*) >= 2: 사원 2명 이상 Group만 유지
+→ SELECT Result Column 구성
+→ ORDER BY deptno
+```
+
+중간 상태:
+
+```text
+20번 Group → JONES 1명 → HAVING에서 제외
+30번 Group → ALLEN, WARD 2명 → 유지
+```
+
+결과:
+
+```text
+DEPTNO | EMP_COUNT | AVG_SAL
+30     | 2         | 1425
+```
+
+## WHERE와 HAVING이 다른 이유
+
+`WHERE` 단계에는 아직 Group과 `COUNT(*)`가 만들어지지 않았다. Aggregate 조건은 Group 계산 이후인 `HAVING`에서 평가한다.
+
+## 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 검색 Anchor | 강사님 코드 검색 Anchor |
+| --- | --- | --- |
+| 부서 Group | `group by deptno` | 같은 Query |
+| 다중 Group | `group by deptno, job` | 다중 Grouping 구간 |
+| Group 조건 | `having` | `having` |
+| 논리 순서 | WHERE·GROUP·HAVING 통합 Query | 같은 실습 구간 |
+
+복잡한 Query는 각 단계 뒤에 어떤 Row 또는 Group이 남는지 손으로 적어 보면 이해하기 쉽다.

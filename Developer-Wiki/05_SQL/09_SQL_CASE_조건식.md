@@ -13,7 +13,7 @@
 | 실습 테이블 | `EMP`, `DEPT` |
 | 선수 학습 | `SELECT`, `WHERE`, 집계함수, 문자열·숫자·날짜·NULL 함수 |
 | 다음 학습 | `UNION`, `UNION ALL` |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 이 문서의 `CASE`는 값을 반환하는 **표현식(Expression)** 이다. Stored Program에서 흐름을 제어하는 `CASE` 문과 구분한다.
 
@@ -1020,3 +1020,83 @@ ELSE 생략
 ```text
 10_SQL_UNION과_UNION_ALL.md
 ```
+
+---
+
+## 🔬 V3 동작 백과 — CASE는 Row마다 어떻게 분기하는가?
+
+`CASE`는 Row를 제거하지 않고 현재 Row에서 반환할 값을 결정한다.
+
+```sql
+SELECT
+    ename,
+    sal,
+    CASE
+        WHEN sal >= 3000 THEN 'HIGH'
+        WHEN sal >= 1500 THEN 'MIDDLE'
+        ELSE 'LOW'
+    END AS sal_grade
+FROM emp;
+```
+
+Row별 평가:
+
+```text
+KING, 5000
+→ 5000 >= 3000 True
+→ 'HIGH' 반환
+→ 뒤 WHEN은 평가 대상에서 제외
+
+ALLEN, 1600
+→ 첫 WHEN False
+→ 1600 >= 1500 True
+→ 'MIDDLE'
+
+SMITH, 800
+→ 모든 WHEN False
+→ ELSE 'LOW'
+```
+
+결과:
+
+```text
+ENAME | SAL  | SAL_GRADE
+KING  | 5000 | HIGH
+ALLEN | 1600 | MIDDLE
+SMITH | 800  | LOW
+```
+
+조건은 위에서 아래로 평가되므로 넓은 조건을 먼저 쓰면 좁은 조건이 실행되지 않는다.
+
+```sql
+-- 잘못된 순서
+WHEN sal >= 1000 THEN '일반'
+WHEN sal >= 3000 THEN '고액'
+```
+
+급여 5000도 첫 조건에서 이미 `'일반'`이 된다.
+
+### 조건부 집계 동작
+
+```sql
+SELECT SUM(CASE WHEN deptno = 20 THEN 1 ELSE 0 END) AS dept20_count
+FROM emp;
+```
+
+```text
+20번 부서 Row → 1
+그 외 Row      → 0
+모든 1과 0을 SUM
+→ 20번 부서 사원 수
+```
+
+### 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 Anchor | 강사님 코드 Anchor |
+| --- | --- | --- |
+| Simple CASE | `case job` | `-- case 문` 이후 |
+| Searched CASE | `case when` | CASE 조건 구간 |
+| ELSE·NULL | `else`가 있거나 없는 CASE | 같은 실습 |
+| 조건부 집계 | `sum(case` | CASE와 Aggregate 구간 |
+
+Result를 확인할 때 경계값 바로 아래·같음·바로 위의 Row를 넣어 조건 순서를 검증한다.

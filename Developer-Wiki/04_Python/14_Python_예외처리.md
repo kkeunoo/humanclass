@@ -1,6 +1,6 @@
 ---
 title: Python 예외 처리
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1779,3 +1779,27 @@ try 범위는 작게 유지
 ```
 
 이 흐름을 이해하면 파일 입출력, 네트워크, 데이터베이스, 사용자 입력처럼 실패 가능성이 있는 작업을 더 안전하게 작성할 수 있다.
+
+# V3 동작 백과 보강 — 예외 처리의 정확한 실행 순서
+
+먼저 `try`를 실행한다. 예외가 생기면 남은 `try` 문장을 건너뛰고 가장 먼저 일치하는 `except`로 이동한다. 예외가 없을 때만 `else`가 실행되며, `finally`는 정상·예외·`return` 여부와 관계없이 정리 작업을 수행한다. 처리하지 않은 예외는 호출자에게 전달된다.
+
+```python
+try:
+    number = int("10")
+except ValueError:
+    print("변환 실패")
+else:
+    print("변환 성공:", number)
+finally:
+    print("정리")
+```
+
+```text
+변환 성공: 10
+정리
+```
+
+`except Exception`을 무조건 쓰면 오류 원인이 숨을 수 있다. 예상하고 복구할 수 있는 구체 예외만 잡고, 메시지에는 실패한 작업과 입력 맥락을 남긴다.
+
+**원본 연결:** 내 코드 `workspace_python/14_try.py`, 강사님 코드 `workspace_python/_14_try.py`의 예외 발생, 다중 `except`, `else`, `finally`, 사용자 정의 예외 예제를 기반으로 한다.

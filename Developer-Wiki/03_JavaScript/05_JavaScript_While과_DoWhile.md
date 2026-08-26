@@ -1,6 +1,6 @@
 ---
 title: JavaScript While과 Do While
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/05_while.html`, `workspace_teacher/workspace_html/javascript/05_while.html` |
 | 핵심 범위 | `while`, `do...while`, 반복 조건, 반복 변수 갱신, 무한 반복, `break`, 메뉴 반복, 입력값 검증 |
 | 실습 범위 | 메뉴 프로그램, 입출금 프로그램, 주사위 반복, 업다운 게임, 정사각형 테두리 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > `while`과 `do...while`의 실행 구조, 사용자 입력 반복, 상태 유지, 종료 조건을 이해하는 데 필요한 코드만 발췌하고 실무 개선 방향을 함께 설명한다.
@@ -1589,3 +1589,10 @@ break와 continue로 흐름을 안전하게 제어하는 것
 ```
 
 이 흐름을 이해하면 이후 함수 문서에서 반복되는 입력 검증과 작업을 별도 함수로 분리할 수 있다.
+# V3 실행 추적 카드 — 조건 확인 ↔ 상태 변경
+
+`while`은 본문 전에 조건을 확인하고 `do...while`은 본문을 한 번 실행한 뒤 확인한다. 조건에 쓰인 상태를 본문에서 반드시 바꿔야 한다.
+
+`let n=0; do { console.log(n); n++; } while(n<2);`는 `0`, `1`을 출력한다. 증가문 누락은 브라우저를 멈추게 하는 무한 반복 원인이다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/05_while.html`에서 실제 사용 위치와 차이를 확인한다.

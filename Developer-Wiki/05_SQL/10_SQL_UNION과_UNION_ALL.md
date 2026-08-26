@@ -13,7 +13,7 @@
 | 실습 테이블 | `EMP`, `DEPT` |
 | 선수 학습 | `SELECT`, `WHERE`, `ORDER BY`, 함수, `CASE`, `GROUP BY`, `HAVING` |
 | 다음 학습 | Subquery |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 원본 `Script.sql`에서 `CASE`와 Grouping 학습 뒤에 이어지는 집합연산 범위를 기준으로 구성했다. `GROUP BY`와 `HAVING`은 06번에서 먼저 정리했으므로, 10번은 다음 미작성 주제인 `UNION`과 `UNION ALL`을 다룬다.
 
@@ -936,3 +936,67 @@ ORDER BY
 ```text
 11_SQL_서브쿼리.md
 ```
+
+---
+
+## 🔬 V3 동작 백과 — 두 Result Set은 어떻게 합쳐지는가?
+
+```sql
+SELECT empno, ename, 'HIGH' AS source
+FROM emp
+WHERE sal >= 3000
+
+UNION ALL
+
+SELECT empno, ename, 'DEPT10' AS source
+FROM emp
+WHERE deptno = 10;
+```
+
+```text
+첫 SELECT 독립 실행
+→ 급여 3000 이상 Result Set A
+
+두 번째 SELECT 독립 실행
+→ 10번 부서 Result Set B
+
+UNION ALL
+→ A 아래에 B를 그대로 이어 붙임
+→ 같은 사원이 양쪽에 있으면 두 번 출력
+```
+
+`UNION`이라면 결합 후 **선택한 모든 Column 조합**이 같은 Row를 중복 제거한다. 위 예제는 `source` 값이 다르므로 같은 사원도 완전히 같은 Row가 아니어서 남을 수 있다.
+
+### Column 위치가 의미를 결정한다
+
+```sql
+SELECT empno, ename FROM emp
+UNION ALL
+SELECT deptno, dname FROM dept;
+```
+
+```text
+첫 번째 Result Column명 → EMPNO, ENAME
+두 번째 SELECT의 DEPTNO → 첫 번째 Column 위치로 들어감
+두 번째 SELECT의 DNAME  → 두 번째 Column 위치로 들어감
+```
+
+Column 이름이 아니라 **개수·순서·호환 가능한 Type**이 맞아야 한다.
+
+### UNION과 UNION ALL 선택
+
+```text
+중복까지 업무 Data로 의미 있음 → UNION ALL
+완전히 같은 Result Row 제거 필요 → UNION
+확신이 없다는 이유로 UNION 사용 → 중복 제거 비용과 Data 손실 가능
+```
+
+### 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 Anchor | 강사님 코드 Anchor |
+| --- | --- | --- |
+| 중복 포함 결합 | `union all` | `union all` |
+| 중복 제거 결합 | `union` | `union` |
+| 정렬 | 집합 Query 뒤 `order by` | 같은 구간 |
+
+각 SELECT를 따로 실행해 Row 수를 기록한 뒤 결합 결과의 Row 수와 비교한다.

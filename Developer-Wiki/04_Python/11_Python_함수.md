@@ -1,6 +1,6 @@
 ---
 title: Python 함수
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2236,3 +2236,26 @@ Built-in
 ```
 
 이 흐름을 이해하면 다음 클래스 문서에서 데이터와 관련 동작을 하나의 객체로 묶는 구조를 더 자연스럽게 학습할 수 있다.
+
+# V3 동작 백과 보강 — 호출에서 반환까지
+
+`def` 문을 실행하면 함수 객체가 만들어지고 이름에 연결된다. 호출할 때 인수가 매개변수에 바인딩되고 새 지역 실행 공간이 생긴다. 본문은 위에서 아래로 실행되며 `return`을 만나면 값과 제어가 호출한 위치로 돌아간다. `return`이 없으면 `None`을 반환한다.
+
+```python
+def add(a, b):
+    result = a + b
+    print("함수 내부:", result)
+    return result
+
+answer = add(2, 3)
+print("호출 결과:", answer)
+```
+
+```text
+함수 내부: 5
+호출 결과: 5
+```
+
+호출 인수 개수가 맞지 않으면 본문 실행 전에 `TypeError`다. 변경 가능한 객체를 전달하면 함수 안의 변경이 호출자에게도 보일 수 있다. 기본값으로 빈 리스트를 두면 호출 사이에 같은 객체가 재사용될 수 있어 보통 `None`을 기본값으로 쓴다.
+
+**원본 연결:** 내 코드 `workspace_python/11_fn.py`, 강사님 코드 `workspace_python/_11_fn.py`의 정의·호출, 인수, 반환, 범위, 람다 예제를 기반으로 한다.

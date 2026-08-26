@@ -1,6 +1,6 @@
 ---
 title: Python 변수와 연산자·입출력
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1670,3 +1670,27 @@ or
 ```
 
 이 흐름을 이해하면 이후 조건문에서 값을 판단하고, 반복문에서 여러 데이터를 처리하는 과정을 자연스럽게 연결할 수 있다.
+
+# V3 동작 백과 보강 — 입력값·변수·연산의 전체 경로
+
+Python 변수는 값을 담는 고정 상자라기보다 객체를 가리키는 이름이다. `input()`은 터미널에 프롬프트를 출력하고 사용자가 Enter를 누를 때까지 기다린 뒤, 입력 문자를 항상 `str`로 반환한다. 계산 전에 필요한 자료형으로 명시적으로 변환해야 한다.
+
+```python
+raw_age = input("나이: ")
+age = int(raw_age)
+next_age = age + 1
+print(raw_age, type(raw_age))
+print(next_age, type(next_age))
+```
+
+사용자가 `20`을 입력하면 다음처럼 관찰된다.
+
+```text
+나이: 20
+20 <class 'str'>
+21 <class 'int'>
+```
+
+`int()` 전에 `raw_age + 1`을 계산하면 문자열과 정수를 더할 수 없어 `TypeError`가 난다. `int("스물")`은 변환할 수 없어 `ValueError`다. 연산자는 괄호와 우선순위에 따라 피연산자를 처리하고 새 결과 객체를 만든다.
+
+**원본 연결:** 내 코드 `workspace_python/02_var.py`, 강사님 코드 `workspace_python/_02_var.py`의 변수, 자료형, 연산자, `input()` 예제를 기반으로 한다.

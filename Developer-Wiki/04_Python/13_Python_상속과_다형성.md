@@ -1,6 +1,6 @@
 ---
 title: Python 상속과 다형성
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -1581,3 +1581,26 @@ super()
 ```
 
 이 흐름을 이해하면 객체지향 프로그램에서 여러 클래스가 어떤 관계로 설계되고 동작하는지 더 쉽게 파악할 수 있다.
+
+# V3 동작 백과 보강 — 메서드를 찾고 재정의된 코드를 고르는 과정
+
+자식 객체에서 메서드를 호출하면 Python은 해당 클래스부터 MRO(Method Resolution Order)를 따라 부모 클래스로 올라가며 이름을 찾는다. 자식이 같은 이름을 정의하면 그 메서드가 선택되는 오버라이딩이 일어난다. `super()`는 MRO의 다음 구현을 호출한다.
+
+```python
+class Animal:
+    def sound(self): return "소리"
+class Dog(Animal):
+    def sound(self): return "멍멍"
+
+for animal in [Animal(), Dog()]:
+    print(animal.sound())
+```
+
+```text
+소리
+멍멍
+```
+
+호출 코드는 같지만 실제 객체의 클래스에 따라 실행 메서드가 달라지는 것이 다형성이다. 부모 초기화가 필요한데 호출하지 않으면 필수 속성이 없어 `AttributeError`가 날 수 있다.
+
+**원본 연결:** 내 코드 `workspace_python/13_상속.py`, 강사님 코드 `workspace_python/_13_상속.py`의 상속, 오버라이딩, `super`, 추상화 예제를 기반으로 한다.

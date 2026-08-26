@@ -1,6 +1,6 @@
 ---
 title: SQL 숫자·날짜·NULL 함수
-version: v2.0-final
+version: v3.0-final
 last_updated: 2026-08-13
 status: Completed
 ---
@@ -19,7 +19,7 @@ status: Completed
 | 핵심 범위 | `ROUND`, `CEIL`, `FLOOR`, `TRUNCATE`, `MOD`, `NOW`, `SYSDATE`, `DATE_FORMAT`, `STR_TO_DATE`, `IFNULL`, `COALESCE` |
 | 학습 범위 | 반올림·올림·내림·버림·나머지, 현재 시각, 날짜 Formatting/Parsing, NULL 대체 |
 | 다음 범위 제외 | `CASE`, `UNION`, Subquery, JOIN |
-| 문서 형식 | SQL Developer-Wiki V2 확정 형식 |
+| 문서 형식 | SQL Developer-Wiki V3 백과사전 형식 |
 
 > 이 문서는 `Script.sql`의 문자열 함수 다음 구간에 등장하는 숫자 함수, 날짜 함수, NULL 처리 함수를 정리한다.  
 > 단순히 함수 결과만 외우지 않고 **양수·음수에서의 반올림/올림/내림 차이**, `NOW()`와 `SYSDATE()`의 의미 차이, 날짜를 문자열로 “표시”하는 것과 문자열을 날짜로 “해석”하는 것, `IFNULL()`과 `COALESCE()`의 역할 차이를 함께 이해한다.
@@ -1510,3 +1510,69 @@ NULL과 경계값 확인
 숫자에서는 **반올림과 절삭**, 날짜에서는 **값과 표시 문자열**, NULL에서는 **값 없음과 실제 0**을 정확히 구분하는 것이 핵심이다.
 
 다음 단원에서는 이러한 함수 결과와 조건식을 결합해 `CASE`로 Row마다 다른 값을 반환하는 방법을 학습한다.
+# V3 동작 백과 — 숫자·날짜·NULL 값은 어떻게 바뀌는가?
+
+## 숫자 함수의 실제 차이
+
+```sql
+SELECT
+    ROUND(3.56, 1) AS rounded,
+    TRUNCATE(3.56, 1) AS truncated,
+    CEIL(-3.14) AS ceiled,
+    FLOOR(-3.14) AS floored;
+```
+
+```text
+ROUND(3.56, 1)    → 3.6  반올림
+TRUNCATE(3.56, 1) → 3.5  잘라냄
+CEIL(-3.14)       → -3   더 큰 정수 방향
+FLOOR(-3.14)      → -4   더 작은 정수 방향
+```
+
+음수에서 CEIL과 FLOOR를 단순히 “절댓값 올림·내림”으로 이해하면 틀린다. 수직선 방향으로 판단한다.
+
+## 날짜값은 어디서 오는가?
+
+```sql
+SELECT NOW(), CURRENT_TIMESTAMP;
+```
+
+값은 사용자 PC 화면 시간이 아니라 MariaDB Server와 Session의 시간 설정을 기준으로 만들어진다. 같은 Query 안에서 `NOW()`는 일반적으로 일관된 기준 시각을 제공한다.
+
+```sql
+SELECT DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s');
+```
+
+```text
+2026-08-26 14:30:05
+```
+
+`%m`은 Month, `%i`는 Minute다.
+
+## NULL 대체가 계산을 바꾸는 과정
+
+```sql
+SELECT sal, comm, sal + IFNULL(comm, 0) AS total_pay
+FROM emp;
+```
+
+```text
+COMM=300  → IFNULL=300 → SAL+300
+COMM=NULL → IFNULL=0   → SAL+0
+```
+
+대체값 0이 업무적으로 “수당 없음”을 의미할 때만 사용한다.
+
+## 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 검색 Anchor | 강사님 코드 검색 Anchor |
+| --- | --- | --- |
+| 반올림 | `select round(3.14)` | 같은 Query |
+| 올림·내림 | `ceil(`, `floor(` | 같은 함수 구간 |
+| 자르기 | `truncate(` | `truncate(` |
+| 현재 시각 | `now()` | 날짜 함수 구간 |
+| Format | `date_format(` | `date_format(` |
+| 문자열→날짜 | `str_to_date(` | 같은 함수 구간 |
+| NULL 대체 | `ifnull(`, `coalesce(` | NULL 함수 구간 |
+
+함수 결과의 Type, Server 시간대, NULL 대체 전후를 Result Grid에서 함께 확인한다.

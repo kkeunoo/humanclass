@@ -989,3 +989,27 @@ filter()    : 요소 선택
 2. 무엇을 반환하는가?
 3. 원본을 변경하는가?
 ```
+
+# V3 동작 백과 보강 — 메서드를 추론하는 법
+
+`object.method(arguments)`에서는 객체 자료형, 반환값, 원본 변경 여부를 각각 확인한다.
+
+| 예 | 반환값 | 원본 변경 |
+|---|---|---|
+| `text.strip()` | 새 `str` | 아니요 |
+| `items.append(x)` | `None` | 예 |
+| `sorted(items)` | 새 `list` | 아니요 |
+| `mapping.get(k)` | 값 또는 `None` | 아니요 |
+| `values.add(x)` | `None` | 예 |
+
+```python
+items = [3, 1]
+returned = items.append(2)
+ordered = sorted(items)
+print(items, returned)
+print(ordered, items)
+```
+
+출력은 `[3, 1, 2] None`, 다음 줄은 `[1, 2, 3] [3, 1, 2]`다.
+
+**원본 연결:** `03_string.py`, `04_list.py`, `05_tuple.py`, `07_dict.py`의 내 코드와 `_` 접두사 강사님 코드에서 사용 위치를 확인한다.

@@ -13,7 +13,7 @@
 | 실습 Table | `ACCOUNT_PRACTICE`, `EMP_PRACTICE` |
 | 선수 학습 | `INSERT`, `UPDATE`, `DELETE`, 제약조건 |
 | 다음 학습 | Index와 AUTO_INCREMENT |
-| 문서 버전 | V2 |
+| 문서 버전 | V3 Encyclopedia |
 
 > 원본 `Script.sql`의 DML 다음 `COMMIT / ROLLBACK` 범위를 기준으로 구성했다. 안전한 실습을 위해 기존 학습용 원본 Table 대신 `_PRACTICE` Table을 사용한다.
 
@@ -1059,3 +1059,52 @@ Transaction의 핵심은 `COMMIT`과 `ROLLBACK` 문법이 아니라 **업무상 
 ```text
 17_SQL_Index와_AUTO_INCREMENT.md
 ```
+
+---
+
+## 🔬 V3 동작 백과 — 변경은 언제 보이고 언제 확정되는가?
+
+```sql
+START TRANSACTION;
+UPDATE account SET balance = balance - 10000 WHERE account_id = 1;
+UPDATE account SET balance = balance + 10000 WHERE account_id = 2;
+COMMIT;
+```
+
+```text
+START TRANSACTION
+→ 출금 UPDATE: 같은 Session에서 변경값 확인 가능
+→ 입금 UPDATE
+→ 두 작업 모두 성공
+→ COMMIT으로 함께 확정
+```
+
+두 번째 작업이 실패하면 `ROLLBACK`하여 첫 번째 미확정 변경도 함께 취소한다.
+
+### 두 Session에서 보는 결과
+
+```text
+Session A: UPDATE, 아직 COMMIT 전
+Session B: Isolation Level에 따라 A의 미확정 변경은 일반적으로 보이지 않음
+Session A: COMMIT
+Session B: 이후 새 조회에서 확정값 확인
+```
+
+`autocommit=1`이면 개별 DML이 독립적으로 확정될 수 있다. 여러 SQL을 하나의 업무로 묶으려면 명시적 Transaction을 사용한다.
+
+```sql
+SAVEPOINT after_first_step;
+ROLLBACK TO after_first_step;
+```
+
+Savepoint 이후만 되돌리며 최종 확정은 `COMMIT`이다.
+
+### 수업 원본에서 다시 찾기
+
+| 개념 | 내 코드 Anchor | 강사님 코드 Anchor |
+| --- | --- | --- |
+| 자동 확정 | `autocommit` | Transaction 구간 |
+| 시작·확정·취소 | `start transaction`, `commit`, `rollback` | 같은 구간 |
+| 부분 취소 | `savepoint` | Savepoint 실습 |
+
+두 SQL Client Session을 열어 Commit 전후 가시성을 직접 비교한다.

@@ -37,6 +37,14 @@ JavaScript의 메서드는 모든 값에 공통으로 존재하지 않습니다.
 ["HTML", "CSS"].join(" / ")        // Array 메서드
 Object.keys({ name: "Kim" })       // Object 정적 메서드
 ```
+# V3 실행 추적 카드 — 객체.메서드(인수) → 반환값/원본 변경
+
+메서드는 이름만 외우지 않고 호출 객체 자료형, 반환값, 원본 변경, 콜백 인수 순서를 확인한다. 배열의 push/sort/splice는 원본을 바꾸고 map/filter/slice는 새 배열을 만든다.
+
+`const a=[3,1]; const b=a.sort(); console.log(a,b,a===b);`는 정렬된 두 배열과 `true`를 보여 같은 객체임을 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/01_var, 06_array, 10_string, 19_json 등 관련 원본`에서 실제 사용 위치와 차이를 확인한다.
+
 
 다음 코드는 실행할 수 없습니다.
 

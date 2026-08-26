@@ -1,6 +1,6 @@
 ---
 title: CSS 텍스트와 글꼴
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2765,3 +2765,10 @@ select {
 - `word-break: break-all`은 단어 중간을 끊어 영문 가독성을 떨어뜨릴 수 있다.
 - CSS로 `div`를 크게 만들어도 의미상 제목이 되지 않으므로 실제 제목은 `h1`~`h6`를 사용한다.
 - 반복 `<br>`는 스크롤 테스트용일 수 있지만 최종 문서에서는 CSS 여백이나 높이로 대체한다.
+# V3 렌더링 추적 카드 — 글꼴 선택과 텍스트 줄 배치
+
+브라우저는 font-family 목록에서 사용할 수 있는 첫 글꼴을 고르고 글자 크기·굵기·line-height를 계산해 줄 상자를 만든다. 웹 폰트 로딩 전후 모양이 달라질 수 있다.
+
+`line-height`는 글자 자체 높이와 같지 않다. Computed Fonts와 계산된 font-size/line-height를 확인하고, 긴 문장·한글·영문·숫자로 줄바꿈을 시험한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/07_font.html 및 asset/css/07_font.css`에서 실제 선택자·계산값·화면 차이를 확인한다.

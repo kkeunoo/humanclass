@@ -1,6 +1,6 @@
 ---
 title: CSS Transform과 요소 변형
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -2025,3 +2025,10 @@ scale(1.5)
 - 내 원본 파일명 `13_tranform.html`에는 `s`가 빠진 철자 오류가 있다.
 - 강사님 코드의 `transition: all .5s`는 마지막 세미콜론이 없지만 현재는 처리될 수 있다.
 - 내 코드의 반복 `<br>`는 CSS 여백으로 대체하는 것이 좋다.
+# V3 렌더링 추적 카드 — 레이아웃 뒤 시각 좌표 변환
+
+transform은 layout에서 잡힌 자리 자체를 다시 배치하기보다 그려지는 결과를 이동·회전·확대·기울인다. 여러 함수의 작성 순서에 따라 결과가 달라진다.
+
+translate로 이동해도 주변 요소는 원래 자리를 기준으로 배치될 수 있다. DevTools transform matrix와 transform-origin을 확인한다. 내 원본 파일명 `13_tranform.html`의 오탈자는 실제 경로 그대로 구분한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/13_tranform.html (강사님 원본은 13_transform.html)`에서 실제 선택자·계산값·화면 차이를 확인한다.

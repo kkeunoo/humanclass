@@ -1,6 +1,6 @@
 ---
 title: CSS 배경 이미지와 배경 속성
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -2186,3 +2186,10 @@ body {
 - 내 코드는 강사님 코드보다 설명이 풍부하지만 `cover`의 잘림, `contain`의 빈 공간, `fixed`의 모바일 한계를 보완해야 한다.
 - 강사님 코드의 주석 처리된 `http` 점 패턴 주소는 실제 프로젝트에서 사용하지 않는 것이 좋다.
 - 반복 `<br>`는 스크롤 테스트용일 수 있지만 최종 코드에서는 CSS 높이로 대체한다.
+# V3 렌더링 추적 카드 — 이미지 로드와 박스 배경 그리기
+
+배경 이미지는 요소의 배경 영역에 그려지며 요소 크기가 0이면 보이지 않을 수 있다. URL은 CSS 파일 위치를 기준으로 해석하고 size, position, repeat가 표시 방식을 결정한다.
+
+Network에서 이미지 404 여부, Computed의 background-image, Box Model의 실제 크기를 확인한다. `cover`는 비율을 유지하며 영역을 덮어 일부가 잘릴 수 있다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/06_background.html 및 asset/css/06_background.css`에서 실제 선택자·계산값·화면 차이를 확인한다.

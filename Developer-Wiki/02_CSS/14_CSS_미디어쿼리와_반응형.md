@@ -1,6 +1,6 @@
 ---
 title: CSS 미디어 쿼리와 반응형
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -2243,3 +2243,10 @@ toggle.addEventListener("click", () => {
 - transition은 기본 상태에 작성하고 opacity와 transform만 명시하는 편이 좋다.
 - 내 코드와 강사님 코드의 CSS 14 원본은 완전히 동일하다.
 - 이번 비교에서는 존재하지 않는 차이를 만들어 내지 않고 공통 장점과 문제점을 분석했다.
+# V3 렌더링 추적 카드 — 미디어 조건 평가와 규칙 전환
+
+브라우저는 viewport 등 미디어 특성을 평가해 조건이 참인 규칙만 캐스케이드에 참여시킨다. 반응형은 기기명이 아니라 콘텐츠가 깨지는 지점을 기준으로 설계한다.
+
+Device Toolbar에서 경계값 바로 전·후를 확인한다. viewport meta 누락, 겹치는 조건, 고정 너비 자식 때문에 모바일 레이아웃이 깨질 수 있다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/14_media.html`에서 실제 선택자·계산값·화면 차이를 확인한다.

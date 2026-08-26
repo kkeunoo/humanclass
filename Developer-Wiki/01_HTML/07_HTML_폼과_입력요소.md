@@ -1,6 +1,6 @@
 ---
 title: HTML 폼과 입력 요소
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -15,7 +15,7 @@ status: Completed
 | 분류 | `01_HTML` |
 | 학습 범위 | `form`, `input`, `button`, `label`, `select`, `option`, `textarea`, `name`, `value`, `placeholder`, `readonly`, `disabled`, `checked`, `selected`, `GET`, `POST` |
 | 프로젝트 연결 | 로그인, 회원가입, 검색, 설문, 주문, 문의, 관리자 입력 화면 |
-| 문서 형식 | HTML Developer-Wiki V2 확정 형식 |
+| 문서 형식 | HTML Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 폼은 사용자가 입력한 데이터를 서버로 전달하는 구조입니다. 화면에 입력 칸을 보이게 만드는 것만으로는 충분하지 않으며, 각 값에 이름을 붙이고 올바른 전송 방식과 접근성까지 함께 설계해야 합니다.
 
@@ -2730,3 +2730,10 @@ GET 폼을 제출한 뒤 주소의 쿼리 문자열을 확인합니다.
 - POST도 HTTPS와 서버 검증이 없으면 안전하지 않다.
 - HTML 검증은 사용자 편의를 위한 1차 검증이며 서버 검증을 대신하지 못한다.
 - 화면이 정상적으로 보이더라도 속성 오타와 잘못된 구조가 없는지 개발자 도구와 검사기로 확인해야 한다.
+# V3 브라우저 해석 추적 카드 — 사용자 입력에서 HTTP 요청 데이터까지
+
+사용자는 input·select·textarea에 값을 넣고 브라우저는 폼 제출 시 성공한 컨트롤의 `name=value` 쌍을 모은다. GET은 URL 쿼리에, POST는 주로 요청 본문에 인코딩한다. `id`는 label 연결, `name`은 전송 키 역할이다.
+
+체크되지 않은 checkbox, disabled 컨트롤, name 없는 요소는 일반적으로 제출 데이터에 포함되지 않는다. submit 후 Network에서 method, URL, query/form data를 확인하고 비밀번호나 개인정보를 URL에 넣지 않는다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/07_form.html`에서 실제 DOM·요청·접근성 차이를 확인한다.

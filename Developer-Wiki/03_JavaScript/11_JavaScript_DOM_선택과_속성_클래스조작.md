@@ -1,6 +1,6 @@
 ---
 title: JavaScript DOM 선택과 속성·클래스 조작
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/11_dom.html`, `workspace_teacher/workspace_html/javascript/11_dom.html` |
 | 핵심 범위 | DOM, 요소 선택, `getElementById()`, `getElementsByTagName()`, `getElementsByClassName()`, `querySelector()`, `querySelectorAll()`, 속성, `classList`, 요소 제거 |
 | 실습 범위 | 제목·메뉴·이미지 요소 선택, 속성 확인·변경·삭제, 클래스 추가·제거·토글, 요소 숨김·삭제 |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
 > DOM 요소를 선택하고 속성·클래스·노드를 조작하는 데 필요한 핵심 코드만 발췌하고, 반환 자료형과 실행 시점까지 함께 설명한다.
@@ -1649,3 +1649,10 @@ DOM 조작의 핵심은 요소를 선택하는 것에서 끝나지 않는다.
 ```
 
 이 흐름을 이해하면 이후 DOM 생성·텍스트 변경·이벤트 처리 문서에서 화면을 더 안전하게 제어할 수 있다.
+# V3 실행 추적 카드 — CSS 선택자 → Element/null → 속성·클래스 변경
+
+`querySelector`는 첫 Element 또는 `null`을 반환한다. script가 요소보다 먼저 실행되거나 선택자가 틀리면 `null`이고 속성 접근 시 TypeError가 난다.
+
+`const box=document.querySelector("#box"); box.classList.add("active");` 실행 뒤 Elements 패널에서 class가 추가되고 CSS가 있으면 화면도 변한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/11_dom.html`에서 실제 사용 위치와 차이를 확인한다.

@@ -1,6 +1,6 @@
 ---
 title: CSS Float와 Clear
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-07
 status: Completed
 ---
@@ -1868,3 +1868,10 @@ body {
 - 강사님 코드는 `border-color`만 바꿔 중복이 적고 헤더 영역 이름이 더 구체적이다.
 - 두 원본 모두 이미지의 `alt`가 없고 외부 이미지 URL을 사용한다.
 - float는 새 레이아웃의 기본 도구라기보다 기사형 텍스트 감싸기와 레거시 코드 이해에 중요하다.
+# V3 렌더링 추적 카드 — 부유 배치와 정상 흐름 복구
+
+float 요소는 좌우로 이동하고 뒤의 인라인 콘텐츠가 둘러싼다. 부모 높이가 접히거나 다음 영역이 감싸면 clear 또는 flow-root 같은 방식으로 새 블록 서식 맥락을 만든다.
+
+부모 배경이 사라져 보이면 float 자식과 부모 계산 높이를 확인한다. 현대 전체 레이아웃은 Flexbox가 더 명확하지만 텍스트 둘러싸기에는 float가 여전히 의미가 있다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/10_float.html 및 asset/css/10_float.css`에서 실제 선택자·계산값·화면 차이를 확인한다.

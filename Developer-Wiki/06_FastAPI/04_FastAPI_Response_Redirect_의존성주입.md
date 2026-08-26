@@ -1,6 +1,6 @@
 ---
 title: FastAPI Response, Redirect와 의존성 주입
-version: v2.0-final
+version: v3.0-final
 last_updated: 2026-08-25
 status: Completed
 ---
@@ -48,6 +48,37 @@ Endpoint 반환값
 
 FastAPI는 Python 반환값을 그대로 전송하는 데 그치지 않고 Route 설정에 따라 검증하고 직렬화한다.
 
+## 1.1 HTTP Response는 무엇으로 구성되는가?
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 26
+
+{"message":"Hello World"}
+```
+
+| 영역 | 예 | 의미 |
+| --- | --- | --- |
+| Status Line | `200 OK` | 처리 결과 |
+| Header | `Content-Type` | Body 형식 등 부가 정보 |
+| 빈 줄 |  | Header와 Body 구분 |
+| Body | JSON·HTML | Client가 사용할 실제 내용 |
+
+Endpoint의 `return`은 이 구조를 만드는 출발점이다.
+
+```python
+return {'message': 'Hello World'}
+```
+
+```text
+Python Dict
+→ Response Model 검증
+→ JSON 직렬화
+→ Content-Type: application/json
+→ 200 OK Response
+```
+
 ---
 
 # 2. Python 반환 Type Hint
@@ -68,6 +99,46 @@ def test() -> int:
 ```
 
 `'ac'`는 정수로 변환할 수 없어 Response Validation Error가 발생한다. 단, `'1'`처럼 변환 가능한 값은 설정과 Type에 따라 정수로 직렬화될 수 있으므로 “문자열은 언제나 불가능”으로 외우지 않는다.
+
+## 2.1 직접 실행과 FastAPI 요청의 차이
+
+일반 Python 직접 호출:
+
+```python
+def test() -> int:
+    return 'ac'
+
+
+result = test()
+print(result, type(result))
+```
+
+Terminal:
+
+```text
+ac <class 'str'>
+```
+
+Type Hint만으로 Python Runtime이 반환을 차단하지 않는다.
+
+FastAPI를 통한 실행:
+
+```python
+@app.get('/test')
+def test() -> int:
+    return 'ac'
+```
+
+```text
+GET /test
+→ 함수가 'ac' 반환
+→ FastAPI가 int 응답 기준으로 검증
+→ int로 처리 불가능
+→ ResponseValidationError
+→ 정상 200 Response를 만들지 못함
+```
+
+같은 함수 반환이라도 **누가 호출하고 반환값을 후처리하느냐**에 따라 결과가 달라진다.
 
 ---
 
@@ -94,6 +165,40 @@ response_model 지정됨 → response_model 기준
 response_model 없음   → 반환 Type Annotation 활용
 둘 다 없음            → 반환값을 기본 방식으로 직렬화
 ```
+
+## 3.1 실제 Field 제거 예제
+
+```python
+class UserResponse(BaseModel):
+    id: int
+    name: str
+
+
+@app.get('/user', response_model=UserResponse)
+def get_user():
+    return {
+        'id': 1,
+        'name': 'kim',
+        'password': 'secret',
+    }
+```
+
+함수의 Python 반환값:
+
+```python
+{'id': 1, 'name': 'kim', 'password': 'secret'}
+```
+
+실제 JSON Response:
+
+```json
+{
+  "id": 1,
+  "name": "kim"
+}
+```
+
+`response_model`에 없는 `password`가 응답에서 제거된다. 이것이 단순 Type Hint를 넘어 Response Model을 별도로 두는 중요한 이유다.
 
 ---
 
@@ -196,6 +301,44 @@ GET /step1?item=...
 
 Redirect는 Browser가 새로운 Request를 보내므로 URL과 Request 흐름이 실제로 바뀐다.
 
+## 7.1 실제 HTTP 왕복
+
+첫 번째 Request:
+
+```http
+POST /step3 HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/x-www-form-urlencoded
+
+item=python
+```
+
+Server Response:
+
+```http
+HTTP/1.1 303 See Other
+Location: /step1?item=python
+```
+
+Browser가 `Location` Header를 읽고 두 번째 Request를 만든다.
+
+```http
+GET /step1?item=python HTTP/1.1
+Host: 127.0.0.1:8000
+```
+
+Terminal Log 예시:
+
+```text
+/step3 실행
+INFO: "POST /step3 HTTP/1.1" 303 See Other
+/step1 실행
+item: python
+INFO: "GET /step1?item=python HTTP/1.1" 200 OK
+```
+
+Redirect 한 번은 Server 내부 함수 이동이 아니라 HTTP Request가 두 번 발생하는 동작이다.
+
 ---
 
 # 8. 303과 307
@@ -266,6 +409,66 @@ Endpoint가 필요한 것 선언
 ```
 
 `classmethod`는 Class에 묶인 Method 호출 방식이고 의존성 주입은 객체 생성과 제공 책임을 분리하는 Pattern이므로 같은 개념이 아니다.
+
+## 10.1 Dependency는 언제 실행되는가?
+
+```python
+def get_settings():
+    print('1. dependency 실행')
+    return {'name': 'Todo API'}
+
+
+@app.get('/info')
+def info(settings: dict = Depends(get_settings)):
+    print('2. endpoint 실행', settings)
+    return settings
+```
+
+GET `/info` 실행 시 Terminal:
+
+```text
+1. dependency 실행
+2. endpoint 실행 {'name': 'Todo API'}
+```
+
+동작 순서:
+
+```text
+Route 일치
+→ FastAPI가 Endpoint Parameter 분석
+→ Depends(get_settings) 발견
+→ get_settings() 먼저 실행
+→ 반환값을 settings에 저장
+→ info(settings=...) 실행
+→ Response 생성
+```
+
+Dependency가 실패해 `HTTPException`을 발생시키면 Endpoint는 실행되지 않는다. 인증, 권한, DB Session 준비 등에 사용하는 이유다.
+
+## 10.2 Request 값도 Dependency에 들어올 수 있다
+
+```python
+from fastapi import Header, HTTPException
+
+
+def verify_token(x_token: str | None = Header(default=None)):
+    if x_token != 'secret':
+        raise HTTPException(status_code=401, detail='인증 실패')
+    return x_token
+
+
+@app.get('/private')
+def private(token: str = Depends(verify_token)):
+    return {'token': token}
+```
+
+```text
+Client의 X-Token Header
+→ FastAPI Header 추출
+→ verify_token의 x_token
+→ 검증 성공
+→ Endpoint의 token에 주입
+```
 
 ---
 
@@ -362,6 +565,38 @@ def step3(item: str = Depends(normalize_item)):
 
 ---
 
+## 14.1 수업 원본에서 다시 찾기
+
+| 배운 개념 | 내 코드 파일·함수 | 강사님 코드 파일·함수 | 다시 확인할 내용 |
+| --- | --- | --- | --- |
+| Query 읽기 | `03_response/api.py`의 `step1()` | 같은 함수 | `request.query_params`와 Terminal 출력 |
+| 함수 직접 호출 | `step2()`에서 `step1(request)` | 같은 위치 | HTTP Forward가 아닌 Python 호출 |
+| Redirect | `step3()` | `step3()` | `RedirectResponse`와 Location |
+| 303·307 | 내 코드 307 | 강사님 코드 303 | Method 유지와 GET 전환 차이 |
+| Query 유지 | 내 코드가 URL에 `item` 연결 | 강사님은 `/step1`만 지정 | Redirect 후 값의 유지 여부 |
+| `response_model` | 2026-08-20 개인 메모 | 수업 Source에는 별도 예제 없음 | 반환 Annotation과 우선순위 |
+| 의존성 주입 | 2026-08-20 개인 메모 | 다음 `03_database`에서 `Depends`로 연결 | 현재는 개념과 실행 순서만 학습 |
+
+## 14.2 실제 호출 결과 비교
+
+```text
+내 코드
+GET /step3?item=python
+→ 307 /step1?item=python
+→ GET Method 유지
+→ step1에서 item=python
+
+강사님 코드
+POST /step3?item=python
+→ 303 /step1
+→ GET으로 전환
+→ Query를 URL에 넣지 않아 step1의 item=None
+```
+
+Browser Network에서 첫 Request와 Redirect 후 두 번째 Request를 각각 열어 Method, Status, Location, Query String을 비교한다.
+
+---
+
 # 15. 종합실습
 
 1. `TodoResponse` Pydantic Model을 작성한다.
@@ -435,4 +670,3 @@ Redirect = Client가 새 Request 전송
 Depends = 필요한 객체·값을 FastAPI가 주입
 pip = 선언된 필수 의존 Package도 함께 설치
 ```
-

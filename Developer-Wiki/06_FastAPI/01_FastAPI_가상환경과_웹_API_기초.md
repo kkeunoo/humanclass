@@ -1,7 +1,7 @@
 ---
 title: FastAPI 가상환경과 웹 API 기초
-version: v2.0-final
-last_updated: 2026-08-19
+version: v3.0-final
+last_updated: 2026-08-25
 status: Completed
 ---
 
@@ -13,7 +13,7 @@ status: Completed
 | --- | --- |
 | 문서 | `01_FastAPI_가상환경과_웹_API_기초.md` |
 | 분류 | `06_FastAPI` |
-| 내 코드 | `workspace_python/todos/api.py`, `.gitignore`, `pyvenv.cfg`, `requirements.txt` |
+| 내 코드 | `workspace_python/02_todos/api.py`, `.gitignore`, `pyvenv.cfg`, `requirements.txt` |
 | 강사님 코드 | `workspace_teacher/workspace_python/todos/api.py`, `run.cmd`, `pyvenv.cfg`, `requirements.txt` |
 | 실행 환경 | Windows, Python 3.14.6, FastAPI 0.141.1, Uvicorn 0.52.1 |
 | 핵심 범위 | Library와 Framework, Client와 Server, Port, 가상환경, Package 관리, FastAPI, Uvicorn, Routing, HTTP Method, REST API |
@@ -63,6 +63,81 @@ FastAPI Application
       ↓
 Response
 ```
+
+## 1.1 각 구성요소가 실제로 하는 일
+
+```text
+Browser
+→ 주소창, Form, fetch() 등으로 HTTP Request 생성
+
+Operating System Network
+→ IP와 Port를 기준으로 Request 전달
+
+Uvicorn
+→ Port 8000에서 연결을 기다리는 ASGI Server
+→ HTTP Data를 Python ASGI Message로 변환
+
+FastAPI
+→ Method와 Path에 맞는 Route 검색
+→ Parameter 추출·검증
+→ Endpoint 함수 실행
+
+Pydantic
+→ 선언된 Type과 Model에 따라 Data 검증·변환
+
+Starlette/FastAPI Response
+→ 반환값을 Status, Header, Body가 있는 HTTP Response로 변환
+```
+
+`app = FastAPI()`는 Server를 즉시 여는 명령이 아니다. Route와 Middleware 등을 등록할 Application 객체를 만드는 명령이다. 실제 Port를 열고 Request를 받는 Process는 Uvicorn이다.
+
+## 1.2 하나의 요청이 처리되는 전체 순서
+
+주소창에 다음을 입력했다고 가정한다.
+
+```text
+http://127.0.0.1:8000/?name=kim
+```
+
+Browser가 만드는 Request의 핵심은 다음과 같다.
+
+```http
+GET /?name=kim HTTP/1.1
+Host: 127.0.0.1:8000
+Accept: text/html,application/json
+```
+
+처리 순서:
+
+```text
+1. Browser가 127.0.0.1의 8000 Port로 GET Request 전송
+2. Uvicorn이 Request 수신
+3. FastAPI가 GET / Route 검색
+4. Query Parameter name 추출
+5. Type과 기본값 검증
+6. Endpoint 함수 실행
+7. 반환 Dict를 JSON으로 직렬화
+8. HTTP Response 전송
+9. Browser가 Response Body 표시
+```
+
+---
+
+## 1.3 HTTP Request와 Response의 기본 구성
+
+```text
+HTTP Request
+├── Request Line: Method, Path, Protocol
+├── Header: Host, Content-Type, Cookie 등
+└── Body: JSON, Form Data, File 등
+
+HTTP Response
+├── Status Line: 200, 404, 422 등
+├── Header: Content-Type, Set-Cookie 등
+└── Body: JSON, HTML, File 등
+```
+
+FastAPI 학습에서 Path·Query·Form·JSON·Header·Cookie를 구분하는 이유는 같은 값이라도 HTTP Message의 서로 다른 위치에서 들어오기 때문이다.
 
 ---
 
@@ -151,6 +226,28 @@ Port는 한 Computer에서 실행 중인 여러 Network Program을 구분하는 
 | HTTPS | `443` |
 
 실습에서 `8000`을 사용하는 이유는 개발 Server용으로 흔히 쓰이며 관리자 권한 없이 사용하기 편하기 때문이다. Port 번호가 다르면 Browser 관점에서 Origin도 달라질 수 있다.
+
+## 4.1 Server Port와 Client Port
+
+```text
+Browser 127.0.0.1:53124
+            ↓ Request
+FastAPI 127.0.0.1:8000
+```
+
+- `8000`: Uvicorn이 계속 열어 두고 기다리는 Server Port
+- `53124`: Browser가 해당 연결에 임시로 사용하는 Client Port
+
+주소창의 `:8000`은 Server가 받을 Port를 지정한다. `request.client.port`에서 확인되는 값은 보통 Browser 측 임시 Port이므로 서로 다르다.
+
+## 4.2 Port를 생략했을 때
+
+```text
+http://example.com  → 기본적으로 80
+https://example.com → 기본적으로 443
+```
+
+`http://127.0.0.1:8000`처럼 기본값이 아닌 Port는 URL에 직접 적어야 한다.
 
 ---
 
@@ -312,6 +409,32 @@ GET /
 
 FastAPI가 Python `dict`를 JSON Response로 변환한다.
 
+## 9.3 반환값은 Browser에 어떻게 보이는가?
+
+```python
+return {'message': 'Hello World2'}
+```
+
+FastAPI는 대략 다음과 같은 HTTP Response를 만든다.
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"message":"Hello World2"}
+```
+
+Python `dict` 자체가 Network로 이동하는 것이 아니다. JSON 문자열로 직렬화된 뒤 Response Body에 들어간다.
+
+반환문이 없으면 Python 함수는 `None`을 반환하고 FastAPI는 이를 JSON `null`로 직렬화한다. 이는 `404`가 아니다. Route는 정상적으로 존재하고 실행되었기 때문이다.
+
+```text
+Route 없음                    → 404 Not Found
+Route는 있지만 Method 다름   → 405 Method Not Allowed
+입력값 검증 실패             → 422 Validation Error
+Route 실행 후 None 반환       → 200 OK + null
+```
+
 ---
 
 # 10. Uvicorn으로 Server 실행
@@ -362,6 +485,42 @@ POST /html → html2()
 
 같은 Method와 Path를 중복 등록하면 의도와 다른 함수가 먼저 선택될 수 있으므로 중복 Route를 만들지 않는다.
 
+## 11.1 Route는 언제 등록되는가?
+
+Python Module이 Import될 때 Decorator가 실행되어 Route 정보가 Application에 등록된다.
+
+```python
+@app.get('/html')
+def html():
+    return 'hello'
+```
+
+등록되는 핵심 정보:
+
+```text
+Method   → GET
+Path     → /html
+Endpoint → html 함수
+```
+
+Request가 올 때마다 Decorator가 다시 Route를 만드는 것이 아니다. Application 시작 과정에서 등록된 Route 목록을 Request마다 조회한다.
+
+## 11.2 Router가 판단하는 값
+
+주소 전체가 아니라 주로 Method와 Path가 Route 선택 기준이다.
+
+```text
+GET /html?lang=ko
+```
+
+```text
+Method → GET
+Path   → /html
+Query  → lang=ko
+```
+
+Query String은 보통 Route 선택이 아니라 선택된 Endpoint의 입력값으로 사용된다.
+
 ---
 
 # 12. HTTP Method
@@ -377,6 +536,44 @@ POST /html → html2()
 메모에는 “GET, POST, PUT, PATCH”가 중요하다고 되어 있지만 CRUD를 완성하려면 `DELETE`도 함께 기억해야 한다.
 
 주소창에서 URL을 직접 여는 동작은 일반적으로 GET Request다. POST·PUT·PATCH·DELETE는 HTML Form, JavaScript, API Client 등을 이용한다.
+
+## 12.1 Method는 어디에서 정하는가?
+
+```text
+주소창·Link 클릭
+→ 일반적으로 GET
+
+<form method="post">
+→ POST
+
+fetch(url, {method: 'PUT'})
+→ PUT
+
+API Test Tool의 Method 선택
+→ 선택한 GET/POST/PUT/PATCH/DELETE
+```
+
+Browser 주소창에는 URL만 입력하므로 POST나 DELETE를 직접 지정할 수 없다.
+
+## 12.2 같은 Path, 다른 Method
+
+```python
+@app.get('/html')
+def show_html():
+    return '화면 조회'
+
+
+@app.post('/html')
+def submit_html():
+    return '데이터 처리'
+```
+
+```text
+GET /html  → show_html()
+POST /html → submit_html()
+```
+
+Path가 같아도 Method가 다르면 서로 다른 Route다.
 
 ---
 
@@ -521,6 +718,43 @@ Module 실행 방식은 PATH 문제를 줄이는 데 도움이 된다.
 
 ---
 
+## 18.5 수업 원본에서 다시 찾기
+
+| 배운 개념 | 내 코드 위치 | 강사님 코드 위치 | 무엇을 확인하는가 |
+| --- | --- | --- | --- |
+| FastAPI Application | `02_todos/api.py`의 `app = FastAPI()` | `todos/api.py` | Application 객체 생성 |
+| GET `/` | `02_todos/api.py`의 `welcome()` | `todos/api.py`의 `welcome()` | Dict가 JSON Response가 되는 과정 |
+| 같은 Path, 다른 Method | `02_todos/api.py`의 두 `/html` Route | `todos/api.py`의 두 `/html` Route | GET과 POST가 별도 Route인 이유 |
+| 반환문 없음 | `02_todos/api.py`의 `no()` | `todos/api.py`의 `no()` | Python `None`이 JSON `null`이 되는 결과 |
+| 가상환경 설정 | `02_todos/pyvenv.cfg` | `todos/pyvenv.cfg` | Python Version과 절대 경로 |
+| 설치 Package 기록 | `02_todos/requirements.txt` | `todos/requirements.txt` | 환경 재현에 필요한 Package 목록 |
+| 반복 실행 명령 | Terminal에서 Uvicorn 실행 | `todos/run.cmd` | `api:app`, Port, Reload 의미 |
+
+이 표는 개념을 잊었을 때 실제 수업 Source로 돌아가기 위한 Index다. 먼저 문서 설명을 읽고 해당 함수를 직접 실행해 결과를 다시 확인한다.
+
+---
+
+## 18.6 직접 재현하기
+
+```powershell
+cd D:\workspace\workspace_python\02_todos
+Scripts\activate
+python -m uvicorn api:app --port 8000 --reload
+```
+
+확인 순서:
+
+```text
+1. Browser에서 http://127.0.0.1:8000/ 열기
+2. JSON message 확인
+3. 주소창에서 /html 열어 GET 결과 확인
+4. 주소창으로 POST를 보낼 수 없는 이유 확인
+5. /no에서 null과 200 Status 확인
+6. 존재하지 않는 /unknown에서 404 비교
+```
+
+---
+
 # 19. Debugging 순서
 
 ```text
@@ -618,4 +852,3 @@ Routing = HTTP Method + Path를 Endpoint에 연결
 REST = Resource 중심 URI + HTTP 규칙 활용
 Source는 Commit, 가상환경은 재생성
 ```
-

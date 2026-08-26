@@ -1,6 +1,6 @@
 ---
 title: JavaScript 폼 이벤트와 이벤트 전파·실전 문제
-version: v2.0-final
+version: v3.0-encyclopedia
 last_updated: 2026-08-06
 status: Completed
 ---
@@ -16,7 +16,7 @@ status: Completed
 | 원본 기준 | `workspace_html/javascript/17_event_form.html`, `workspace_html/javascript/asset/js/17_event_form.js`, 강사님 동일 파일 |
 | 핵심 범위 | `focus`, `blur`, `input`, `submit`, Event Propagation, `target`, `currentTarget`, `this`, `stopPropagation()`, Event Delegation |
 | 실습 범위 | 검색 Form 검증, 주문·배송 복사, 로그인, 피자 주문 계산, 메뉴 선택, Todo List |
-| 문서 형식 | JavaScript Developer-Wiki V2 확정 형식 |
+| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
 
 > 17번은 폼 이벤트와 이벤트 전파를 학습한 뒤 다섯 개의 실전 문제로 연결한다.  
 > 강사님 원본은 기본 이벤트 예제와 문제 요구사항을 제공하고, 내 원본은 문제 1~5를 직접 구현했다. 이 문서에서는 실제 구현 오류와 개선 방향을 함께 정리한다.
@@ -1951,3 +1951,10 @@ Target과 상위 구조를 안전하게 탐색하고
 ```
 
 이 흐름을 이해하면 이후 BOM과 외부 API 문서에서도 사용자 동작과 브라우저 기능을 안정적으로 연결할 수 있다.
+# V3 실행 추적 카드 — submit 발생 → 캡처/타깃/버블 → 검증·전송
+
+폼 제출은 버튼 click보다 form의 submit 이벤트를 중심으로 처리한다. `preventDefault()`는 제출·새로고침을 막고, `stopPropagation()`은 전파를 멈추는 별도 기능이다.
+
+부모와 자식 리스너에서 event.currentTarget을 출력해 버블 순서를 확인한다. 검증 실패 시 화면 오류를 표시하고 실제 요청이 없는지 Network에서 확인한다.
+
+**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/17_event_form.html, asset/js/17_event_form.js`에서 실제 사용 위치와 차이를 확인한다.
