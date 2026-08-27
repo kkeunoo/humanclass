@@ -1260,8 +1260,6 @@ commit;
 
 select * from emp_pr;
 
-sql = select * from emp_pr;
-
 select * from emp3;
 select * from dept3;
 
