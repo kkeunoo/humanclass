@@ -83,8 +83,10 @@ async def emp_insert(
         }) 
         print('실행 결과로 영향을 받은 row 수 : ',result.rowcount)
         count = result.rowcount
+        session.commit()
     except :
         count = 0
+        session.rollback()
 
     if count == 0 :
         return RedirectResponse(

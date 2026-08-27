@@ -14,7 +14,7 @@ def get_connect():
         database='human',
         user='root',
         password='human1234$',
-        cursorclass=pymysql.cursors.DictCursor
+        cursorclass=pymysql.cursors.DictCursor # DictCursor는 select한 tuple결과를 dict로 변환해줌
     )
 
     return conn
