@@ -29,9 +29,10 @@
 | Python | 24 | ✅ V3 | [Open](./Developer-Wiki/04_Python/README.md) |
 | SQL · MariaDB | 20 | ✅ V3 | [Open](./Developer-Wiki/05_SQL/README.md) |
 | FastAPI · SQLite | 6 | 🔄 수업 범위 확장 중 | [Open](./Developer-Wiki/06_FastAPI/README.md) |
-| **합계** | **106** |  | [Developer-Wiki Home](./Developer-Wiki/README.md) |
+| 통합 용어 색인 | 1 | ✅ Reference | [Open](./Developer-Wiki/99_Developer-Wiki_통합_용어색인.md) |
+| **합계** | **107** |  | [Developer-Wiki Home](./Developer-Wiki/README.md) |
 
-문서 수는 과목별 README를 제외하고 V3 읽기법과 참고 문서를 포함한 Markdown 기준입니다.
+문서 수는 과목별 README를 제외하고 V3 읽기법·참고 문서·통합 용어 색인을 포함한 Markdown 기준입니다.
 
 ---
 
@@ -108,7 +109,8 @@ workspace/
 │   ├── 03_JavaScript/
 │   ├── 04_Python/
 │   ├── 05_SQL/
-│   └── 06_FastAPI/
+│   ├── 06_FastAPI/
+│   └── 99_Developer-Wiki_통합_용어색인.md
 ├── workspace_html/
 ├── workspace_python/
 ├── workspace_sql/

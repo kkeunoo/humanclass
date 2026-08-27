@@ -21,9 +21,16 @@
 | 04 | 🐍 Python | 24 | ✅ V3 | [Open](./04_Python/README.md) |
 | 05 | 🗄️ SQL · MariaDB | 20 | ✅ V3 | [Open](./05_SQL/README.md) |
 | 06 | 🚀 FastAPI | 6 | 🔄 수업 범위 확장 중 | [Open](./06_FastAPI/README.md) |
-| **합계** | **7개 영역** | **106** |  |  |
+| 99 | 🔎 통합 용어 색인 | 1 | ✅ Reference | [Open](./99_Developer-Wiki_통합_용어색인.md) |
+| **합계** | **7개 영역 + 통합 색인** | **107** |  |  |
 
 > FastAPI는 현재 완료된 `01~06` 문서만 포함합니다. 학습 중인 `workspace_python/03_database`는 수업이 끝난 뒤 원본을 다시 검토하여 추가합니다.
+
+---
+
+## 🔎 용어를 먼저 찾고 싶다면
+
+[Developer-Wiki 통합 용어 색인](./99_Developer-Wiki_통합_용어색인.md)에서 `Framework`, `Request`, `정규표현식`, `Transaction`처럼 기억나는 Keyword나 “문자 필터링”, “요청값 위치”, “DB 변경 취소” 같은 상황으로 관련 문서를 찾을 수 있습니다.
 
 ---
 
@@ -121,7 +128,8 @@ Developer-Wiki/
 ├── 03_JavaScript/
 ├── 04_Python/
 ├── 05_SQL/
-└── 06_FastAPI/
+├── 06_FastAPI/
+└── 99_Developer-Wiki_통합_용어색인.md
 ```
 
 ---
