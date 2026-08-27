@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>파일 업로드 실습</h1>
+        <!-- 
+            파일 업로드 시 method는 무조건 'post',
+            파일 첨부 기능 시 form에 'enctype="multipart/form-data"' 작성 필수
+        -->
+        <form
+            method="post"
+            action="http://127.0.0.1:8000/upload"
+            enctype="multipart/form-data"
+        >
+            제목 : <input type="text" name="title"><br>
+            내용<br>
+            <textarea name="content"></textarea><br>
+            파일 첨부1 : <input type="file" name="file1"><br>
+            파일 첨부2 : <input type="file" name="file2" multiple="multiple"><br><br>
+            <input type="submit" value="전송">
+        </form>
+
+        <img src="http://127.0.0.1:8000/download?file_name=a47e9a87bf984b33b59b20fe0b3fde3c_Spongebob-Christmas-PNG-Picture.png">
+    </body>
+</html>
