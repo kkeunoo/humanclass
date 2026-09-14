@@ -21,6 +21,8 @@ ORDER BY { 정열_기준열 [ASC|DESC][.] }
 
 */
 
+show processlist;
+
 -- 전체 사원
 select * from emp;
 -- 부서 별
