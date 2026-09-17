@@ -1,7 +1,7 @@
 ---
 title: JavaScript 문자열과 문자열 메서드
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,98 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: 문자열 메서드는 새 문자열을 반환한다](#js-10-section-4)
+- [56. 문자열 비교 시 엄격 비교](#js-10-section-60)
+- [58. 내 코드와 강사님 코드 비교](#js-10-section-62)
+- [60. 실무형 예제: 회원 정보 표시용 마스킹](#js-10-section-64)
+- [61. 대표 오류로 이해하기](#js-10-section-65)
+- [62. 자주 하는 실수](#js-10-section-66)
+- [63. 핵심 요약](#js-10-section-67)
+- [64. 최종 체크리스트](#js-10-section-68)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-10-section-1)
+- [핵심 개념](#js-10-section-2)
+- [학습 목표](#js-10-section-3)
+- [개념에서 실제 실행까지: 문자열 메서드는 새 문자열을 반환한다](#js-10-section-4)
+- [1. 문자열 생성](#js-10-section-5)
+- [2. 문자열 길이](#js-10-section-6)
+- [3. 공백도 길이에 포함](#js-10-section-7)
+- [4. 빈 문자열](#js-10-section-8)
+- [5. 문자열 인덱스](#js-10-section-9)
+- [6. 마지막 문자](#js-10-section-10)
+- [7. 문자열 불변성](#js-10-section-11)
+- [8. `indexOf()`](#js-10-section-12)
+- [9. 첫 번째 일치 위치](#js-10-section-13)
+- [10. 찾지 못한 경우](#js-10-section-14)
+- [11. `indexOf()` 조건 검사](#js-10-section-15)
+- [12. `includes()`](#js-10-section-16)
+- [13. `startsWith()`와 `endsWith()`](#js-10-section-17)
+- [14. `replace()`](#js-10-section-18)
+- [15. 첫 번째 일치만 치환](#js-10-section-19)
+- [16. 모든 문자열 치환](#js-10-section-20)
+- [17. 정규표현식 전역 치환](#js-10-section-21)
+- [18. 정규표현식 기본 구조](#js-10-section-22)
+- [19. 대소문자 무시 치환](#js-10-section-23)
+- [20. `replace()`의 원본 유지](#js-10-section-24)
+- [21. `slice()`](#js-10-section-25)
+- [22. `slice()` 종료 생략](#js-10-section-26)
+- [23. 음수 인덱스](#js-10-section-27)
+- [24. `substring()`](#js-10-section-28)
+- [25. `slice()`와 `substring()` 차이](#js-10-section-29)
+- [26. `substr()`](#js-10-section-30)
+- [27. `substr()` 대체](#js-10-section-31)
+- [28. `split()`](#js-10-section-32)
+- [29. 구분자가 없는 경우](#js-10-section-33)
+- [30. 빈 문자열로 분리](#js-10-section-34)
+- [31. 분리 개수 제한](#js-10-section-35)
+- [32. `trim()`](#js-10-section-36)
+- [33. `trimStart()`와 `trimEnd()`](#js-10-section-37)
+- [34. 공백 입력 검증](#js-10-section-38)
+- [35. `trim()` 원본 유지](#js-10-section-39)
+- [36. 문제 1: 이메일 ID 추출](#js-10-section-40)
+- [37. `@`가 없을 때의 문제](#js-10-section-41)
+- [38. 안전한 이메일 ID 추출](#js-10-section-42)
+- [39. `split()`을 이용한 이메일 분리](#js-10-section-43)
+- [40. 문제 2: 주민번호 성별 코드](#js-10-section-44)
+- [41. 원본 성별 판정 문제](#js-10-section-45)
+- [42. 성별 코드 규칙](#js-10-section-46)
+- [43. 안전한 성별 판정](#js-10-section-47)
+- [44. 개인정보 최소 처리](#js-10-section-48)
+- [45. 문제 3: 날짜 문자열에서 월·분 추출](#js-10-section-49)
+- [46. 단계별 분리](#js-10-section-50)
+- [47. 날짜 문자열 검증](#js-10-section-51)
+- [48. 문제 4: 고정 별표 이메일 마스킹](#js-10-section-52)
+- [49. 문제 5: 길이에 맞는 이메일 마스킹](#js-10-section-53)
+- [50. `repeat()`을 이용한 마스킹](#js-10-section-54)
+- [51. 출력 결과](#js-10-section-55)
+- [52. 짧은 ID 처리](#js-10-section-56)
+- [53. 원본 문제 4 재시도의 오류](#js-10-section-57)
+- [54. 누적 치환 방식](#js-10-section-58)
+- [55. 부분 마스킹 규칙 설계](#js-10-section-59)
+- [56. 문자열 비교 시 엄격 비교](#js-10-section-60)
+- [57. 문자열 메서드 원본 변경 여부](#js-10-section-61)
+- [58. 내 코드와 강사님 코드 비교](#js-10-section-62)
+- [59. 기존 코드에서 개선 코드로 바꾼 이유](#js-10-section-63)
+- [60. 실무형 예제: 회원 정보 표시용 마스킹](#js-10-section-64)
+- [61. 대표 오류로 이해하기](#js-10-section-65)
+- [62. 자주 하는 실수](#js-10-section-66)
+- [63. 핵심 요약](#js-10-section-67)
+- [64. 최종 체크리스트](#js-10-section-68)
+- [마무리](#js-10-section-69)
+- [V3 실행 추적 카드 — 문자열 입력 → 검색/변환 → 새 문자열](#js-10-section-70)
+
+</details>
+
+---
+
+<a id="js-10-section-1"></a>
+
+## 개요
 
 문자열은 문자들의 순서 있는 집합이다.
 
@@ -65,7 +156,9 @@ S
 
 ---
 
-# 핵심 개념
+<a id="js-10-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -85,28 +178,119 @@ S
 
 ---
 
-# 학습 목표
+<a id="js-10-section-3"></a>
 
-- 문자열의 길이를 확인할 수 있다.
-- 문자열 인덱스가 0부터 시작함을 이해한다.
-- 문자열이 불변이라는 의미를 설명할 수 있다.
-- `indexOf()`의 반환값과 `-1`을 처리할 수 있다.
-- `includes()`로 포함 여부를 확인할 수 있다.
-- `replace()`와 `replaceAll()`의 차이를 설명할 수 있다.
-- 정규표현식의 `g` 플래그를 이해한다.
-- `slice()`와 `substring()`을 구분할 수 있다.
-- `substr()` 대신 권장 메서드를 사용할 수 있다.
-- `split()`으로 문자열을 배열로 분리할 수 있다.
-- `trim()`으로 공백 입력을 검증할 수 있다.
-- 이메일 ID와 도메인을 안전하게 추출할 수 있다.
-- 주민번호 성별 코드를 올바르게 판정할 수 있다.
-- 날짜 문자열에서 월과 분을 추출할 수 있다.
-- 이메일 ID를 요구사항에 맞게 마스킹할 수 있다.
-- 잘못된 문자열 입력을 먼저 검증할 수 있다.
+## 학습 목표
+
+- 검색 실패와 정규표현식 범위를 확인한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. 문자열 생성
+<a id="js-10-section-4"></a>
+
+## 개념에서 실제 실행까지: 문자열 메서드는 새 문자열을 반환한다
+
+문자열은 변경 불가능한 원시값이다. replace나 slice를 호출해도 기존 str은 그대로이고 반환값을 새 변수에 저장해야 한다. indexOf는 찾은 위치0도 반환하므로 if(indexOf(...))처럼 사용하면 처음에 있던 문자를 놓치고 -1을 참으로 취급한다.
+
+두 원본은 replace("가","나")와 replace(/가/g,"나")를 비교한다. 문자열 검색은 첫 일치, g 정규표현식은 전체 일치를 바꾼다. slice(시작,끝)은 끝 직전까지, 수업의 substr(시작,개수)는 두 번째 인수 의미가 다르다. 💡 substr은 레거시라 새 예제는 slice를 우선 사용한다.
+
+내 이메일 secCheck는 매회 원래 email.replace를 다시 실행해 바뀐 결과가 누적되지 않는다. 강사님은 앞두글자+별표누적+도메인을 합친다. 두 번째 문제는 별표 개수 규칙이 다르므로 '항상4개'와 '가려진 글자 수'를 별도로 설명해야 한다. [a-Z]는 대소문자 전체를 의미하지 않고 범위 순서가 역전되어 오류가 난다. [a-zA-Z]가 영문자 범위다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/10_string.html`
+
+```javascript
+// 첫번째 전달인자를 두번째 전달인자로 바꾼다 (string쪽은 거의 원본값을 바꾸지 않음)
+            let s1 = str.replace('죽었','살았')
+            console.log(str)
+            console.log(s1)
+
+            // '가'가 2개 있어도 처음 만나는것만 바꿈 
+            // (반복하려면 while indexof로 -1 받을 때 까지)
+            let s2 = str.replace('가','나')
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/10_string.html`
+
+```javascript
+// 단, 처음 만나는 것만 바꾼다
+    let s1 = str.replace('죽었', '살았')
+    console.log(str)
+    console.log(s1)
+
+    let s2 = str.replace('가', '나')
+    console.log(s2)
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+const email = "study.todair@gmail.com";
+const pos = email.indexOf("@");
+const masked = email.slice(0, 2) + "*".repeat(pos - 2) + email.slice(pos);
+console.log(masked);
+const original = "가가";
+console.log(original.replace("가", "나"), original.replace(/가/g, "나"), original);
+console.log(/^[a-zA-Z]+$/.test("Abc"), /^[a-zA-Z]+$/.test("Abc1"));
+```
+
+예상 출력:
+
+```text
+st**********@gmail.com
+나가 나나 가가
+true false
+```
+
+### 결과를 역추적하는 방법
+
+[A-z]는 대문자A~소문자z 사이의 [, \, ], ^, _, 백틱도 포함한다. 전체 영문만 검증하려면 ^와 $ 및 반복 +를 포함한 /^[a-zA-Z]+$/를 사용한다. 이 규칙은 ASCII 영문만 허용한다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** abcd@example.com을 고정 별표4개와 길이 기반 별표로 각각 가린다.
+
+**응용·디버깅 실습:** [A-z]를 영문자 전용 검증으로 사용하면 생기는 문제를 고친다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. ab****@example.com과 ab**@example.com이다. 요구사항이 다르면 결과도 다르다.
+2. ASCII 중간기호가 포함될 수 있다. /^[a-zA-Z]+$/로 전체 영문 문자열을 검사한다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** email에 @가 없는데 slice(0,-1)을 하면?
+
+**해설:** 마지막 글자를 제외한 문자열을 만든다. 실패가 자동 표시되지 않으므로 indexOf의 -1을 먼저 처리해야 한다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-10-section-5"></a>
+
+## 1. 문자열 생성
 
 ```javascript
 const text = "기사도가 죽었을 리가"
@@ -122,9 +306,11 @@ const third = `문자열`
 
 ---
 
-# 2. 문자열 길이
+<a id="js-10-section-6"></a>
 
-## 2-1. 원본 코드
+## 2. 문자열 길이
+
+### 2-1. 원본 코드
 
 ```javascript
 const text = "기사도가 죽었을 리가"
@@ -138,7 +324,9 @@ console.log(
 
 ---
 
-# 3. 공백도 길이에 포함
+<a id="js-10-section-7"></a>
+
+## 3. 공백도 길이에 포함
 
 ```javascript
 const text = "a b"
@@ -156,7 +344,9 @@ console.log(text.length)
 
 ---
 
-# 4. 빈 문자열
+<a id="js-10-section-8"></a>
+
+## 4. 빈 문자열
 
 ```javascript
 const text = ""
@@ -172,7 +362,9 @@ console.log(text.length)
 
 ---
 
-# 5. 문자열 인덱스
+<a id="js-10-section-9"></a>
+
+## 5. 문자열 인덱스
 
 ```javascript
 const text = "JavaScript"
@@ -192,7 +384,9 @@ a
 
 ---
 
-# 6. 마지막 문자
+<a id="js-10-section-10"></a>
+
+## 6. 마지막 문자
 
 ```javascript
 const text = "JavaScript"
@@ -220,7 +414,9 @@ console.log(
 
 ---
 
-# 7. 문자열 불변성
+<a id="js-10-section-11"></a>
+
+## 7. 문자열 불변성
 
 ```javascript
 let text = "abc"
@@ -248,9 +444,11 @@ text = (
 
 ---
 
-# 8. `indexOf()`
+<a id="js-10-section-12"></a>
 
-## 8-1. 원본 코드
+## 8. `indexOf()`
+
+### 8-1. 원본 코드
 
 ```javascript
 const text = "기사도가 죽었을 리가"
@@ -264,7 +462,9 @@ console.log(
 
 ---
 
-# 9. 첫 번째 일치 위치
+<a id="js-10-section-13"></a>
+
+## 9. 첫 번째 일치 위치
 
 ```javascript
 console.log(
@@ -276,7 +476,9 @@ console.log(
 
 ---
 
-# 10. 찾지 못한 경우
+<a id="js-10-section-14"></a>
+
+## 10. 찾지 못한 경우
 
 ```javascript
 console.log(
@@ -295,7 +497,9 @@ console.log(
 
 ---
 
-# 11. `indexOf()` 조건 검사
+<a id="js-10-section-15"></a>
+
+## 11. `indexOf()` 조건 검사
 
 ```javascript
 const atIndex = (
@@ -313,7 +517,9 @@ if (atIndex !== -1) {
 
 ---
 
-# 12. `includes()`
+<a id="js-10-section-16"></a>
+
+## 12. `includes()`
 
 위치가 필요하지 않고 포함 여부만 필요하다면 다음이 더 직접적이다.
 
@@ -333,7 +539,9 @@ true
 
 ---
 
-# 13. `startsWith()`와 `endsWith()`
+<a id="js-10-section-17"></a>
+
+## 13. `startsWith()`와 `endsWith()`
 
 ```javascript
 const fileName = "report.pdf"
@@ -351,9 +559,11 @@ console.log(
 
 ---
 
-# 14. `replace()`
+<a id="js-10-section-18"></a>
 
-## 14-1. 원본 코드
+## 14. `replace()`
+
+### 14-1. 원본 코드
 
 ```javascript
 const text = "기사도가 죽었을 리가"
@@ -371,7 +581,9 @@ console.log(changed)
 
 ---
 
-# 15. 첫 번째 일치만 치환
+<a id="js-10-section-19"></a>
+
+## 15. 첫 번째 일치만 치환
 
 ```javascript
 const changed = text.replace(
@@ -384,7 +596,9 @@ const changed = text.replace(
 
 ---
 
-# 16. 모든 문자열 치환
+<a id="js-10-section-20"></a>
+
+## 16. 모든 문자열 치환
 
 현대 JavaScript에서는 `replaceAll()`을 사용할 수 있다.
 
@@ -397,7 +611,9 @@ const changed = text.replaceAll(
 
 ---
 
-# 17. 정규표현식 전역 치환
+<a id="js-10-section-21"></a>
+
+## 17. 정규표현식 전역 치환
 
 원본:
 
@@ -412,7 +628,9 @@ const changed = text.replace(
 
 ---
 
-# 18. 정규표현식 기본 구조
+<a id="js-10-section-22"></a>
+
+## 18. 정규표현식 기본 구조
 
 ```text
 /패턴/플래그
@@ -428,7 +646,9 @@ const changed = text.replace(
 
 ---
 
-# 19. 대소문자 무시 치환
+<a id="js-10-section-23"></a>
+
+## 19. 대소문자 무시 치환
 
 ```javascript
 const text = "JavaScript javascript"
@@ -449,7 +669,9 @@ JS JS
 
 ---
 
-# 20. `replace()`의 원본 유지
+<a id="js-10-section-24"></a>
+
+## 20. `replace()`의 원본 유지
 
 ```javascript
 let text = "abc abc"
@@ -479,9 +701,11 @@ text = text.replace(
 
 ---
 
-# 21. `slice()`
+<a id="js-10-section-25"></a>
 
-## 21-1. 원본 코드
+## 21. `slice()`
+
+### 21-1. 원본 코드
 
 ```javascript
 const text = "기사도가 죽었을 리가"
@@ -495,7 +719,9 @@ console.log(
 
 ---
 
-# 22. `slice()` 종료 생략
+<a id="js-10-section-26"></a>
+
+## 22. `slice()` 종료 생략
 
 ```javascript
 console.log(
@@ -507,7 +733,9 @@ console.log(
 
 ---
 
-# 23. 음수 인덱스
+<a id="js-10-section-27"></a>
+
+## 23. 음수 인덱스
 
 ```javascript
 const text = "JavaScript"
@@ -527,9 +755,11 @@ Script
 
 ---
 
-# 24. `substring()`
+<a id="js-10-section-28"></a>
 
-## 24-1. 원본 코드
+## 24. `substring()`
+
+### 24-1. 원본 코드
 
 ```javascript
 const result = text.substring(
@@ -542,7 +772,9 @@ const result = text.substring(
 
 ---
 
-# 25. `slice()`와 `substring()` 차이
+<a id="js-10-section-29"></a>
+
+## 25. `slice()`와 `substring()` 차이
 
 | 항목 | `slice()` | `substring()` |
 | --- | --- | --- |
@@ -573,7 +805,9 @@ cd
 
 ---
 
-# 26. `substr()`
+<a id="js-10-section-30"></a>
+
+## 26. `substr()`
 
 원본:
 
@@ -590,7 +824,9 @@ const result = text.substr(
 
 ---
 
-# 27. `substr()` 대체
+<a id="js-10-section-31"></a>
+
+## 27. `substr()` 대체
 
 ```javascript
 const start = 3
@@ -604,9 +840,11 @@ const result = text.slice(
 
 ---
 
-# 28. `split()`
+<a id="js-10-section-32"></a>
 
-## 28-1. 원본 코드
+## 28. `split()`
+
+### 28-1. 원본 코드
 
 ```javascript
 const words = text.split(" ")
@@ -618,7 +856,9 @@ console.log(words)
 
 ---
 
-# 29. 구분자가 없는 경우
+<a id="js-10-section-33"></a>
+
+## 29. 구분자가 없는 경우
 
 ```javascript
 console.log(
@@ -636,7 +876,9 @@ console.log(
 
 ---
 
-# 30. 빈 문자열로 분리
+<a id="js-10-section-34"></a>
+
+## 30. 빈 문자열로 분리
 
 ```javascript
 console.log(
@@ -654,7 +896,9 @@ console.log(
 
 ---
 
-# 31. 분리 개수 제한
+<a id="js-10-section-35"></a>
+
+## 31. 분리 개수 제한
 
 ```javascript
 const values = (
@@ -675,9 +919,11 @@ console.log(values)
 
 ---
 
-# 32. `trim()`
+<a id="js-10-section-36"></a>
 
-## 32-1. 원본 코드
+## 32. `trim()`
+
+### 32-1. 원본 코드
 
 ```javascript
 const text = "    1 2  3   "
@@ -693,7 +939,9 @@ console.log(trimmed)
 
 ---
 
-# 33. `trimStart()`와 `trimEnd()`
+<a id="js-10-section-37"></a>
+
+## 33. `trimStart()`와 `trimEnd()`
 
 ```javascript
 text.trimStart()
@@ -704,7 +952,9 @@ text.trimEnd()
 
 ---
 
-# 34. 공백 입력 검증
+<a id="js-10-section-38"></a>
+
+## 34. 공백 입력 검증
 
 원본:
 
@@ -728,7 +978,9 @@ if (
 
 ---
 
-# 35. `trim()` 원본 유지
+<a id="js-10-section-39"></a>
+
+## 35. `trim()` 원본 유지
 
 ```javascript
 let text = "  abc  "
@@ -752,9 +1004,11 @@ text = text.trim()
 
 ---
 
-# 36. 문제 1: 이메일 ID 추출
+<a id="js-10-section-40"></a>
 
-## 36-1. 내 코드
+## 36. 문제 1: 이메일 ID 추출
+
+### 36-1. 내 코드
 
 ```javascript
 function getEmailId(
@@ -775,7 +1029,9 @@ function getEmailId(
 
 ---
 
-# 37. `@`가 없을 때의 문제
+<a id="js-10-section-41"></a>
+
+## 37. `@`가 없을 때의 문제
 
 ```javascript
 "abcdef".slice(
@@ -794,7 +1050,9 @@ abcde
 
 ---
 
-# 38. 안전한 이메일 ID 추출
+<a id="js-10-section-42"></a>
+
+## 38. 안전한 이메일 ID 추출
 
 ```javascript
 function getEmailId(
@@ -821,7 +1079,9 @@ function getEmailId(
 
 ---
 
-# 39. `split()`을 이용한 이메일 분리
+<a id="js-10-section-43"></a>
+
+## 39. `split()`을 이용한 이메일 분리
 
 ```javascript
 function splitEmail(
@@ -846,7 +1106,9 @@ function splitEmail(
 
 ---
 
-# 40. 문제 2: 주민번호 성별 코드
+<a id="js-10-section-44"></a>
+
+## 40. 문제 2: 주민번호 성별 코드
 
 원본은 하이픈 뒤 첫 문자를 추출한다.
 
@@ -859,7 +1121,9 @@ const code = residentNumber.slice(
 
 ---
 
-# 41. 원본 성별 판정 문제
+<a id="js-10-section-45"></a>
+
+## 41. 원본 성별 판정 문제
 
 원본:
 
@@ -880,7 +1144,9 @@ if (code == 1) {
 
 ---
 
-# 42. 성별 코드 규칙
+<a id="js-10-section-46"></a>
+
+## 42. 성별 코드 규칙
 
 일반적인 성별 코드 기준:
 
@@ -894,7 +1160,9 @@ if (code == 1) {
 
 ---
 
-# 43. 안전한 성별 판정
+<a id="js-10-section-47"></a>
+
+## 43. 안전한 성별 판정
 
 ```javascript
 function getGenderText(
@@ -925,7 +1193,9 @@ function getGenderText(
 
 ---
 
-# 44. 개인정보 최소 처리
+<a id="js-10-section-48"></a>
+
+## 44. 개인정보 최소 처리
 
 주민등록번호는 민감한 개인정보다.
 
@@ -939,7 +1209,9 @@ function getGenderText(
 
 ---
 
-# 45. 문제 3: 날짜 문자열에서 월·분 추출
+<a id="js-10-section-49"></a>
+
+## 45. 문제 3: 날짜 문자열에서 월·분 추출
 
 입력:
 
@@ -951,7 +1223,9 @@ function getGenderText(
 
 ---
 
-# 46. 단계별 분리
+<a id="js-10-section-50"></a>
+
+## 46. 단계별 분리
 
 ```javascript
 const value = (
@@ -988,7 +1262,9 @@ console.log(
 
 ---
 
-# 47. 날짜 문자열 검증
+<a id="js-10-section-51"></a>
+
+## 47. 날짜 문자열 검증
 
 ```javascript
 function parseDateTime(
@@ -1017,7 +1293,9 @@ function parseDateTime(
 
 ---
 
-# 48. 문제 4: 고정 별표 이메일 마스킹
+<a id="js-10-section-52"></a>
+
+## 48. 문제 4: 고정 별표 이메일 마스킹
 
 요구사항:
 
@@ -1052,7 +1330,9 @@ function maskEmailFixed(
 
 ---
 
-# 49. 문제 5: 길이에 맞는 이메일 마스킹
+<a id="js-10-section-53"></a>
+
+## 49. 문제 5: 길이에 맞는 이메일 마스킹
 
 요구사항:
 
@@ -1065,7 +1345,9 @@ ID의 앞 두 글자만 남기고 나머지 길이만큼 별표를 만든다.
 
 ---
 
-# 50. `repeat()`을 이용한 마스킹
+<a id="js-10-section-54"></a>
+
+## 50. `repeat()`을 이용한 마스킹
 
 ```javascript
 function maskEmail(
@@ -1104,7 +1386,9 @@ function maskEmail(
 
 ---
 
-# 51. 출력 결과
+<a id="js-10-section-55"></a>
+
+## 51. 출력 결과
 
 ```javascript
 console.log(
@@ -1129,7 +1413,9 @@ st**********@gmail.com
 
 ---
 
-# 52. 짧은 ID 처리
+<a id="js-10-section-56"></a>
+
+## 52. 짧은 ID 처리
 
 ```javascript
 console.log(
@@ -1151,7 +1437,9 @@ ID 길이가 두 글자 이하인 경우 가릴 문자가 없다.
 
 ---
 
-# 53. 원본 문제 4 재시도의 오류
+<a id="js-10-section-57"></a>
+
+## 53. 원본 문제 4 재시도의 오류
 
 내 코드의 두 번째 문제 4 풀이:
 
@@ -1178,7 +1466,9 @@ for (
 
 ---
 
-# 54. 누적 치환 방식
+<a id="js-10-section-58"></a>
+
+## 54. 누적 치환 방식
 
 반드시 치환 방식으로 구현한다면 새 결과를 계속 갱신해야 한다.
 
@@ -1202,7 +1492,9 @@ for (
 
 ---
 
-# 55. 부분 마스킹 규칙 설계
+<a id="js-10-section-59"></a>
+
+## 55. 부분 마스킹 규칙 설계
 
 마스킹 코드는 먼저 규칙을 정해야 한다.
 
@@ -1217,7 +1509,9 @@ for (
 
 ---
 
-# 56. 문자열 비교 시 엄격 비교
+<a id="js-10-section-60"></a>
+
+## 56. 문자열 비교 시 엄격 비교
 
 원본:
 
@@ -1239,7 +1533,9 @@ if (
 
 ---
 
-# 57. 문자열 메서드 원본 변경 여부
+<a id="js-10-section-61"></a>
+
+## 57. 문자열 메서드 원본 변경 여부
 
 | 기능 | 원본 변경 |
 | --- | --- |
@@ -1256,7 +1552,9 @@ if (
 
 ---
 
-# 58. 내 코드와 강사님 코드 비교
+<a id="js-10-section-62"></a>
+
+## 58. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1269,14 +1567,14 @@ if (
 | 비교 | `!=`, `==` 사용 | `!=` 사용 |
 | 형식 검증 | 거의 없음 | 없음 |
 
-## 58-1. 내 코드의 장점
+### 58-1. 내 코드의 장점
 
 - 문자열 메서드의 반환값과 원본 유지 여부를 주석으로 기록했다.
 - 문제 1~5를 직접 구현했다.
 - 이메일 마스킹을 두 방식으로 시도했다.
 - 날짜 문자열을 단계별로 분리했다.
 
-## 58-2. 내 코드의 개선점
+### 58-2. 내 코드의 개선점
 
 - 이메일에 `@`가 없을 때 `slice(0, -1)`이 실행될 수 있다.
 - 주민번호 코드 `3`을 남성으로 처리하지 않는다.
@@ -1287,14 +1585,14 @@ if (
 - 전역 변수를 여러 함수가 공유한다.
 - 입력값 형식 검증이 부족하다.
 
-## 58-3. 강사님 코드의 장점
+### 58-3. 강사님 코드의 장점
 
 - 문자열 검색·치환·자르기·분리를 순서대로 보여 준다.
 - `replace()`가 첫 일치만 변경함을 설명한다.
 - 정규표현식 `g` 플래그를 소개한다.
 - 이메일 마스킹 문제의 기본 풀이를 제공한다.
 
-## 58-4. 강사님 코드의 보충점
+### 58-4. 강사님 코드의 보충점
 
 - `substr()`의 레거시 상태를 설명할 필요가 있다.
 - `replaceAll()`과 `includes()`를 보충할 수 있다.
@@ -1305,9 +1603,11 @@ if (
 
 ---
 
-# 59. 기존 코드에서 개선 코드로 바꾼 이유
+<a id="js-10-section-63"></a>
 
-## 59-1. `substr()` 제거
+## 59. 기존 코드에서 개선 코드로 바꾼 이유
+
+### 59-1. `substr()` 제거
 
 기존:
 
@@ -1327,7 +1627,7 @@ text.slice(
 )
 ```
 
-## 59-2. 이메일 분리
+### 59-2. 이메일 분리
 
 기존:
 
@@ -1350,7 +1650,7 @@ const parsed = splitEmail(
 )
 ```
 
-## 59-3. 마스킹 반복문 제거
+### 59-3. 마스킹 반복문 제거
 
 기존:
 
@@ -1368,7 +1668,7 @@ const hidden = "*".repeat(
 )
 ```
 
-## 59-4. 전역 변수 제거
+### 59-4. 전역 변수 제거
 
 기존:
 
@@ -1396,7 +1696,9 @@ function getEmailId(
 
 ---
 
-# 60. 실무형 예제: 회원 정보 표시용 마스킹
+<a id="js-10-section-64"></a>
+
+## 60. 실무형 예제: 회원 정보 표시용 마스킹
 
 ```javascript
 function maskEmail(
@@ -1455,7 +1757,7 @@ console.log(
 )
 ```
 
-## 60-1. 출력 결과
+### 60-1. 출력 결과
 
 ```text
 {
@@ -1464,7 +1766,7 @@ console.log(
 }
 ```
 
-## 60-2. 코드에서 무엇을 사용하는 걸까?
+### 60-2. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1477,79 +1779,89 @@ console.log(
 
 ---
 
-# 61. 대표 오류로 이해하기
+<a id="js-10-section-65"></a>
 
-## 61-1. `indexOf()` 실패값 미처리
+## 61. 대표 오류로 이해하기
+
+### 61-1. `indexOf()` 실패값 미처리
 
 `-1`을 인덱스로 사용해 잘못된 문자열이 만들어진다.
 
-## 61-2. 문자열 메서드 반환값 미저장
+### 61-2. 문자열 메서드 반환값 미저장
 
 원본 문자열은 바뀌지 않는다.
 
-## 61-3. `substr()` 의존
+### 61-3. `substr()` 의존
 
 실행은 될 수 있지만 신규 코드에서 권장되지 않는다.
 
-## 61-4. 주민번호 형식 검증 누락
+### 61-4. 주민번호 형식 검증 누락
 
 하이픈이 없으면 잘못된 위치의 문자를 읽을 수 있다.
 
-## 61-5. 반복 `replace()` 누적 실패
+### 61-5. 반복 `replace()` 누적 실패
 
 매번 원본에서 다시 치환하면 이전 결과가 사라진다.
 
-## 61-6. `split()` 결과 길이 미검사
+### 61-6. `split()` 결과 길이 미검사
 
 예상한 배열 요소가 없어 `undefined`가 될 수 있다.
 
 ---
 
-# 62. 자주 하는 실수
+<a id="js-10-section-66"></a>
 
-## 62-1. 문자열 인덱스를 직접 변경
+## 62. 자주 하는 실수
+
+### 62-1. 문자열 인덱스를 직접 변경
 
 문자열은 불변이다.
 
-## 62-2. `length`에서 공백 제외
+<a id="index-section-99"></a>
+
+### 62-2. `length`에서 공백 제외
 
 공백도 길이에 포함된다.
 
-## 62-3. `indexOf()` 실패값을 `undefined`로 생각
+<a id="index-section-100"></a>
+
+### 62-3. `indexOf()` 실패값을 `undefined`로 생각
 
 `-1`이다.
 
-## 62-4. `replace()`가 모든 문자열을 바꾼다고 생각
+### 62-4. `replace()`가 모든 문자열을 바꾼다고 생각
 
 기본적으로 첫 일치만 변경한다.
 
-## 62-5. `trim()`이 가운데 공백도 제거한다고 생각
+### 62-5. `trim()`이 가운데 공백도 제거한다고 생각
 
 앞뒤 공백만 제거한다.
 
-## 62-6. `slice()` 종료 인덱스 포함
+### 62-6. `slice()` 종료 인덱스 포함
 
 종료 직전까지만 복사한다.
 
-## 62-7. `substring()`에서 음수 인덱스 사용
+### 62-7. `substring()`에서 음수 인덱스 사용
 
 0으로 처리된다.
 
-## 62-8. 이메일 `@` 존재 여부를 검사하지 않음
+### 62-8. 이메일 `@` 존재 여부를 검사하지 않음
 
 잘못된 결과가 만들어질 수 있다.
 
-## 62-9. 주민번호 코드 1만 남성으로 처리
+### 62-9. 주민번호 코드 1만 남성으로 처리
 
 3도 남성 코드일 수 있다.
 
-## 62-10. 개인정보 원문을 Console에 출력
+### 62-10. 개인정보 원문을 Console에 출력
 
 실제 서비스에서는 노출을 최소화해야 한다.
 
 ---
 
-# 63. 핵심 요약
+<a id="js-10-section-67"></a>
+
+## 63. 핵심 요약
 
 ```text
 text.length
@@ -1601,7 +1913,9 @@ repeat()
 
 ---
 
-# 64. 최종 체크리스트
+<a id="js-10-section-68"></a>
+
+## 64. 최종 체크리스트
 
 - [ ] 문자열 길이를 확인할 수 있는가?
 - [ ] 문자열 인덱스가 0부터 시작함을 이해했는가?
@@ -1626,7 +1940,9 @@ repeat()
 
 ---
 
-# 마무리
+<a id="js-10-section-69"></a>
+
+## 마무리
 
 문자열 처리의 핵심은 문자를 자르고 붙이는 것에서 끝나지 않는다.
 
@@ -1643,7 +1959,9 @@ repeat()
 ```
 
 이 흐름을 이해하면 이후 객체와 DOM 문서에서 사용자 입력과 화면 문자열을 더 안전하게 처리할 수 있다.
-# V3 실행 추적 카드 — 문자열 입력 → 검색/변환 → 새 문자열
+<a id="js-10-section-70"></a>
+
+## V3 실행 추적 카드 — 문자열 입력 → 검색/변환 → 새 문자열
 
 문자열은 불변이므로 메서드 결과는 새 문자열이다. `trim`, `replace`, `toUpperCase` 결과를 계속 쓰려면 저장해야 한다.
 

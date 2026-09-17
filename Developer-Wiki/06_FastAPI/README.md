@@ -40,7 +40,11 @@ Jinja Todo 화면 CRUD
         ↓
 SQLite와 Transaction
         ↓
-Database 연동 과정으로 확장 예정
+MariaDB·SQLModel 사원 CRUD
+        ↓
+파일 업로드·다운로드
+        ↓
+Cookie·Session·공통 로그인 검사
 ```
 
 ---
@@ -55,6 +59,10 @@ Database 연동 과정으로 확장 예정
 | 04 | [Response, Redirect와 의존성 주입](./04_FastAPI_Response_Redirect_의존성주입.md) | 반환값이 어떻게 Response가 되고 Redirect는 왜 두 번 요청되는가? |
 | 05 | [Jinja Todo CRUD](./05_FastAPI_Jinja_Todo_CRUD.md) | 화면 입력값이 CRUD를 거쳐 다시 화면에 보이는 과정은 무엇인가? |
 | 06 | [Python SQLite와 Transaction](./06_Python_SQLite와_Transaction.md) | Python 값이 어떻게 SQL과 DB File에 들어가고 확정·취소되는가? |
+
+| 07 | [FastAPI와 MariaDB — PyMySQL·SQLModel·사원 CRUD](07_FastAPI_MariaDB_SQLModel_사원_CRUD.md) | 요청→저장/상태→응답→오류 재현 |
+| 08 | [FastAPI 파일 업로드와 다운로드](08_FastAPI_파일_업로드와_다운로드.md) | 요청→저장/상태→응답→오류 재현 |
+| 09 | [FastAPI Cookie·Session·로그인 검사 Middleware](09_FastAPI_Cookie_Session_Middleware.md) | 요청→저장/상태→응답→오류 재현 |
 
 ---
 
@@ -189,7 +197,7 @@ workspace_teacher/workspace_python/todos/
 └── 05_SQLite/
 ```
 
-학습 중인 후속 Database 자료는 다음 정식 문서 작업에서 다룬다.
+MariaDB Database 자료는 07번 문서, 파일 업로드는 08번, Cookie·Session은 09번에서 정식으로 다룬다. 06_scikit_learn은 추가 자료 전달 전까지 보류한다.
 
 ---
 
@@ -212,3 +220,15 @@ workspace_teacher/workspace_python/todos/
 | :---: | :---: | :---: |
 | [🗄️ SQL](../05_SQL/README.md) | [🏠 Developer-Wiki](../README.md) | 진행 예정 |
 
+
+
+## 이번 리팩토링 적용 범위
+
+기존 01–06 상세 설명·예제·문제·정답을 유지하고 설명을 보강했다. 추가 허용 범위는 03_database·04_fileupload·05_cookie_session이다. 00_CSS는 제외하며 06_scikit_learn은 GitHub pull과 추가 자료 전달 전까지 보류한다. 자동 생성 venv 파일을 수업 앱 코드로 분류하지 않는다.
+
+[상세백과 읽기법](00_FastAPI_상세백과_읽기법.md) · [검토기록](00_FastAPI_리팩토링_검토기록.md)
+
+최상위 workspace·Developer-Wiki README와 통합 용어색인의 전면 동기화, 모든 승인 파트의 교차 검토는 이번 파트 확인 후 통합 단계에서 진행한다.
+전체 Wiki 탐색
+
+[전체 파트 안내](../README.md) · [통합 용어색인](../99_Developer-Wiki_통합_용어색인.md) · [최종 전체 검토기록](../98_Developer-Wiki_전체_검토기록.md)

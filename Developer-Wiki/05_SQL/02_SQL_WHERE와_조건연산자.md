@@ -1,11 +1,91 @@
 ---
 title: SQL WHERE와 조건연산자
-version: v3.0-final
-last_updated: 2026-08-12
+version: v4.0-detailed-encyclopedia
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # SQL WHERE와 조건연산자
+
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-02-section-2)
+- [개념에서 실제 실행까지 — WHERE란? — 각 행을 조건으로 통과시키기](#sql-02-section-3)
+- [4. 기본 비교연산자](#sql-02-section-7)
+- [5. 숫자 비교](#sql-02-section-8)
+- [10. 문자열 비교와 대/소문자](#sql-02-section-13)
+- [28. `BETWEEN`과 비교연산자 변환](#sql-02-section-31)
+- [41. 내 코드와 강사님 코드 비교](#sql-02-section-44)
+- [48. Debugging](#sql-02-section-51)
+- [49. 종합실습](#sql-02-section-52)
+- [50. 정답과 해설](#sql-02-section-53)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [문서 정보](#sql-02-section-1)
+- [학습 목표](#sql-02-section-2)
+- [개념에서 실제 실행까지 — WHERE란? — 각 행을 조건으로 통과시키기](#sql-02-section-3)
+- [1. `WHERE`란?](#sql-02-section-4)
+- [2. `WHERE`의 위치](#sql-02-section-5)
+- [3. `WHERE`는 Row를 제한한다](#sql-02-section-6)
+- [4. 기본 비교연산자](#sql-02-section-7)
+- [5. 숫자 비교](#sql-02-section-8)
+- [6. `>`와 `<`](#sql-02-section-9)
+- [7. `>=`와 `<=`](#sql-02-section-10)
+- [8. 문자열 조건](#sql-02-section-11)
+- [9. 문자열 Quote를 빠뜨리면?](#sql-02-section-12)
+- [10. 문자열 비교와 대/소문자](#sql-02-section-13)
+- [11. Collation 확인](#sql-02-section-14)
+- [12. `AND`](#sql-02-section-15)
+- [13. `AND` 진리표](#sql-02-section-16)
+- [14. `OR`](#sql-02-section-17)
+- [15. `OR` 진리표](#sql-02-section-18)
+- [16. `AND`와 `OR` 혼합](#sql-02-section-19)
+- [17. 우선순위 해석](#sql-02-section-20)
+- [18. 괄호를 사용한 조건 변경](#sql-02-section-21)
+- [19. 괄호를 권장하는 이유](#sql-02-section-22)
+- [20. `NOT`](#sql-02-section-23)
+- [21. `!=`](#sql-02-section-24)
+- [22. `<>`](#sql-02-section-25)
+- [23. `NOT`, `!=`, `<>`의 관계](#sql-02-section-26)
+- [24. 문제 1: 급여 범위](#sql-02-section-27)
+- [25. 범위 조건은 경계값이 중요하다](#sql-02-section-28)
+- [26. `BETWEEN`](#sql-02-section-29)
+- [27. `BETWEEN A AND B`의 포함 범위](#sql-02-section-30)
+- [28. `BETWEEN`과 비교연산자 변환](#sql-02-section-31)
+- [29. 문제 1과 `BETWEEN`은 완전히 같은가?](#sql-02-section-32)
+- [30. `BETWEEN`의 순서](#sql-02-section-33)
+- [31. 문제 2: `OR`와 `AND`](#sql-02-section-34)
+- [32. 문제 2의 괄호가 중요한 이유](#sql-02-section-35)
+- [33. 같은 Column에 여러 `OR`](#sql-02-section-36)
+- [34. `IN`](#sql-02-section-37)
+- [35. `IN`과 `OR`](#sql-02-section-38)
+- [36. 세 값의 `IN`](#sql-02-section-39)
+- [37. `NOT IN`](#sql-02-section-40)
+- [38. `NOT IN`과 `NOT`](#sql-02-section-41)
+- [39. `NOT IN`과 `NULL` 주의](#sql-02-section-42)
+- [40. 조건식 Formatting](#sql-02-section-43)
+- [41. 내 코드와 강사님 코드 비교](#sql-02-section-44)
+- [42. 개선된 통합 예제](#sql-02-section-45)
+- [43. 실무 조건식 작성 기준](#sql-02-section-46)
+- [44. `AND`와 `OR` 리팩토링](#sql-02-section-47)
+- [45. 범위 조건 리팩토링](#sql-02-section-48)
+- [46. 문자열 조건 실무 주의](#sql-02-section-49)
+- [47. 자주 하는 실수](#sql-02-section-50)
+- [48. Debugging](#sql-02-section-51)
+- [49. 종합실습](#sql-02-section-52)
+- [50. 정답과 해설](#sql-02-section-53)
+- [51. 최종 체크리스트](#sql-02-section-54)
+- [52. 핵심 요약](#sql-02-section-55)
+- [마무리](#sql-02-section-56)
+- [V3 동작 백과 — WHERE는 어떤 Row를 남기는가?](#sql-02-section-57)
+
+</details>
+
+---
+
+<a id="sql-02-section-1"></a>
 
 ## 문서 정보
 
@@ -26,23 +106,129 @@ status: Completed
 
 ---
 
-# 학습 목표
+<a id="sql-02-section-2"></a>
 
-- `WHERE`가 Result Row를 Filtering하는 Clause임을 설명할 수 있다.
-- 숫자 Column에 `=`, `!=`, `<>`, `>`, `>=`, `<`, `<=` 조건을 사용할 수 있다.
-- 문자열 조건에서 Quote를 올바르게 사용할 수 있다.
-- 문자열 비교의 대소문자 구분이 Collation에 따라 달라질 수 있음을 이해할 수 있다.
-- `AND`, `OR`, `NOT`으로 복합 조건을 만들 수 있다.
-- `AND`가 `OR`보다 먼저 평가된다는 점을 설명할 수 있다.
-- 괄호를 사용해 의도한 조건 그룹을 명확하게 표현할 수 있다.
-- `BETWEEN A AND B`가 양 끝값을 포함한다는 점을 설명할 수 있다.
-- `IN`을 같은 Column에 대한 여러 `OR` 조건으로 바꿔 쓸 수 있다.
-- `NOT IN`으로 특정 값 집합을 제외할 수 있다.
-- 내 코드와 강사님 코드의 실제 차이와 원본 설명의 한계를 구분할 수 있다.
+## 학습 목표
+
+- AND·OR 우선순위와 경계값을 중간 행으로 확인한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
 
-# 1. `WHERE`란?
+<a id="sql-02-section-3"></a>
+
+## 개념에서 실제 실행까지 — WHERE란? — 각 행을 조건으로 통과시키기
+
+### 무엇이며 왜 배워야 할까?
+
+WHERE는 입력 행마다 조건을 평가하고 참인 행만 결과 후보로 남기는 절이다. 열 선택과 행 선택은 다른 일이다. 이름만 SELECT해도 WHERE에서는 급여나 부서 조건을 사용할 수 있다.
+
+AND는 두 조건 모두 참이어야 하고 OR는 둘 중 하나면 된다. MariaDB에서 AND가 OR보다 먼저 결합되므로 deptno=30 OR deptno=20 AND job='CLERK'는 30부서 전체 또는 20부서 사무직을 뜻한다. 두 부서의 사무직만 원하면 괄호로 부서 조건을 묶는다. 의도한 자연어를 먼저 써야 어떤 괄호가 필요한지 판단할 수 있다.
+
+BETWEEN은 양끝을 포함한다. 2000 이상 3000 미만과 2000~3000 포함은 다른 질문이다. 또한 NULL인 값과의 일반 비교는 UNKNOWN이며 WHERE는 TRUE만 통과시킨다. 문자열의 대소문자 일치 여부는 collation의 영향을 받으므로 무조건 구분한다고 외우지 않는다.
+
+### 입력은 어디에서 오는가?
+
+EMP·DEPT·SALGRADE는 초기화 자료 그대로 준비된 상태다. EMP 14행, DEPT 4행, SALGRADE 5행이다. 다른 DML로 데이터를 바꿨다면 아래 결과와 달라질 수 있다. 상수 SELECT 예제는 테이블 없이도 실행할 수 있다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+SELECT empno, ename, deptno, job
+FROM emp
+WHERE (deptno = 30 OR deptno = 20)
+  AND job = 'CLERK'
+ORDER BY empno;
+```
+
+Result Grid의 열·행 값:
+
+```text
+empno	ename	deptno	job
+7369	SMITH	20	CLERK
+7876	ADAMS	20	CLERK
+7900	JAMES	30	CLERK
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. EMP의 각 행에서 부서 번호를 검사한다.
+2. 괄호 안의 20 또는 30 조건을 묶는다.
+3. 그 결과와 job='CLERK'를 AND로 결합한다.
+4. 두 조건이 참인 SMITH·ADAMS·JAMES만 남겨 사원번호로 정렬한다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 84~93행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+-- and가 or보다 우선순위이기 때문에, 필요 시 괄호 활용
+-- 아래는 deptno = 20 and job = 'CLERK' 가 먼저 필터링 됨
+select * from emp
+where deptno = 30 or deptno = 20 and job = 'CLERK';
+
+select * from emp
+where (deptno = 30 or deptno = 20) and job = 'CLERK';
+
+select * from emp
+where sal = 3000;
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 48~57행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+where deptno = 20 or  job='CLERK';
+
+select * from emp
+where deptno = 30 or deptno = 20 and job = 'CLERK';
+
+select * from emp
+where (deptno = 30 or deptno = 20) and job = 'CLERK';
+
+select * from emp
+where sal = 3000;
+```
+
+두 원본의 괄호 전·후 질의는 같은 결과를 다른 방식으로 표현한 것이 아니다. 논리 조건 자체가 바뀐다. 내 코드의 문자 대소문자 메모는 실제 MariaDB collation 조건을 함께 확인해야 한다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 이해 확인 실습
+
+1. 괄호를 빼면 SALES 부서의 SALESMAN도 포함될까?
+2. sal>=2000 AND sal<3000을 BETWEEN 2000 AND 3000으로 바꿔도 같은가?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 포함된다. 30부서 조건만으로 OR의 첫 가지가 참이다.
+2. 아니다. BETWEEN은 3000도 포함한다. 경계값 포함 여부를 요구사항에서 먼저 정한다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-02-section-4"></a>
+
+## 1. `WHERE`란?
 
 `WHERE`는 Table의 모든 Row 중 **조건을 만족하는 Row만 선택**하는 Clause다.
 
@@ -64,7 +250,9 @@ DEPTNO = 20 조건 평가
 
 ---
 
-# 2. `WHERE`의 위치
+<a id="sql-02-section-5"></a>
+
+## 2. `WHERE`의 위치
 
 기본 구조:
 
@@ -88,7 +276,9 @@ WHERE deptno = 20;
 
 ---
 
-# 3. `WHERE`는 Row를 제한한다
+<a id="sql-02-section-6"></a>
+
+## 3. `WHERE`는 Row를 제한한다
 
 `SELECT` List와 `WHERE`는 역할이 다르다.
 
@@ -120,7 +310,9 @@ Row
 
 ---
 
-# 4. 기본 비교연산자
+<a id="sql-02-section-7"></a>
+
+## 4. 기본 비교연산자
 
 | 연산자 | 의미 |
 | --- | --- |
@@ -134,7 +326,9 @@ Row
 
 ---
 
-# 5. 숫자 비교
+<a id="sql-02-section-8"></a>
+
+## 5. 숫자 비교
 
 ```sql
 SELECT *
@@ -146,7 +340,9 @@ WHERE sal = 3000;
 
 ---
 
-# 6. `>`와 `<`
+<a id="sql-02-section-9"></a>
+
+## 6. `>`와 `<`
 
 ```sql
 SELECT *
@@ -164,7 +360,9 @@ WHERE sal < 3000;
 
 ---
 
-# 7. `>=`와 `<=`
+<a id="sql-02-section-10"></a>
+
+## 7. `>=`와 `<=`
 
 ```sql
 SELECT *
@@ -182,7 +380,9 @@ WHERE sal <= 3000;
 
 ---
 
-# 8. 문자열 조건
+<a id="sql-02-section-11"></a>
+
+## 8. 문자열 조건
 
 문자열 Literal은 Quote로 감싼다.
 
@@ -196,9 +396,11 @@ WHERE job = 'CLERK';
 
 ---
 
-# 9. 문자열 Quote를 빠뜨리면?
+<a id="sql-02-section-12"></a>
 
-## 잘못된 의도
+## 9. 문자열 Quote를 빠뜨리면?
+
+### 잘못된 의도
 
 ```sql
 SELECT *
@@ -208,7 +410,7 @@ WHERE job = CLERK;
 
 Database는 `CLERK`를 문자열이 아니라 Identifier로 해석하려고 할 수 있다.
 
-## 올바른 형태
+### 올바른 형태
 
 ```sql
 SELECT *
@@ -218,7 +420,9 @@ WHERE job = 'CLERK';
 
 ---
 
-# 10. 문자열 비교와 대/소문자
+<a id="sql-02-section-13"></a>
+
+## 10. 문자열 비교와 대/소문자
 
 내 코드에는 다음 Comment가 있다.
 
@@ -248,7 +452,9 @@ WHERE job = 'clerk';
 
 ---
 
-# 11. Collation 확인
+<a id="sql-02-section-14"></a>
+
+## 11. Collation 확인
 
 Column 정의와 Collation을 확인할 수 있다.
 
@@ -270,7 +476,9 @@ SELECT
 
 ---
 
-# 12. `AND`
+<a id="sql-02-section-15"></a>
+
+## 12. `AND`
 
 모든 조건이 True여야 한다.
 
@@ -293,7 +501,9 @@ JOB = 'CLERK'
 
 ---
 
-# 13. `AND` 진리표
+<a id="sql-02-section-16"></a>
+
+## 13. `AND` 진리표
 
 | 조건 A | 조건 B | `A AND B` |
 |:---:|:---:|:---:|
@@ -304,7 +514,9 @@ JOB = 'CLERK'
 
 ---
 
-# 14. `OR`
+<a id="sql-02-section-17"></a>
+
+## 14. `OR`
 
 둘 중 하나 이상이 True면 Result에 포함된다.
 
@@ -317,7 +529,9 @@ WHERE deptno = 20
 
 ---
 
-# 15. `OR` 진리표
+<a id="sql-02-section-18"></a>
+
+## 15. `OR` 진리표
 
 | 조건 A | 조건 B | `A OR B` |
 |:---:|:---:|:---:|
@@ -328,7 +542,9 @@ WHERE deptno = 20
 
 ---
 
-# 16. `AND`와 `OR` 혼합
+<a id="sql-02-section-19"></a>
+
+## 16. `AND`와 `OR` 혼합
 
 원본:
 
@@ -354,7 +570,9 @@ WHERE deptno = 30
 
 ---
 
-# 17. 우선순위 해석
+<a id="sql-02-section-20"></a>
+
+## 17. 우선순위 해석
 
 위 Query의 조건:
 
@@ -374,7 +592,9 @@ OR
 
 ---
 
-# 18. 괄호를 사용한 조건 변경
+<a id="sql-02-section-21"></a>
+
+## 18. 괄호를 사용한 조건 변경
 
 원본:
 
@@ -407,11 +627,13 @@ JOB = 'CLERK'
 
 ---
 
-# 19. 괄호를 권장하는 이유
+<a id="sql-02-section-22"></a>
+
+## 19. 괄호를 권장하는 이유
 
 SQL Engine이 우선순위를 알고 있어도 복잡한 조건은 괄호로 의도를 드러내는 편이 좋다.
 
-## Before
+### Before
 
 ```sql
 WHERE a = 1
@@ -419,7 +641,7 @@ WHERE a = 1
   AND c = 3
 ```
 
-## After
+### After
 
 ```sql
 WHERE a = 1
@@ -433,7 +655,9 @@ Code Review에서 해석 오류를 줄일 수 있다.
 
 ---
 
-# 20. `NOT`
+<a id="sql-02-section-23"></a>
+
+## 20. `NOT`
 
 조건의 결과를 반대로 만든다.
 
@@ -455,7 +679,9 @@ SAL != 3000
 
 ---
 
-# 21. `!=`
+<a id="sql-02-section-24"></a>
+
+## 21. `!=`
 
 MariaDB에서 “같지 않다” 조건으로 사용할 수 있다.
 
@@ -467,7 +693,9 @@ WHERE sal != 3000;
 
 ---
 
-# 22. `<>`
+<a id="sql-02-section-25"></a>
+
+## 22. `<>`
 
 SQL 표준 형태의 “같지 않다” 연산자다.
 
@@ -479,7 +707,9 @@ WHERE sal <> 3000;
 
 ---
 
-# 23. `NOT`, `!=`, `<>`의 관계
+<a id="sql-02-section-26"></a>
+
+## 23. `NOT`, `!=`, `<>`의 관계
 
 원본에서는 다음 세 Query를 연속으로 비교한다.
 
@@ -509,7 +739,9 @@ WHERE NOT (sal = 3000);
 
 ---
 
-# 24. 문제 1: 급여 범위
+<a id="sql-02-section-27"></a>
+
+## 24. 문제 1: 급여 범위
 
 원본 문제:
 
@@ -545,7 +777,9 @@ WHERE sal >= 2000
 
 ---
 
-# 25. 범위 조건은 경계값이 중요하다
+<a id="sql-02-section-28"></a>
+
+## 25. 범위 조건은 경계값이 중요하다
 
 다음을 비교한다.
 
@@ -563,7 +797,9 @@ WHERE sal >= 2000
 
 ---
 
-# 26. `BETWEEN`
+<a id="sql-02-section-29"></a>
+
+## 26. `BETWEEN`
 
 범위 조건을 간결하게 작성할 수 있다.
 
@@ -575,7 +811,9 @@ WHERE sal BETWEEN 2000 AND 3000;
 
 ---
 
-# 27. `BETWEEN A AND B`의 포함 범위
+<a id="sql-02-section-30"></a>
+
+## 27. `BETWEEN A AND B`의 포함 범위
 
 원본 Comment:
 
@@ -594,7 +832,9 @@ value BETWEEN A AND B
 
 ---
 
-# 28. `BETWEEN`과 비교연산자 변환
+<a id="sql-02-section-31"></a>
+
+## 28. `BETWEEN`과 비교연산자 변환
 
 ```sql
 WHERE sal BETWEEN 2000 AND 3000
@@ -609,7 +849,9 @@ WHERE sal >= 2000
 
 ---
 
-# 29. 문제 1과 `BETWEEN`은 완전히 같은가?
+<a id="sql-02-section-32"></a>
+
+## 29. 문제 1과 `BETWEEN`은 완전히 같은가?
 
 아니다.
 
@@ -642,7 +884,9 @@ BETWEEN
 
 ---
 
-# 30. `BETWEEN`의 순서
+<a id="sql-02-section-33"></a>
+
+## 30. `BETWEEN`의 순서
 
 일반적인 범위는 작은 값부터 큰 값 순으로 작성한다.
 
@@ -660,7 +904,9 @@ MariaDB의 일반적인 `BETWEEN` 비교에서는 Lower Bound와 Upper Bound를 
 
 ---
 
-# 31. 문제 2: `OR`와 `AND`
+<a id="sql-02-section-34"></a>
+
+## 31. 문제 2: `OR`와 `AND`
 
 원본 문제:
 
@@ -684,7 +930,9 @@ WHERE job = 'CLERK'
 
 ---
 
-# 32. 문제 2의 괄호가 중요한 이유
+<a id="sql-02-section-35"></a>
+
+## 32. 문제 2의 괄호가 중요한 이유
 
 `AND`가 먼저 평가되므로 괄호 없이도 같은 결과가 나올 수 있다.
 
@@ -706,7 +954,9 @@ WHERE job = 'CLERK'
 
 ---
 
-# 33. 같은 Column에 여러 `OR`
+<a id="sql-02-section-36"></a>
+
+## 33. 같은 Column에 여러 `OR`
 
 강사님 코드:
 
@@ -722,7 +972,9 @@ WHERE deptno = 20
 
 ---
 
-# 34. `IN`
+<a id="sql-02-section-37"></a>
+
+## 34. `IN`
 
 같은 Column이 여러 값 중 하나인지 확인할 때 간결하게 작성할 수 있다.
 
@@ -734,7 +986,9 @@ WHERE deptno IN (20, 30);
 
 ---
 
-# 35. `IN`과 `OR`
+<a id="sql-02-section-38"></a>
+
+## 35. `IN`과 `OR`
 
 다음 두 조건은 같은 의미다.
 
@@ -751,7 +1005,9 @@ WHERE deptno IN (20, 30)
 
 ---
 
-# 36. 세 값의 `IN`
+<a id="sql-02-section-39"></a>
+
+## 36. 세 값의 `IN`
 
 ```sql
 SELECT *
@@ -769,7 +1025,9 @@ WHERE deptno = 10
 
 ---
 
-# 37. `NOT IN`
+<a id="sql-02-section-40"></a>
+
+## 37. `NOT IN`
 
 목록에 포함되지 않는 값을 찾는다.
 
@@ -783,7 +1041,9 @@ WHERE deptno NOT IN (20, 30);
 
 ---
 
-# 38. `NOT IN`과 `NOT`
+<a id="sql-02-section-41"></a>
+
+## 38. `NOT IN`과 `NOT`
 
 다음처럼 이해할 수 있다.
 
@@ -801,7 +1061,9 @@ WHERE NOT (
 
 ---
 
-# 39. `NOT IN`과 `NULL` 주의
+<a id="sql-02-section-42"></a>
+
+## 39. `NOT IN`과 `NULL` 주의
 
 `NOT IN`의 목록이나 비교 대상에 `NULL`이 섞이면 예상과 다른 결과가 나올 수 있다.
 
@@ -817,16 +1079,18 @@ SQL의 `NULL` 비교는 `UNKNOWN`을 만들 수 있기 때문에 단순히 “20
 
 ---
 
-# 40. 조건식 Formatting
+<a id="sql-02-section-43"></a>
 
-## Before
+## 40. 조건식 Formatting
+
+### Before
 
 ```sql
 select * from emp
 where job = 'CLERK' or (SAL > 2000 and DEPTNO = 10);
 ```
 
-## After
+### After
 
 ```sql
 SELECT *
@@ -842,7 +1106,9 @@ WHERE job = 'CLERK'
 
 ---
 
-# 41. 내 코드와 강사님 코드 비교
+<a id="sql-02-section-44"></a>
+
+## 41. 내 코드와 강사님 코드 비교
 
 두 원본의 `WHERE` 학습 순서는 거의 동일하다.
 
@@ -865,7 +1131,7 @@ WHERE 기본
 
 ---
 
-## 41.1 `WHERE deptno = 20`
+### 41.1 `WHERE deptno = 20`
 
 두 코드 모두 동일하다.
 
@@ -879,7 +1145,7 @@ WHERE deptno = 20;
 
 ---
 
-## 41.2 문자열 대/소문자 설명
+### 41.2 문자열 대/소문자 설명
 
 내 코드:
 
@@ -899,7 +1165,7 @@ where의 값일 땐 '대/소문자'를 구분 함
 
 ---
 
-## 41.3 `AND`
+### 41.3 `AND`
 
 내 코드:
 
@@ -914,7 +1180,7 @@ WHERE deptno = 20
 
 ---
 
-## 41.4 `OR`
+### 41.4 `OR`
 
 두 코드:
 
@@ -927,7 +1193,7 @@ WHERE deptno = 20
 
 ---
 
-## 41.5 `AND` 우선순위
+### 41.5 `AND` 우선순위
 
 두 코드 모두 다음 Query를 사용한다.
 
@@ -947,7 +1213,7 @@ V2에서는 괄호를 사용해 실제 평가 구조까지 명시한다.
 
 ---
 
-## 41.6 괄호 조건
+### 41.6 괄호 조건
 
 두 코드 모두 다음 Query를 사용한다.
 
@@ -962,7 +1228,7 @@ WHERE (deptno = 30 OR deptno = 20)
 
 ---
 
-## 41.7 `!=`, `<>`, `NOT`
+### 41.7 `!=`, `<>`, `NOT`
 
 두 코드 모두 다음 세 형태를 비교한다.
 
@@ -988,7 +1254,7 @@ not은 != , <>도 사용할 수 있음
 
 ---
 
-## 41.8 문제 1
+### 41.8 문제 1
 
 두 코드 모두:
 
@@ -1003,7 +1269,7 @@ WHERE sal >= 2000
 
 ---
 
-## 41.9 `BETWEEN`
+### 41.9 `BETWEEN`
 
 두 코드 모두:
 
@@ -1035,7 +1301,7 @@ BETWEEN A AND B
 
 ---
 
-## 41.10 문제 2
+### 41.10 문제 2
 
 내 코드:
 
@@ -1060,7 +1326,7 @@ WHERE
 
 ---
 
-## 41.11 강사님 코드의 세 부서 `OR`
+### 41.11 강사님 코드의 세 부서 `OR`
 
 강사님 코드에는 다음 Query가 추가되어 있다.
 
@@ -1076,7 +1342,7 @@ WHERE deptno = 20
 
 ---
 
-## 41.12 내 코드의 `IN`
+### 41.12 내 코드의 `IN`
 
 내 코드는 다음 Comment로 원리를 설명한다.
 
@@ -1098,7 +1364,7 @@ where에서 컬럼이 같고 or일 때 줄일 수 있는 방법 (in)
 
 ---
 
-## 41.13 `NOT IN`
+### 41.13 `NOT IN`
 
 두 코드 모두:
 
@@ -1112,7 +1378,7 @@ WHERE deptno NOT IN (20, 30);
 
 ---
 
-## 41.14 원본 비교 요약
+### 41.14 원본 비교 요약
 
 | 항목 | 내 코드 | 강사님 코드 | V2 정리 |
 | --- | --- | --- | --- |
@@ -1134,7 +1400,9 @@ WHERE deptno NOT IN (20, 30);
 
 ---
 
-# 42. 개선된 통합 예제
+<a id="sql-02-section-45"></a>
+
+## 42. 개선된 통합 예제
 
 ```sql
 -- 부서 20의 사원
@@ -1195,7 +1463,9 @@ WHERE sal BETWEEN 2000 AND 3000;
 
 ---
 
-# 43. 실무 조건식 작성 기준
+<a id="sql-02-section-46"></a>
+
+## 43. 실무 조건식 작성 기준
 
 복잡한 `WHERE`는 다음 기준으로 작성한다.
 
@@ -1211,9 +1481,11 @@ WHERE sal BETWEEN 2000 AND 3000;
 
 ---
 
-# 44. `AND`와 `OR` 리팩토링
+<a id="sql-02-section-47"></a>
 
-## Before
+## 44. `AND`와 `OR` 리팩토링
+
+### Before
 
 ```sql
 SELECT *
@@ -1223,7 +1495,7 @@ WHERE deptno = 10
    OR deptno = 30;
 ```
 
-## After
+### After
 
 ```sql
 SELECT *
@@ -1235,15 +1507,17 @@ WHERE deptno IN (10, 20, 30);
 
 ---
 
-# 45. 범위 조건 리팩토링
+<a id="sql-02-section-48"></a>
 
-## 포함 범위
+## 45. 범위 조건 리팩토링
+
+### 포함 범위
 
 ```sql
 WHERE sal BETWEEN 2000 AND 3000
 ```
 
-## 상한 제외
+### 상한 제외
 
 ```sql
 WHERE sal >= 2000
@@ -1254,7 +1528,9 @@ WHERE sal >= 2000
 
 ---
 
-# 46. 문자열 조건 실무 주의
+<a id="sql-02-section-49"></a>
+
+## 46. 문자열 조건 실무 주의
 
 다음 Query:
 
@@ -1280,39 +1556,43 @@ Comparison Expression
 
 ---
 
-# 47. 자주 하는 실수
+<a id="sql-02-section-50"></a>
 
-## 47.1 `AND`와 `OR` 우선순위를 반대로 이해
+## 47. 자주 하는 실수
+
+### 47.1 `AND`와 `OR` 우선순위를 반대로 이해
 
 `AND`가 `OR`보다 먼저 평가된다.
 
-## 47.2 괄호 없이 긴 조건 작성
+### 47.2 괄호 없이 긴 조건 작성
 
 동작은 맞아도 유지보수가 어렵다.
 
-## 47.3 `BETWEEN`이 끝값을 제외한다고 생각
+### 47.3 `BETWEEN`이 끝값을 제외한다고 생각
 
 양 끝값을 포함한다.
 
-## 47.4 문제 1을 `BETWEEN 2000 AND 3000`으로 변경
+### 47.4 문제 1을 `BETWEEN 2000 AND 3000`으로 변경
 
 문제는 `3000 미만`이므로 결과가 달라진다.
 
-## 47.5 `IN`을 Column 여러 개 비교 기능이라고 생각
+### 47.5 `IN`을 Column 여러 개 비교 기능이라고 생각
 
 기본 형태는 **하나의 Expression을 값 목록과 비교**한다.
 
-## 47.6 `NOT`을 단순히 `!=` 기호의 다른 이름으로 생각
+### 47.6 `NOT`을 단순히 `!=` 기호의 다른 이름으로 생각
 
 `NOT`은 논리 조건을 반전시키는 Operator다.
 
-## 47.7 문자열 Case Sensitivity를 MariaDB 전체 특성으로 단정
+### 47.7 문자열 Case Sensitivity를 MariaDB 전체 특성으로 단정
 
 Collation을 확인해야 한다.
 
 ---
 
-# 48. Debugging
+<a id="sql-02-section-51"></a>
+
+## 48. Debugging
 
 조건 결과가 예상과 다르면 다음을 확인한다.
 
@@ -1330,39 +1610,41 @@ Collation을 확인해야 한다.
 
 ---
 
-# 49. 종합실습
+<a id="sql-02-section-52"></a>
 
-## 문제 1
+## 49. 종합실습
+
+### 문제 1
 
 부서 번호가 `30`인 사원의 사원 번호, 이름, 직무를 조회하시오.
 
 ---
 
-## 문제 2
+### 문제 2
 
 급여가 `1500` 이상인 사원의 이름과 급여를 조회하시오.
 
 ---
 
-## 문제 3
+### 문제 3
 
 직무가 `MANAGER`가 아니면서 부서 번호가 `20`인 사원을 조회하시오.
 
 ---
 
-## 문제 4
+### 문제 4
 
 부서 번호가 `10`, `20`, `30` 중 하나인 사원을 `IN`으로 조회하시오.
 
 ---
 
-## 문제 5
+### 문제 5
 
 부서 번호가 `20`, `30`이 아닌 사원을 조회하시오.
 
 ---
 
-## 문제 6
+### 문제 6
 
 급여가 `2000 이상 3000 미만`인 사원을 조회하시오.
 
@@ -1370,19 +1652,19 @@ Collation을 확인해야 한다.
 
 ---
 
-## 문제 7
+### 문제 7
 
 급여가 `2000 이상 3000 이하`인 사원을 `BETWEEN`으로 조회하시오.
 
 ---
 
-## 문제 8
+### 문제 8
 
 부서 번호가 `20 또는 30`이고 직무가 `CLERK`인 사원을 조회하시오.
 
 ---
 
-## 문제 9
+### 문제 9
 
 직무가 `CLERK`이거나, `급여가 2000 초과이면서 부서 번호가 10`인 사원을 조회하시오.
 
@@ -1390,9 +1672,11 @@ Collation을 확인해야 한다.
 
 ---
 
-# 50. 정답과 해설
+<a id="sql-02-section-53"></a>
 
-## 문제 1
+## 50. 정답과 해설
+
+### 문제 1
 
 ```sql
 SELECT
@@ -1405,7 +1689,7 @@ WHERE deptno = 30;
 
 ---
 
-## 문제 2
+### 문제 2
 
 ```sql
 SELECT
@@ -1417,7 +1701,7 @@ WHERE sal >= 1500;
 
 ---
 
-## 문제 3
+### 문제 3
 
 ```sql
 SELECT *
@@ -1430,7 +1714,7 @@ WHERE job <> 'MANAGER'
 
 ---
 
-## 문제 4
+### 문제 4
 
 ```sql
 SELECT *
@@ -1442,7 +1726,7 @@ WHERE deptno IN (10, 20, 30);
 
 ---
 
-## 문제 5
+### 문제 5
 
 ```sql
 SELECT *
@@ -1452,7 +1736,7 @@ WHERE deptno NOT IN (20, 30);
 
 ---
 
-## 문제 6
+### 문제 6
 
 ```sql
 SELECT *
@@ -1465,7 +1749,7 @@ WHERE sal >= 2000
 
 ---
 
-## 문제 7
+### 문제 7
 
 ```sql
 SELECT *
@@ -1477,7 +1761,7 @@ WHERE sal BETWEEN 2000 AND 3000;
 
 ---
 
-## 문제 8
+### 문제 8
 
 ```sql
 SELECT *
@@ -1488,7 +1772,7 @@ WHERE deptno IN (20, 30)
 
 ---
 
-## 문제 9
+### 문제 9
 
 ```sql
 SELECT *
@@ -1504,7 +1788,9 @@ WHERE job = 'CLERK'
 
 ---
 
-# 51. 최종 체크리스트
+<a id="sql-02-section-54"></a>
+
+## 51. 최종 체크리스트
 
 - [ ] `WHERE`가 Row를 Filtering한다는 점을 설명할 수 있는가?
 - [ ] `SELECT` List와 `WHERE`의 역할 차이를 이해하는가?
@@ -1529,7 +1815,9 @@ WHERE job = 'CLERK'
 
 ---
 
-# 52. 핵심 요약
+<a id="sql-02-section-55"></a>
+
+## 52. 핵심 요약
 
 ```text
 WHERE
@@ -1590,7 +1878,9 @@ NOT IN
 
 ---
 
-# 마무리
+<a id="sql-02-section-56"></a>
+
+## 마무리
 
 `WHERE`의 핵심은 단순히 조건문을 붙이는 것이 아니다.
 
@@ -1607,13 +1897,41 @@ AND / OR 관계를 결정하고
 ```
 
 이 흐름을 이해하면 다음 단계인 `LIKE`, Pattern 검색, `NULL` 조건도 훨씬 자연스럽게 확장할 수 있다.
-# V3 동작 백과 — WHERE는 어떤 Row를 남기는가?
+<a id="sql-02-section-57"></a>
 
-## 왜 배워야 하는가?
+## V3 동작 백과 — WHERE는 어떤 Row를 남기는가?
+
+> 입력 범위 확인: 이 복습 부분의 작은 표는 처리 원리를 위한 가정·발췌이며 전체 초기화 EMP의 입력 전체가 아니다. FROM emp를 그대로 실행하면 모든 대상 사원을 처리한다. 수치는 작은 가정 입력의 결과인지 전체 14행 결과인지 구분한다. 실행·시간순 설명은 논리적 설명이며 물리적 평가 순서를 보장하지 않는다.
+
+<a id="index-section-118"></a>
+
+### 기존 작은 입력 표를 실행 가능한 CTE로 재현
+
+기존 V3 복습 표는 세 행만 있다고 가정한 설명이다. 실제 초기화 EMP의 같은 조건에서는 JONES·SCOTT·ADAMS·FORD가 남는다. 작은 표의 JONES 한 행을 얻으려면 아래처럼 표에 해당하는 입력을 별도로 만든다.
+
+```sql
+WITH sample(empno,ename,deptno,sal) AS (
+ SELECT 7369,'SMITH',20,800 UNION ALL
+ SELECT 7566,'JONES',20,2975 UNION ALL
+ SELECT 7499,'ALLEN',30,1600
+)
+SELECT empno,ename,deptno,sal FROM sample
+WHERE deptno=20 AND sal>=1000 ORDER BY empno;
+```
+
+```text
+empno	ename	deptno	sal
+7566	JONES	20	2975
+```
+
+아래 기존 표는 이 작은 입력을 손으로 따라가는 복습 설명이다.
+
+
+### 왜 배워야 하는가?
 
 Table 전체가 아니라 필요한 Row만 읽어야 업무 질문에 답하고, 불필요한 Data 처리와 위험한 전체 수정·삭제를 피할 수 있다.
 
-## 조건값은 어디서 오는가?
+### 조건값은 어디서 오는가?
 
 SQL에 직접 작성할 수도 있고 Application의 검색 Form·API Parameter에서 전달받을 수도 있다.
 
@@ -1649,7 +1967,7 @@ JONES | 20 | 2975
 
 SMITH는 급여 조건이 False이고 ALLEN은 부서 조건이 False라 제외된다.
 
-## AND·OR의 실제 평가
+### AND·OR의 실제 평가
 
 ```sql
 WHERE deptno = 20
@@ -1669,7 +1987,7 @@ WHERE (deptno = 20 OR deptno = 30)
   AND sal >= 2000;
 ```
 
-## 수업 원본에서 다시 찾기
+### 수업 원본에서 다시 찾기
 
 | 개념 | 내 코드 검색 Anchor | 강사님 코드 검색 Anchor |
 | --- | --- | --- |

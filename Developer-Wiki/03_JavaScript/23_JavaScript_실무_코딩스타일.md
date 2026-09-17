@@ -1,7 +1,7 @@
 ---
 title: JavaScript 실무 코딩 스타일
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -24,7 +24,111 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: 리팩토링은 코드 모양보다 책임과 동작 보존을 개선하는 일이다](#js-23-section-5)
+- [6. 엄격한 비교를 기본으로 사용](#js-23-section-11)
+- [72. Before와 After를 비교할 때 확인할 기준](#js-23-section-77)
+- [73. 실무형 예제: 사용자 목록 Component](#js-23-section-78)
+- [75. 자주 하는 실수](#js-23-section-80)
+- [76. 핵심 요약](#js-23-section-81)
+- [77. 최종 체크리스트](#js-23-section-82)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-23-section-1)
+- [공통 실무 데이터](#js-23-section-2)
+- [핵심 기준](#js-23-section-3)
+- [학습 목표](#js-23-section-4)
+- [개념에서 실제 실행까지: 리팩토링은 코드 모양보다 책임과 동작 보존을 개선하는 일이다](#js-23-section-5)
+- [1. 좋은 코드는 의도가 보인다](#js-23-section-6)
+- [2. 변수는 명사, Boolean은 질문처럼 작성](#js-23-section-7)
+- [3. 함수 이름은 동작을 표현](#js-23-section-8)
+- [4. `const`를 기본으로 사용](#js-23-section-9)
+- [5. `var` 대신 Block Scope 사용](#js-23-section-10)
+- [6. 엄격한 비교를 기본으로 사용](#js-23-section-11)
+- [7. 자료형 변환은 명시적으로 작성](#js-23-section-12)
+- [8. Truthy·Falsy보다 업무 조건을 명확히 표현](#js-23-section-13)
+- [9. `null`과 `undefined`를 구분](#js-23-section-14)
+- [10. Guard Clause로 중첩을 줄인다](#js-23-section-15)
+- [11. 조건식은 의미 있는 함수로 분리](#js-23-section-16)
+- [12. Magic Number와 Magic String을 상수로 분리](#js-23-section-17)
+- [13. 반복 목적에 맞는 문법 선택](#js-23-section-18)
+- [14. 배열을 단순 순회할 때 `for...of`](#js-23-section-19)
+- [15. Index가 필요하면 `entries()`](#js-23-section-20)
+- [16. `map()`은 새 배열을 만들 때 사용](#js-23-section-21)
+- [17. `filter()`는 조건에 맞는 값만 남긴다](#js-23-section-22)
+- [18. `reduce()`는 누적 목적이 분명할 때 사용](#js-23-section-23)
+- [19. 객체 구조 분해로 필요한 값 표현](#js-23-section-24)
+- [20. 기본값과 Nullish Coalescing](#js-23-section-25)
+- [21. Optional Chaining은 안전한 탐색에 사용](#js-23-section-26)
+- [22. 함수 하나는 하나의 주요 역할을 가진다](#js-23-section-27)
+- [23. 함수의 입력과 결과를 분명히 한다](#js-23-section-28)
+- [24. Side Effect를 경계에 모은다](#js-23-section-29)
+- [25. 필수 DOM 요소는 명확하게 검사](#js-23-section-30)
+- [26. DOM 선택 범위를 Component 내부로 제한](#js-23-section-31)
+- [27. 상태를 DOM Text에만 저장하지 않는다](#js-23-section-32)
+- [28. 외부 문자열은 `textContent`로 출력](#js-23-section-33)
+- [29. HTML 구조가 필요하면 Node를 생성](#js-23-section-34)
+- [30. 반복 렌더링에서 `innerHTML +=`를 피한다](#js-23-section-35)
+- [31. Append 후 부모 Text를 덮어쓰지 않는다](#js-23-section-36)
+- [32. 상태 Style은 Class로 관리](#js-23-section-37)
+- [33. 이벤트 함수는 이름 있는 참조를 사용](#js-23-section-38)
+- [34. 이벤트 등록을 한 번만 수행](#js-23-section-39)
+- [35. 동적 요소에는 Event Delegation](#js-23-section-40)
+- [36. `target`과 `currentTarget`을 구분](#js-23-section-41)
+- [37. 기본 동작과 이벤트 전파를 구분](#js-23-section-42)
+- [38. Form은 Button Click보다 Submit을 처리](#js-23-section-43)
+- [39. 입력값은 `trim()` 후 검증](#js-23-section-44)
+- [40. Loading·Empty·Error·Success 상태를 구분](#js-23-section-45)
+- [41. Fetch에서는 `response.ok`를 검사](#js-23-section-46)
+- [42. `async/await`와 `try...catch`](#js-23-section-47)
+- [43. `finally`에서 UI를 복구](#js-23-section-48)
+- [44. 중복 요청을 막는다](#js-23-section-49)
+- [45. 이전 요청을 취소한다](#js-23-section-50)
+- [46. Abort는 일반 오류와 구분](#js-23-section-51)
+- [47. API 응답의 구조를 검증](#js-23-section-52)
+- [48. 외부 API 날짜는 Timezone을 확인](#js-23-section-53)
+- [49. JSON 객체와 JSON 문자열을 구분](#js-23-section-54)
+- [50. Local Storage는 안전하게 Parse](#js-23-section-55)
+- [51. 저장할 데이터와 실행 객체를 구분](#js-23-section-56)
+- [52. API Key와 Webhook URL은 Client에 넣지 않는다](#js-23-section-57)
+- [53. 민감정보는 Console에 출력하지 않는다](#js-23-section-58)
+- [54. 외부 HTML과 AI 응답을 바로 실행하지 않는다](#js-23-section-59)
+- [55. Module로 역할을 분리](#js-23-section-60)
+- [56. Module Export 예제](#js-23-section-61)
+- [57. 초기화 함수는 기능을 연결](#js-23-section-62)
+- [58. 작은 Component는 Closure로 상태를 숨긴다](#js-23-section-63)
+- [59. 주석은 코드가 아닌 이유를 설명](#js-23-section-64)
+- [60. Format과 Lint를 자동화](#js-23-section-65)
+- [61. JSDoc으로 입력과 반환값 표현](#js-23-section-66)
+- [62. 실제 개선 사례 1: NodeList에 `classList`](#js-23-section-67)
+- [63. 실제 개선 사례 2: Event Listener 중복](#js-23-section-68)
+- [64. 실제 개선 사례 3: `innerHTML +=`](#js-23-section-69)
+- [65. 실제 개선 사례 4: Fetch 성공 검사 누락](#js-23-section-70)
+- [66. 실제 개선 사례 5: AI History 오염](#js-23-section-71)
+- [67. 실제 개선 사례 6: Webhook Credential 노출](#js-23-section-72)
+- [68. 실제 개선 사례 7: 잘못된 Button Type](#js-23-section-73)
+- [69. 실제 개선 사례 8: 빈 입력 전송](#js-23-section-74)
+- [70. 실제 개선 사례 9: 동일 Node를 여러 번 Append](#js-23-section-75)
+- [71. 실제 개선 사례 10: 삭제와 숨김 혼동](#js-23-section-76)
+- [72. Before와 After를 비교할 때 확인할 기준](#js-23-section-77)
+- [73. 실무형 예제: 사용자 목록 Component](#js-23-section-78)
+- [74. 파일 구조 예시](#js-23-section-79)
+- [75. 자주 하는 실수](#js-23-section-80)
+- [76. 핵심 요약](#js-23-section-81)
+- [77. 최종 체크리스트](#js-23-section-82)
+- [마무리](#js-23-section-83)
+- [V3 실행 추적 카드 — 입력 경계 → 작은 책임 → 명시적 오류·결과](#js-23-section-84)
+
+</details>
+
+---
+
+<a id="js-23-section-1"></a>
+
+## 개요
 
 실행되는 코드가 반드시 유지보수하기 좋은 코드는 아니다.
 
@@ -84,7 +188,9 @@ for (const user of users) {
 
 ---
 
-# 공통 실무 데이터
+<a id="js-23-section-2"></a>
+
+## 공통 실무 데이터
 
 이 문서에서는 다음 사용자와 상품 데이터를 여러 예제에서 사용한다.
 
@@ -149,7 +255,9 @@ const products = [
 
 ---
 
-# 핵심 기준
+<a id="js-23-section-3"></a>
+
+## 핵심 기준
 
 | 기준 | 의미 |
 | --- | --- |
@@ -166,32 +274,114 @@ const products = [
 
 ---
 
-# 학습 목표
+<a id="js-23-section-4"></a>
 
-- 실행되는 코드와 실무에서 유지보수하기 좋은 코드를 구분할 수 있다.
-- 역할이 명확한 변수명·함수명·상태명을 작성할 수 있다.
-- `const`를 기본으로 사용하고 재할당이 필요한 경우에만 `let`을 선택할 수 있다.
-- 엄격한 비교와 명시적인 자료형 변환을 사용할 수 있다.
-- Guard Clause로 중첩 조건문을 줄일 수 있다.
-- 반복문의 목적에 맞게 `for...of`, `map()`, `filter()`, `reduce()`를 선택할 수 있다.
-- 함수의 검증·계산·렌더링·요청 책임을 분리할 수 있다.
-- DOM 선택 결과가 `null`일 수 있음을 처리할 수 있다.
-- 상태를 DOM 문자열에만 저장하지 않고 JavaScript 값으로 관리할 수 있다.
-- `innerHTML`과 `textContent`를 안전하게 선택할 수 있다.
-- 동적 요소에 Event Delegation을 적용할 수 있다.
-- Listener 중복 등록과 익명 함수 해제 문제를 방지할 수 있다.
-- `async/await`, `response.ok`, `try...catch`, `finally`를 사용할 수 있다.
-- Loading·Empty·Error·Success 상태를 화면에 표현할 수 있다.
-- `AbortController`로 이전 요청을 취소할 수 있다.
-- Local Storage 데이터를 안전하게 저장·복원할 수 있다.
-- API Key·Webhook URL을 Client 코드에 노출하지 않는 구조를 설명할 수 있다.
-- 큰 Script를 기능별 Module과 Component로 분리할 수 있다.
+## 학습 목표
+
+- 변경 전후 정상·실패·경계 동작을 비교한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. 좋은 코드는 의도가 보인다
+<a id="js-23-section-5"></a>
 
-## 1-1. Before
+## 개념에서 실제 실행까지: 리팩토링은 코드 모양보다 책임과 동작 보존을 개선하는 일이다
+
+이 문서는 원본 23번 수업 파일이 아니라01~22에서 연결한 💡 확장 기준이다. 함수 이름만 영어로 바꾸거나 let을 const로 일괄 치환하면 리팩토링의 목적을 놓친다. 데이터 입력·검증·계산·저장·출력의 책임을 나누고 같은 요구사항을 유지하는지 테스트해야 한다.
+
+예를 들어 수업 피자는 size.value의 이름과 가격을 split해 합산했다. 개선에서는 입력 문자열 해석과 가격 계산을 분리한다. 정렬도 원본 배열 순서 유지가 요구사항이면 slice 후 sort하고, 클릭 handler는 현재 입력을 읽은 다음 순수 계산 함수 결과만 화면에 표시한다.
+
+Library는 내가 필요한 기능을 호출하는 도구, Framework는 정해진 구조와 생명주기에서 내 코드를 호출하는 틀로 이해한다. 경계는 제품마다 겹칠 수 있으며 JavaScript라는 언어 자체가 둘 중 하나는 아니다. 수업의 우편번호 SDK 호출이나 이벤트 콜백을 모두 'Framework'라고 일괄 부르지 않는다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 이 문서의 개선·통합 예제는 💡 확장 학습이며 강사님 완성 코드로 표시하지 않는다.
+
+내 코드: `workspace_html/javascript/asset/js/17_event_form.js`
+
+```javascript
+let topPrice = 0
+       let priceResult = 0
+
+       for(let i=0; i<topping.length; i++) {
+           if(topping[i].checked == true) {
+               // console.log('토핑', topping[i].value.split(' ')[0])
+               topResult += topping[i].value.split(' ')[0]
+               topPrice += Number(topping[i].value.split(' ')[1])
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/asset/js/17_event_form.js`
+
+```javascript
+// 이 파일에는 대응 구현이 없음
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+function calcTotal(base, toppings) {
+  if (!Number.isFinite(base) || base < 0) throw new Error("가격 오류");
+  if (!toppings.every(n => Number.isFinite(n) && n >= 0)) throw new Error("토핑 오류");
+  return base + toppings.reduce((sum, n) => sum + n, 0);
+}
+console.log(calcTotal(18000, [2000, 2500]));
+try { calcTotal(-1, []); } catch (error) { console.log(error.message); }
+```
+
+예상 출력:
+
+```text
+22500
+가격 오류
+```
+
+### 결과를 역추적하는 방법
+
+원본 구현과 이 개선 함수는 동일한 입력 정상값의 합계를 확인하고, 잘못된 입력 차이는 의도한 검증 강화로 명시한다. 순수 함수는 Console에서 테스트하기 쉽지만 DOM·Network 통합 테스트를 대신하지는 않는다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** 가격계산코드리팩토링전후에보존할기준을적는다.
+
+**응용·디버깅 실습:** 상태계산함수가document를직접선택하지않게분리한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. 정상합계·빈토핑·0원·음수거부·숫자아닌값검증이다. 함수이름이나줄수만비교하지않는다.
+2. 입력handler가값을읽고검증→순수함수계산→렌더함수표시로연결한다. DOM없는테스트를계산함수에적용한다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** 짧아졌다는 이유만으로 map 체인이 늘 좋은가?
+
+**해설:** 아니다. 반환 데이터가 필요한지, 부수효과인지, 종료 조건이 있는지에 맞게 선택하고 가독성·검증·성능을 함께 본다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-23-section-6"></a>
+
+## 1. 좋은 코드는 의도가 보인다
+
+### 1-1. Before
 
 ```javascript
 const a = 21
@@ -202,7 +392,7 @@ if (a >= 19 && b) {
 }
 ```
 
-## 1-2. After
+### 1-2. After
 
 ```javascript
 const userAge = 21
@@ -218,13 +408,13 @@ if (
 }
 ```
 
-## 1-3. 실행 결과
+### 1-3. 실행 결과
 
 ```text
 이용 가능
 ```
 
-## 1-4. 왜 개선됐을까?
+### 1-4. 왜 개선됐을까?
 
 | Before | After |
 | --- | --- |
@@ -234,7 +424,9 @@ if (
 
 ---
 
-# 2. 변수는 명사, Boolean은 질문처럼 작성
+<a id="js-23-section-7"></a>
+
+## 2. 변수는 명사, Boolean은 질문처럼 작성
 
 일반 값은 명사 형태로 작성한다.
 
@@ -253,7 +445,7 @@ const canEdit = true
 const isLoading = false
 ```
 
-## 2-1. Before
+### 2-1. Before
 
 ```javascript
 const active = true
@@ -265,7 +457,7 @@ if (active) {
 }
 ```
 
-## 2-2. After
+### 2-2. After
 
 ```javascript
 const isActive = true
@@ -286,7 +478,9 @@ if (isActive) {
 
 ---
 
-# 3. 함수 이름은 동작을 표현
+<a id="js-23-section-8"></a>
+
+## 3. 함수 이름은 동작을 표현
 
 ```javascript
 function validateUser() {}
@@ -309,9 +503,11 @@ function click() {}
 
 ---
 
-# 4. `const`를 기본으로 사용
+<a id="js-23-section-9"></a>
 
-## 4-1. Before
+## 4. `const`를 기본으로 사용
+
+### 4-1. Before
 
 ```javascript
 let userName = "Kim"
@@ -325,7 +521,7 @@ let button = (
 
 값을 다시 대입하지 않는데 모두 `let`을 사용한다.
 
-## 4-2. After
+### 4-2. After
 
 ```javascript
 const userName = "Kim"
@@ -337,7 +533,9 @@ const button = (
 )
 ```
 
-## 4-3. `let`이 필요한 경우
+<a id="index-section-25"></a>
+
+### 4-3. `let`이 필요한 경우
 
 ```javascript
 let count = 0
@@ -352,9 +550,11 @@ let controller = null
 
 ---
 
-# 5. `var` 대신 Block Scope 사용
+<a id="js-23-section-10"></a>
 
-## 5-1. Before
+## 5. `var` 대신 Block Scope 사용
+
+### 5-1. Before
 
 ```javascript
 for (
@@ -379,7 +579,7 @@ for (
 3
 ```
 
-## 5-2. After
+### 5-2. After
 
 ```javascript
 for (
@@ -408,9 +608,11 @@ for (
 
 ---
 
-# 6. 엄격한 비교를 기본으로 사용
+<a id="js-23-section-11"></a>
 
-## 6-1. Before
+## 6. 엄격한 비교를 기본으로 사용
+
+### 6-1. Before
 
 ```javascript
 if (userId == 1) {
@@ -420,7 +622,7 @@ if (userId == 1) {
 
 문자열 `"1"`도 Number `1`과 같다고 판정될 수 있다.
 
-## 6-2. After
+### 6-2. After
 
 ```javascript
 if (userId === 1) {
@@ -438,7 +640,9 @@ const numericUserId = Number(
 
 ---
 
-# 7. 자료형 변환은 명시적으로 작성
+<a id="js-23-section-12"></a>
+
+## 7. 자료형 변환은 명시적으로 작성
 
 ```javascript
 const quantity = Number(
@@ -470,9 +674,11 @@ CSS 단위 처리에는 적합할 수 있지만 Form 숫자 검증에는 `Number
 
 ---
 
-# 8. Truthy·Falsy보다 업무 조건을 명확히 표현
+<a id="js-23-section-13"></a>
 
-## 8-1. Before
+## 8. Truthy·Falsy보다 업무 조건을 명확히 표현
+
+### 8-1. Before
 
 ```javascript
 if (users) {
@@ -484,7 +690,7 @@ if (users) {
 
 빈 배열도 Truthy다.
 
-## 8-2. After
+### 8-2. After
 
 ```javascript
 if (
@@ -508,7 +714,9 @@ if (
 
 ---
 
-# 9. `null`과 `undefined`를 구분
+<a id="js-23-section-14"></a>
+
+## 9. `null`과 `undefined`를 구분
 
 ```text
 null
@@ -544,9 +752,11 @@ optionalBanner?.remove()
 
 ---
 
-# 10. Guard Clause로 중첩을 줄인다
+<a id="js-23-section-15"></a>
 
-## 10-1. Before
+## 10. Guard Clause로 중첩을 줄인다
+
+### 10-1. Before
 
 ```javascript
 function submitOrder(
@@ -568,7 +778,7 @@ function submitOrder(
 }
 ```
 
-## 10-2. After
+### 10-2. After
 
 ```javascript
 function submitOrder(
@@ -598,9 +808,11 @@ function submitOrder(
 
 ---
 
-# 11. 조건식은 의미 있는 함수로 분리
+<a id="js-23-section-16"></a>
 
-## 11-1. Before
+## 11. 조건식은 의미 있는 함수로 분리
+
+### 11-1. Before
 
 ```javascript
 if (
@@ -615,7 +827,7 @@ if (
 }
 ```
 
-## 11-2. After
+### 11-2. After
 
 ```javascript
 function isEligibleUser(
@@ -642,9 +854,11 @@ if (
 
 ---
 
-# 12. Magic Number와 Magic String을 상수로 분리
+<a id="js-23-section-17"></a>
 
-## 12-1. Before
+## 12. Magic Number와 Magic String을 상수로 분리
+
+### 12-1. Before
 
 ```javascript
 if (
@@ -656,7 +870,7 @@ if (
 }
 ```
 
-## 12-2. After
+### 12-2. After
 
 ```javascript
 const MAX_MESSAGE_LENGTH = 2000
@@ -675,7 +889,9 @@ if (
 
 ---
 
-# 13. 반복 목적에 맞는 문법 선택
+<a id="js-23-section-18"></a>
+
+## 13. 반복 목적에 맞는 문법 선택
 
 | 목적 | 선택 |
 | --- | --- |
@@ -690,9 +906,11 @@ if (
 
 ---
 
-# 14. 배열을 단순 순회할 때 `for...of`
+<a id="js-23-section-19"></a>
 
-## 14-1. Before
+## 14. 배열을 단순 순회할 때 `for...of`
+
+### 14-1. Before
 
 ```javascript
 for (
@@ -706,7 +924,7 @@ for (
 }
 ```
 
-## 14-2. After
+### 14-2. After
 
 ```javascript
 for (const user of users) {
@@ -718,7 +936,9 @@ Index가 필요하지 않다면 직접 값을 순회한다.
 
 ---
 
-# 15. Index가 필요하면 `entries()`
+<a id="js-23-section-20"></a>
+
+## 15. Index가 필요하면 `entries()`
 
 ```javascript
 for (
@@ -737,9 +957,11 @@ for (
 
 ---
 
-# 16. `map()`은 새 배열을 만들 때 사용
+<a id="js-23-section-21"></a>
 
-## 16-1. Before
+## 16. `map()`은 새 배열을 만들 때 사용
+
+### 16-1. Before
 
 ```javascript
 const names = []
@@ -753,7 +975,7 @@ users.forEach(
 )
 ```
 
-## 16-2. After
+### 16-2. After
 
 ```javascript
 const names = users.map(
@@ -771,7 +993,9 @@ Side Effect가 목적이면 `forEach()`, 새 배열이 목적이면 `map()`을 �
 
 ---
 
-# 17. `filter()`는 조건에 맞는 값만 남긴다
+<a id="js-23-section-22"></a>
+
+## 17. `filter()`는 조건에 맞는 값만 남긴다
 
 ```javascript
 const activeUsers = (
@@ -800,7 +1024,9 @@ function isActiveUser(
 
 ---
 
-# 18. `reduce()`는 누적 목적이 분명할 때 사용
+<a id="js-23-section-23"></a>
+
+## 18. `reduce()`는 누적 목적이 분명할 때 사용
 
 ```javascript
 const totalPrice = (
@@ -827,9 +1053,11 @@ const totalPrice = (
 
 ---
 
-# 19. 객체 구조 분해로 필요한 값 표현
+<a id="js-23-section-24"></a>
 
-## 19-1. Before
+## 19. 객체 구조 분해로 필요한 값 표현
+
+### 19-1. Before
 
 ```javascript
 function printUser(
@@ -842,7 +1070,7 @@ function printUser(
 }
 ```
 
-## 19-2. After
+### 19-2. After
 
 ```javascript
 function printUser({
@@ -860,7 +1088,9 @@ function printUser({
 
 ---
 
-# 20. 기본값과 Nullish Coalescing
+<a id="js-23-section-25"></a>
+
+## 20. 기본값과 Nullish Coalescing
 
 ```javascript
 const displayName = (
@@ -883,7 +1113,9 @@ const pageSize = (
 
 ---
 
-# 21. Optional Chaining은 안전한 탐색에 사용
+<a id="js-23-section-26"></a>
+
+## 21. Optional Chaining은 안전한 탐색에 사용
 
 ```javascript
 const city = (
@@ -909,9 +1141,11 @@ if (
 
 ---
 
-# 22. 함수 하나는 하나의 주요 역할을 가진다
+<a id="js-23-section-27"></a>
 
-## 22-1. Before
+## 22. 함수 하나는 하나의 주요 역할을 가진다
+
+### 22-1. Before
 
 ```javascript
 async function loadUsers() {
@@ -948,7 +1182,7 @@ async function loadUsers() {
 
 요청·변환·DOM·저장을 한 함수에서 모두 처리한다.
 
-## 22-2. After
+### 22-2. After
 
 ```javascript
 async function fetchUsers() {
@@ -986,7 +1220,9 @@ function renderUsers(
 
 ---
 
-# 23. 함수의 입력과 결과를 분명히 한다
+<a id="js-23-section-28"></a>
+
+## 23. 함수의 입력과 결과를 분명히 한다
 
 ```javascript
 function calculateTotal(
@@ -1010,7 +1246,9 @@ DOM에 직접 출력하지 않는 계산 함수는 독립적으로 테스트하�
 
 ---
 
-# 24. Side Effect를 경계에 모은다
+<a id="js-23-section-29"></a>
+
+## 24. Side Effect를 경계에 모은다
 
 ```text
 순수 계산
@@ -1039,7 +1277,9 @@ renderTotal(
 
 ---
 
-# 25. 필수 DOM 요소는 명확하게 검사
+<a id="js-23-section-30"></a>
+
+## 25. 필수 DOM 요소는 명확하게 검사
 
 ```javascript
 function getRequiredElement(
@@ -1062,7 +1302,7 @@ function getRequiredElement(
 }
 ```
 
-## 25-1. 사용
+### 25-1. 사용
 
 ```javascript
 const form = getRequiredElement(
@@ -1080,9 +1320,11 @@ HTML 누락을 조용히 무시하지 않는다.
 
 ---
 
-# 26. DOM 선택 범위를 Component 내부로 제한
+<a id="js-23-section-31"></a>
 
-## 26-1. Before
+## 26. DOM 선택 범위를 Component 내부로 제한
+
+### 26-1. Before
 
 ```javascript
 const button = (
@@ -1094,7 +1336,7 @@ const button = (
 
 같은 클래스가 여러 기능에 있으면 잘못된 요소를 선택할 수 있다.
 
-## 26-2. After
+### 26-2. After
 
 ```javascript
 function initTodo(
@@ -1112,9 +1354,11 @@ Component Root를 전달해 선택 범위를 제한한다.
 
 ---
 
-# 27. 상태를 DOM Text에만 저장하지 않는다
+<a id="js-23-section-32"></a>
 
-## 27-1. Before
+## 27. 상태를 DOM Text에만 저장하지 않는다
+
+### 27-1. Before
 
 ```javascript
 countButton.addEventListener(
@@ -1129,7 +1373,7 @@ countButton.addEventListener(
 )
 ```
 
-## 27-2. After
+### 27-2. After
 
 ```javascript
 let count = 0
@@ -1153,9 +1397,11 @@ countButton.addEventListener(
 
 ---
 
-# 28. 외부 문자열은 `textContent`로 출력
+<a id="js-23-section-33"></a>
 
-## 28-1. Before
+## 28. 외부 문자열은 `textContent`로 출력
+
+### 28-1. Before
 
 ```javascript
 messageView.innerHTML = (
@@ -1163,7 +1409,7 @@ messageView.innerHTML = (
 )
 ```
 
-## 28-2. After
+### 28-2. After
 
 ```javascript
 messageView.textContent = (
@@ -1175,7 +1421,9 @@ messageView.textContent = (
 
 ---
 
-# 29. HTML 구조가 필요하면 Node를 생성
+<a id="js-23-section-34"></a>
+
+## 29. HTML 구조가 필요하면 Node를 생성
 
 ```javascript
 function createUserItem(
@@ -1214,9 +1462,11 @@ function createUserItem(
 
 ---
 
-# 30. 반복 렌더링에서 `innerHTML +=`를 피한다
+<a id="js-23-section-35"></a>
 
-## 30-1. Before
+## 30. 반복 렌더링에서 `innerHTML +=`를 피한다
+
+### 30-1. Before
 
 ```javascript
 for (const user of users) {
@@ -1228,7 +1478,7 @@ for (const user of users) {
 
 반복마다 기존 HTML 전체를 다시 읽고 Parse할 수 있다.
 
-## 30-2. After
+### 30-2. After
 
 ```javascript
 const fragment = (
@@ -1248,9 +1498,11 @@ list.replaceChildren(
 
 ---
 
-# 31. Append 후 부모 Text를 덮어쓰지 않는다
+<a id="js-23-section-36"></a>
 
-## 31-1. Before
+## 31. Append 후 부모 Text를 덮어쓰지 않는다
+
+### 31-1. Before
 
 ```javascript
 const message = (
@@ -1268,7 +1520,7 @@ resultView.innerText = (
 
 `innerText` 재할당으로 방금 추가한 `message`가 제거된다.
 
-## 31-2. After
+### 31-2. After
 
 ```javascript
 message.textContent = (
@@ -1280,9 +1532,11 @@ resultView.append(message)
 
 ---
 
-# 32. 상태 Style은 Class로 관리
+<a id="js-23-section-37"></a>
 
-## 32-1. Before
+## 32. 상태 Style은 Class로 관리
+
+### 32-1. Before
 
 ```javascript
 button.style.backgroundColor = (
@@ -1294,7 +1548,7 @@ button.style.fontWeight = (
 )
 ```
 
-## 32-2. After
+### 32-2. After
 
 ```javascript
 button.classList.add(
@@ -1313,7 +1567,9 @@ JavaScript는 상태를, CSS는 시각 표현을 담당한다.
 
 ---
 
-# 33. 이벤트 함수는 이름 있는 참조를 사용
+<a id="js-23-section-38"></a>
+
+## 33. 이벤트 함수는 이름 있는 참조를 사용
 
 ```javascript
 function handleSaveClick() {
@@ -1339,9 +1595,11 @@ saveButton.removeEventListener(
 
 ---
 
-# 34. 이벤트 등록을 한 번만 수행
+<a id="js-23-section-39"></a>
 
-## 34-1. Before
+## 34. 이벤트 등록을 한 번만 수행
+
+### 34-1. Before
 
 ```javascript
 function addTodo() {
@@ -1364,7 +1622,7 @@ function addTodo() {
 
 Todo를 추가할 때마다 기존 Button에도 Listener가 다시 등록될 수 있다.
 
-## 34-2. After
+### 34-2. After
 
 ```javascript
 todoList.addEventListener(
@@ -1393,7 +1651,9 @@ todoList.addEventListener(
 
 ---
 
-# 35. 동적 요소에는 Event Delegation
+<a id="js-23-section-40"></a>
+
+## 35. 동적 요소에는 Event Delegation
 
 상위 요소 Listener 하나로 동적 자식을 처리한다.
 
@@ -1421,7 +1681,9 @@ menuList.addEventListener(
 
 ---
 
-# 36. `target`과 `currentTarget`을 구분
+<a id="js-23-section-41"></a>
+
+## 36. `target`과 `currentTarget`을 구분
 
 ```javascript
 menuList.addEventListener(
@@ -1448,7 +1710,9 @@ currentTarget
 
 ---
 
-# 37. 기본 동작과 이벤트 전파를 구분
+<a id="js-23-section-42"></a>
+
+## 37. 기본 동작과 이벤트 전파를 구분
 
 ```javascript
 event.preventDefault()
@@ -1466,9 +1730,11 @@ event.stopPropagation()
 
 ---
 
-# 38. Form은 Button Click보다 Submit을 처리
+<a id="js-23-section-43"></a>
 
-## 38-1. Before
+## 38. Form은 Button Click보다 Submit을 처리
+
+### 38-1. Before
 
 ```javascript
 loginButton.addEventListener(
@@ -1479,7 +1745,7 @@ loginButton.addEventListener(
 
 Keyboard Enter 제출을 놓칠 수 있다.
 
-## 38-2. After
+### 38-2. After
 
 ```javascript
 loginForm.addEventListener(
@@ -1495,7 +1761,9 @@ Button과 Enter 제출을 하나의 흐름으로 통합한다.
 
 ---
 
-# 39. 입력값은 `trim()` 후 검증
+<a id="js-23-section-44"></a>
+
+## 39. 입력값은 `trim()` 후 검증
 
 ```javascript
 const userId = (
@@ -1516,7 +1784,9 @@ Password는 정책에 따라 공백이 유효할 수도 있으므로 무조건 `
 
 ---
 
-# 40. Loading·Empty·Error·Success 상태를 구분
+<a id="js-23-section-45"></a>
+
+## 40. Loading·Empty·Error·Success 상태를 구분
 
 ```text
 Idle
@@ -1539,9 +1809,11 @@ Error
 
 ---
 
-# 41. Fetch에서는 `response.ok`를 검사
+<a id="js-23-section-46"></a>
 
-## 41-1. Before
+## 41. Fetch에서는 `response.ok`를 검사
+
+### 41-1. Before
 
 ```javascript
 const response = await fetch(
@@ -1553,7 +1825,7 @@ const users = await response.json()
 
 HTTP 404·500도 Parse를 시도할 수 있다.
 
-## 41-2. After
+### 41-2. After
 
 ```javascript
 const response = await fetch(
@@ -1571,7 +1843,9 @@ const users = await response.json()
 
 ---
 
-# 42. `async/await`와 `try...catch`
+<a id="js-23-section-47"></a>
+
+## 42. `async/await`와 `try...catch`
 
 ```javascript
 async function loadUsers() {
@@ -1601,7 +1875,9 @@ async function loadUsers() {
 
 ---
 
-# 43. `finally`에서 UI를 복구
+<a id="js-23-section-48"></a>
+
+## 43. `finally`에서 UI를 복구
 
 ```javascript
 async function handleLoad() {
@@ -1619,7 +1895,9 @@ async function handleLoad() {
 
 ---
 
-# 44. 중복 요청을 막는다
+<a id="js-23-section-49"></a>
+
+## 44. 중복 요청을 막는다
 
 ```javascript
 let isLoading = false
@@ -1643,7 +1921,9 @@ Button `disabled`와 상태 Flag를 함께 사용할 수 있다.
 
 ---
 
-# 45. 이전 요청을 취소한다
+<a id="js-23-section-50"></a>
+
+## 45. 이전 요청을 취소한다
 
 검색어가 바뀔 때 이전 요청 결과가 최신 결과를 덮어쓰지 않도록 한다.
 
@@ -1690,7 +1970,9 @@ async function fetchLatest(
 
 ---
 
-# 46. Abort는 일반 오류와 구분
+<a id="js-23-section-51"></a>
+
+## 46. Abort는 일반 오류와 구분
 
 ```javascript
 async function handleLatestRequest(
@@ -1719,7 +2001,9 @@ async function handleLatestRequest(
 
 ---
 
-# 47. API 응답의 구조를 검증
+<a id="js-23-section-52"></a>
+
+## 47. API 응답의 구조를 검증
 
 ```javascript
 function isUserArray(
@@ -1744,7 +2028,9 @@ JSON Parse 성공은 데이터 구조가 올바르다는 뜻이 아니다.
 
 ---
 
-# 48. 외부 API 날짜는 Timezone을 확인
+<a id="js-23-section-53"></a>
+
+## 48. 외부 API 날짜는 Timezone을 확인
 
 ```javascript
 function formatLocalDate(
@@ -1778,7 +2064,9 @@ function formatLocalDate(
 
 ---
 
-# 49. JSON 객체와 JSON 문자열을 구분
+<a id="js-23-section-54"></a>
+
+## 49. JSON 객체와 JSON 문자열을 구분
 
 ```javascript
 const requestData = {
@@ -1802,7 +2090,9 @@ JSON 문자열이다.
 
 ---
 
-# 50. Local Storage는 안전하게 Parse
+<a id="js-23-section-55"></a>
+
+## 50. Local Storage는 안전하게 Parse
 
 ```javascript
 function loadJson(
@@ -1840,7 +2130,9 @@ function loadJson(
 
 ---
 
-# 51. 저장할 데이터와 실행 객체를 구분
+<a id="js-23-section-56"></a>
+
+## 51. 저장할 데이터와 실행 객체를 구분
 
 Storage에는 상태 데이터만 저장한다.
 
@@ -1855,7 +2147,9 @@ const settings = {
 
 ---
 
-# 52. API Key와 Webhook URL은 Client에 넣지 않는다
+<a id="js-23-section-57"></a>
+
+## 52. API Key와 Webhook URL은 Client에 넣지 않는다
 
 ```text
 잘못된 구조
@@ -1873,7 +2167,9 @@ Browser
 
 ---
 
-# 53. 민감정보는 Console에 출력하지 않는다
+<a id="js-23-section-58"></a>
+
+## 53. 민감정보는 Console에 출력하지 않는다
 
 출력하지 않는 값:
 
@@ -1894,7 +2190,9 @@ console.log(
 
 ---
 
-# 54. 외부 HTML과 AI 응답을 바로 실행하지 않는다
+<a id="js-23-section-59"></a>
+
+## 54. 외부 HTML과 AI 응답을 바로 실행하지 않는다
 
 ```text
 API 응답
@@ -1914,7 +2212,9 @@ Markdown·HTML Renderer를 사용할 경우 Sanitizer와 허용 정책이 필요
 
 ---
 
-# 55. Module로 역할을 분리
+<a id="js-23-section-60"></a>
+
+## 55. Module로 역할을 분리
 
 ```text
 api/
@@ -1935,7 +2235,9 @@ main.js
 
 ---
 
-# 56. Module Export 예제
+<a id="js-23-section-61"></a>
+
+## 56. Module Export 예제
 
 ```javascript
 export function calculateTotal(
@@ -1963,7 +2265,9 @@ import {
 
 ---
 
-# 57. 초기화 함수는 기능을 연결
+<a id="js-23-section-62"></a>
+
+## 57. 초기화 함수는 기능을 연결
 
 ```javascript
 function init() {
@@ -1990,7 +2294,9 @@ init()
 
 ---
 
-# 58. 작은 Component는 Closure로 상태를 숨긴다
+<a id="js-23-section-63"></a>
+
+## 58. 작은 Component는 Closure로 상태를 숨긴다
 
 ```javascript
 function createCounter(
@@ -2022,7 +2328,9 @@ function createCounter(
 
 ---
 
-# 59. 주석은 코드가 아닌 이유를 설명
+<a id="js-23-section-64"></a>
+
+## 59. 주석은 코드가 아닌 이유를 설명
 
 좋지 않은 주석:
 
@@ -2045,7 +2353,9 @@ baseDate.setHours(
 
 ---
 
-# 60. Format과 Lint를 자동화
+<a id="js-23-section-65"></a>
+
+## 60. Format과 Lint를 자동화
 
 대표 도구:
 
@@ -2067,7 +2377,9 @@ Test
 
 ---
 
-# 61. JSDoc으로 입력과 반환값 표현
+<a id="js-23-section-66"></a>
+
+## 61. JSDoc으로 입력과 반환값 표현
 
 ```javascript
 /**
@@ -2098,9 +2410,11 @@ function calculateTotal(
 
 ---
 
-# 62. 실제 개선 사례 1: NodeList에 `classList`
+<a id="js-23-section-67"></a>
 
-## 62-1. Before
+## 62. 실제 개선 사례 1: NodeList에 `classList`
+
+### 62-1. Before
 
 ```javascript
 const quizItems = (
@@ -2116,7 +2430,7 @@ quizItems.classList.contains(
 
 `querySelectorAll()` 결과는 NodeList다.
 
-## 62-2. After
+### 62-2. After
 
 ```javascript
 const quizItems = (
@@ -2134,9 +2448,11 @@ console.log(
 
 ---
 
-# 63. 실제 개선 사례 2: Event Listener 중복
+<a id="js-23-section-68"></a>
 
-## 63-1. Before
+## 63. 실제 개선 사례 2: Event Listener 중복
+
+### 63-1. Before
 
 ```text
 Todo 추가
@@ -2144,7 +2460,7 @@ Todo 추가
 → 기존 버튼에도 Listener 재등록
 ```
 
-## 63-2. After
+### 63-2. After
 
 ```javascript
 todoList.addEventListener(
@@ -2157,9 +2473,11 @@ todoList.addEventListener(
 
 ---
 
-# 64. 실제 개선 사례 3: `innerHTML +=`
+<a id="js-23-section-69"></a>
 
-## 64-1. Before
+## 64. 실제 개선 사례 3: `innerHTML +=`
+
+### 64-1. Before
 
 ```javascript
 for (const user of users) {
@@ -2171,7 +2489,7 @@ for (const user of users) {
 
 Table 구조도 잘못되고 반복 재파싱도 발생한다.
 
-## 64-2. After
+### 64-2. After
 
 ```javascript
 const row = document.createElement(
@@ -2189,16 +2507,18 @@ tbody.append(row)
 
 ---
 
-# 65. 실제 개선 사례 4: Fetch 성공 검사 누락
+<a id="js-23-section-70"></a>
 
-## 65-1. Before
+## 65. 실제 개선 사례 4: Fetch 성공 검사 누락
+
+### 65-1. Before
 
 ```javascript
 const response = await fetch(url)
 const data = await response.json()
 ```
 
-## 65-2. After
+### 65-2. After
 
 ```javascript
 const response = await fetch(url)
@@ -2214,9 +2534,11 @@ const data = await response.json()
 
 ---
 
-# 66. 실제 개선 사례 5: AI History 오염
+<a id="js-23-section-71"></a>
 
-## 66-1. Before
+## 66. 실제 개선 사례 5: AI History 오염
+
+### 66-1. Before
 
 ```javascript
 conversation.contents.push({
@@ -2234,7 +2556,7 @@ conversation.contents.push({
 
 전체 API Response Metadata를 대화에 저장한다.
 
-## 66-2. After
+### 66-2. After
 
 ```javascript
 conversation.contents.push({
@@ -2252,16 +2574,18 @@ conversation.contents.push({
 
 ---
 
-# 67. 실제 개선 사례 6: Webhook Credential 노출
+<a id="js-23-section-72"></a>
 
-## 67-1. Before
+## 67. 실제 개선 사례 6: Webhook Credential 노출
+
+### 67-1. Before
 
 ```text
 Client JavaScript
 → 실제 Discord Webhook URL
 ```
 
-## 67-2. After
+### 67-2. After
 
 ```text
 Client
@@ -2274,15 +2598,17 @@ Client
 
 ---
 
-# 68. 실제 개선 사례 7: 잘못된 Button Type
+<a id="js-23-section-73"></a>
 
-## 68-1. Before
+## 68. 실제 개선 사례 7: 잘못된 Button Type
+
+### 68-1. Before
 
 ```html
 <button type="buttn">
 ```
 
-## 68-2. After
+### 68-2. After
 
 ```html
 <button type="button">
@@ -2292,9 +2618,11 @@ Client
 
 ---
 
-# 69. 실제 개선 사례 8: 빈 입력 전송
+<a id="js-23-section-74"></a>
 
-## 69-1. Before
+## 69. 실제 개선 사례 8: 빈 입력 전송
+
+### 69-1. Before
 
 ```javascript
 const prompt = (
@@ -2304,7 +2632,7 @@ const prompt = (
 sendPrompt(prompt)
 ```
 
-## 69-2. After
+### 69-2. After
 
 ```javascript
 const prompt = (
@@ -2324,7 +2652,9 @@ sendPrompt(prompt)
 
 ---
 
-# 70. 실제 개선 사례 9: 동일 Node를 여러 번 Append
+<a id="js-23-section-75"></a>
+
+## 70. 실제 개선 사례 9: 동일 Node를 여러 번 Append
 
 ```javascript
 list.append(item)
@@ -2343,7 +2673,9 @@ const clonedItem = item.cloneNode(
 
 ---
 
-# 71. 실제 개선 사례 10: 삭제와 숨김 혼동
+<a id="js-23-section-76"></a>
+
+## 71. 실제 개선 사례 10: 삭제와 숨김 혼동
 
 ```javascript
 element.remove()
@@ -2361,7 +2693,9 @@ element.hidden = true
 
 ---
 
-# 72. Before와 After를 비교할 때 확인할 기준
+<a id="js-23-section-77"></a>
+
+## 72. Before와 After를 비교할 때 확인할 기준
 
 ```text
 코드 줄 수가 줄었는가?
@@ -2385,7 +2719,9 @@ element.hidden = true
 
 ---
 
-# 73. 실무형 예제: 사용자 목록 Component
+<a id="js-23-section-78"></a>
+
+## 73. 실무형 예제: 사용자 목록 Component
 
 ```javascript
 function createUserList({
@@ -2527,7 +2863,7 @@ function createUserList({
 }
 ```
 
-## 73-1. 실행 흐름
+### 73-1. 실행 흐름
 
 ```text
 Button Click
@@ -2540,7 +2876,7 @@ Button Click
 → Button 복구
 ```
 
-## 73-2. 실무에서 이렇게 작성하는 이유
+### 73-2. 실무에서 이렇게 작성하는 이유
 
 | 코드 | 이유 |
 | --- | --- |
@@ -2555,7 +2891,9 @@ Button Click
 
 ---
 
-# 74. 파일 구조 예시
+<a id="js-23-section-79"></a>
+
+## 74. 파일 구조 예시
 
 ```text
 src/
@@ -2576,51 +2914,55 @@ src/
 
 ---
 
-# 75. 자주 하는 실수
+<a id="js-23-section-80"></a>
 
-## 75-1. 모든 변수를 `let`으로 선언
+## 75. 자주 하는 실수
+
+### 75-1. 모든 변수를 `let`으로 선언
 
 재할당 여부가 드러나지 않는다.
 
-## 75-2. 짧은 이름을 좋은 코드라고 생각
+### 75-2. 짧은 이름을 좋은 코드라고 생각
 
 의미 없는 축약은 해석 비용을 높인다.
 
-## 75-3. `map()`을 Side Effect 목적으로 사용
+### 75-3. `map()`을 Side Effect 목적으로 사용
 
 새 배열을 사용하지 않는다면 다른 반복 방식을 검토한다.
 
-## 75-4. 빈 배열·NodeList를 Falsy로 생각
+### 75-4. 빈 배열·NodeList를 Falsy로 생각
 
 객체이므로 Truthy다.
 
-## 75-5. 필수 DOM 요소에 Optional Chaining만 사용
+### 75-5. 필수 DOM 요소에 Optional Chaining만 사용
 
 HTML 오류가 조용히 무시된다.
 
-## 75-6. `innerHTML`을 문자열 출력 기본값으로 사용
+### 75-6. `innerHTML`을 문자열 출력 기본값으로 사용
 
 XSS와 재파싱 문제가 생길 수 있다.
 
-## 75-7. 동적 요소마다 Listener 등록
+### 75-7. 동적 요소마다 Listener 등록
 
 Event Delegation을 검토한다.
 
-## 75-8. Fetch Catch가 HTTP 404를 자동 처리한다고 생각
+### 75-8. Fetch Catch가 HTTP 404를 자동 처리한다고 생각
 
 `response.ok`를 직접 확인한다.
 
-## 75-9. 실패 상태에서도 입력과 상태를 모두 초기화
+### 75-9. 실패 상태에서도 입력과 상태를 모두 초기화
 
 사용자의 재시도 흐름을 고려한다.
 
-## 75-10. Secret을 Client Bundle에 넣고 `.gitignore`로 보호
+### 75-10. Secret을 Client Bundle에 넣고 `.gitignore`로 보호
 
 Browser에 전달된 값은 사용자에게 노출된다.
 
 ---
 
-# 76. 핵심 요약
+<a id="js-23-section-81"></a>
+
+## 76. 핵심 요약
 
 ```text
 좋은 이름
@@ -2676,7 +3018,9 @@ Local Storage
 
 ---
 
-# 77. 최종 체크리스트
+<a id="js-23-section-82"></a>
+
+## 77. 최종 체크리스트
 
 - [ ] 변수 이름이 업무 의미를 표현하는가?
 - [ ] Boolean 이름이 질문처럼 읽히는가?
@@ -2716,7 +3060,9 @@ Local Storage
 
 ---
 
-# 마무리
+<a id="js-23-section-83"></a>
+
+## 마무리
 
 JavaScript 실무 코딩 스타일의 핵심은 최신 문법을 많이 사용하는 것에서 끝나지 않는다.
 
@@ -2735,7 +3081,9 @@ JavaScript 실무 코딩 스타일의 핵심은 최신 문법을 많이 사용�
 좋은 JavaScript 코드는 단순히 실행되는 코드가 아니다.
 
 **다른 개발자가 빠르게 이해하고, 기능을 안전하게 변경하고, 잘못된 상태를 쉽게 발견할 수 있는 코드**다.
-# V3 실행 추적 카드 — 입력 경계 → 작은 책임 → 명시적 오류·결과
+<a id="js-23-section-84"></a>
+
+## V3 실행 추적 카드 — 입력 경계 → 작은 책임 → 명시적 오류·결과
 
 읽기 좋은 코드는 이름, 실행 시점, 상태 소유자, 부수 효과를 드러낸다. DOM 선택·검증·상태 변경·렌더링·네트워크를 함수 책임별로 나누면 디버깅이 쉬워진다.
 

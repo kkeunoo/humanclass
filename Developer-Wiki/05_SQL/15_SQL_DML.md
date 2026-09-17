@@ -4,6 +4,57 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-15-section-2)
+- [개념에서 실제 실행까지 — DML이란? — 대상으로 정한 행만 변경하기](#sql-15-section-3)
+- [14. DELETE와 TRUNCATE 비교](#sql-15-section-17)
+- [17. 내 코드와 강사님 코드 비교](#sql-15-section-20)
+- [22. 종합실습](#sql-15-section-25)
+- [23. 정답과 해설](#sql-15-section-26)
+- [24. 최종 체크리스트](#sql-15-section-27)
+- [25. 핵심 요약](#sql-15-section-28)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-15-section-1)
+- [학습 목표](#sql-15-section-2)
+- [개념에서 실제 실행까지 — DML이란? — 대상으로 정한 행만 변경하기](#sql-15-section-3)
+- [1. DML 기본 개념](#sql-15-section-4)
+- [2. INSERT 기본](#sql-15-section-5)
+- [3. 여러 Row INSERT](#sql-15-section-6)
+- [4. NULL과 DEFAULT 입력](#sql-15-section-7)
+- [5. 날짜와 문자열 입력](#sql-15-section-8)
+- [6. INSERT ... SELECT](#sql-15-section-9)
+- [7. Primary Key와 중복 입력](#sql-15-section-10)
+- [8. Foreign Key와 입력 순서](#sql-15-section-11)
+- [9. UPDATE 기본](#sql-15-section-12)
+- [10. 조건부 UPDATE](#sql-15-section-13)
+- [11. JOIN을 사용한 UPDATE](#sql-15-section-14)
+- [12. DELETE 기본](#sql-15-section-15)
+- [13. Foreign Key와 DELETE](#sql-15-section-16)
+- [14. DELETE와 TRUNCATE 비교](#sql-15-section-17)
+- [15. 영향받은 Row 확인](#sql-15-section-18)
+- [16. Safe Update와 LIMIT](#sql-15-section-19)
+- [17. 내 코드와 강사님 코드 비교](#sql-15-section-20)
+- [18. 개선된 통합 예제](#sql-15-section-21)
+- [19. 실무 DML 절차](#sql-15-section-22)
+- [20. 자주 하는 실수](#sql-15-section-23)
+- [21. 디버깅 방법](#sql-15-section-24)
+- [22. 종합실습](#sql-15-section-25)
+- [23. 정답과 해설](#sql-15-section-26)
+- [24. 최종 체크리스트](#sql-15-section-27)
+- [25. 핵심 요약](#sql-15-section-28)
+- [📎 다음 문서](#sql-15-section-29)
+- [🔬 V3 동작 백과 — 입력값이 실제 Row 변경으로 이어지는 과정](#sql-15-section-30)
+
+</details>
+
+---
+
+<a id="sql-15-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -19,17 +70,159 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-15-section-2"></a>
 
-- DML과 DDL의 역할을 구분한다.
-- Column 목록을 명시하여 단일·다중 Row를 안전하게 입력한다.
-- `INSERT ... SELECT`로 Query 결과를 다른 Table에 저장한다.
-- `UPDATE`와 `DELETE` 전에 같은 조건의 `SELECT`로 대상을 검증한다.
-- Primary Key, Foreign Key, `NOT NULL`, Default가 DML에 미치는 영향을 설명한다.
-- 영향받은 Row 수와 변경 후 Data를 확인한다.
-- 대량 변경을 작은 단위로 설계하고 Transaction 단원과 연결한다.
+## 학습 목표
+
+- 사전 조회·변경 범위·영향 행·트랜잭션을 이해한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-15-section-3"></a>
+
+## 개념에서 실제 실행까지 — DML이란? — 대상으로 정한 행만 변경하기
+
+### 무엇이며 왜 배워야 할까?
+
+DML은 저장된 행의 값을 입력·수정·삭제한다. INSERT의 열 목록을 명시하면 값이 어느 열에 대응하는지 읽기 쉽고 생략 열의 기본값 적용을 확인할 수 있다. DEFAULT가 있다고 명시적 NULL도 자동 대체되는 것은 아니다.
+
+UPDATE는 WHERE가 통과시킨 모든 행에 SET을 적용한다. WHERE가 없으면 테이블 전체가 대상이다. 조건이 있으니 무조건 안전한 것이 아니라 그 조건이 원하는 행만 찾는지 같은 WHERE의 SELECT로 먼저 확인해야 한다. 영향을 받은 행 수는 매칭 수와 값이 실제 바뀐 수 등 클라이언트 설정 차이도 있어 사후 조회와 함께 판단한다.
+
+두 원본은 empno=1002 INSERT를 오류 시연으로 제외하고 뒤에서 1002 UPDATE·DELETE를 시도한다. 다른 작업으로 그 번호를 넣지 않은 초기 상태라면 변경 대상은 0행이다. SQL이 정상 종료했다는 사실만으로 해당 사원의 급여가 바뀌었다고 쓰면 잘못이다.
+
+아래 실습은 별도 테이블의 두 행을 만들고 명시 트랜잭션에서 한 행만 수정한다. 저장 데이터가 바뀌는 과정을 보되 마지막에는 ROLLBACK으로 변경을 되돌린다. CREATE·초기 INSERT는 트랜잭션 시작 전에 실행한다.
+
+### 입력은 어디에서 오는가?
+
+기존 EMP·DEPT를 변경하지 않는 새 wiki_demo_* 테이블을 사용한다. 이 이름이 이미 있으면 다른 새 이름으로 구분하고 기존 객체를 삭제·덮어쓰지 않는다. 일반 DDL은 진행 중인 트랜잭션과 분리한다. 아래 예제는 새 실습 테이블에서 한 번 실행하는 순서다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+CREATE TABLE wiki_demo_15_emp (
+  empno INT PRIMARY KEY,
+  sal DECIMAL(7,2) NOT NULL
+) ENGINE=InnoDB;
+INSERT INTO wiki_demo_15_emp VALUES (1,1000), (2,2000);
+START TRANSACTION;
+SELECT empno, sal FROM wiki_demo_15_emp WHERE empno=1;
+UPDATE wiki_demo_15_emp SET sal=sal*1.1 WHERE empno=1;
+SELECT empno, sal FROM wiki_demo_15_emp ORDER BY empno;
+ROLLBACK;
+SELECT empno, sal FROM wiki_demo_15_emp ORDER BY empno;
+```
+
+Result Grid의 열·행 값:
+
+```text
+empno	sal
+1	1000.00
+empno	sal
+1	1100.00
+2	2000.00
+empno	sal
+1	1000.00
+2	2000.00
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 새 실습 테이블에 사원 1과 2를 각각 입력한다.
+2. 트랜잭션을 시작하고 사원번호 1의 기존 급여 1000을 조회한다.
+3. 같은 조건으로 10% 인상하여 1100을 확인한다. 사원 2는 2000을 유지한다.
+4. ROLLBACK 후 1의 급여가 1000으로 복원된 저장 상태를 조회한다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 837~846행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+set 
+	sal = sal * 1.1,
+	comm = comm * 1.2
+where empno = 1002;
+select * from emp2;
+
+-- dept 테이블에서도 서로 참조를 하고 있기 때문에 변경할 수 없음
+-- SQL Error [1451] [23000]: (conn=5) Cannot delete or update a parent row: 
+-- a foreign key constraint fails (`human`.`emp2`, CONSTRAINT `1` FOREIGN KEY (`deptno`) REFERENCES `dept2` (`deptno`))
+select * from dept2;
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 777~786행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+set 
+	sal = sal * 1.1,
+	comm = comm * 1.2
+where empno = 1002;
+select * from emp2;
+
+select * from dept2;
+update dept2
+set deptno = 20
+where deptno = 10;
+```
+
+내 원본에는 전체 DELETE도 있어 테이블 전체를 실행하면 이후 비교 상태가 달라진다. 원본 일부 발췌는 순서·autocommit·실패한 문장까지 함께 해설해야 하며 운영 테이블에 그대로 적용하지 않는다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 매칭 0행도 정상 종료할 수 있다
+
+앞 독립 예제의 wiki_demo_15_emp에는 1·2번만 있다. 1002번 UPDATE는 SQL 문법·권한을 통과해도 대상이 없어 변경하지 않는다. 즉시 ROW_COUNT와 사후 SELECT를 대조한다. 💡 클라이언트 연결 옵션에 따라 매칭·변경 행 보고 규칙이 달라질 수 있으므로 이 예제는 기본 연결 조건이다.
+
+```sql
+UPDATE wiki_demo_15_emp SET sal=sal*1.1 WHERE empno=1002;
+SELECT ROW_COUNT() AS changed_rows;
+SELECT empno,sal FROM wiki_demo_15_emp ORDER BY empno;
+```
+
+검증 결과:
+
+```text
+changed_rows
+0
+empno	sal
+1	1000.00
+2	2000.00
+```
+
+### 이해 확인 실습
+
+1. 마지막 ROLLBACK 대신 COMMIT하면 최종 급여는?
+2. 조건이 있는 UPDATE면 무조건 1행 수정인가?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 사원 1은 1100, 사원 2는 2000으로 확정된다. 이후 ROLLBACK이 이미 확정한 업무를 취소하지 않는다.
+2. 아니다. 0·1·여러 행일 수 있다. 같은 WHERE의 사전 조회와 사후 상태를 대조한다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-15-section-4"></a>
 
 ## 1. DML 기본 개념
 
@@ -78,6 +271,8 @@ SELECT * FROM emp_practice ORDER BY empno;
 
 ---
 
+<a id="sql-15-section-5"></a>
+
 ## 2. INSERT 기본
 
 ### 6. Column 목록을 명시한 단일 Row 입력
@@ -121,6 +316,8 @@ WHERE deptno = 50;
 
 ---
 
+<a id="sql-15-section-6"></a>
+
 ## 3. 여러 Row INSERT
 
 ### 11. 한 문장으로 여러 Row 입력
@@ -154,6 +351,8 @@ SELECT ROW_COUNT() AS affected_rows;
 `ROW_COUNT()`는 바로 앞 DML 뒤에 확인해야 의미가 있다.
 
 ---
+
+<a id="sql-15-section-7"></a>
 
 ## 4. NULL과 DEFAULT 입력
 
@@ -198,6 +397,8 @@ Nullable Column에 명시한 `NULL`은 “값 없음”이다.
 
 ---
 
+<a id="sql-15-section-8"></a>
+
 ## 5. 날짜와 문자열 입력
 
 ### 21. ISO 형태의 날짜 Literal을 사용한다
@@ -232,6 +433,8 @@ VALUES (92, 'R&D', 'SEOUL');
 문자열 값은 작은따옴표로 표현한다.
 
 ---
+
+<a id="sql-15-section-9"></a>
 
 ## 6. INSERT ... SELECT
 
@@ -283,6 +486,8 @@ SELECT COUNT(*) FROM emp_practice WHERE deptno = 20;
 
 ---
 
+<a id="sql-15-section-10"></a>
+
 ## 7. Primary Key와 중복 입력
 
 ### 31. 중복 Primary Key는 거부된다
@@ -316,6 +521,8 @@ ON DUPLICATE KEY UPDATE
 “없으면 생성, 있으면 최신 상태로 변경”이 명확한 요구사항일 때 사용한다. 중복 Data 원인을 숨기는 도구가 아니다.
 
 ---
+
+<a id="sql-15-section-11"></a>
 
 ## 8. Foreign Key와 입력 순서
 
@@ -355,6 +562,8 @@ VALUES
 정상 입력 순서와 유효한 부모 Data를 준비한다. `foreign_key_checks=0`은 잘못된 관계를 만들 수 있다.
 
 ---
+
+<a id="sql-15-section-12"></a>
 
 ## 9. UPDATE 기본
 
@@ -411,6 +620,8 @@ ORDER BY empno;
 
 ---
 
+<a id="sql-15-section-13"></a>
+
 ## 10. 조건부 UPDATE
 
 ### 46. CASE로 Row별 값을 다르게 변경한다
@@ -437,6 +648,8 @@ SET comm = COALESCE(comm, 0) + 100
 WHERE job = 'SALESMAN';
 ```
 
+<a id="index-section-74"></a>
+
 ### 49. Subquery 결과로 변경한다
 
 ```sql
@@ -450,6 +663,8 @@ WHERE empno = 9007;
 
 Scalar Subquery가 1행 1열을 반환하는지 확인한다.
 
+<a id="index-section-75"></a>
+
 ### 50. FK Column 변경도 제약조건을 따른다
 
 ```sql
@@ -461,6 +676,8 @@ WHERE empno = 9005;
 부모 `DEPT_PRACTICE`에 60번이 있어야 한다.
 
 ---
+
+<a id="sql-15-section-14"></a>
 
 ## 11. JOIN을 사용한 UPDATE
 
@@ -493,6 +710,8 @@ WHERE d.loc = 'SEOUL';
 임시 Table이나 검증 가능한 Stage Data를 사용하면 재현성과 감사가 쉬워진다.
 
 ---
+
+<a id="sql-15-section-15"></a>
 
 ## 12. DELETE 기본
 
@@ -540,6 +759,8 @@ WHERE deptno = 50
 
 ---
 
+<a id="sql-15-section-16"></a>
+
 ## 13. Foreign Key와 DELETE
 
 ### 60. 부모 삭제가 제한될 수 있다
@@ -560,6 +781,8 @@ DELETE FROM dept_practice WHERE deptno = 50;
 
 실제 업무에서는 삭제 대신 이력 보존이나 상태 변경이 필요한지도 검토한다.
 
+<a id="index-section-90"></a>
+
 ### 62. CASCADE는 자동 삭제를 전파한다
 
 `ON DELETE CASCADE`가 정의되어 있으면 부모 삭제 시 자식도 삭제된다. 실행 전 예상 자식 Row 수를 확인한다.
@@ -578,6 +801,8 @@ SHOW CREATE TABLE emp_practice;
 
 ---
 
+<a id="sql-15-section-17"></a>
+
 ## 14. DELETE와 TRUNCATE 비교
 
 ### 65. DELETE는 조건을 사용할 수 있다
@@ -593,9 +818,13 @@ WHERE deptno = 50;
 TRUNCATE TABLE emp_practice;
 ```
 
+<a id="index-section-96"></a>
+
 ### 67. Transaction 성격이 다르다
 
 InnoDB의 `DELETE`는 Transaction DML로 다룰 수 있지만 `TRUNCATE`는 DDL로 처리되어 암시적 Commit을 발생시킨다.
+
+<a id="index-section-97"></a>
 
 ### 68. AUTO_INCREMENT 처리도 다르다
 
@@ -606,6 +835,8 @@ InnoDB의 `DELETE`는 Transaction DML로 다룰 수 있지만 `TRUNCATE`는 DDL�
 Rollback 가능성, Trigger, FK, Logging, 감사, 성능을 함께 고려한다.
 
 ---
+
+<a id="sql-15-section-18"></a>
 
 ## 15. 영향받은 Row 확인
 
@@ -648,6 +879,8 @@ ORDER BY deptno;
 
 ---
 
+<a id="sql-15-section-19"></a>
+
 ## 16. Safe Update와 LIMIT
 
 ### 75. sql_safe_updates
@@ -682,6 +915,8 @@ WHERE empno IN (9001, 9003, 9005);
 ```
 
 ---
+
+<a id="sql-15-section-20"></a>
 
 ## 17. 내 코드와 강사님 코드 비교
 
@@ -729,6 +964,8 @@ WHERE deptno = 50;
 - 안전 모드를 끄거나 LIMIT를 붙이는 것으로 잘못된 조건을 숨기지 않는다.
 
 ---
+
+<a id="sql-15-section-21"></a>
 
 ## 18. 개선된 통합 예제
 
@@ -780,6 +1017,8 @@ SELECT ROW_COUNT() AS deleted_rows;
 
 ---
 
+<a id="sql-15-section-22"></a>
+
 ## 19. 실무 DML 절차
 
 ### 88. 변경 전 Checklist
@@ -813,6 +1052,8 @@ PK 중복 0, FK 위반 0, 필수값 NULL 0, 합계 변화가 승인 범위와 �
 여러 DML이 하나의 업무 단위라면 다음 단원에서 `START TRANSACTION`, `COMMIT`, `ROLLBACK`으로 원자성을 보장한다.
 
 ---
+
+<a id="sql-15-section-23"></a>
 
 ## 20. 자주 하는 실수
 
@@ -849,6 +1090,8 @@ Foreign Key 위반이 발생한다.
 값의 정확성과 집계·무결성까지 검증한다.
 
 ---
+
+<a id="sql-15-section-24"></a>
 
 ## 21. 디버깅 방법
 
@@ -906,6 +1149,8 @@ ORDER BY empno;
 
 ---
 
+<a id="sql-15-section-25"></a>
+
 ## 22. 종합실습
 
 ### 109. 문제 1 — 부서 다중 입력
@@ -929,6 +1174,8 @@ ORDER BY empno;
 70번 부서를 삭제하되 소속 사원 존재 여부와 Foreign Key 동작을 먼저 확인한다.
 
 ---
+
+<a id="sql-15-section-26"></a>
 
 ## 23. 정답과 해설
 
@@ -1009,6 +1256,8 @@ FK의 `ON DELETE` 규칙을 확인하지 않은 상태에서 부모 삭제를 �
 
 ---
 
+<a id="sql-15-section-27"></a>
+
 ## 24. 최종 체크리스트
 
 ### 119. INSERT 체크
@@ -1033,6 +1282,8 @@ FK의 `ON DELETE` 규칙을 확인하지 않은 상태에서 부모 삭제를 �
 - [ ] Transaction의 Commit 또는 Rollback 결정을 명확히 했는가?
 
 ---
+
+<a id="sql-15-section-28"></a>
 
 ## 25. 핵심 요약
 
@@ -1061,6 +1312,8 @@ DML의 핵심은 문법보다 **정확히 어떤 Row가 어떤 값으로 바뀌�
 
 ---
 
+<a id="sql-15-section-29"></a>
+
 ## 📎 다음 문서
 
 다음 원본 흐름은 DML 변경을 확정하거나 취소하는 Transaction이다.
@@ -1070,6 +1323,8 @@ DML의 핵심은 문법보다 **정확히 어떤 Row가 어떤 값으로 바뀌�
 ```
 
 ---
+
+<a id="sql-15-section-30"></a>
 
 ## 🔬 V3 동작 백과 — 입력값이 실제 Row 변경으로 이어지는 과정
 

@@ -4,6 +4,58 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-20-section-2)
+- [개념에서 실제 실행까지 — 종합실습이란? — 보고서에서 빈 부서와 0명을 다루기](#sql-20-section-3)
+- [4. Level 1 정답](#sql-20-section-7)
+- [6. Level 2 정답](#sql-20-section-9)
+- [8. Level 3 정답](#sql-20-section-11)
+- [10. Level 4 정답](#sql-20-section-13)
+- [12. Level 5 정답](#sql-20-section-15)
+- [14. Level 6 정답](#sql-20-section-17)
+- [16. Level 7 정답](#sql-20-section-19)
+- [18. Level 8 정답](#sql-20-section-21)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-20-section-1)
+- [학습 목표](#sql-20-section-2)
+- [개념에서 실제 실행까지 — 종합실습이란? — 보고서에서 빈 부서와 0명을 다루기](#sql-20-section-3)
+- [1. 실습 진행 방법](#sql-20-section-4)
+- [2. 실습 환경 확인](#sql-20-section-5)
+- [3. Level 1 — SELECT와 조건](#sql-20-section-6)
+- [4. Level 1 정답](#sql-20-section-7)
+- [5. Level 2 — 함수와 CASE](#sql-20-section-8)
+- [6. Level 2 정답](#sql-20-section-9)
+- [7. Level 3 — 집계와 Grouping](#sql-20-section-10)
+- [8. Level 3 정답](#sql-20-section-11)
+- [9. Level 4 — JOIN과 Subquery](#sql-20-section-12)
+- [10. Level 4 정답](#sql-20-section-13)
+- [11. Level 5 — 집합·계층·보고서](#sql-20-section-14)
+- [12. Level 5 정답](#sql-20-section-15)
+- [13. Level 6 — 실습 Schema 설계](#sql-20-section-16)
+- [14. Level 6 정답](#sql-20-section-17)
+- [15. Level 7 — 안전한 DML과 Transaction](#sql-20-section-18)
+- [16. Level 7 정답](#sql-20-section-19)
+- [17. Level 8 — Index와 실행 계획](#sql-20-section-20)
+- [18. Level 8 정답](#sql-20-section-21)
+- [19. 내 코드와 강사님 코드 비교](#sql-20-section-22)
+- [20. 개선된 최종 통합 예제](#sql-20-section-23)
+- [21. 실수·디버깅 종합](#sql-20-section-24)
+- [22. 실무 제출 Checklist](#sql-20-section-25)
+- [23. 최종 자기평가](#sql-20-section-26)
+- [24. 핵심 요약](#sql-20-section-27)
+- [📎 SQL V3 Series 완료](#sql-20-section-28)
+- [🔬 V3 종합실습 실행 기록법](#sql-20-section-29)
+
+</details>
+
+---
+
+<a id="sql-20-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -20,18 +72,130 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-20-section-2"></a>
 
-- 자연어 요구사항을 Result Row, Join 관계, Filtering, 집계, 정렬로 분해한다.
-- NULL·중복·경계값·동점·0행을 고려한 Query를 작성한다.
-- JOIN, Subquery, CTE, Window 대체 Pattern 중 적절한 구조를 선택한다.
-- DDL과 제약조건으로 안전한 실습 Schema를 설계한다.
-- Preview·Transaction·영향 Row 검증을 포함한 DML을 수행한다.
-- `EXPLAIN`을 사용해 Index 후보와 실제 접근 계획을 확인한다.
-- Recursive CTE로 조직 계층을 안전하게 탐색한다.
-- 결과뿐 아니라 작성 근거와 위험을 설명할 수 있다.
+## 학습 목표
+
+- 입력·관계·집계·NULL·검증 질문을 함께 설계한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-20-section-3"></a>
+
+## 개념에서 실제 실행까지 — 종합실습이란? — 보고서에서 빈 부서와 0명을 다루기
+
+### 무엇이며 왜 배워야 할까?
+
+종합실습은 자연어 요구사항을 결과 열·행 보존·연결 관계·필터·집계·정렬로 나누어 하나의 SQL로 구현하는 과정이다. ‘모든 부서의 인원·급여합·평균’은 EMP에서 출발하면 사원이 없는 40부서를 놓친다. 전체 목록의 기준이 무엇인지 먼저 정한다.
+
+부서 한 행에 여러 사원이 연결된다. 그 연결 결과를 부서별로 묶고 사원 키를 COUNT하면 실제 인원 수를 얻는다. 사원 없는 부서는 NULL 확장 한 행이며 SUM·AVG에는 값이 없어 NULL이다. 보고서에서 합계를 0으로 표시하는 업무 규칙은 적용할 수 있지만 평균까지 0으로 채워 ‘평균 급여 0’으로 해석할지는 별도로 정한다.
+
+이 예제는 상세 종합실습의 진입 예제다. 기존 20번의 기초·중급·DDL·DML·트랜잭션·성능·재귀 과제와 정답은 그대로 이어서 제공한다. 내 원본의 문제 풀이와 후반 시험문제는 실습 출처지만 모든 개선 코드가 수업 원본 그대로 있었던 것은 아니다. 💡 보충 보고서와 경계 데이터는 검증을 위한 확장이다.
+
+결과가 맞아 보이면 빈 부서·공동 최고·NULL 보너스·외부 연도 같은 반례로 다시 검토한다. 작은 예제에서 맞는 출력만으로 일반적인 업무 조건을 모두 만족했다고 결론내리지 않는다.
+
+### 입력은 어디에서 오는가?
+
+초기화 자료의 EMP·DEPT 또는 SQL 안에서 직접 만든 CTE를 사용한다. 각 코드에 명시된 입력을 읽고 전체 EMP와 작은 가상 입력을 구분한다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+SELECT d.deptno, d.dname,
+       COUNT(e.empno) AS employee_count,
+       COALESCE(SUM(e.sal),0) AS total_salary
+FROM dept AS d
+LEFT JOIN emp AS e ON e.deptno=d.deptno
+GROUP BY d.deptno,d.dname
+ORDER BY d.deptno;
+```
+
+Result Grid의 열·행 값:
+
+```text
+deptno	dname	employee_count	total_salary
+10	ACCOUNTING	3	8750.00
+20	RESEARCH	5	10875.00
+30	SALES	6	9400.00
+40	OPERATIONS	0	0.00
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 모든 부서 4개를 기준으로 EMP와 LEFT JOIN한다.
+2. 부서 40에는 EMP 열이 NULL인 확장 행이 생긴다.
+3. COUNT(empno)는 그 행을 0명으로 세고 SUM은 NULL이 된다.
+4. 합계 NULL만 0으로 표시한 후 부서번호 순으로 결과를 전달한다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 1047~1056행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+select * from emp;
+select * from salgrade;
+
+-- 문제5 최종풀이
+select s.grade, count(e.ENAME) as gradeCount
+from salgrade s left outer join emp e
+on (e.sal between s.losal and s.hisal)
+group by s.grade
+order by s.grade asc;
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 985~994행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+단, 모든 등급을 표시한다
+ */
+
+select s.grade, count(*)
+from salgrade s
+	left outer join emp e 
+		on (e.sal <= s.hisal and e.sal >= s.losal)
+group by s.grade
+order by s.grade;
+```
+
+급여 등급 인원 문제에서 내 COUNT(ename)와 강사님 COUNT(*) 차이는 현재 모든 등급에 사원이 있어 눈에 안 띈다. 빈 등급을 추가하면 차이가 드러난다. 인원 보고서에서 확장 행을 세는지 실제 사원 키를 세는지 확인한다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 이해 확인 실습
+
+1. 40부서의 평균 급여를 0으로 바꾸면 원래 NULL과 완전히 같은 의미인가?
+2. 초기 데이터에서 맞는 답을 얻은 뒤 어떤 반례를 넣어 검토하는가?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 아니다. 인원이 없어 평균이 정의되지 않은 상태와 실제 평균이 0인 상태를 구분해야 한다.
+2. 빈 부서·빈 등급·동점 급여·다른 부서 최고값과 같은 비최고·다른 해의 같은 최저급여·NULL·0행 등을 별도 입력으로 검토한다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-20-section-4"></a>
 
 ## 1. 실습 진행 방법
 
@@ -70,6 +234,8 @@ NULL Data
 
 ---
 
+<a id="sql-20-section-5"></a>
+
 ## 2. 실습 환경 확인
 
 ### 6. Table 구조
@@ -79,6 +245,8 @@ DESCRIBE emp;
 DESCRIBE dept;
 DESCRIBE salgrade;
 ```
+
+<a id="index-section-23"></a>
 
 ### 7. 제약조건과 Index
 
@@ -112,6 +280,8 @@ SELECT 'SALGRADE', COUNT(*) FROM salgrade;
 
 ---
 
+<a id="sql-20-section-6"></a>
+
 ## 3. Level 1 — SELECT와 조건
 
 ### 10. 문제 1 — 기본 사원 목록
@@ -135,6 +305,8 @@ Commission이 NULL인 사원과 0인 사원을 서로 다른 상태 Label로 표
 급여가 가장 높은 사원 3명을 조회한다. 동점에서도 결과 순서가 안정적이어야 한다.
 
 ---
+
+<a id="sql-20-section-7"></a>
 
 ## 4. Level 1 정답
 
@@ -196,6 +368,8 @@ LIMIT 3;
 
 ---
 
+<a id="sql-20-section-8"></a>
+
 ## 5. Level 2 — 함수와 CASE
 
 ### 20. 문제 6 — 이름 Masking
@@ -219,6 +393,8 @@ LIMIT 3;
 `PRESIDENT → MANAGER → ANALYST → SALESMAN → CLERK → 기타` 순서로 정렬한다.
 
 ---
+
+<a id="sql-20-section-9"></a>
 
 ## 6. Level 2 정답
 
@@ -297,6 +473,8 @@ ORDER BY
 
 ---
 
+<a id="sql-20-section-10"></a>
+
 ## 7. Level 3 — 집계와 Grouping
 
 ### 30. 문제 11 — 부서별 급여 통계
@@ -306,6 +484,8 @@ ORDER BY
 ### 31. 문제 12 — 조건부 집계
 
 부서별 전체 인원, 급여 2000 이상 인원, 양수 Commission 지급 인원을 조회한다.
+
+<a id="index-section-53"></a>
 
 ### 32. 문제 13 — HAVING
 
@@ -320,6 +500,8 @@ ORDER BY
 모든 부서의 인원수를 표시한다. 사원이 없는 부서는 0명이어야 한다.
 
 ---
+
+<a id="sql-20-section-11"></a>
 
 ## 8. Level 3 정답
 
@@ -398,6 +580,8 @@ ORDER BY d.deptno;
 
 ---
 
+<a id="sql-20-section-12"></a>
+
 ## 9. Level 4 — JOIN과 Subquery
 
 ### 40. 문제 16 — 사원·부서·급여 등급
@@ -421,6 +605,8 @@ ORDER BY d.deptno;
 `NOT EXISTS` 방식으로 소속 사원이 없는 부서를 조회한다.
 
 ---
+
+<a id="sql-20-section-13"></a>
 
 ## 10. Level 4 정답
 
@@ -495,6 +681,8 @@ ORDER BY d.deptno;
 
 ---
 
+<a id="sql-20-section-14"></a>
+
 ## 11. Level 5 — 집합·계층·보고서
 
 ### 50. 문제 21 — 통합 검색 결과
@@ -518,6 +706,8 @@ Root부터 전체 사원을 조회하고 깊이, 들여쓴 이름, 이름 경로
 모든 부서의 인원수, 평균 급여, 최고 급여자 수를 조회한다. 사원이 없는 부서도 포함한다.
 
 ---
+
+<a id="sql-20-section-15"></a>
 
 ## 12. Level 5 정답
 
@@ -639,6 +829,8 @@ ORDER BY d.deptno;
 
 ---
 
+<a id="sql-20-section-16"></a>
+
 ## 13. Level 6 — 실습 Schema 설계
 
 ### 60. Scenario
@@ -668,6 +860,8 @@ ORDER BY d.deptno;
 부서 2개, 프로젝트 2개, 참여자 3개를 입력하고 자동 생성 ID를 확인한다.
 
 ---
+
+<a id="sql-20-section-17"></a>
 
 ## 14. Level 6 정답
 
@@ -746,6 +940,8 @@ Application에서는 Session 변수를 대신해 같은 Connection의 생성 ID 
 
 ---
 
+<a id="sql-20-section-18"></a>
+
 ## 15. Level 7 — 안전한 DML과 Transaction
 
 ### 66. 문제 28 — 프로젝트 이동
@@ -761,6 +957,8 @@ Application에서는 Session 변수를 대신해 같은 Connection의 생성 ID 
 프로젝트 이동 후 존재하지 않는 사원을 참여자로 넣어 오류가 발생하면 전체 변경을 취소하는 흐름을 작성한다.
 
 ---
+
+<a id="sql-20-section-19"></a>
 
 ## 16. Level 7 정답
 
@@ -840,6 +1038,8 @@ ROLLBACK;
 
 ---
 
+<a id="sql-20-section-20"></a>
+
 ## 17. Level 8 — Index와 실행 계획
 
 ### 72. 문제 31 — 주요 Query
@@ -855,6 +1055,8 @@ ROLLBACK;
 근거 없이 사용된 `FORCE INDEX`를 제거하고 전후 실행 계획과 실제 Data 규모로 판단한다.
 
 ---
+
+<a id="sql-20-section-21"></a>
 
 ## 18. Level 8 정답
 
@@ -910,6 +1112,8 @@ Sample Data가 너무 적으면 차이가 의미 없으므로 운영과 유사�
 ```
 
 ---
+
+<a id="sql-20-section-22"></a>
 
 ## 19. 내 코드와 강사님 코드 비교
 
@@ -978,6 +1182,8 @@ ORDER BY e.sal DESC, e.empno;
 - 성능 변경 전후에는 결과 동일성을 먼저 검증한다.
 
 ---
+
+<a id="sql-20-section-23"></a>
 
 ## 20. 개선된 최종 통합 예제
 
@@ -1073,6 +1279,8 @@ ORDER BY d.deptno;
 
 ---
 
+<a id="sql-20-section-24"></a>
+
 ## 21. 실수·디버깅 종합
 
 ### 86. 예상보다 Row가 많다
@@ -1108,6 +1316,8 @@ Subquery에 NULL이 있는지 확인하고 `NOT EXISTS`를 검토한다.
 Table 크기, 선택도, 통계, 자료형 변환, 함수, 반환 Row 비율을 확인한다.
 
 ---
+
+<a id="sql-20-section-25"></a>
 
 ## 22. 실무 제출 Checklist
 
@@ -1146,12 +1356,16 @@ Table 크기, 선택도, 통계, 자료형 변환, 함수, 반환 Row 비율을 
 
 ---
 
+<a id="sql-20-section-26"></a>
+
 ## 23. 최종 자기평가
 
 ### 99. 기초
 
 - [ ] SELECT 목록과 Alias를 명확히 작성한다.
 - [ ] WHERE, NULL, LIKE, 정렬, LIMIT를 정확히 사용한다.
+
+<a id="index-section-137"></a>
 
 ### 100. 집계·조회 설계
 
@@ -1162,6 +1376,8 @@ Table 크기, 선택도, 통계, 자료형 변환, 함수, 반환 Row 비율을 
 
 - [ ] INNER·Outer·Self Join의 Row 보존 차이를 설명한다.
 - [ ] Recursive CTE의 Anchor·재귀·종료·Cycle을 설계한다.
+
+<a id="index-section-139"></a>
 
 ### 102. 변경·운영
 
@@ -1175,6 +1391,8 @@ Table 크기, 선택도, 통계, 자료형 변환, 함수, 반환 Row 비율을 
 - [ ] 다른 개발자가 유지보수할 수 있는 SQL을 작성한다.
 
 ---
+
+<a id="sql-20-section-27"></a>
 
 ## 24. 핵심 요약
 
@@ -1206,6 +1424,8 @@ SQL 학습의 완성은 문법을 많이 기억하는 것이 아니라 **요구�
 
 ---
 
+<a id="sql-20-section-28"></a>
+
 ## 📎 SQL V3 Series 완료
 
 ```text
@@ -1234,6 +1454,8 @@ SQL 학습의 완성은 문법을 많이 기억하는 것이 아니라 **요구�
 SQL Developer-Wiki V3 01~20 학습 복원 과정 완성.
 
 ---
+
+<a id="sql-20-section-29"></a>
 
 ## 🔬 V3 종합실습 실행 기록법
 

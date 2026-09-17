@@ -1,7 +1,7 @@
 ---
 title: JavaScript Gemini API와 멀티턴 대화
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,112 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: 멀티턴 대화는 질문·답변의 맥락을 API 계약에 맞춰 전달한다](#js-21-section-4)
+- [59. 대화 요약 방식](#js-21-section-63)
+- [72. 원본 코드와 강사님 코드 비교](#js-21-section-76)
+- [74. 실무형 예제: 안전한 Chat UI](#js-21-section-78)
+- [75. 대표 오류로 이해하기](#js-21-section-79)
+- [76. 자주 하는 실수](#js-21-section-80)
+- [77. 핵심 요약](#js-21-section-81)
+- [78. 최종 체크리스트](#js-21-section-82)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-21-section-1)
+- [핵심 개념](#js-21-section-2)
+- [학습 목표](#js-21-section-3)
+- [개념에서 실제 실행까지: 멀티턴 대화는 질문·답변의 맥락을 API 계약에 맞춰 전달한다](#js-21-section-4)
+- [1. 원본 HTML 구조](#js-21-section-5)
+- [2. 내 코드의 Button Type 오류](#js-21-section-6)
+- [3. 문서 기본 정보 개선](#js-21-section-7)
+- [4. 원본 초기화](#js-21-section-8)
+- [5. 함수 이름 개선](#js-21-section-9)
+- [6. `defer` 초기화](#js-21-section-10)
+- [7. 전역 History](#js-21-section-11)
+- [8. 변수 이름 개선](#js-21-section-12)
+- [9. 단일 질문 입력](#js-21-section-13)
+- [10. 빈 질문 검증](#js-21-section-14)
+- [11. API Key](#js-21-section-15)
+- [12. API Key를 Client에 넣으면 안 되는 이유](#js-21-section-16)
+- [13. 안전한 Key 관리](#js-21-section-17)
+- [14. API Endpoint](#js-21-section-18)
+- [15. Endpoint 분리](#js-21-section-19)
+- [16. Single-turn 요청 객체](#js-21-section-20)
+- [17. `contents`](#js-21-section-21)
+- [18. `role`](#js-21-section-22)
+- [19. `parts`](#js-21-section-23)
+- [20. Body 직렬화](#js-21-section-24)
+- [21. 원본 주석 수정](#js-21-section-25)
+- [22. Request Header](#js-21-section-26)
+- [23. `Content-Type`](#js-21-section-27)
+- [24. 단일 요청](#js-21-section-28)
+- [25. HTTP 상태 검사](#js-21-section-29)
+- [26. Error Response Body](#js-21-section-30)
+- [27. 응답 JSON 변환](#js-21-section-31)
+- [28. 원본 응답 접근](#js-21-section-32)
+- [29. Dot·Index 접근](#js-21-section-33)
+- [30. 안전한 응답 Text 추출](#js-21-section-34)
+- [31. Candidate가 없을 수 있는 경우](#js-21-section-35)
+- [32. Finish Reason 확인](#js-21-section-36)
+- [33. 원본 단일 응답 화면 출력](#js-21-section-37)
+- [34. 생성한 Div가 사라지는 이유](#js-21-section-38)
+- [35. 단일 결과 교체](#js-21-section-39)
+- [36. 대화 Message 추가](#js-21-section-40)
+- [37. `textContent` 사용](#js-21-section-41)
+- [38. Markdown 응답](#js-21-section-42)
+- [39. 멀티턴 User Turn 추가](#js-21-section-43)
+- [40. History 전체 전송](#js-21-section-44)
+- [41. 원본 Model Turn 저장](#js-21-section-45)
+- [42. 원본 History 저장 오류](#js-21-section-46)
+- [43. 올바른 Model Turn 저장](#js-21-section-47)
+- [44. Role 순서](#js-21-section-48)
+- [45. 실패한 User Turn 처리](#js-21-section-49)
+- [46. 실패 시 Rollback](#js-21-section-50)
+- [47. 중복 클릭 문제](#js-21-section-51)
+- [48. Loading 상태](#js-21-section-52)
+- [49. 상태 복구](#js-21-section-53)
+- [50. 입력 초기화](#js-21-section-54)
+- [51. Enter 전송](#js-21-section-55)
+- [52. 요청 함수 분리](#js-21-section-56)
+- [53. 단일 질문 함수](#js-21-section-57)
+- [54. 멀티턴 질문 함수](#js-21-section-58)
+- [55. `contents` 복사](#js-21-section-59)
+- [56. History 초기화](#js-21-section-60)
+- [57. 대화가 계속 길어지는 문제](#js-21-section-61)
+- [58. 최근 Turn만 유지](#js-21-section-62)
+- [59. 대화 요약 방식](#js-21-section-63)
+- [60. AbortController](#js-21-section-64)
+- [61. Timeout 구현](#js-21-section-65)
+- [62. Retry 주의](#js-21-section-66)
+- [63. 재시도 대상 예](#js-21-section-67)
+- [64. 응답 순서 보호](#js-21-section-68)
+- [65. UI 상태 구분](#js-21-section-69)
+- [66. 접근성 상태](#js-21-section-70)
+- [67. 민감정보 전송 주의](#js-21-section-71)
+- [68. Prompt Injection 기초](#js-21-section-72)
+- [69. Model 출력 검증](#js-21-section-73)
+- [70. Backend Proxy 요청](#js-21-section-74)
+- [71. Backend 역할](#js-21-section-75)
+- [72. 원본 코드와 강사님 코드 비교](#js-21-section-76)
+- [73. 기존 코드에서 개선한 이유](#js-21-section-77)
+- [74. 실무형 예제: 안전한 Chat UI](#js-21-section-78)
+- [75. 대표 오류로 이해하기](#js-21-section-79)
+- [76. 자주 하는 실수](#js-21-section-80)
+- [77. 핵심 요약](#js-21-section-81)
+- [78. 최종 체크리스트](#js-21-section-82)
+- [마무리](#js-21-section-83)
+- [V3 실행 추적 카드 — 사용자 메시지 → 요청 본문 → API 응답 → 대화 상태·화면](#js-21-section-84)
+
+</details>
+
+---
+
+<a id="js-21-section-1"></a>
+
+## 개요
 
 생성형 AI API 요청도 일반적인 JSON API 요청 흐름을 따른다.
 
@@ -61,7 +166,9 @@ Model 응답 저장
 
 ---
 
-# 핵심 개념
+<a id="js-21-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -80,26 +187,116 @@ Model 응답 저장
 
 ---
 
-# 학습 목표
+<a id="js-21-section-3"></a>
 
-- 생성형 AI API 요청 구조를 설명할 수 있다.
-- `fetch()`로 JSON POST 요청을 보낼 수 있다.
-- API Key Header와 Content Type Header의 역할을 이해한다.
-- JavaScript 객체와 JSON 문자열을 구분할 수 있다.
-- 단일 질문용 `contents` 구조를 만들 수 있다.
-- 응답의 중첩 구조에서 Text를 안전하게 추출할 수 있다.
-- HTTP 오류와 응답 구조 오류를 구분할 수 있다.
-- 사용자 질문과 Model 답변을 History에 올바르게 저장할 수 있다.
-- `user`와 `model` 역할을 번갈아 유지할 수 있다.
-- 전체 응답 JSON이 아니라 실제 답변 Text를 저장해야 함을 이해한다.
-- 빈 질문과 중복 요청을 방지할 수 있다.
-- 생성형 AI 결과를 `textContent`로 안전하게 출력할 수 있다.
-- API Key를 Client에 노출하면 안 되는 이유를 설명할 수 있다.
-- Backend Proxy 기반 실무 구조를 이해한다.
+## 학습 목표
+
+- 응답 텍스트·대화 상태·출력 노드를 분리한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. 원본 HTML 구조
+<a id="js-21-section-4"></a>
+
+## 개념에서 실제 실행까지: 멀티턴 대화는 질문·답변의 맥락을 API 계약에 맞춰 전달한다
+
+수업은 generateContent의 contents에 이전 user/model 대화를 직접 담는다. 서버가 브라우저 list 변수를 읽는 것이 아니라 요청 Body에 직렬화된 기록을 받는다. 최신 다른 API의 서버 관리형 대화와 혼동하지 않는다.
+
+두 원본 모두 contents→parts→text로 질문을 구성한다. 내 코드는 model의 text에 JSON.stringify(result) 전체를 넣어 답변 텍스트가 아니라 응답 봉투를 저장한다. 강사님도 완전한 멀티턴·UI를 구현한 정답으로 볼 수 없으며 직접 개선해야 한다. 내 askResult.append(divAdd) 다음 askResult.innerText=...는 부모의 자식들을 교체하여 방금 만든 div를 없앤다.
+
+💡 아래는 실제 호출 없이 고정 응답으로 history와 출력 텍스트를 확인한다. 질문은 새 턴에, 답변 텍스트는 model 턴에 저장한다. 실패하면 확정 history를 바꾸지 않는 설계를 적용하면 rollback과 동시 클릭 문제를 줄일 수 있다. 비텍스트·도구·thinking 응답까지 다룰 때는 원래 Content/서명 보존 등 별도 계약을 따라야 한다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/21_gemini.html`
+
+```javascript
+// json으로 저장해서 gemini가 기억을 하는 것 처럼 구현할 수 있음
+            list.contents.push({
+                role: 'user',
+                parts: [{
+                    text: prompt
+                }]
+            })
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/21_gemini.html`
+
+```javascript
+list.contents.push({
+                role: 'user',
+                parts:[{
+                    text: prompt
+                }]
+            })
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+const history = [];
+const userTurn = {role:"user", parts:[{text:"안녕"}]};
+const result = {candidates:[{content:{role:"model", parts:[{text:"반가워요"}]}}]};
+const answer = result.candidates[0].content.parts[0].text;
+history.push(userTurn, {role:"model", parts:[{text:answer}]});
+console.log(answer);
+console.log(JSON.stringify(history));
+```
+
+예상 출력:
+
+```text
+반가워요
+[{"role":"user","parts":[{"text":"안녕"}]},{"role":"model","parts":[{"text":"반가워요"}]}]
+```
+
+### 결과를 역추적하는 방법
+
+원본 model 이름은 수업 당시 설정이며 지원 확인을 하지 않고 현재 추천값으로 단정하지 않는다. [generateContent 공식 계약](https://ai.google.dev/api/generate-content)은 contents의 단일·멀티턴 구성을 설명한다. 최신 [별도 대화 API](https://ai.google.dev/gemini-api/docs/text-generation)는 구조가 다를 수 있다. 키는 서버에 두고 실제 호출·과금 테스트는 하지 않았다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** 질문1·답변1·질문2를 전송할 history의role/text를 설계한다.
+
+**응용·디버깅 실습:** 실패한질문이확정history에남지않게설계한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. user질문1→model실제답변1→user질문2다. 응답봉투전체를답변text로넣지않는다.
+2. 확정history의복사본에user턴을붙여요청하고성공한경우user/model쌍을함께확정한다. 요청중복방지도필요하다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** 응답 candidates가 없을 때 [0].content를 바로 읽으면?
+
+**해설:** TypeError가 날 수 있다. HTTP 상태뿐 아니라 후보·parts·텍스트 존재를 확인하고 빈 응답이나 차단 응답을 다른 상태로 안내한다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-21-section-5"></a>
+
+## 1. 원본 HTML 구조
 
 ```html
 <textarea id="prompt"></textarea>
@@ -123,7 +320,9 @@ Model 응답 저장
 
 ---
 
-# 2. 내 코드의 Button Type 오류
+<a id="js-21-section-6"></a>
+
+## 2. 내 코드의 Button Type 오류
 
 내 원본:
 
@@ -141,7 +340,9 @@ Model 응답 저장
 
 ---
 
-# 3. 문서 기본 정보 개선
+<a id="js-21-section-7"></a>
+
+## 3. 문서 기본 정보 개선
 
 원본:
 
@@ -159,7 +360,9 @@ Model 응답 저장
 
 ---
 
-# 4. 원본 초기화
+<a id="js-21-section-8"></a>
+
+## 4. 원본 초기화
 
 ```javascript
 window.onload = function () {
@@ -171,7 +374,9 @@ window.onload = function () {
 
 ---
 
-# 5. 함수 이름 개선
+<a id="js-21-section-9"></a>
+
+## 5. 함수 이름 개선
 
 기존:
 
@@ -193,7 +398,9 @@ function initGeminiChat() {
 
 ---
 
-# 6. `defer` 초기화
+<a id="js-21-section-10"></a>
+
+## 6. `defer` 초기화
 
 ```html
 <script
@@ -210,7 +417,9 @@ Inline Script보다 HTML과 JavaScript를 분리하기 쉽다.
 
 ---
 
-# 7. 전역 History
+<a id="js-21-section-11"></a>
+
+## 7. 전역 History
 
 원본:
 
@@ -224,7 +433,9 @@ const list = {
 
 ---
 
-# 8. 변수 이름 개선
+<a id="js-21-section-12"></a>
+
+## 8. 변수 이름 개선
 
 ```javascript
 const conversation = {
@@ -236,7 +447,9 @@ const conversation = {
 
 ---
 
-# 9. 단일 질문 입력
+<a id="js-21-section-13"></a>
+
+## 9. 단일 질문 입력
 
 ```javascript
 const promptInput = (
@@ -254,7 +467,9 @@ Textarea의 현재 입력값을 문자열로 읽는다.
 
 ---
 
-# 10. 빈 질문 검증
+<a id="js-21-section-14"></a>
+
+## 10. 빈 질문 검증
 
 ```javascript
 const prompt = (
@@ -275,7 +490,9 @@ if (prompt === "") {
 
 ---
 
-# 11. API Key
+<a id="js-21-section-15"></a>
+
+## 11. API Key
 
 원본:
 
@@ -287,7 +504,9 @@ const key = ""
 
 ---
 
-# 12. API Key를 Client에 넣으면 안 되는 이유
+<a id="js-21-section-16"></a>
+
+## 12. API Key를 Client에 넣으면 안 되는 이유
 
 Browser JavaScript에 Key를 넣으면 다음 위치에서 확인할 수 있다.
 
@@ -300,7 +519,9 @@ Browser JavaScript에 Key를 넣으면 다음 위치에서 확인할 수 있다.
 
 ---
 
-# 13. 안전한 Key 관리
+<a id="js-21-section-17"></a>
+
+## 13. 안전한 Key 관리
 
 ```text
 Frontend
@@ -316,7 +537,12 @@ Frontend
 
 ---
 
-# 14. API Endpoint
+<a id="js-21-section-18"></a>
+
+## 14. API Endpoint
+
+> **원본 기록과 현재 설정 구분:** 아래 원본 URL의 model 이름은 수업 파일의 기록이다. 현재 지원 모델이라고 보증하지 않는다. 개선 설정은 `YOUR_SUPPORTED_MODEL`을 서버 설정에서 지정한다. `generateContent`와 별도 `interactions` API는 요청·응답 계약이 다르다. 일반 텍스트 예제를 비텍스트·thinking·도구 호출에 그대로 확대하지 않는다.
+
 
 원본:
 
@@ -333,10 +559,12 @@ Model 이름과 Endpoint 지원 여부는 API 업데이트에 따라 달라질 �
 
 ---
 
-# 15. Endpoint 분리
+<a id="js-21-section-19"></a>
+
+## 15. Endpoint 분리
 
 ```javascript
-const model = "gemini-3.6-flash"
+const model = "YOUR_SUPPORTED_MODEL"
 
 const url = (
     "https://generativelanguage.googleapis.com/"
@@ -346,7 +574,9 @@ const url = (
 
 ---
 
-# 16. Single-turn 요청 객체
+<a id="js-21-section-20"></a>
+
+## 16. Single-turn 요청 객체
 
 ```javascript
 const requestData = {
@@ -366,7 +596,9 @@ const requestData = {
 
 ---
 
-# 17. `contents`
+<a id="js-21-section-21"></a>
+
+## 17. `contents`
 
 ```text
 contents
@@ -377,7 +609,9 @@ contents
 
 ---
 
-# 18. `role`
+<a id="js-21-section-22"></a>
+
+## 18. `role`
 
 ```text
 user
@@ -391,7 +625,9 @@ model
 
 ---
 
-# 19. `parts`
+<a id="js-21-section-23"></a>
+
+## 19. `parts`
 
 ```javascript
 parts: [
@@ -405,7 +641,9 @@ parts: [
 
 ---
 
-# 20. Body 직렬화
+<a id="js-21-section-24"></a>
+
+## 20. Body 직렬화
 
 ```javascript
 body: JSON.stringify(
@@ -417,7 +655,9 @@ body: JSON.stringify(
 
 ---
 
-# 21. 원본 주석 수정
+<a id="js-21-section-25"></a>
+
+## 21. 원본 주석 수정
 
 원본 취지:
 
@@ -435,7 +675,9 @@ JavaScript 객체를 JSON 문자열로 직렬화
 
 ---
 
-# 22. Request Header
+<a id="js-21-section-26"></a>
+
+## 22. Request Header
 
 ```text
 headers: {
@@ -446,7 +688,9 @@ headers: {
 
 ---
 
-# 23. `Content-Type`
+<a id="js-21-section-27"></a>
+
+## 23. `Content-Type`
 
 ```text
 application/json
@@ -455,7 +699,9 @@ application/json
 
 ---
 
-# 24. 단일 요청
+<a id="js-21-section-28"></a>
+
+## 24. 단일 요청
 
 ```javascript
 async function requestContent() {
@@ -482,7 +728,9 @@ async function requestContent() {
 
 ---
 
-# 25. HTTP 상태 검사
+<a id="js-21-section-29"></a>
+
+## 25. HTTP 상태 검사
 
 원본은 바로 `response.json()`을 호출한다.
 
@@ -498,7 +746,9 @@ if (!response.ok) {
 
 ---
 
-# 26. Error Response Body
+<a id="js-21-section-30"></a>
+
+## 26. Error Response Body
 
 API는 실패 시에도 JSON Error Body를 반환할 수 있다.
 
@@ -525,7 +775,9 @@ async function readErrorMessage(
 
 ---
 
-# 27. 응답 JSON 변환
+<a id="js-21-section-31"></a>
+
+## 27. 응답 JSON 변환
 
 ```javascript
 async function parseResponse(
@@ -539,7 +791,9 @@ async function parseResponse(
 
 ---
 
-# 28. 원본 응답 접근
+<a id="js-21-section-32"></a>
+
+## 28. 원본 응답 접근
 
 ```javascript
 result[
@@ -561,7 +815,9 @@ result[
 
 ---
 
-# 29. Dot·Index 접근
+<a id="js-21-section-33"></a>
+
+## 29. Dot·Index 접근
 
 ```javascript
 const text = (
@@ -575,7 +831,9 @@ const text = (
 
 ---
 
-# 30. 안전한 응답 Text 추출
+<a id="js-21-section-34"></a>
+
+## 30. 안전한 응답 Text 추출
 
 ```javascript
 function getResponseText(
@@ -614,7 +872,9 @@ function getResponseText(
 
 ---
 
-# 31. Candidate가 없을 수 있는 경우
+<a id="js-21-section-35"></a>
+
+## 31. Candidate가 없을 수 있는 경우
 
 다음 상황에서는 예상한 Text가 없을 수 있다.
 
@@ -629,7 +889,9 @@ function getResponseText(
 
 ---
 
-# 32. Finish Reason 확인
+<a id="js-21-section-36"></a>
+
+## 32. Finish Reason 확인
 
 ```javascript
 const finishReason = (
@@ -645,7 +907,9 @@ Text가 없을 때 종료 이유를 확인할 수 있다.
 
 ---
 
-# 33. 원본 단일 응답 화면 출력
+<a id="js-21-section-37"></a>
+
+## 33. 원본 단일 응답 화면 출력
 
 내 코드:
 
@@ -663,7 +927,9 @@ askResult.innerText = text
 
 ---
 
-# 34. 생성한 Div가 사라지는 이유
+<a id="js-21-section-38"></a>
+
+## 34. 생성한 Div가 사라지는 이유
 
 ```text
 빈 Div Append
@@ -679,7 +945,9 @@ Text Node로 교체
 
 ---
 
-# 35. 단일 결과 교체
+<a id="js-21-section-39"></a>
+
+## 35. 단일 결과 교체
 
 최신 답변 하나만 표시할 경우:
 
@@ -689,7 +957,9 @@ askResult.textContent = text
 
 ---
 
-# 36. 대화 Message 추가
+<a id="js-21-section-40"></a>
+
+## 36. 대화 Message 추가
 
 대화를 누적할 경우:
 
@@ -741,7 +1011,9 @@ function appendMessage(
 
 ---
 
-# 37. `textContent` 사용
+<a id="js-21-section-41"></a>
+
+## 37. `textContent` 사용
 
 AI 응답도 외부 데이터다.
 
@@ -753,7 +1025,9 @@ body.textContent = text
 
 ---
 
-# 38. Markdown 응답
+<a id="js-21-section-42"></a>
+
+## 38. Markdown 응답
 
 Model 답변에 Markdown 문법이 포함될 수 있다.
 
@@ -769,7 +1043,9 @@ Markdown Renderer를 사용할 경우 Sanitizing이 필요하다.
 
 ---
 
-# 39. 멀티턴 User Turn 추가
+<a id="js-21-section-43"></a>
+
+## 39. 멀티턴 User Turn 추가
 
 ```javascript
 conversation.contents.push({
@@ -785,7 +1061,9 @@ conversation.contents.push({
 
 ---
 
-# 40. History 전체 전송
+<a id="js-21-section-44"></a>
+
+## 40. History 전체 전송
 
 ```javascript
 body: JSON.stringify(
@@ -797,7 +1075,9 @@ body: JSON.stringify(
 
 ---
 
-# 41. 원본 Model Turn 저장
+<a id="js-21-section-45"></a>
+
+## 41. 원본 Model Turn 저장
 
 원본:
 
@@ -817,7 +1097,9 @@ conversation.contents.push({
 
 ---
 
-# 42. 원본 History 저장 오류
+<a id="js-21-section-46"></a>
+
+## 42. 원본 History 저장 오류
 
 Model의 실제 답변 Text가 아니라 전체 API Response JSON 문자열을 저장한다.
 
@@ -832,7 +1114,9 @@ Model의 실제 답변 Text가 아니라 전체 API Response JSON 문자열을 �
 
 ---
 
-# 43. 올바른 Model Turn 저장
+<a id="js-21-section-47"></a>
+
+## 43. 올바른 Model Turn 저장
 
 ```javascript
 conversation.contents.push({
@@ -848,7 +1132,9 @@ conversation.contents.push({
 
 ---
 
-# 44. Role 순서
+<a id="js-21-section-48"></a>
+
+## 44. Role 순서
 
 정상적인 History 예:
 
@@ -883,7 +1169,9 @@ conversation.contents.push({
 
 ---
 
-# 45. 실패한 User Turn 처리
+<a id="js-21-section-49"></a>
+
+## 45. 실패한 User Turn 처리
 
 User Turn을 먼저 History에 추가한 뒤 요청이 실패하면 실패한 질문이 History에 남는다.
 
@@ -897,7 +1185,9 @@ User Turn을 먼저 History에 추가한 뒤 요청이 실패하면 실패한 �
 
 ---
 
-# 46. 실패 시 Rollback
+<a id="js-21-section-50"></a>
+
+## 46. 실패 시 Rollback
 
 ```javascript
 conversation.contents.push(
@@ -916,7 +1206,9 @@ try {
 
 ---
 
-# 47. 중복 클릭 문제
+<a id="js-21-section-51"></a>
+
+## 47. 중복 클릭 문제
 
 요청 중 Button을 다시 클릭하면 여러 요청이 동시에 실행될 수 있다.
 
@@ -927,7 +1219,9 @@ try {
 
 ---
 
-# 48. Loading 상태
+<a id="js-21-section-52"></a>
+
+## 48. Loading 상태
 
 ```javascript
 askButton.disabled = true
@@ -939,7 +1233,9 @@ statusView.textContent = (
 
 ---
 
-# 49. 상태 복구
+<a id="js-21-section-53"></a>
+
+## 49. 상태 복구
 
 ```javascript
 try {
@@ -951,7 +1247,9 @@ try {
 
 ---
 
-# 50. 입력 초기화
+<a id="js-21-section-54"></a>
+
+## 50. 입력 초기화
 
 성공 후:
 
@@ -964,7 +1262,9 @@ promptInput.focus()
 
 ---
 
-# 51. Enter 전송
+<a id="js-21-section-55"></a>
+
+## 51. Enter 전송
 
 ```javascript
 promptInput.addEventListener(
@@ -985,7 +1285,9 @@ promptInput.addEventListener(
 
 ---
 
-# 52. 요청 함수 분리
+<a id="js-21-section-56"></a>
+
+## 52. 요청 함수 분리
 
 ```javascript
 async function generateContent({
@@ -1028,7 +1330,9 @@ async function generateContent({
 
 ---
 
-# 53. 단일 질문 함수
+<a id="js-21-section-57"></a>
+
+## 53. 단일 질문 함수
 
 ```javascript
 async function askOnce(
@@ -1067,7 +1371,9 @@ async function askOnce(
 
 ---
 
-# 54. 멀티턴 질문 함수
+<a id="js-21-section-58"></a>
+
+## 54. 멀티턴 질문 함수
 
 ```javascript
 async function askWithHistory(
@@ -1131,7 +1437,9 @@ async function askWithHistory(
 
 ---
 
-# 55. `contents` 복사
+<a id="js-21-section-59"></a>
+
+## 55. `contents` 복사
 
 Request 중 원본 배열이 변경될 가능성을 줄이려면 Snapshot을 전달할 수 있다.
 
@@ -1145,7 +1453,9 @@ contents: (
 
 ---
 
-# 56. History 초기화
+<a id="js-21-section-60"></a>
+
+## 56. History 초기화
 
 ```javascript
 function resetConversation() {
@@ -1156,7 +1466,9 @@ function resetConversation() {
 
 ---
 
-# 57. 대화가 계속 길어지는 문제
+<a id="js-21-section-61"></a>
+
+## 57. 대화가 계속 길어지는 문제
 
 History를 무제한 누적하면:
 
@@ -1169,7 +1481,9 @@ History를 무제한 누적하면:
 
 ---
 
-# 58. 최근 Turn만 유지
+<a id="js-21-section-62"></a>
+
+## 58. 최근 Turn만 유지
 
 ```javascript
 const MAX_TURNS = 10
@@ -1194,7 +1508,9 @@ function trimConversation() {
 
 ---
 
-# 59. 대화 요약 방식
+<a id="js-21-section-63"></a>
+
+## 59. 대화 요약 방식
 
 오래된 대화를 단순 삭제하는 대신 요약 Turn으로 압축할 수 있다.
 
@@ -1209,7 +1525,9 @@ function trimConversation() {
 
 ---
 
-# 60. AbortController
+<a id="js-21-section-64"></a>
+
+## 60. AbortController
 
 ```javascript
 const controller = (
@@ -1230,7 +1548,9 @@ controller.abort()
 
 ---
 
-# 61. Timeout 구현
+<a id="js-21-section-65"></a>
+
+## 61. Timeout 구현
 
 ```javascript
 const controller = (
@@ -1258,7 +1578,9 @@ try {
 
 ---
 
-# 62. Retry 주의
+<a id="js-21-section-66"></a>
+
+## 62. Retry 주의
 
 일시적인 서버 오류에는 Retry가 도움이 될 수 있다.
 
@@ -1272,7 +1594,9 @@ try {
 
 ---
 
-# 63. 재시도 대상 예
+<a id="js-21-section-67"></a>
+
+## 63. 재시도 대상 예
 
 ```text
 일시적 Network 오류
@@ -1287,7 +1611,9 @@ HTTP 504
 
 ---
 
-# 64. 응답 순서 보호
+<a id="js-21-section-68"></a>
+
+## 64. 응답 순서 보호
 
 동시에 요청할 수 있는 UI라면 요청 ID를 사용할 수 있다.
 
@@ -1318,7 +1644,9 @@ async function askLatest(
 
 ---
 
-# 65. UI 상태 구분
+<a id="js-21-section-69"></a>
+
+## 65. UI 상태 구분
 
 ```text
 Idle
@@ -1342,7 +1670,9 @@ Blocked
 
 ---
 
-# 66. 접근성 상태
+<a id="js-21-section-70"></a>
+
+## 66. 접근성 상태
 
 ```html
 <div
@@ -1356,7 +1686,9 @@ Blocked
 
 ---
 
-# 67. 민감정보 전송 주의
+<a id="js-21-section-71"></a>
+
+## 67. 민감정보 전송 주의
 
 사용자 Prompt에 다음 정보가 포함되지 않도록 안내할 수 있다.
 
@@ -1370,7 +1702,9 @@ Blocked
 
 ---
 
-# 68. Prompt Injection 기초
+<a id="js-21-section-72"></a>
+
+## 68. Prompt Injection 기초
 
 Model 출력이나 외부 문서의 지시를 무조건 신뢰하지 않는다.
 
@@ -1385,7 +1719,9 @@ Model 출력이나 외부 문서의 지시를 무조건 신뢰하지 않는다.
 
 ---
 
-# 69. Model 출력 검증
+<a id="js-21-section-73"></a>
+
+## 69. Model 출력 검증
 
 생성된 Text를 화면에 표시하는 것과 실행 가능한 코드·명령으로 사용하는 것은 다르다.
 
@@ -1402,7 +1738,9 @@ Command 실행
 
 ---
 
-# 70. Backend Proxy 요청
+<a id="js-21-section-74"></a>
+
+## 70. Backend Proxy 요청
 
 Frontend:
 
@@ -1429,7 +1767,9 @@ Frontend에는 Gemini API Key가 없다.
 
 ---
 
-# 71. Backend 역할
+<a id="js-21-section-75"></a>
+
+## 71. Backend 역할
 
 ```text
 입력 검증
@@ -1444,7 +1784,9 @@ Gemini API 요청
 
 ---
 
-# 72. 원본 코드와 강사님 코드 비교
+<a id="js-21-section-76"></a>
+
+## 72. 원본 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1458,14 +1800,14 @@ Gemini API 요청
 | HTTP Status 검사 | 없음 | 없음 |
 | API Key | 빈 문자열 | 빈 문자열 |
 
-## 72-1. 내 코드의 장점
+### 72-1. 내 코드의 장점
 
 - 단일 응답 Text를 직접 찾아 출력했다.
 - 화면 출력 Container를 추가했다.
 - History 누적의 목적을 주석으로 설명했다.
 - Single-turn과 Multiturn Button을 분리했다.
 
-## 72-2. 내 코드의 개선점
+### 72-2. 내 코드의 개선점
 
 - Button Type 오타가 있다.
 - 빈 Prompt를 전송한다.
@@ -1476,13 +1818,13 @@ Gemini API 요청
 - 요청 중 Button 상태를 관리하지 않는다.
 - API Key를 Client Header에 넣는 구조다.
 
-## 72-3. 강사님 코드의 장점
+### 72-3. 강사님 코드의 장점
 
 - Request Header·Body·Fetch 흐름이 간결하다.
 - Single-turn과 Multiturn 구조를 비교할 수 있다.
 - `user`와 `model` Turn을 배열에 누적하는 기본 형태를 보여 준다.
 
-## 72-4. 강사님 코드의 보충점
+### 72-4. 강사님 코드의 보충점
 
 - 응답을 화면에 출력하지 않는다.
 - 실제 Model Text 대신 전체 Response JSON을 History에 저장한다.
@@ -1492,9 +1834,11 @@ Gemini API 요청
 
 ---
 
-# 73. 기존 코드에서 개선한 이유
+<a id="js-21-section-77"></a>
 
-## 73-1. Button Type
+## 73. 기존 코드에서 개선한 이유
+
+### 73-1. Button Type
 
 기존:
 
@@ -1508,7 +1852,7 @@ type="buttn"
 type="button"
 ```
 
-## 73-2. 응답 출력
+### 73-2. 응답 출력
 
 기존:
 
@@ -1532,7 +1876,7 @@ appendMessage(
 )
 ```
 
-## 73-3. Model History
+### 73-3. Model History
 
 기존:
 
@@ -1546,7 +1890,7 @@ text: JSON.stringify(result)
 text: responseText
 ```
 
-## 73-4. API Key
+### 73-4. API Key
 
 기존:
 
@@ -1566,7 +1910,9 @@ Browser
 
 ---
 
-# 74. 실무형 예제: 안전한 Chat UI
+<a id="js-21-section-78"></a>
+
+## 74. 실무형 예제: 안전한 Chat UI
 
 ```javascript
 function createChatApp({
@@ -1714,7 +2060,7 @@ function createChatApp({
 }
 ```
 
-## 74-1. 코드에서 무엇을 사용하는 걸까?
+### 74-1. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1731,79 +2077,93 @@ function createChatApp({
 
 ---
 
-# 75. 대표 오류로 이해하기
+<a id="js-21-section-79"></a>
 
-## 75-1. HTTP 400·401 후 응답 접근
+## 75. 대표 오류로 이해하기
+
+### 75-1. HTTP 400·401 후 응답 접근
 
 Error JSON에는 `candidates`가 없어 `TypeError`가 발생할 수 있다.
 
-## 75-2. API Key가 빈 문자열
+### 75-2. API Key가 빈 문자열
 
 인증 오류가 발생한다.
 
-## 75-3. Model 응답 전체를 History Text로 저장
+### 75-3. Model 응답 전체를 History Text로 저장
 
 다음 요청 Context가 불필요한 JSON Metadata로 오염된다.
 
-## 75-4. Append 후 `innerText` 재할당
+<a id="index-section-99"></a>
+
+### 75-4. Append 후 `innerText` 재할당
 
 생성한 자식 Node가 모두 제거된다.
 
-## 75-5. 중복 요청
+### 75-5. 중복 요청
 
 응답 순서와 History 순서가 엉킬 수 있다.
 
-## 75-6. Client에 Key 하드코딩
+<a id="index-section-101"></a>
+
+### 75-6. Client에 Key 하드코딩
 
 사용자가 Key를 확인하고 악용할 수 있다.
 
 ---
 
-# 76. 자주 하는 실수
+<a id="js-21-section-80"></a>
 
-## 76-1. Model이 Browser 상태를 자동 기억한다고 생각
+## 76. 자주 하는 실수
+
+### 76-1. Model이 Browser 상태를 자동 기억한다고 생각
 
 Client가 History를 다시 전송해야 한다.
 
-## 76-2. 객체가 자동으로 JSON 전송된다고 생각
+### 76-2. 객체가 자동으로 JSON 전송된다고 생각
 
 `JSON.stringify()`가 필요하다.
 
-## 76-3. `response.json()`이 동기 함수라고 생각
+<a id="index-section-105"></a>
+
+### 76-3. `response.json()`이 동기 함수라고 생각
 
 Promise를 반환한다.
 
-## 76-4. HTTP 오류도 Catch가 자동 처리한다고 생각
+### 76-4. HTTP 오류도 Catch가 자동 처리한다고 생각
 
 `response.ok`를 확인한다.
 
-## 76-5. Candidate Text가 항상 존재한다고 생각
+### 76-5. Candidate Text가 항상 존재한다고 생각
 
 안전 차단·빈 응답·형식 변경을 처리한다.
 
-## 76-6. 전체 Result를 Model 답변으로 저장
+### 76-6. 전체 Result를 Model 답변으로 저장
 
 실제 생성 Text만 History에 넣는다.
 
-## 76-7. History를 무제한 저장
+### 76-7. History를 무제한 저장
 
 Token·비용·지연·Context 한도를 관리한다.
 
-## 76-8. AI 응답을 `innerHTML`에 직접 삽입
+<a id="index-section-110"></a>
+
+### 76-8. AI 응답을 `innerHTML`에 직접 삽입
 
 `textContent` 또는 Sanitizer를 사용한다.
 
-## 76-9. API Key를 `.gitignore`만으로 보호 가능하다고 생각
+### 76-9. API Key를 `.gitignore`만으로 보호 가능하다고 생각
 
 Browser Bundle에 들어가면 사용자에게 노출된다.
 
-## 76-10. Model 이름을 영구적인 값으로 생각
+### 76-10. Model 이름을 영구적인 값으로 생각
 
 설정값으로 분리하고 공식 문서를 확인한다.
 
 ---
 
-# 77. 핵심 요약
+<a id="js-21-section-81"></a>
+
+## 77. 핵심 요약
 
 ```text
 Prompt
@@ -1842,7 +2202,9 @@ Backend Proxy
 
 ---
 
-# 78. 최종 체크리스트
+<a id="js-21-section-82"></a>
+
+## 78. 최종 체크리스트
 
 - [ ] Button Type을 올바르게 작성했는가?
 - [ ] HTML `lang`과 `title`이 문서 내용에 맞는가?
@@ -1872,7 +2234,9 @@ Backend Proxy
 
 ---
 
-# 마무리
+<a id="js-21-section-83"></a>
+
+## 마무리
 
 생성형 AI API 연동의 핵심은 질문을 보내고 답변을 출력하는 것에서 끝나지 않는다.
 
@@ -1889,7 +2253,9 @@ API Key와 사용자 데이터를 Backend에서 보호하는 것
 ```
 
 이 흐름을 이해하면 단순한 API 실습을 넘어 실제 AI Chat UI와 서비스 구조로 확장할 수 있다.
-# V3 실행 추적 카드 — 사용자 메시지 → 요청 본문 → API 응답 → 대화 상태·화면
+<a id="js-21-section-84"></a>
+
+## V3 실행 추적 카드 — 사용자 메시지 → 요청 본문 → API 응답 → 대화 상태·화면
 
 멀티턴은 이전 user/model 메시지를 배열 상태에 누적해 다음 요청에 포함한다. 전송 전 UI 상태, 요청 중 로딩, 성공·실패 후 복구를 구분한다.
 

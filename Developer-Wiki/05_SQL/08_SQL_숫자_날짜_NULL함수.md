@@ -1,11 +1,101 @@
 ---
 title: SQL 숫자·날짜·NULL 함수
-version: v3.0-final
-last_updated: 2026-08-13
+version: v4.0-detailed-encyclopedia
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # SQL 숫자·날짜·NULL 함수
+
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-08-section-2)
+- [개념에서 실제 실행까지 — 숫자·날짜·NULL 함수란? — 변환 목적부터 정하기](#sql-08-section-3)
+- [11. CEIL과 FLOOR 비교](#sql-08-section-14)
+- [16. ROUND와 TRUNCATE 비교](#sql-08-section-19)
+- [51. 내 코드와 강사님 코드 비교](#sql-08-section-54)
+- [58. Debugging](#sql-08-section-61)
+- [59. 종합실습](#sql-08-section-62)
+- [60. 정답과 해설](#sql-08-section-63)
+- [61. 최종 체크리스트](#sql-08-section-64)
+- [62. 핵심 요약](#sql-08-section-65)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [문서 정보](#sql-08-section-1)
+- [학습 목표](#sql-08-section-2)
+- [개념에서 실제 실행까지 — 숫자·날짜·NULL 함수란? — 변환 목적부터 정하기](#sql-08-section-3)
+- [1. 숫자 함수란?](#sql-08-section-4)
+- [2. ROUND](#sql-08-section-5)
+- [3. ROUND 두 번째 인수](#sql-08-section-6)
+- [4. ROUND의 핵심](#sql-08-section-7)
+- [5. ROUND는 단순 삭제가 아니다](#sql-08-section-8)
+- [6. ROUND 음수 자릿수](#sql-08-section-9)
+- [7. CEIL](#sql-08-section-10)
+- [8. CEIL 음수](#sql-08-section-11)
+- [9. FLOOR](#sql-08-section-12)
+- [10. FLOOR 음수](#sql-08-section-13)
+- [11. CEIL과 FLOOR 비교](#sql-08-section-14)
+- [12. TRUNCATE](#sql-08-section-15)
+- [13. TRUNCATE 0자리](#sql-08-section-16)
+- [14. TRUNCATE 1자리](#sql-08-section-17)
+- [15. FLOOR와 TRUNCATE 차이](#sql-08-section-18)
+- [16. ROUND와 TRUNCATE 비교](#sql-08-section-19)
+- [17. MOD](#sql-08-section-20)
+- [18. MOD 활용](#sql-08-section-21)
+- [19. MOD와 `%`](#sql-08-section-22)
+- [20. 숫자 함수와 Column](#sql-08-section-23)
+- [21. 날짜·시간 함수란?](#sql-08-section-24)
+- [22. NOW](#sql-08-section-25)
+- [23. NOW는 서버/세션 시간 기준](#sql-08-section-26)
+- [24. CURRENT_TIMESTAMP](#sql-08-section-27)
+- [25. SYSDATE](#sql-08-section-28)
+- [26. NOW와 SYSDATE 차이](#sql-08-section-29)
+- [27. NOW와 SYSDATE를 같은 함수라고만 외우면 안 되는 이유](#sql-08-section-30)
+- [28. DATE_FORMAT](#sql-08-section-31)
+- [29. DATE_FORMAT 주요 Format](#sql-08-section-32)
+- [30. Minute은 `%m`이 아니다](#sql-08-section-33)
+- [31. DATE_FORMAT의 Result](#sql-08-section-34)
+- [32. 날짜는 가능한 날짜형으로 보관](#sql-08-section-35)
+- [33. STR_TO_DATE](#sql-08-section-36)
+- [34. DATE_FORMAT과 STR_TO_DATE는 반대 방향](#sql-08-section-37)
+- [35. STR_TO_DATE Format 일치](#sql-08-section-38)
+- [36. 잘못된 날짜 문자열](#sql-08-section-39)
+- [37. DATE_FORMAT과 정렬](#sql-08-section-40)
+- [38. NULL 처리 함수](#sql-08-section-41)
+- [39. IFNULL](#sql-08-section-42)
+- [40. IFNULL 예제](#sql-08-section-43)
+- [41. COALESCE](#sql-08-section-44)
+- [42. COALESCE 두 인수](#sql-08-section-45)
+- [43. IFNULL과 COALESCE 차이](#sql-08-section-46)
+- [44. COALESCE 활용 예](#sql-08-section-47)
+- [45. NULL 산술 원본](#sql-08-section-48)
+- [46. NULL 대체 후 산술](#sql-08-section-49)
+- [47. NULL을 0으로 바꾸는 것은 Business Rule](#sql-08-section-50)
+- [48. IFNULL은 Data를 수정하지 않는다](#sql-08-section-51)
+- [49. NULL 처리와 집계함수](#sql-08-section-52)
+- [50. NULL 처리와 문자열 결합](#sql-08-section-53)
+- [51. 내 코드와 강사님 코드 비교](#sql-08-section-54)
+- [52. 개선된 통합 예제](#sql-08-section-55)
+- [53. 실무 함수 선택 기준](#sql-08-section-56)
+- [54. 숫자 함수 리팩토링](#sql-08-section-57)
+- [55. 날짜 Formatting 리팩토링](#sql-08-section-58)
+- [56. NULL 처리 리팩토링](#sql-08-section-59)
+- [57. 자주 하는 실수](#sql-08-section-60)
+- [58. Debugging](#sql-08-section-61)
+- [59. 종합실습](#sql-08-section-62)
+- [60. 정답과 해설](#sql-08-section-63)
+- [61. 최종 체크리스트](#sql-08-section-64)
+- [62. 핵심 요약](#sql-08-section-65)
+- [마무리](#sql-08-section-66)
+- [V3 동작 백과 — 숫자·날짜·NULL 값은 어떻게 바뀌는가?](#sql-08-section-67)
+
+</details>
+
+---
+
+<a id="sql-08-section-1"></a>
 
 ## 문서 정보
 
@@ -26,22 +116,135 @@ status: Completed
 
 ---
 
-# 학습 목표
+<a id="sql-08-section-2"></a>
 
-- `ROUND()`로 반올림할 수 있다.
-- `ROUND(value, digits)`의 두 번째 인수 의미를 설명할 수 있다.
-- `CEIL()`과 `FLOOR()`를 양수·음수에서 구분할 수 있다.
-- `TRUNCATE()`가 반올림이 아니라 자릿수 절삭이라는 점을 이해할 수 있다.
-- `MOD()`로 나머지를 계산할 수 있다.
-- `NOW()`와 `SYSDATE()`의 공통점과 차이를 설명할 수 있다.
-- `DATE_FORMAT()`으로 날짜·시간 출력 형식을 변경할 수 있다.
-- `STR_TO_DATE()`로 문자열을 날짜/시간 값으로 해석할 수 있다.
-- `IFNULL()`과 `COALESCE()`로 NULL 대체값을 만들 수 있다.
-- `NULL`이 포함된 산술식과 NULL 대체 후 산술식의 차이를 설명할 수 있다.
+## 학습 목표
+
+- 올림·내림·절삭 및 날짜 표시·파싱을 구분한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
 
-# 1. 숫자 함수란?
+<a id="sql-08-section-3"></a>
+
+## 개념에서 실제 실행까지 — 숫자·날짜·NULL 함수란? — 변환 목적부터 정하기
+
+### 무엇이며 왜 배워야 할까?
+
+함수의 이름보다 변환 목적을 먼저 정한다. CEIL은 더 큰 방향의 정수, FLOOR는 더 작은 방향의 정수이며 음수에서 -3.14의 결과는 -3과 -4다. TRUNCATE는 지정 자릿수 뒤를 잘라 0 방향으로 절삭하므로 FLOOR와 다르다.
+
+DATE_FORMAT은 날짜·시간 값을 표시 문자열로 바꾸고 STR_TO_DATE는 형식에 맞는 문자열을 날짜·시간 값으로 해석한다. 월은 %m, 분은 %i다. 화면에서 ‘2026년’처럼 보인다고 원본 날짜 컬럼이 문자열로 바뀐 것은 아니다.
+
+NOW는 현재 문장 시작 시점의 시간, SYSDATE는 호출 시점 시간이 기본이지만 서버 옵션 등에 따라 달라질 수 있다. 현재 시각은 실행마다 변하므로 아래 검증에서는 고정 날짜를 사용한다.
+
+IFNULL(x,0)은 x가 NULL일 때만 0을 반환한다. 이미 0인 값과 NULL의 업무 의미가 동일하다는 선언은 아니다. COALESCE는 왼쪽부터 첫 비NULL 값을 선택하며 '',0도 실제 값으로 선택한다.
+
+### 입력은 어디에서 오는가?
+
+EMP·DEPT·SALGRADE는 초기화 자료 그대로 준비된 상태다. EMP 14행, DEPT 4행, SALGRADE 5행이다. 다른 DML로 데이터를 바꿨다면 아래 결과와 달라질 수 있다. 상수 SELECT 예제는 테이블 없이도 실행할 수 있다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+SELECT CEIL(-3.14) AS up_value,
+       FLOOR(-3.14) AS down_value,
+       TRUNCATE(-3.14, 0) AS cut_value;
+SELECT DATE_FORMAT('2026-08-07 13:05:09', '%Y-%m-%d %H:%i:%s') AS formatted,
+       STR_TO_DATE('07-08-2026', '%d-%m-%Y') AS parsed;
+SELECT IFNULL(NULL, 0) AS fallback,
+       LENGTH(COALESCE(NULL, '', 'default')) AS chosen_length;
+```
+
+Result Grid의 열·행 값:
+
+```text
+up_value	down_value	cut_value
+-3	-4	-3
+formatted	parsed
+2026-08-07 13:05:09	2026-08-07
+fallback	chosen_length
+0	0
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 음수 상수에 세 숫자 함수를 적용해 방향 차이를 비교한다.
+2. 고정 날짜 문자열과 일치하는 형식으로 파싱한다.
+3. 표시할 날짜에는 DATE_FORMAT을 적용한다.
+4. COALESCE가 NULL 뒤의 빈 문자열을 선택하는지 길이로 관찰한다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 292~301행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+select floor(-3.14);
+
+-- truncate는 두 번째 전달인자가 필수이며, 소수점 몇 자리인지 확인 후 버림
+select truncate(-3.14, 0);
+
+-- mod는 나머지를 구해줌
+select mod(10, 3);
+
+-- now(), sysdate()는 현재 시간을 알 수 있음
+select now(); -- 서버시간
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 252~261행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+select floor(-3.14);
+
+-- 버림
+select truncate(-3.14, 1);
+
+-- 나머지
+select mod(10, 3);
+
+-- 현재 시간
+select now();
+```
+
+두 원본의 round·ceil·floor·truncate와 날짜·NULL 예제를 연결했다. ROUND의 정확한 절반 동작은 입력이 정확 수치인지 근사 수치인지 등도 확인하므로 서로 다른 자료형 결과를 무조건 일반화하지 않는다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 이해 확인 실습
+
+1. COALESCE(NULL,0,100)은? IFNULL(comm,0)을 SELECT하면 저장 NULL도 0일까?
+2. 분을 %m으로 포맷하면? COALESCE(NULL,'',100)의 값은?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 0을 선택한다. SELECT 표시 대체만으로 저장 데이터가 변경되지는 않는다.
+2. %m은 월이다. 분은 %i다. COALESCE는 첫 비NULL인 빈 문자열을 선택한다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-08-section-4"></a>
+
+## 1. 숫자 함수란?
 
 숫자 함수는 숫자 값을 입력받아 반올림, 올림, 내림, 절삭, 나머지 계산 같은 결과를 반환한다.
 
@@ -64,7 +267,9 @@ MOD
 
 ---
 
-# 2. ROUND
+<a id="sql-08-section-5"></a>
+
+## 2. ROUND
 
 원본:
 
@@ -82,7 +287,9 @@ Result:
 
 ---
 
-# 3. ROUND 두 번째 인수
+<a id="sql-08-section-6"></a>
+
+## 3. ROUND 두 번째 인수
 
 ```sql
 SELECT ROUND(3.145, 2);
@@ -97,7 +304,9 @@ ROUND(value, 2)
 
 ---
 
-# 4. ROUND의 핵심
+<a id="sql-08-section-7"></a>
+
+## 4. ROUND의 핵심
 
 ```sql
 SELECT ROUND(123.4567, 2);
@@ -113,7 +322,9 @@ SELECT ROUND(123.4567, 2);
 
 ---
 
-# 5. ROUND는 단순 삭제가 아니다
+<a id="sql-08-section-8"></a>
+
+## 5. ROUND는 단순 삭제가 아니다
 
 ```text
 ROUND
@@ -127,7 +338,9 @@ TRUNCATE
 
 ---
 
-# 6. ROUND 음수 자릿수
+<a id="sql-08-section-9"></a>
+
+## 6. ROUND 음수 자릿수
 
 MariaDB에서는 두 번째 인수에 음수를 사용해 정수부 자릿수를 기준으로 반올림할 수도 있다.
 
@@ -141,7 +354,9 @@ SELECT ROUND(1234.56, -2);
 
 ---
 
-# 7. CEIL
+<a id="sql-08-section-10"></a>
+
+## 7. CEIL
 
 원본:
 
@@ -159,7 +374,9 @@ Result:
 
 ---
 
-# 8. CEIL 음수
+<a id="sql-08-section-11"></a>
+
+## 8. CEIL 음수
 
 원본:
 
@@ -187,7 +404,9 @@ Result:
 
 ---
 
-# 9. FLOOR
+<a id="sql-08-section-12"></a>
+
+## 9. FLOOR
 
 원본:
 
@@ -205,7 +424,9 @@ Result:
 
 ---
 
-# 10. FLOOR 음수
+<a id="sql-08-section-13"></a>
+
+## 10. FLOOR 음수
 
 원본:
 
@@ -231,7 +452,9 @@ FLOOR
 
 ---
 
-# 11. CEIL과 FLOOR 비교
+<a id="sql-08-section-14"></a>
+
+## 11. CEIL과 FLOOR 비교
 
 ```sql
 SELECT
@@ -255,7 +478,9 @@ FLOOR → -4
 
 ---
 
-# 12. TRUNCATE
+<a id="sql-08-section-15"></a>
+
+## 12. TRUNCATE
 
 원본 내 코드:
 
@@ -279,7 +504,9 @@ TRUNCATE(value, digits)
 
 ---
 
-# 13. TRUNCATE 0자리
+<a id="sql-08-section-16"></a>
+
+## 13. TRUNCATE 0자리
 
 ```sql
 SELECT TRUNCATE(-3.14, 0);
@@ -297,7 +524,9 @@ SELECT TRUNCATE(-3.14, 0);
 
 ---
 
-# 14. TRUNCATE 1자리
+<a id="sql-08-section-17"></a>
+
+## 14. TRUNCATE 1자리
 
 ```sql
 SELECT TRUNCATE(-3.14, 1);
@@ -313,7 +542,9 @@ Result:
 
 ---
 
-# 15. FLOOR와 TRUNCATE 차이
+<a id="sql-08-section-18"></a>
+
+## 15. FLOOR와 TRUNCATE 차이
 
 음수에서 차이가 특히 명확하다.
 
@@ -335,7 +566,9 @@ TRUNCATE
 
 ---
 
-# 16. ROUND와 TRUNCATE 비교
+<a id="sql-08-section-19"></a>
+
+## 16. ROUND와 TRUNCATE 비교
 
 ```sql
 SELECT
@@ -355,7 +588,9 @@ TRUNCATE
 
 ---
 
-# 17. MOD
+<a id="sql-08-section-20"></a>
+
+## 17. MOD
 
 원본:
 
@@ -373,7 +608,9 @@ Result:
 
 ---
 
-# 18. MOD 활용
+<a id="sql-08-section-21"></a>
+
+## 18. MOD 활용
 
 짝수/홀수 판단 같은 조건에도 사용할 수 있다.
 
@@ -388,7 +625,9 @@ SELECT MOD(10, 2);
 
 ---
 
-# 19. MOD와 `%`
+<a id="sql-08-section-22"></a>
+
+## 19. MOD와 `%`
 
 DBMS에서는 `%` Operator도 나머지 계산에 지원될 수 있지만, 함수 형태인 `MOD()`를 사용하면 의도가 분명하다.
 
@@ -398,7 +637,9 @@ SELECT MOD(10, 3);
 
 ---
 
-# 20. 숫자 함수와 Column
+<a id="sql-08-section-23"></a>
+
+## 20. 숫자 함수와 Column
 
 함수는 상수뿐 아니라 Column에도 적용한다.
 
@@ -414,7 +655,9 @@ FROM emp;
 
 ---
 
-# 21. 날짜·시간 함수란?
+<a id="sql-08-section-24"></a>
+
+## 21. 날짜·시간 함수란?
 
 날짜 함수는 현재 날짜·시간을 조회하거나 표시 형식을 바꾸거나 문자열을 날짜 값으로 해석할 때 사용한다.
 
@@ -429,7 +672,9 @@ STR_TO_DATE
 
 ---
 
-# 22. NOW
+<a id="sql-08-section-25"></a>
+
+## 22. NOW
 
 원본:
 
@@ -447,7 +692,9 @@ YYYY-MM-DD HH:MM:SS
 
 ---
 
-# 23. NOW는 서버/세션 시간 기준
+<a id="sql-08-section-26"></a>
+
+## 23. NOW는 서버/세션 시간 기준
 
 `NOW()`가 반환하는 값은 Database Server의 현재 Time Zone 설정과 관련된다.
 
@@ -455,7 +702,9 @@ Application 사용자의 PC 시각이라고 단정하면 안 된다.
 
 ---
 
-# 24. CURRENT_TIMESTAMP
+<a id="sql-08-section-27"></a>
+
+## 24. CURRENT_TIMESTAMP
 
 `NOW()`와 함께 자주 사용하는 표준적인 표현이 있다.
 
@@ -467,7 +716,9 @@ MariaDB에서 현재 날짜와 시간을 얻는 용도로 사용할 수 있다.
 
 ---
 
-# 25. SYSDATE
+<a id="sql-08-section-28"></a>
+
+## 25. SYSDATE
 
 원본:
 
@@ -481,7 +732,9 @@ SELECT SYSDATE();
 
 ---
 
-# 26. NOW와 SYSDATE 차이
+<a id="sql-08-section-29"></a>
+
+## 26. NOW와 SYSDATE 차이
 
 MariaDB 기준:
 
@@ -497,7 +750,9 @@ SYSDATE()
 
 ---
 
-# 27. NOW와 SYSDATE를 같은 함수라고만 외우면 안 되는 이유
+<a id="sql-08-section-30"></a>
+
+## 27. NOW와 SYSDATE를 같은 함수라고만 외우면 안 되는 이유
 
 원본 Comment:
 
@@ -519,7 +774,9 @@ now(), sysdate()는 현재 시간을 알 수 있음
 
 ---
 
-# 28. DATE_FORMAT
+<a id="sql-08-section-31"></a>
+
+## 28. DATE_FORMAT
 
 원본:
 
@@ -534,7 +791,9 @@ SELECT DATE_FORMAT(
 
 ---
 
-# 29. DATE_FORMAT 주요 Format
+<a id="sql-08-section-32"></a>
+
+## 29. DATE_FORMAT 주요 Format
 
 | Format | 의미 |
 | --- | --- |
@@ -547,7 +806,9 @@ SELECT DATE_FORMAT(
 
 ---
 
-# 30. Minute은 `%m`이 아니다
+<a id="sql-08-section-33"></a>
+
+## 30. Minute은 `%m`이 아니다
 
 자주 하는 실수:
 
@@ -569,7 +830,9 @@ SELECT DATE_FORMAT(
 
 ---
 
-# 31. DATE_FORMAT의 Result
+<a id="sql-08-section-34"></a>
+
+## 31. DATE_FORMAT의 Result
 
 ```sql
 SELECT DATE_FORMAT(
@@ -582,7 +845,9 @@ SELECT DATE_FORMAT(
 
 ---
 
-# 32. 날짜는 가능한 날짜형으로 보관
+<a id="sql-08-section-35"></a>
+
+## 32. 날짜는 가능한 날짜형으로 보관
 
 실제 Table에 날짜를 저장할 때:
 
@@ -594,7 +859,9 @@ SELECT DATE_FORMAT(
 
 ---
 
-# 33. STR_TO_DATE
+<a id="sql-08-section-36"></a>
+
+## 33. STR_TO_DATE
 
 원본:
 
@@ -609,7 +876,9 @@ SELECT STR_TO_DATE(
 
 ---
 
-# 34. DATE_FORMAT과 STR_TO_DATE는 반대 방향
+<a id="sql-08-section-37"></a>
+
+## 34. DATE_FORMAT과 STR_TO_DATE는 반대 방향
 
 ```text
 DATE_FORMAT
@@ -623,7 +892,9 @@ STR_TO_DATE
 
 ---
 
-# 35. STR_TO_DATE Format 일치
+<a id="sql-08-section-38"></a>
+
+## 35. STR_TO_DATE Format 일치
 
 ```sql
 SELECT STR_TO_DATE(
@@ -636,7 +907,9 @@ SELECT STR_TO_DATE(
 
 ---
 
-# 36. 잘못된 날짜 문자열
+<a id="sql-08-section-39"></a>
+
+## 36. 잘못된 날짜 문자열
 
 잘못된 날짜/시간 입력은 `NULL`, Warning 또는 SQL Mode에 따른 Error와 관련될 수 있다.
 
@@ -644,7 +917,9 @@ SELECT STR_TO_DATE(
 
 ---
 
-# 37. DATE_FORMAT과 정렬
+<a id="sql-08-section-40"></a>
+
+## 37. DATE_FORMAT과 정렬
 
 날짜를 먼저 문자열로 Formatting한 뒤 그 문자열 기준으로 정렬하면 Format에 따라 실제 시간 순서와 다르게 보일 수 있다.
 
@@ -660,7 +935,9 @@ ORDER BY hiredate;
 
 ---
 
-# 38. NULL 처리 함수
+<a id="sql-08-section-41"></a>
+
+## 38. NULL 처리 함수
 
 원본:
 
@@ -682,7 +959,9 @@ NULL을 대체하는 대표 함수다.
 
 ---
 
-# 39. IFNULL
+<a id="sql-08-section-42"></a>
+
+## 39. IFNULL
 
 구조:
 
@@ -694,7 +973,9 @@ IFNULL(value, fallback)
 
 ---
 
-# 40. IFNULL 예제
+<a id="sql-08-section-43"></a>
+
+## 40. IFNULL 예제
 
 ```sql
 SELECT
@@ -714,7 +995,9 @@ COMM = NULL
 
 ---
 
-# 41. COALESCE
+<a id="sql-08-section-44"></a>
+
+## 41. COALESCE
 
 `COALESCE()`는 인수 목록에서 **첫 번째 NULL이 아닌 값**을 반환한다.
 
@@ -730,7 +1013,9 @@ Result:
 
 ---
 
-# 42. COALESCE 두 인수
+<a id="sql-08-section-45"></a>
+
+## 42. COALESCE 두 인수
 
 ```sql
 SELECT COALESCE(comm, 0)
@@ -741,7 +1026,9 @@ FROM emp;
 
 ---
 
-# 43. IFNULL과 COALESCE 차이
+<a id="sql-08-section-46"></a>
+
+## 43. IFNULL과 COALESCE 차이
 
 ```text
 IFNULL(a, b)
@@ -757,7 +1044,9 @@ COALESCE(a, b, c, ...)
 
 ---
 
-# 44. COALESCE 활용 예
+<a id="sql-08-section-47"></a>
+
+## 44. COALESCE 활용 예
 
 ```sql
 SELECT COALESCE(
@@ -773,7 +1062,9 @@ FROM member;
 
 ---
 
-# 45. NULL 산술 원본
+<a id="sql-08-section-48"></a>
+
+## 45. NULL 산술 원본
 
 원본:
 
@@ -787,7 +1078,9 @@ FROM emp;
 
 ---
 
-# 46. NULL 대체 후 산술
+<a id="sql-08-section-49"></a>
+
+## 46. NULL 대체 후 산술
 
 원본:
 
@@ -801,7 +1094,9 @@ FROM emp;
 
 ---
 
-# 47. NULL을 0으로 바꾸는 것은 Business Rule
+<a id="sql-08-section-50"></a>
+
+## 47. NULL을 0으로 바꾸는 것은 Business Rule
 
 다음 두 상태는 다를 수 있다.
 
@@ -817,7 +1112,9 @@ COMM = 0
 
 ---
 
-# 48. IFNULL은 Data를 수정하지 않는다
+<a id="sql-08-section-51"></a>
+
+## 48. IFNULL은 Data를 수정하지 않는다
 
 ```sql
 SELECT IFNULL(comm, 0)
@@ -830,7 +1127,9 @@ Query Result에서 대체된 값을 반환한다.
 
 ---
 
-# 49. NULL 처리와 집계함수
+<a id="sql-08-section-52"></a>
+
+## 49. NULL 처리와 집계함수
 
 05번과 연결:
 
@@ -861,7 +1160,9 @@ Result 의미가 달라질 수 있다.
 
 ---
 
-# 50. NULL 처리와 문자열 결합
+<a id="sql-08-section-53"></a>
+
+## 50. NULL 처리와 문자열 결합
 
 07번과 연결:
 
@@ -878,7 +1179,9 @@ NULL 때문에 전체 `CONCAT` Result가 NULL이 되는 상황을 피할 수 있
 
 ---
 
-# 51. 내 코드와 강사님 코드 비교
+<a id="sql-08-section-54"></a>
+
+## 51. 내 코드와 강사님 코드 비교
 
 두 원본은 다음 순서가 거의 동일하다.
 
@@ -899,7 +1202,7 @@ ROUND
 
 ---
 
-## 51.1 ROUND
+### 51.1 ROUND
 
 내 코드:
 
@@ -918,7 +1221,7 @@ V2에서는 두 번째 인수가 남길 자릿수라는 의미까지 명확히 �
 
 ---
 
-## 51.2 CEIL / FLOOR
+### 51.2 CEIL / FLOOR
 
 두 원본 모두:
 
@@ -936,7 +1239,7 @@ V2에서는 음수에서 `CEIL=-3`, `FLOOR=-4`가 되는 이유를 수직선 기
 
 ---
 
-## 51.3 TRUNCATE 차이
+### 51.3 TRUNCATE 차이
 
 내 코드:
 
@@ -962,7 +1265,7 @@ SELECT TRUNCATE(-3.14, 1);
 
 ---
 
-## 51.4 MOD
+### 51.4 MOD
 
 두 코드 모두:
 
@@ -974,7 +1277,7 @@ SELECT MOD(10, 3);
 
 ---
 
-## 51.5 NOW / SYSDATE
+### 51.5 NOW / SYSDATE
 
 두 코드 모두 두 함수를 연속으로 실행한다.
 
@@ -989,7 +1292,7 @@ V2에서는 Statement 시작 시각 기준인 `NOW()`와 실제 함수 실행 �
 
 ---
 
-## 51.6 DATE_FORMAT
+### 51.6 DATE_FORMAT
 
 두 코드 모두:
 
@@ -1004,7 +1307,7 @@ SELECT DATE_FORMAT(
 
 ---
 
-## 51.7 STR_TO_DATE
+### 51.7 STR_TO_DATE
 
 두 코드 모두:
 
@@ -1019,7 +1322,7 @@ SELECT STR_TO_DATE(
 
 ---
 
-## 51.8 IFNULL / COALESCE
+### 51.8 IFNULL / COALESCE
 
 두 코드 모두:
 
@@ -1047,7 +1350,7 @@ COALESCE
 
 ---
 
-## 51.9 NULL 산술
+### 51.9 NULL 산술
 
 두 코드 모두:
 
@@ -1063,7 +1366,7 @@ NULL이 산술 전체를 NULL로 만드는 경우와 대체값을 사용한 경�
 
 ---
 
-## 51.10 원본 비교 요약
+### 51.10 원본 비교 요약
 
 | 항목 | 내 코드 | 강사님 코드 | V2 정리 |
 | --- | --- | --- | --- |
@@ -1082,7 +1385,9 @@ NULL이 산술 전체를 NULL로 만드는 경우와 대체값을 사용한 경�
 
 ---
 
-# 52. 개선된 통합 예제
+<a id="sql-08-section-55"></a>
+
+## 52. 개선된 통합 예제
 
 ```sql
 -- 숫자 함수 비교
@@ -1119,7 +1424,9 @@ FROM emp;
 
 ---
 
-# 53. 실무 함수 선택 기준
+<a id="sql-08-section-56"></a>
+
+## 53. 실무 함수 선택 기준
 
 ```text
 반올림
@@ -1159,7 +1466,9 @@ NULL 대체 후보 1개
 
 ---
 
-# 54. 숫자 함수 리팩토링
+<a id="sql-08-section-57"></a>
+
+## 54. 숫자 함수 리팩토링
 
 요구사항이 “소수점 2자리 반올림”이라면:
 
@@ -1177,13 +1486,15 @@ TRUNCATE(value, 2)
 
 ---
 
-# 55. 날짜 Formatting 리팩토링
+<a id="sql-08-section-58"></a>
 
-## Before
+## 55. 날짜 Formatting 리팩토링
+
+### Before
 
 날짜 Column을 문자열처럼 직접 가공해 저장하거나 비교한다.
 
-## After
+### After
 
 ```sql
 SELECT
@@ -1200,9 +1511,11 @@ Date Type은 Date Type으로 유지하고 표시할 때 Formatting한다.
 
 ---
 
-# 56. NULL 처리 리팩토링
+<a id="sql-08-section-59"></a>
 
-## Before
+## 56. NULL 처리 리팩토링
+
+### Before
 
 ```sql
 SELECT
@@ -1212,7 +1525,7 @@ FROM emp;
 
 NULL 때문에 계산 결과가 사라질 수 있다.
 
-## After
+### After
 
 업무상 NULL을 0으로 계산하는 것이 맞다면:
 
@@ -1224,7 +1537,9 @@ FROM emp;
 
 ---
 
-# 57. 자주 하는 실수
+<a id="sql-08-section-60"></a>
+
+## 57. 자주 하는 실수
 
 - `CEIL(-3.14)`을 `-4`라고 생각한다.
 - `FLOOR(-3.14)`을 `-3`이라고 생각한다.
@@ -1240,7 +1555,9 @@ FROM emp;
 
 ---
 
-# 58. Debugging
+<a id="sql-08-section-61"></a>
+
+## 58. Debugging
 
 ```text
 1. ROUND와 TRUNCATE 중 요구사항에 맞는가?
@@ -1257,25 +1574,27 @@ FROM emp;
 
 ---
 
-# 59. 종합실습
+<a id="sql-08-section-62"></a>
 
-## 문제 1
+## 59. 종합실습
+
+### 문제 1
 
 `3.146`을 소수점 이하 2자리로 반올림하시오.
 
-## 문제 2
+### 문제 2
 
 `-3.14`에 `CEIL`, `FLOOR`, `TRUNCATE(..., 0)`를 각각 적용해 비교하시오.
 
-## 문제 3
+### 문제 3
 
 10을 3으로 나눈 나머지를 구하시오.
 
-## 문제 4
+### 문제 4
 
 현재 날짜와 시간을 조회하시오.
 
-## 문제 5
+### 문제 5
 
 현재 날짜와 시간을 다음 형태로 출력하시오.
 
@@ -1283,27 +1602,29 @@ FROM emp;
 2026-08-13 10:30:15
 ```
 
-## 문제 6
+### 문제 6
 
 문자열 `'2026/08/13'`을 Date 값으로 변환하시오.
 
-## 문제 7
+### 문제 7
 
 EMP의 `COMM`이 NULL이면 0으로 표시하시오.
 
-## 문제 8
+### 문제 8
 
 `COALESCE(NULL, NULL, 300, 400)`의 Result와 이유를 설명하시오.
 
-## 문제 9
+### 문제 9
 
 `sal * 12 + comm`과 `sal * 12 + IFNULL(comm, 0)`의 차이를 설명하시오.
 
 ---
 
-# 60. 정답과 해설
+<a id="sql-08-section-63"></a>
 
-## 문제 1
+## 60. 정답과 해설
+
+### 문제 1
 
 ```sql
 SELECT ROUND(3.146, 2);
@@ -1311,7 +1632,7 @@ SELECT ROUND(3.146, 2);
 
 ---
 
-## 문제 2
+### 문제 2
 
 ```sql
 SELECT
@@ -1335,7 +1656,7 @@ TRUNCATE
 
 ---
 
-## 문제 3
+### 문제 3
 
 ```sql
 SELECT MOD(10, 3);
@@ -1343,7 +1664,7 @@ SELECT MOD(10, 3);
 
 ---
 
-## 문제 4
+### 문제 4
 
 ```sql
 SELECT NOW();
@@ -1351,7 +1672,7 @@ SELECT NOW();
 
 ---
 
-## 문제 5
+### 문제 5
 
 ```sql
 SELECT DATE_FORMAT(
@@ -1362,7 +1683,7 @@ SELECT DATE_FORMAT(
 
 ---
 
-## 문제 6
+### 문제 6
 
 ```sql
 SELECT STR_TO_DATE(
@@ -1373,7 +1694,7 @@ SELECT STR_TO_DATE(
 
 ---
 
-## 문제 7
+### 문제 7
 
 ```sql
 SELECT
@@ -1385,7 +1706,7 @@ FROM emp;
 
 ---
 
-## 문제 8
+### 문제 8
 
 ```sql
 SELECT COALESCE(
@@ -1400,7 +1721,7 @@ SELECT COALESCE(
 
 ---
 
-## 문제 9
+### 문제 9
 
 첫 번째 Query는 `COMM`이 NULL이면 전체 산술 결과도 NULL이 된다.
 
@@ -1410,7 +1731,9 @@ SELECT COALESCE(
 
 ---
 
-# 61. 최종 체크리스트
+<a id="sql-08-section-64"></a>
+
+## 61. 최종 체크리스트
 
 - [ ] `ROUND()`를 사용할 수 있는가?
 - [ ] `ROUND(value, digits)`의 자릿수를 설명할 수 있는가?
@@ -1435,7 +1758,9 @@ SELECT COALESCE(
 
 ---
 
-# 62. 핵심 요약
+<a id="sql-08-section-65"></a>
+
+## 62. 핵심 요약
 
 ```text
 ROUND
@@ -1491,7 +1816,9 @@ IFNULL로 대체
 
 ---
 
-# 마무리
+<a id="sql-08-section-66"></a>
+
+## 마무리
 
 08번의 함수들은 서로 다른 영역처럼 보이지만 공통점이 있다.
 
@@ -1510,9 +1837,13 @@ NULL과 경계값 확인
 숫자에서는 **반올림과 절삭**, 날짜에서는 **값과 표시 문자열**, NULL에서는 **값 없음과 실제 0**을 정확히 구분하는 것이 핵심이다.
 
 다음 단원에서는 이러한 함수 결과와 조건식을 결합해 `CASE`로 Row마다 다른 값을 반환하는 방법을 학습한다.
-# V3 동작 백과 — 숫자·날짜·NULL 값은 어떻게 바뀌는가?
+<a id="sql-08-section-67"></a>
 
-## 숫자 함수의 실제 차이
+## V3 동작 백과 — 숫자·날짜·NULL 값은 어떻게 바뀌는가?
+
+> 입력 범위 확인: 이 복습 부분의 작은 표는 처리 원리를 위한 가정·발췌이며 전체 초기화 EMP의 입력 전체가 아니다. FROM emp를 그대로 실행하면 모든 대상 사원을 처리한다. 수치는 작은 가정 입력의 결과인지 전체 14행 결과인지 구분한다. 실행·시간순 설명은 논리적 설명이며 물리적 평가 순서를 보장하지 않는다. 현재 시각 출력은 형식 예시이며 고정된 검증 결과가 아니다.
+
+### 숫자 함수의 실제 차이
 
 ```sql
 SELECT
@@ -1531,7 +1862,7 @@ FLOOR(-3.14)      → -4   더 작은 정수 방향
 
 음수에서 CEIL과 FLOOR를 단순히 “절댓값 올림·내림”으로 이해하면 틀린다. 수직선 방향으로 판단한다.
 
-## 날짜값은 어디서 오는가?
+### 날짜값은 어디서 오는가?
 
 ```sql
 SELECT NOW(), CURRENT_TIMESTAMP;
@@ -1549,7 +1880,7 @@ SELECT DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s');
 
 `%m`은 Month, `%i`는 Minute다.
 
-## NULL 대체가 계산을 바꾸는 과정
+### NULL 대체가 계산을 바꾸는 과정
 
 ```sql
 SELECT sal, comm, sal + IFNULL(comm, 0) AS total_pay
@@ -1563,7 +1894,7 @@ COMM=NULL → IFNULL=0   → SAL+0
 
 대체값 0이 업무적으로 “수당 없음”을 의미할 때만 사용한다.
 
-## 수업 원본에서 다시 찾기
+### 수업 원본에서 다시 찾기
 
 | 개념 | 내 코드 검색 Anchor | 강사님 코드 검색 Anchor |
 | --- | --- | --- |
@@ -1576,3 +1907,4 @@ COMM=NULL → IFNULL=0   → SAL+0
 | NULL 대체 | `ifnull(`, `coalesce(` | NULL 함수 구간 |
 
 함수 결과의 Type, Server 시간대, NULL 대체 전후를 Result Grid에서 함께 확인한다.
+

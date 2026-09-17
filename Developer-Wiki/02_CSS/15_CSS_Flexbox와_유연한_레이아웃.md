@@ -1,11 +1,110 @@
 ---
 title: CSS Flexbox와 유연한 레이아웃
-version: v3.0-encyclopedia
-last_updated: 2026-08-07
+version: v4.1-detailed-learning
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # CSS Flexbox와 유연한 레이아웃
+
+## 문서 내 목차
+
+- [문서 정보](#css-1)
+- [학습 목표](#css-2)
+- [개념에서 실제 동작까지](#css-3)
+- [1. Flexbox란?](#css-4)
+- [2. 원본 전체 구조](#css-5)
+- [3. `display: flex`](#css-6)
+- [4. `display: inline-flex`](#css-7)
+- [5. Main axis와 Cross axis](#css-8)
+- [6. 축은 항상 가로·세로로 고정되지 않는다](#css-9)
+- [7. 원본 `flex-direction: row`](#css-10)
+- [8. `row-reverse`](#css-11)
+- [9. `column`](#css-12)
+- [10. `column-reverse`](#css-13)
+- [11. `flex-wrap`](#css-14)
+- [12. `nowrap`](#css-15)
+- [13. `wrap`](#css-16)
+- [14. “inline-block처럼” 주석 보완](#css-17)
+- [15. `wrap-reverse`](#css-18)
+- [16. `flex-flow`](#css-19)
+- [17. `justify-content`](#css-20)
+- [18. `justify-content: flex-start`](#css-21)
+- [19. `justify-content: flex-end`](#css-22)
+- [20. `justify-content: center`](#css-23)
+- [21. `space-between`](#css-24)
+- [22. `space-around`](#css-25)
+- [23. `space-evenly`](#css-26)
+- [24. `gap`](#css-27)
+- [25. `align-items`](#css-28)
+- [26. `align-items: stretch`](#css-29)
+- [27. `align-items: flex-start`](#css-30)
+- [28. `align-items: flex-end`](#css-31)
+- [29. `align-items: center`](#css-32)
+- [30. `align-items: baseline`](#css-33)
+- [31. `align-content`](#css-34)
+- [32. `align-content`가 작동하려면](#css-35)
+- [33. `align-items`와 `align-content` 비교](#css-36)
+- [34. 원본 Container 크기](#css-37)
+- [35. 원본 Item 크기](#css-38)
+- [36. Item 기본 크기](#css-39)
+- [37. Flex item 기본값](#css-40)
+- [38. `order`](#css-41)
+- [39. 원본의 시각 순서](#css-42)
+- [40. Order는 DOM을 바꾸지 않는다](#css-43)
+- [41. Order 사용이 적절한 경우](#css-44)
+- [42. `flex-grow`](#css-45)
+- [43. Grow 비율 예제](#css-46)
+- [44. `flex-shrink`](#css-47)
+- [45. Shrink 값이 크면](#css-48)
+- [46. `min-width: 50px`](#css-49)
+- [47. `min-width: auto`와 긴 콘텐츠](#css-50)
+- [48. `flex-basis`](#css-51)
+- [49. `flex` 단축 속성](#css-52)
+- [50. `flex: 1`](#css-53)
+- [51. `align-self`](#css-54)
+- [52. Inline style 분석](#css-55)
+- [53. 클래스 기반 개선](#css-56)
+- [54. 원본 Emmet 문자열](#css-57)
+- [55. 문서 언어와 제목](#css-58)
+- [56. 원본의 중복 Width 주석](#css-59)
+- [57. `border`와 Box sizing](#css-60)
+- [58. Flexbox와 Margin](#css-61)
+- [59. Flexbox와 Auto margin](#css-62)
+- [60. 완전 중앙 정렬](#css-63)
+- [61. 반응형 Row와 Column](#css-64)
+- [62. 반응형 Wrap 카드](#css-65)
+- [63. Flexbox와 Grid 비교](#css-66)
+- [64. Flex item이 줄어들지 않을 때](#css-67)
+- [65. Flex item이 늘어나지 않을 때](#css-68)
+- [66. `justify-content`가 안 보일 때](#css-69)
+- [67. `align-content`가 안 보일 때](#css-70)
+- [68. `align-items: stretch`가 안 보일 때](#css-71)
+- [69. `order`가 안 보일 때](#css-72)
+- [70. 접근성: 시각 순서와 읽기 순서](#css-73)
+- [71. 반응형에서 Order 사용 주의](#css-74)
+- [72. 내 코드 분석](#css-75)
+- [73. 강사님 코드 분석](#css-76)
+- [74. 내 코드와 강사님 코드 비교](#css-77)
+- [75. 원본 보존 코드](#css-78)
+- [76. 원본 통합 개선 예제](#css-79)
+- [77. 헤더 실무 패턴](#css-80)
+- [78. 버튼 그룹](#css-81)
+- [79. 동일 너비 버튼](#css-82)
+- [80. 카드 목록](#css-83)
+- [81. 미디어 객체 패턴](#css-84)
+- [82. Footer 배치](#css-85)
+- [83. 반응형 내비게이션](#css-86)
+- [84. Flexbox 디버깅](#css-87)
+- [85. 자주 하는 실수](#css-88)
+- [종합실습](#css-89)
+- [정답과 해설](#css-90)
+- [최종 체크리스트](#css-91)
+- [핵심 요약](#css-92)
+- [렌더링 복습 카드 — 주축·교차축과 남는 공간 분배](#css-93)
+
+
+<a id="css-1"></a>
 
 ## 문서 정보
 
@@ -21,27 +120,71 @@ status: Completed
 
 ---
 
-# 학습 목표
+<a id="css-2"></a>
 
-- Flexbox가 한 축을 중심으로 자식 요소를 배치하는 레이아웃 방식임을 설명한다.
-- flex container와 flex item을 구분한다.
-- main axis와 cross axis가 `flex-direction`에 따라 달라진다는 점을 이해한다.
-- `row`, `row-reverse`, `column`, `column-reverse`의 차이를 설명한다.
-- `nowrap`, `wrap`, `wrap-reverse`의 차이를 이해한다.
-- `justify-content`가 main axis 정렬을 담당한다는 점을 설명한다.
-- `align-items`가 한 줄 내부의 cross axis 정렬을 담당한다는 점을 설명한다.
-- `align-content`가 여러 줄 전체의 cross axis 배치를 담당한다는 점을 설명한다.
-- `order`가 시각적 순서를 바꾸지만 DOM 순서를 바꾸지 않는다는 점을 이해한다.
-- `flex-grow`가 남은 양의 공간을 분배하는 비율임을 설명한다.
-- `flex-shrink`가 부족한 공간에서 축소되는 비율에 관여한다는 점을 이해한다.
-- `min-width`가 flex item 축소 한계를 만들 수 있음을 설명한다.
-- 원본의 인라인 스타일 실험값을 보존하면서 클래스 기반 개선안을 작성한다.
-- 내 코드와 강사님 코드가 완전히 동일함을 정확히 기록한다.
-- Flexbox와 Grid의 사용 목적을 구분한다.
+## 학습 목표
 
----
+- 주요 속성의 의미와 차이를 설명한다.
+- 대상과 계산 기준을 찾고 결과를 예측한다.
+- 원본을 비교하고 적용·배치 오류를 수정한다.
 
-# 1. Flexbox란?
+<a id="learning-flow"></a>
+
+<a id="css-3"></a>
+
+## 개념에서 실제 동작까지
+
+### Flexbox란? 한 축을 중심으로 공간을 배분하는 배치
+
+Flexbox는 부모가 직접 자식 항목을 배열하고 남거나 부족한 공간을 배분하는 레이아웃입니다. justify-content는 항상 가로, align-items는 항상 세로라고 외우면 column에서 틀립니다. 먼저 주축과 교차축을 정합니다.
+
+두 원본 공통 발췌:
+
+```css
+.container { display: flex; flex-direction: row; width: 300px; height: 300px; }
+```
+
+직접 자식 항목의 order는 1번=0, 2번=1, 3번=-1, 4번=0, 5번=0입니다.
+
+| 단계 | 결과 |
+| --- | --- |
+| DOM 순서 | 1, 2, 3, 4, 5 |
+| order 작은 그룹부터 배치 | -1 → 0 → 1 |
+| 같은 order는 원래 순서 유지 | 0 그룹은 1, 4, 5 |
+| 시각 순서 | 3, 1, 4, 5, 2 |
+
+order는 DOM 순서나 키보드 이동·읽기 순서를 자동 재작성하지 않습니다. 중요 정보의 순서가 다르게 보이는 문제를 검수합니다.
+
+💡 공간 분배 계산 예제: 콘텐츠 기준 너비 300의 부모에 basis가 50인 세 항목, grow가 1·2·1이고 padding/border/gap/최소·최대 제약이 없다고 가정합니다. 기본 합 150, 남는 공간 150을 4비율로 나눠 37.5·75·37.5를 더하므로 최종 너비는 87.5·125·87.5입니다. grow 숫자가 최종 전체 너비 비율 자체를 보장하는 것은 아닙니다.
+
+부족할 때 shrink 분배는 shrink 값만이 아니라 기본 크기 가중치도 사용하고 최소 크기에 제한됩니다. 원본 4번에는 min-width:50px와 shrink:3, 5번에는 shrink:2가 있습니다. basis와 콘텐츠가 없는 단순 숫자 표로 원본 최종 폭을 확정하지 않습니다.
+
+**확인:** 부모에 flex가 실제 적용됐는지, 대상이 직접 자식인지, direction·wrap·사용 가능한 공간을 먼저 봅니다. 긴 문자열에서 min-width:auto 때문에 안 줄어들면 💡 min-width:0와 줄바꿈을 함께 검토합니다. [Flexbox 표준](https://www.w3.org/TR/css-flexbox-1/)을 참고합니다.
+
+
+### 개발자 도구에서 실제 값을 읽기
+
+15_flex.html을 브라우저에서 열고 Console에 다음을 입력합니다. 💡 JavaScript를 이용한 CSS 진단 명령이며 CSS 파일에 쓰는 코드가 아닙니다.
+
+```javascript
+Array.from(document.querySelectorAll('.container > .item'), e => getComputedStyle(e).order)
+```
+
+**예상 결과:** ['0', '1', '-1', '0', '0']
+
+DOM 순서대로 읽은 order 값입니다. 실제 시각 순서 3,1,4,5,2와 구분합니다. 요소가 없다는 오류가 나오면 페이지와 선택 대상을 먼저 확인합니다. getComputedStyle은 API에서 계산·해석된 스타일을 읽고 getBoundingClientRect는 변환이 반영된 표시 경계 상자를 읽습니다. margin까지 포함한 전체 점유를 자동 반환하는 값은 아닙니다. CSS에는 Python의 print가 없으므로 화면 결과와 Console 값 확인을 구분합니다.
+
+### 짧은 점검 문제와 해설
+
+**문제:** grow1·2이면 최종 너비도 항상1:2인가?
+
+**해설:** 아닙니다. 기본 크기에 남는 공간을 비율대로 추가하므로 기본 크기·제약도 봅니다.
+
+먼저 답을 가리고 이유를 말한 뒤 본문의 단계별 예제와 종합실습으로 확인합니다.
+
+<a id="css-4"></a>
+
+## 1. Flexbox란?
 
 Flexbox는 부모 요소를 flex container로 만들고, 그 직계 자식 요소를 flex item으로 배치하는 CSS 레이아웃 방식입니다.
 
@@ -79,7 +222,9 @@ HTML:
 
 ---
 
-# 2. 원본 전체 구조
+<a id="css-5"></a>
+
+## 2. 원본 전체 구조
 
 원본은 하나의 고정 크기 컨테이너와 다섯 개의 item으로 구성됩니다.
 
@@ -130,7 +275,9 @@ HTML:
 
 ---
 
-# 3. `display: flex`
+<a id="css-6"></a>
+
+## 3. `display: flex`
 
 ```css
 .container {
@@ -154,7 +301,9 @@ align-content: stretch
 
 ---
 
-# 4. `display: inline-flex`
+<a id="css-7"></a>
+
+## 4. `display: inline-flex`
 
 원본 주석:
 
@@ -175,7 +324,9 @@ align-content: stretch
 
 ---
 
-# 5. Main axis와 Cross axis
+<a id="css-8"></a>
+
+## 5. Main axis와 Cross axis
 
 Flexbox에는 두 축이 있습니다.
 
@@ -202,7 +353,9 @@ cross axis → 위에서 아래
 
 ---
 
-# 6. 축은 항상 가로·세로로 고정되지 않는다
+<a id="css-9"></a>
+
+## 6. 축은 항상 가로·세로로 고정되지 않는다
 
 중요:
 
@@ -224,7 +377,9 @@ cross axis → 가로
 
 ---
 
-# 7. 원본 `flex-direction: row`
+<a id="css-10"></a>
+
+## 7. 원본 `flex-direction: row`
 
 ```css
 /* main 축의 기본값 : 왼쪽에서 오른쪽으로 */
@@ -243,7 +398,9 @@ flex-direction: row;
 
 ---
 
-# 8. `row-reverse`
+<a id="css-11"></a>
+
+## 8. `row-reverse`
 
 원본 주석:
 
@@ -268,7 +425,9 @@ flex-direction: row;
 
 ---
 
-# 9. `column`
+<a id="css-12"></a>
+
+## 9. `column`
 
 원본 주석:
 
@@ -297,7 +456,9 @@ align-items
 
 ---
 
-# 10. `column-reverse`
+<a id="css-13"></a>
+
+## 10. `column-reverse`
 
 원본 주석:
 
@@ -312,7 +473,9 @@ main axis 방향을 세로 역방향으로 배치합니다.
 
 ---
 
-# 11. `flex-wrap`
+<a id="css-14"></a>
+
+## 11. `flex-wrap`
 
 원본에는 세 값이 모두 주석으로 기록되어 있습니다.
 
@@ -326,7 +489,9 @@ main axis 방향을 세로 역방향으로 배치합니다.
 
 ---
 
-# 12. `nowrap`
+<a id="css-15"></a>
+
+## 12. `nowrap`
 
 원본 주석:
 
@@ -351,7 +516,9 @@ flex-wrap: nowrap;
 
 ---
 
-# 13. `wrap`
+<a id="css-16"></a>
+
+## 13. `wrap`
 
 원본 주석:
 
@@ -379,7 +546,9 @@ main axis 공간이 부족하면 다음 줄로 넘깁니다.
 
 ---
 
-# 14. “inline-block처럼” 주석 보완
+<a id="css-17"></a>
+
+## 14. “inline-block처럼” 주석 보완
 
 원본:
 
@@ -401,7 +570,9 @@ main axis 공간이 부족하면 다음 줄로 넘깁니다.
 
 ---
 
-# 15. `wrap-reverse`
+<a id="css-18"></a>
+
+## 15. `wrap-reverse`
 
 원본 주석:
 
@@ -420,7 +591,9 @@ item 자체의 DOM 순서를 반대로 만드는 속성은 아닙니다.
 
 ---
 
-# 16. `flex-flow`
+<a id="css-19"></a>
+
+## 16. `flex-flow`
 
 원본에는 없지만 `flex-direction`과 `flex-wrap`을 함께 작성할 수 있습니다.
 
@@ -443,7 +616,9 @@ item 자체의 DOM 순서를 반대로 만드는 속성은 아닙니다.
 
 ---
 
-# 17. `justify-content`
+<a id="css-20"></a>
+
+## 17. `justify-content`
 
 원본에는 다음 값이 모두 주석으로 있습니다.
 
@@ -460,7 +635,9 @@ item 자체의 DOM 순서를 반대로 만드는 속성은 아닙니다.
 
 ---
 
-# 18. `justify-content: flex-start`
+<a id="css-21"></a>
+
+## 18. `justify-content: flex-start`
 
 원본 주석:
 
@@ -480,7 +657,9 @@ item을 main-start 쪽에 모읍니다.
 
 ---
 
-# 19. `justify-content: flex-end`
+<a id="css-22"></a>
+
+## 19. `justify-content: flex-end`
 
 ```css
 justify-content: flex-end;
@@ -492,7 +671,9 @@ main-end 방향으로 모읍니다.
 
 ---
 
-# 20. `justify-content: center`
+<a id="css-23"></a>
+
+## 20. `justify-content: center`
 
 ```css
 justify-content: center;
@@ -508,7 +689,9 @@ main axis 중앙에 item 묶음을 배치합니다.
 
 ---
 
-# 21. `space-between`
+<a id="css-24"></a>
+
+## 21. `space-between`
 
 원본 주석:
 
@@ -529,7 +712,9 @@ justify-content: space-between;
 
 ---
 
-# 22. `space-around`
+<a id="css-25"></a>
+
+## 22. `space-around`
 
 원본 주석:
 
@@ -547,7 +732,9 @@ justify-content: space-around;
 
 ---
 
-# 23. `space-evenly`
+<a id="css-26"></a>
+
+## 23. `space-evenly`
 
 원본 주석:
 
@@ -569,7 +756,9 @@ item ↔ item
 
 ---
 
-# 24. `gap`
+<a id="css-27"></a>
+
+## 24. `gap`
 
 원본에는 없지만 Flexbox에서 item 사이 간격을 만들 때 사용할 수 있습니다.
 
@@ -595,7 +784,9 @@ item ↔ item
 
 ---
 
-# 25. `align-items`
+<a id="css-28"></a>
+
+## 25. `align-items`
 
 원본 주석:
 
@@ -616,7 +807,9 @@ align-items: center;
 
 ---
 
-# 26. `align-items: stretch`
+<a id="css-29"></a>
+
+## 26. `align-items: stretch`
 
 원본 주석:
 
@@ -633,7 +826,9 @@ align-items: center;
 
 ---
 
-# 27. `align-items: flex-start`
+<a id="css-30"></a>
+
+## 27. `align-items: flex-start`
 
 ```css
 align-items: flex-start;
@@ -647,7 +842,9 @@ align-items: flex-start;
 
 ---
 
-# 28. `align-items: flex-end`
+<a id="css-31"></a>
+
+## 28. `align-items: flex-end`
 
 ```css
 align-items: flex-end;
@@ -659,7 +856,9 @@ cross-end 방향으로 정렬합니다.
 
 ---
 
-# 29. `align-items: center`
+<a id="css-32"></a>
+
+## 29. `align-items: center`
 
 ```css
 align-items: center;
@@ -681,7 +880,9 @@ Flexbox 중앙 정렬:
 
 ---
 
-# 30. `align-items: baseline`
+<a id="css-33"></a>
+
+## 30. `align-items: baseline`
 
 원본에는 없지만 텍스트 기준선 정렬에 사용할 수 있습니다.
 
@@ -695,7 +896,9 @@ Flexbox 중앙 정렬:
 
 ---
 
-# 31. `align-content`
+<a id="css-34"></a>
+
+## 31. `align-content`
 
 원본 주석:
 
@@ -719,7 +922,9 @@ align-content: space-evenly;
 
 ---
 
-# 32. `align-content`가 작동하려면
+<a id="css-35"></a>
+
+## 32. `align-content`가 작동하려면
 
 보통 다음 조건이 필요합니다.
 
@@ -738,7 +943,9 @@ align-content: space-evenly;
 
 ---
 
-# 33. `align-items`와 `align-content` 비교
+<a id="css-36"></a>
+
+## 33. `align-items`와 `align-content` 비교
 
 | 속성 | 대상 | 주로 필요한 조건 |
 | --- | --- | --- |
@@ -757,7 +964,9 @@ align-content
 
 ---
 
-# 34. 원본 Container 크기
+<a id="css-37"></a>
+
+## 34. 원본 Container 크기
 
 ```css
 height: 300px;
@@ -787,7 +996,9 @@ width: 300px;
 
 ---
 
-# 35. 원본 Item 크기
+<a id="css-38"></a>
+
+## 35. 원본 Item 크기
 
 원본 `.item`에는 실제 width와 height가 없습니다.
 
@@ -822,7 +1033,9 @@ width 주석이 두 번 반복되어 있다.
 
 ---
 
-# 36. Item 기본 크기
+<a id="css-39"></a>
+
+## 36. Item 기본 크기
 
 width가 지정되지 않은 flex item은 콘텐츠와 flex sizing 규칙을 바탕으로 크기가 결정됩니다.
 
@@ -842,7 +1055,9 @@ container에 남는 공간이 많아도 `flex-grow` 기본값이 0이므로 자�
 
 ---
 
-# 37. Flex item 기본값
+<a id="css-40"></a>
+
+## 37. Flex item 기본값
 
 개념적으로 자주 설명하는 기본값:
 
@@ -862,7 +1077,9 @@ flex: 0 1 auto;
 
 ---
 
-# 38. `order`
+<a id="css-41"></a>
+
+## 38. `order`
 
 원본:
 
@@ -891,7 +1108,9 @@ order: 0;
 
 ---
 
-# 39. 원본의 시각 순서
+<a id="css-42"></a>
+
+## 39. 원본의 시각 순서
 
 같은 order 값에서는 DOM 순서가 유지됩니다.
 
@@ -916,7 +1135,9 @@ order 1
 
 ---
 
-# 40. Order는 DOM을 바꾸지 않는다
+<a id="css-43"></a>
+
+## 40. Order는 DOM을 바꾸지 않는다
 
 HTML 순서:
 
@@ -936,7 +1157,9 @@ HTML 순서:
 
 ---
 
-# 41. Order 사용이 적절한 경우
+<a id="css-44"></a>
+
+## 41. Order 사용이 적절한 경우
 
 적절할 수 있는 예:
 
@@ -956,7 +1179,9 @@ HTML 순서:
 
 ---
 
-# 42. `flex-grow`
+<a id="css-45"></a>
+
+## 42. `flex-grow`
 
 원본 item 4와 5:
 
@@ -976,7 +1201,9 @@ flex-grow: 0;
 
 ---
 
-# 43. Grow 비율 예제
+<a id="css-46"></a>
+
+## 43. Grow 비율 예제
 
 ```css
 .item--a {
@@ -1004,7 +1231,9 @@ A : B = 1 : 2
 
 ---
 
-# 44. `flex-shrink`
+<a id="css-47"></a>
+
+## 44. `flex-shrink`
 
 원본:
 
@@ -1043,7 +1272,9 @@ flex-shrink: 1;
 
 ---
 
-# 45. Shrink 값이 크면
+<a id="css-48"></a>
+
+## 45. Shrink 값이 크면
 
 단순한 학습 표현:
 
@@ -1066,7 +1297,9 @@ flex-shrink 값이 더 크면
 
 ---
 
-# 46. `min-width: 50px`
+<a id="css-49"></a>
+
+## 46. `min-width: 50px`
 
 원본 item 4:
 
@@ -1090,7 +1323,9 @@ min-width: 50px
 
 ---
 
-# 47. `min-width: auto`와 긴 콘텐츠
+<a id="css-50"></a>
+
+## 47. `min-width: auto`와 긴 콘텐츠
 
 Flex item의 기본 최소 크기 때문에 긴 텍스트가 충분히 줄어들지 않는 경우가 있습니다.
 
@@ -1117,7 +1352,9 @@ Flex item의 기본 최소 크기 때문에 긴 텍스트가 충분히 줄어들
 
 ---
 
-# 48. `flex-basis`
+<a id="css-51"></a>
+
+## 48. `flex-basis`
 
 원본에는 직접 등장하지 않지만 grow와 shrink를 이해할 때 중요합니다.
 
@@ -1133,7 +1370,9 @@ main axis 방향의 초기 기준 크기를 지정합니다.
 
 ---
 
-# 49. `flex` 단축 속성
+<a id="css-52"></a>
+
+## 49. `flex` 단축 속성
 
 ```css
 flex:
@@ -1162,7 +1401,9 @@ flex: none;
 
 ---
 
-# 50. `flex: 1`
+<a id="css-53"></a>
+
+## 50. `flex: 1`
 
 흔히 다음처럼 사용합니다.
 
@@ -1178,7 +1419,9 @@ flex: none;
 
 ---
 
-# 51. `align-self`
+<a id="css-54"></a>
+
+## 51. `align-self`
 
 특정 item 하나만 cross axis에서 다르게 정렬할 수 있습니다.
 
@@ -1194,7 +1437,9 @@ container의 `align-items` 값을 해당 item에 개별적으로 덮어씁니다
 
 ---
 
-# 52. Inline style 분석
+<a id="css-55"></a>
+
+## 52. Inline style 분석
 
 원본은 다음처럼 인라인 스타일을 사용합니다.
 
@@ -1216,7 +1461,9 @@ container의 `align-items` 값을 해당 item에 개별적으로 덮어씁니다
 
 ---
 
-# 53. 클래스 기반 개선
+<a id="css-56"></a>
+
+## 53. 클래스 기반 개선
 
 ```html
 <div class="item item--last">2</div>
@@ -1246,7 +1493,9 @@ container의 `align-items` 값을 해당 item에 개별적으로 덮어씁니다
 
 ---
 
-# 54. 원본 Emmet 문자열
+<a id="css-57"></a>
+
+## 54. 원본 Emmet 문자열
 
 원본 body:
 
@@ -1282,7 +1531,9 @@ div.container>div.item*5
 
 ---
 
-# 55. 문서 언어와 제목
+<a id="css-58"></a>
+
+## 55. 문서 언어와 제목
 
 원본:
 
@@ -1302,7 +1553,9 @@ div.container>div.item*5
 
 ---
 
-# 56. 원본의 중복 Width 주석
+<a id="css-59"></a>
+
+## 56. 원본의 중복 Width 주석
 
 ```css
 /* width: 100px; */
@@ -1336,7 +1589,9 @@ QA 결과:
 
 ---
 
-# 57. `border`와 Box sizing
+<a id="css-60"></a>
+
+## 57. `border`와 Box sizing
 
 원본 container:
 
@@ -1366,7 +1621,9 @@ item에도 border가 있으므로 크기 계산에 포함됩니다.
 
 ---
 
-# 58. Flexbox와 Margin
+<a id="css-61"></a>
+
+## 58. Flexbox와 Margin
 
 원본 item에는 margin이 없습니다.
 
@@ -1390,7 +1647,9 @@ item 사이 간격을 만들려면:
 
 ---
 
-# 59. Flexbox와 Auto margin
+<a id="css-62"></a>
+
+## 59. Flexbox와 Auto margin
 
 특정 item을 main-end로 밀 수 있습니다.
 
@@ -1414,7 +1673,9 @@ item 사이 간격을 만들려면:
 
 ---
 
-# 60. 완전 중앙 정렬
+<a id="css-63"></a>
+
+## 60. 완전 중앙 정렬
 
 ```css
 .container {
@@ -1437,7 +1698,9 @@ align-items     → 세로 중앙
 
 ---
 
-# 61. 반응형 Row와 Column
+<a id="css-64"></a>
+
+## 61. 반응형 Row와 Column
 
 ```css
 .card-list {
@@ -1459,7 +1722,9 @@ CSS 14 미디어 쿼리와 연결됩니다.
 
 ---
 
-# 62. 반응형 Wrap 카드
+<a id="css-65"></a>
+
+## 62. 반응형 Wrap 카드
 
 ```css
 .card-list {
@@ -1490,7 +1755,9 @@ basis 15rem
 
 ---
 
-# 63. Flexbox와 Grid 비교
+<a id="css-66"></a>
+
+## 63. Flexbox와 Grid 비교
 
 | 기준 | Flexbox | Grid |
 | --- | --- | --- |
@@ -1514,7 +1781,9 @@ basis 15rem
 
 ---
 
-# 64. Flex item이 줄어들지 않을 때
+<a id="css-67"></a>
+
+## 64. Flex item이 줄어들지 않을 때
 
 점검:
 
@@ -1531,7 +1800,9 @@ basis 15rem
 
 ---
 
-# 65. Flex item이 늘어나지 않을 때
+<a id="css-68"></a>
+
+## 65. Flex item이 늘어나지 않을 때
 
 점검:
 
@@ -1548,7 +1819,9 @@ basis 15rem
 
 ---
 
-# 66. `justify-content`가 안 보일 때
+<a id="css-69"></a>
+
+## 66. `justify-content`가 안 보일 때
 
 `justify-content`는 남는 공간이 있어야 차이가 보입니다.
 
@@ -1566,7 +1839,9 @@ space-between
 
 ---
 
-# 67. `align-content`가 안 보일 때
+<a id="css-70"></a>
+
+## 67. `align-content`가 안 보일 때
 
 가장 흔한 원인:
 
@@ -1592,7 +1867,9 @@ space-between
 
 ---
 
-# 68. `align-items: stretch`가 안 보일 때
+<a id="css-71"></a>
+
+## 68. `align-items: stretch`가 안 보일 때
 
 item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
@@ -1610,7 +1887,9 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 69. `order`가 안 보일 때
+<a id="css-72"></a>
+
+## 69. `order`가 안 보일 때
 
 점검:
 
@@ -1625,7 +1904,9 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 70. 접근성: 시각 순서와 읽기 순서
+<a id="css-73"></a>
+
+## 70. 접근성: 시각 순서와 읽기 순서
 
 원본의 `order` 실험은 CSS 동작을 이해하는 데 유용합니다.
 
@@ -1639,7 +1920,9 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 71. 반응형에서 Order 사용 주의
+<a id="css-74"></a>
+
+## 71. 반응형에서 Order 사용 주의
 
 모바일에서 특정 요소를 위로 보이게 하기 위해:
 
@@ -1657,9 +1940,11 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 72. 내 코드 분석
+<a id="css-75"></a>
 
-## 72.1 장점
+## 72. 내 코드 분석
+
+### 72.1 장점
 
 - main axis와 cross axis 용어를 주석으로 반복해 학습한다.
 - `flex-direction` 네 값을 한 자리에서 비교할 수 있다.
@@ -1669,7 +1954,7 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 - `order`, `flex-grow`, `flex-shrink`, `min-width`를 실제 item별 값으로 실험한다.
 - 고정 크기 container라 정렬 결과를 눈으로 확인하기 쉽다.
 
-## 72.2 개선점
+### 72.2 개선점
 
 - 강사님 코드와 완전히 동일하므로 개인 설명 차이는 없다.
 - `width: 100px` 주석이 두 번 중복되어 있다.
@@ -1683,9 +1968,11 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 73. 강사님 코드 분석
+<a id="css-76"></a>
 
-## 73.1 장점
+## 73. 강사님 코드 분석
+
+### 73.1 장점
 
 - 내 코드와 동일한 구성으로 Flexbox 핵심 container 속성을 폭넓게 실습한다.
 - main axis와 cross axis 기준의 설명이 포함되어 있다.
@@ -1693,7 +1980,7 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 - item 속성인 `order`, grow, shrink를 container 속성과 함께 확인할 수 있다.
 - 복잡한 외부 CSS 없이 한 HTML 파일에서 빠르게 실험할 수 있다.
 
-## 73.2 개선점
+### 73.2 개선점
 
 - 내 코드와 동일하므로 별도 차이는 없다.
 - 중복 width 주석의 의도를 확인할 수 없다.
@@ -1705,7 +1992,9 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 74. 내 코드와 강사님 코드 비교
+<a id="css-77"></a>
+
+## 74. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1723,7 +2012,9 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 75. 원본 보존 코드
+<a id="css-78"></a>
+
+## 75. 원본 보존 코드
 
 ```html
 <!DOCTYPE html>
@@ -1857,9 +2148,11 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 
 ---
 
-# 76. 원본 통합 개선 예제
+<a id="css-79"></a>
 
-## HTML
+## 76. 원본 통합 개선 예제
+
+### HTML
 
 ```html
 <!DOCTYPE html>
@@ -1894,7 +2187,7 @@ item에 고정 cross size가 있으면 stretch 효과가 제한됩니다.
 </html>
 ```
 
-## CSS
+### CSS
 
 ```css
 *,
@@ -1952,9 +2245,11 @@ body {
 
 ---
 
-# 77. 헤더 실무 패턴
+<a id="css-80"></a>
 
-## HTML
+## 77. 헤더 실무 패턴
+
+### HTML
 
 ```html
 <header class="site-header">
@@ -1974,7 +2269,7 @@ body {
 </header>
 ```
 
-## CSS
+### CSS
 
 ```css
 .site-header {
@@ -1997,7 +2292,9 @@ DOM 순서를 유지하면서 auto margin으로 마지막 요소를 오른쪽에
 
 ---
 
-# 78. 버튼 그룹
+<a id="css-81"></a>
+
+## 78. 버튼 그룹
 
 ```css
 .button-group {
@@ -2019,7 +2316,9 @@ DOM 순서를 유지하면서 auto margin으로 마지막 요소를 오른쪽에
 
 ---
 
-# 79. 동일 너비 버튼
+<a id="css-82"></a>
+
+## 79. 동일 너비 버튼
 
 ```css
 .button-group {
@@ -2038,7 +2337,9 @@ DOM 순서를 유지하면서 auto margin으로 마지막 요소를 오른쪽에
 
 ---
 
-# 80. 카드 목록
+<a id="css-83"></a>
+
+## 80. 카드 목록
 
 ```css
 .card-list {
@@ -2059,7 +2360,9 @@ DOM 순서를 유지하면서 auto margin으로 마지막 요소를 오른쪽에
 
 ---
 
-# 81. 미디어 객체 패턴
+<a id="css-84"></a>
+
+## 81. 미디어 객체 패턴
 
 ```html
 <article class="media">
@@ -2096,7 +2399,9 @@ DOM 순서를 유지하면서 auto margin으로 마지막 요소를 오른쪽에
 
 ---
 
-# 82. Footer 배치
+<a id="css-85"></a>
+
+## 82. Footer 배치
 
 ```css
 .footer {
@@ -2112,7 +2417,9 @@ DOM 순서를 유지하면서 auto margin으로 마지막 요소를 오른쪽에
 
 ---
 
-# 83. 반응형 내비게이션
+<a id="css-86"></a>
+
+## 83. 반응형 내비게이션
 
 ```css
 .nav {
@@ -2133,7 +2440,9 @@ CSS 14의 모바일 우선 미디어 쿼리와 연결됩니다.
 
 ---
 
-# 84. Flexbox 디버깅
+<a id="css-87"></a>
+
+## 84. Flexbox 디버깅
 
 브라우저 개발자 도구에서 확인할 항목:
 
@@ -2161,138 +2470,144 @@ CSS 14의 모바일 우선 미디어 쿼리와 연결됩니다.
 
 ---
 
-# 85. 자주 하는 실수
+<a id="css-88"></a>
 
-## 85.1 Main axis를 항상 가로로 이해
+## 85. 자주 하는 실수
+
+### 85.1 Main axis를 항상 가로로 이해
 
 `column`에서는 main axis가 세로입니다.
 
-## 85.2 `justify-content`를 항상 가로 정렬로 이해
+### 85.2 `justify-content`를 항상 가로 정렬로 이해
 
 main axis 정렬이므로 direction에 따라 방향이 바뀝니다.
 
-## 85.3 `align-items`와 `align-content` 혼동
+### 85.3 `align-items`와 `align-content` 혼동
 
 items는 item, content는 여러 line 묶음을 정렬합니다.
 
-## 85.4 한 줄인데 `align-content` 사용
+### 85.4 한 줄인데 `align-content` 사용
 
 여러 줄이 아니면 효과를 확인하기 어렵습니다.
 
-## 85.5 `order`로 의미 순서 변경
+### 85.5 `order`로 의미 순서 변경
 
 시각 순서와 DOM 순서가 달라 접근성 문제가 생길 수 있습니다.
 
-## 85.6 Grow 비율을 최종 전체 너비 비율로 단정
+### 85.6 Grow 비율을 최종 전체 너비 비율로 단정
 
 남은 공간 분배 비율이지 전체 너비가 곧바로 같은 비율이 되는 것은 아닙니다.
 
-## 85.7 Shrink 값을 단순 비율로만 계산
+### 85.7 Shrink 값을 단순 비율로만 계산
 
 basis, min-width, 콘텐츠 크기도 영향을 줍니다.
 
-## 85.8 긴 텍스트가 줄어들지 않음
+### 85.8 긴 텍스트가 줄어들지 않음
 
 flex item에 `min-width: 0`이 필요할 수 있습니다.
 
-## 85.9 모든 스타일을 인라인으로 작성
+### 85.9 모든 스타일을 인라인으로 작성
 
 재사용과 유지보수가 어려워집니다.
 
-## 85.10 두 원본에 없는 차이를 만들어 냄
+### 85.10 두 원본에 없는 차이를 만들어 냄
 
 CSS 15의 내 코드와 강사님 코드는 완전히 동일합니다.
 
 ---
 
 
-# 종합실습
+<a id="css-89"></a>
 
-## 문제 1. Flex Container
+## 종합실습
+
+### 문제 1. Flex Container
 
 `.container`의 직계 자식을 flex item으로 만드세요.
 
-## 문제 2. Inline Flex
+### 문제 2. Inline Flex
 
 컨테이너가 주변 요소와 인라인 수준으로 배치되면서 내부는 Flexbox가 되도록 작성하세요.
 
-## 문제 3. Row Reverse
+### 문제 3. Row Reverse
 
 item을 main axis 역방향으로 배치하세요.
 
-## 문제 4. Column
+### 문제 4. Column
 
 item을 위에서 아래로 배치하세요.
 
-## 문제 5. Wrap
+### 문제 5. Wrap
 
 공간이 부족하면 item을 다음 flex line으로 넘기세요.
 
-## 문제 6. Main Axis 중앙
+### 문제 6. Main Axis 중앙
 
 item 묶음을 main axis 중앙에 정렬하세요.
 
-## 문제 7. Cross Axis 중앙
+### 문제 7. Cross Axis 중앙
 
 한 줄 내부 item을 cross axis 중앙에 정렬하세요.
 
-## 문제 8. 완전 중앙 정렬
+### 문제 8. 완전 중앙 정렬
 
 row 방향 container 안에서 item을 가로·세로 중앙에 배치하세요.
 
-## 문제 9. Space Between
+### 문제 9. Space Between
 
 첫 item과 마지막 item은 양 끝에 두고 사이 공간을 균등 분배하세요.
 
-## 문제 10. Gap
+### 문제 10. Gap
 
 item 사이에 16px 간격을 추가하세요.
 
-## 문제 11. Align Content
+### 문제 11. Align Content
 
 여러 줄 전체를 cross axis 중앙에 배치하세요.
 
-## 문제 12. Order 계산
+### 문제 12. Order 계산
 
 원본의 item 1~5가 일반적인 row 방향에서 어떤 시각 순서로 보이는지 작성하세요.
 
-## 문제 13. Order 접근성
+### 문제 13. Order 접근성
 
 `order`로 중요한 콘텐츠 순서를 바꿀 때 발생할 수 있는 문제를 설명하세요.
 
-## 문제 14. Grow
+### 문제 14. Grow
 
 두 item이 남은 공간을 1:2 비율로 분배하도록 작성하세요.
 
-## 문제 15. Shrink
+### 문제 15. Shrink
 
 item A는 shrink 3, item B는 shrink 2가 되도록 작성하세요.
 
-## 문제 16. Minimum Width
+### 문제 16. Minimum Width
 
 item이 50px 아래로 줄어들지 않도록 작성하세요.
 
-## 문제 17. Flex 단축 속성
+### 문제 17. Flex 단축 속성
 
 grow 0, shrink 3, basis auto를 단축 속성으로 작성하세요.
 
-## 문제 18. 말줄임표
+### 문제 18. 말줄임표
 
 flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 작성하세요.
 
-## 문제 19. 중복 원본 주석
+### 문제 19. 중복 원본 주석
 
 원본 `.item`에서 중복된 주석을 찾아 설명하세요.
 
-## 문제 20. 원본 동일성
+<a id="index-section-131"></a>
+
+### 문제 20. 원본 동일성
 
 내 코드와 강사님 코드의 차이를 작성하세요.
 
-## 문제 21. 반응형 카드
+### 문제 21. 반응형 카드
 
 카드가 약 15rem을 기준으로 줄바꿈하고 남은 공간을 채우도록 작성하세요.
 
-## 문제 22. 종합 Header
+### 문제 22. 종합 Header
 
 다음 요구사항을 만족하는 header를 작성하세요.
 
@@ -2309,9 +2624,11 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 
 ---
 
-# 정답과 해설
+<a id="css-90"></a>
 
-## 정답 1
+## 정답과 해설
+
+### 정답 1
 
 ```css
 .container {
@@ -2319,7 +2636,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 }
 ```
 
-## 정답 2
+### 정답 2
 
 ```css
 .container {
@@ -2327,7 +2644,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 }
 ```
 
-## 정답 3
+### 정답 3
 
 ```css
 .container {
@@ -2336,7 +2653,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 }
 ```
 
-## 정답 4
+### 정답 4
 
 ```css
 .container {
@@ -2345,7 +2662,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 }
 ```
 
-## 정답 5
+### 정답 5
 
 ```css
 .container {
@@ -2354,7 +2671,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 }
 ```
 
-## 정답 6
+### 정답 6
 
 ```css
 .container {
@@ -2363,7 +2680,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 }
 ```
 
-## 정답 7
+### 정답 7
 
 ```css
 .container {
@@ -2372,7 +2689,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 }
 ```
 
-## 정답 8
+### 정답 8
 
 ```css
 .container {
@@ -2382,7 +2699,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 }
 ```
 
-## 정답 9
+### 정답 9
 
 ```css
 .container {
@@ -2391,7 +2708,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 }
 ```
 
-## 정답 10
+### 정답 10
 
 ```css
 .container {
@@ -2400,7 +2717,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 }
 ```
 
-## 정답 11
+### 정답 11
 
 ```css
 .container {
@@ -2412,7 +2729,7 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 
 여러 줄과 남는 cross axis 공간이 있어야 차이가 보입니다.
 
-## 정답 12
+### 정답 12
 
 ```text
 3 → 1 → 4 → 5 → 2
@@ -2420,11 +2737,11 @@ flex item 안의 긴 제목이 축소되고 한 줄 말줄임표가 되도록 �
 
 order -1인 3이 먼저, order 0인 1·4·5가 DOM 순서대로, order 1인 2가 마지막입니다.
 
-## 정답 13
+### 정답 13
 
 시각적 순서만 바뀌고 DOM, 키보드 탐색, 화면 읽기 순서는 그대로일 수 있어 사용자가 서로 다른 순서를 경험할 수 있습니다.
 
-## 정답 14
+### 정답 14
 
 ```css
 .item-a {
@@ -2438,7 +2755,7 @@ order -1인 3이 먼저, order 0인 1·4·5가 DOM 순서대로, order 1인 2가
 
 남는 공간을 1:2 비율로 분배합니다.
 
-## 정답 15
+### 정답 15
 
 ```css
 .item-a {
@@ -2452,7 +2769,7 @@ order -1인 3이 먼저, order 0인 1·4·5가 DOM 순서대로, order 1인 2가
 
 실제 축소량에는 기준 크기와 최소 크기도 영향을 줍니다.
 
-## 정답 16
+### 정답 16
 
 ```css
 .item {
@@ -2460,7 +2777,7 @@ order -1인 3이 먼저, order 0인 1·4·5가 DOM 순서대로, order 1인 2가
 }
 ```
 
-## 정답 17
+### 정답 17
 
 ```css
 .item {
@@ -2468,7 +2785,7 @@ order -1인 3이 먼저, order 0인 1·4·5가 DOM 순서대로, order 1인 2가
 }
 ```
 
-## 정답 18
+### 정답 18
 
 ```css
 .title {
@@ -2481,7 +2798,7 @@ order -1인 3이 먼저, order 0인 1·4·5가 DOM 순서대로, order 1인 2가
 
 부모 또는 해당 item이 실제로 축소 가능한 Flexbox 구조인지도 확인합니다.
 
-## 정답 19
+### 정답 19
 
 ```css
 /* width: 100px; */
@@ -2490,11 +2807,11 @@ order -1인 3이 먼저, order 0인 1·4·5가 DOM 순서대로, order 1인 2가
 
 같은 주석이 두 번 반복되어 있습니다. 두 번째가 height였다고 원본만으로 확정할 수 없으므로 임의로 바꾸지 않습니다.
 
-## 정답 20
+### 정답 20
 
 차이가 없습니다. 두 파일은 HTML, CSS, 주석, 인라인 스타일, 텍스트까지 동일합니다.
 
-## 정답 21
+### 정답 21
 
 ```css
 .card-list {
@@ -2508,7 +2825,7 @@ order -1인 3이 먼저, order 0인 1·4·5가 DOM 순서대로, order 1인 2가
 }
 ```
 
-## 정답 22
+### 정답 22
 
 ### HTML
 
@@ -2576,9 +2893,11 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 
 ---
 
-# 최종 체크리스트
+<a id="css-91"></a>
 
-## Flex Container
+## 최종 체크리스트
+
+### Flex Container
 
 - [ ] 부모에 `display: flex` 또는 `inline-flex`를 적용했다.
 - [ ] flex item이 직계 자식인지 확인했다.
@@ -2587,7 +2906,7 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 - [ ] `flex-wrap` 여부를 결정했다.
 - [ ] container의 실제 크기와 overflow를 확인했다.
 
-## 정렬
+### 정렬
 
 - [ ] `justify-content`가 main axis 정렬임을 이해했다.
 - [ ] `align-items`가 item의 cross axis 정렬임을 이해했다.
@@ -2596,7 +2915,7 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 - [ ] 남는 공간이 없을 때 justify-content 차이가 작을 수 있음을 확인했다.
 - [ ] item 간격에는 `gap`을 검토했다.
 
-## Flex Item
+### Flex Item
 
 - [ ] `order` 기본값이 0임을 이해했다.
 - [ ] 시각 순서와 DOM 순서를 구분했다.
@@ -2607,7 +2926,7 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 - [ ] 긴 콘텐츠에 `min-width: 0`이 필요한지 확인했다.
 - [ ] 인라인 스타일보다 클래스를 검토했다.
 
-## 반응형과 실무
+### 반응형과 실무
 
 - [ ] 고정 300px 너비가 작은 화면에서 안전한지 확인했다.
 - [ ] 모바일에서 column, 넓은 화면에서 row 전환을 검토했다.
@@ -2616,7 +2935,7 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 - [ ] auto margin으로 특정 item을 끝으로 밀 수 있음을 이해했다.
 - [ ] 개발자 도구의 Flexbox overlay를 확인했다.
 
-## 접근성
+### 접근성
 
 - [ ] DOM 순서가 의미 있는 읽기 순서다.
 - [ ] row-reverse와 order가 키보드 순서를 혼란스럽게 하지 않는다.
@@ -2625,7 +2944,7 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 - [ ] 시각적 재배치 없이도 콘텐츠 구조가 이해된다.
 - [ ] 반응형에서도 읽기 순서가 유지된다.
 
-## 원본 코드 검수
+### 원본 코드 검수
 
 - [ ] 내 코드와 강사님 코드가 동일함을 확인했다.
 - [ ] 존재하지 않는 차이를 만들지 않았다.
@@ -2638,7 +2957,9 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 
 ---
 
-# 핵심 요약
+<a id="css-92"></a>
+
+## 핵심 요약
 
 - Flexbox는 flex container의 직계 자식을 flex item으로 배치한다.
 - `display: flex`는 블록 수준, `inline-flex`는 인라인 수준 container를 만든다.
@@ -2666,10 +2987,15 @@ HTML 의미 순서를 유지하면서 margin-left auto로 로그인 링크를 ma
 - 원본의 Emmet 문자열은 실제 화면에 텍스트로 표시된다.
 - 내 코드와 강사님 코드의 CSS 15 원본은 완전히 동일하다.
 - 한 축 중심의 정렬에는 Flexbox, 행과 열을 함께 제어할 때는 Grid가 더 적합할 수 있다.
-# V3 렌더링 추적 카드 — 주축·교차축과 남는 공간 분배
+<a id="css-93"></a>
+
+## 렌더링 복습 카드 — 주축·교차축과 남는 공간 분배
 
 flex container가 된 부모는 자식을 flex item으로 배치한다. `flex-direction`이 주축을 정하고 justify-content는 주축, align-items는 교차축 정렬을 담당한다.
 
 item의 기본 `min-width:auto` 때문에 긴 콘텐츠가 줄지 않을 수 있어 필요하면 `min-width:0`을 검토한다. Layout 패널 overlay로 축, gap, item 크기를 확인한다.
 
 **원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/15_flex.html`에서 실제 선택자·계산값·화면 차이를 확인한다.
+
+
+[CSS 파트 목차로 돌아가기](./README.md)

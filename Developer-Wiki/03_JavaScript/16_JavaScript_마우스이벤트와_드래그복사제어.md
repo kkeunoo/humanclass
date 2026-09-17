@@ -1,7 +1,7 @@
 ---
 title: JavaScript 마우스 이벤트와 드래그·복사 제어
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,108 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: 마우스 좌표는 서로 다른 기준점에서 잰 위치다](#js-16-section-4)
+- [31. 좌표계 비교](#js-16-section-35)
+- [68. 내 코드와 강사님 코드 비교](#js-16-section-72)
+- [70. 실무형 예제: Pointer 기반 Drag Component](#js-16-section-74)
+- [71. 대표 오류로 이해하기](#js-16-section-75)
+- [72. 자주 하는 실수](#js-16-section-76)
+- [73. 핵심 요약](#js-16-section-77)
+- [74. 최종 체크리스트](#js-16-section-78)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-16-section-1)
+- [핵심 개념](#js-16-section-2)
+- [학습 목표](#js-16-section-3)
+- [개념에서 실제 실행까지: 마우스 좌표는 서로 다른 기준점에서 잰 위치다](#js-16-section-4)
+- [1. 원본 HTML 구조](#js-16-section-5)
+- [2. 요소별 역할](#js-16-section-6)
+- [3. Script 실행 시점](#js-16-section-7)
+- [4. `defer` 개선](#js-16-section-8)
+- [5. Drag 상태 변수](#js-16-section-9)
+- [6. 안전한 Log 함수](#js-16-section-10)
+- [7. 원본 Log의 문제](#js-16-section-11)
+- [8. `contextmenu`](#js-16-section-12)
+- [9. `return false`와 `preventDefault()`](#js-16-section-13)
+- [10. 우클릭 차단의 한계](#js-16-section-14)
+- [11. `selectstart`](#js-16-section-15)
+- [12. CSS `user-select`](#js-16-section-16)
+- [13. Copy Event](#js-16-section-17)
+- [14. 현재 선택 텍스트](#js-16-section-18)
+- [15. 빈 선택 검사](#js-16-section-19)
+- [16. 복사 텍스트에 출처 추가](#js-16-section-20)
+- [17. Clipboard 데이터 변경](#js-16-section-21)
+- [18. `text/plain`](#js-16-section-22)
+- [19. Clipboard API](#js-16-section-23)
+- [20. `mousedown`](#js-16-section-24)
+- [21. `mouseup`](#js-16-section-25)
+- [22. `click`](#js-16-section-26)
+- [23. 기본 클릭 순서](#js-16-section-27)
+- [24. `dblclick`](#js-16-section-28)
+- [25. Double Click 시간](#js-16-section-29)
+- [26. Mouse Event 객체](#js-16-section-30)
+- [27. `offsetX`, `offsetY`](#js-16-section-31)
+- [28. `pageX`, `pageY`](#js-16-section-32)
+- [29. `clientX`, `clientY`](#js-16-section-33)
+- [30. `screenX`, `screenY`](#js-16-section-34)
+- [31. 좌표계 비교](#js-16-section-35)
+- [32. 좌표 출력 함수](#js-16-section-36)
+- [33. `mouseover`](#js-16-section-37)
+- [34. 원본 오타](#js-16-section-38)
+- [35. `mouseout`](#js-16-section-39)
+- [36. `mouseenter`, `mouseleave`](#js-16-section-40)
+- [37. Hover 이벤트 차이](#js-16-section-41)
+- [38. CSS Hover 대안](#js-16-section-42)
+- [39. `mousemove`](#js-16-section-43)
+- [40. 원본 Mousemove Log 문제](#js-16-section-44)
+- [41. `requestAnimationFrame()`](#js-16-section-45)
+- [42. 커서 추적 이미지](#js-16-section-46)
+- [43. 10px Offset 이유](#js-16-section-47)
+- [44. `pointer-events: none`](#js-16-section-48)
+- [45. `position: absolute`](#js-16-section-49)
+- [46. Mousemove Listener 통합](#js-16-section-50)
+- [47. Drag 시작](#js-16-section-51)
+- [48. Drag Offset 저장 이유](#js-16-section-52)
+- [49. Drag 중 이동](#js-16-section-53)
+- [50. 원본 Drag 종료](#js-16-section-54)
+- [51. 요소 밖 Mouseup 문제](#js-16-section-55)
+- [52. Document에서 Drag 종료](#js-16-section-56)
+- [53. Window Blur 처리](#js-16-section-57)
+- [54. Drag 상태 클래스](#js-16-section-58)
+- [55. 이름 개선](#js-16-section-59)
+- [56. 중복 ID 가능성](#js-16-section-60)
+- [57. Pointer Event](#js-16-section-61)
+- [58. Pointer Capture](#js-16-section-62)
+- [59. Pointer Drag 시작](#js-16-section-63)
+- [60. Pointer Drag 이동](#js-16-section-64)
+- [61. Pointer Drag 종료](#js-16-section-65)
+- [62. `resize`](#js-16-section-66)
+- [63. `innerWidth`, `innerHeight`](#js-16-section-67)
+- [64. `outerWidth`, `outerHeight`](#js-16-section-68)
+- [65. Resize 성능](#js-16-section-69)
+- [66. Resize 최적화](#js-16-section-70)
+- [67. 외부 이미지와 `alt`](#js-16-section-71)
+- [68. 내 코드와 강사님 코드 비교](#js-16-section-72)
+- [69. 기존 코드에서 개선한 이유](#js-16-section-73)
+- [70. 실무형 예제: Pointer 기반 Drag Component](#js-16-section-74)
+- [71. 대표 오류로 이해하기](#js-16-section-75)
+- [72. 자주 하는 실수](#js-16-section-76)
+- [73. 핵심 요약](#js-16-section-77)
+- [74. 최종 체크리스트](#js-16-section-78)
+- [마무리](#js-16-section-79)
+- [V3 실행 추적 카드 — 포인터 동작 → 좌표/대상 → 상태 변경](#js-16-section-80)
+
+</details>
+
+---
+
+<a id="js-16-section-1"></a>
+
+## 개요
 
 마우스 이벤트는 Pointer가 요소 위로 이동하거나 버튼을 누르고 놓을 때 발생한다.
 
@@ -55,7 +156,9 @@ Event 객체에 좌표와 버튼 정보 저장
 
 ---
 
-# 핵심 개념
+<a id="js-16-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -74,28 +177,119 @@ Event 객체에 좌표와 버튼 정보 저장
 
 ---
 
-# 학습 목표
+<a id="js-16-section-3"></a>
 
-- `contextmenu` 이벤트를 이해하고 기본 동작을 취소할 수 있다.
-- 우클릭 차단이 보안 기능이 아님을 설명할 수 있다.
-- `selectstart`와 CSS `user-select`를 사용할 수 있다.
-- Copy Event에서 선택 텍스트를 읽을 수 있다.
-- 복사 텍스트에 출처를 추가할 수 있다.
-- `mousedown`, `mouseup`, `click`, `dblclick`을 구분할 수 있다.
-- 네 가지 마우스 좌표계를 설명할 수 있다.
-- `mouseover`와 `mouseenter`의 차이를 이해한다.
-- 빈번한 `mousemove`에서 DOM 생성을 최소화할 수 있다.
-- 커서 추적 요소가 Event Target을 가리지 않도록 설정할 수 있다.
-- Drag 시작 시 Pointer Offset을 저장할 수 있다.
-- Drag 중 요소의 새 위치를 계산할 수 있다.
-- 요소 밖에서 버튼을 놓아도 Drag를 종료할 수 있다.
-- Pointer Event와 Pointer Capture를 사용할 수 있다.
-- `resize`에서 Viewport 크기를 읽을 수 있다.
-- `innerHTML` 대신 안전한 텍스트 출력을 사용할 수 있다.
+## 학습 목표
+
+- 좌표계·드래그 상태·종료 이벤트를 연결한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. 원본 HTML 구조
+<a id="js-16-section-4"></a>
+
+## 개념에서 실제 실행까지: 마우스 좌표는 서로 다른 기준점에서 잰 위치다
+
+client는 뷰포트, page는 문서, screen은 화면, offset은 이벤트 대상 요소의 패딩 경계 기준 좌표다. 이름이 다른 값끼리 그대로 빼면 스크롤이나 부모 배치에 따라 위치가 어긋난다.
+
+두 원본은 mousedown에서 _isDrag=true와 눌린 위치 offset을 저장하고, body의 mousemove에서 page좌표-offset으로 요소의 left/top을 바꾼다. 이는 해당 positioned 요소의 containing block 기준이 문서와 일치하는 단순 배치에서 이해하기 좋은 방식이다. positioned 부모 안이라면 부모 좌표도 빼야 한다. img에서만 mouseup을 듣기 때문에 요소 밖에서 놓으면 종료를 놓칠 수 있다.
+
+mouseover/out은 자식 경계를 넘을 때도 발생·버블링하고 mouseenter/leave와 같지 않다. 더블 클릭 시간은 OS·브라우저 설정에 달려 있어 0.3초 고정 규칙이 아니다. innerWidth/Height는 보통 스크롤바를 포함하고 documentElement.clientWidth/Height가 레이아웃 뷰포트의 스크롤바 제외 크기를 준다. outerWidth는 브라우저 바깥 창 크기다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/asset/js/16_event_mouse.js`
+
+```javascript
+document.querySelector('#img').addEventListener('mousedown', function(evt) {
+        _isDrag = true
+        // 눌렀을 때 X, Y값을 저장해두어야 하기 때문에 전역변수를 선언해서 저장
+        _offsetX = evt.offsetX
+        _offsetY = evt.offsetY
+    })
+    document.querySelector('#img').addEventListener('mouseup', function(evt) {
+        // 마우스를 뗀다면 drag 하고있는것을 중단하기 위해 false로 변환
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/asset/js/16_event_mouse.js`
+
+```javascript
+document.querySelector('#img').addEventListener('mousedown', function(evt){
+        _isDrag = true
+        _offsetX = evt.offsetX
+        _offsetY = evt.offsetY
+    })
+    document.querySelector('#img').addEventListener('mouseup', function(evt){
+        _isDrag = false
+    })
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+const scrollY = 300;
+const clientY = 120;
+const pageY = clientY + scrollY;
+const grabOffset = 20;
+console.log(pageY, pageY - grabOffset);
+const parentPageTop = 100;
+console.log(pageY - grabOffset - parentPageTop);
+```
+
+예상 출력:
+
+```text
+420 400
+300
+```
+
+### 결과를 역추적하는 방법
+
+좌표 계산을 확인하는 순수 예제다. 실제 브라우저의 줌·뷰포트 상황에서는 event 값을 직접 기록한다. 💡 Pointer Events와 setPointerCapture로 요소 밖 이동·해제, pointercancel을 함께 처리하는 방향을 알아두면 좋다. 복사·우클릭 방지는 정보 보호 수단이 아니다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** 문서 스크롤300,clientY120,grabOffset20에서 문서 기준top을 계산한다.
+
+**응용·디버깅 실습:** 이미지 밖에서mouseup해도 드래그가 끝나게 한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. pageY420, top400이다. containing block이 문서인 조건에서만 직접 적용한다.
+2. document의mouseup 또는Pointer capture를 사용하고 pointercancel·blur 등 중단을 처리한다. 종료 후 _isDrag=false를 확인한다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** mouseup을 document에서 들으면 어떤 누락을 줄일까?
+
+**해설:** 문서 안에서 요소 밖으로 포인터가 이동한 뒤 놓아도 종료를 감지할 수 있다. 창 밖 해제·터치 취소는 추가 처리나 pointer capture가 필요하다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-16-section-5"></a>
+
+## 1. 원본 HTML 구조
 
 ```html
 <div id="area" class="area">
@@ -122,7 +316,9 @@ Event 객체에 좌표와 버튼 정보 저장
 
 ---
 
-# 2. 요소별 역할
+<a id="js-16-section-6"></a>
+
+## 2. 요소별 역할
 
 ```text
 #area
@@ -143,7 +339,9 @@ Event 객체에 좌표와 버튼 정보 저장
 
 ---
 
-# 3. Script 실행 시점
+<a id="js-16-section-7"></a>
+
+## 3. Script 실행 시점
 
 원본은 `<head>`에서 외부 JavaScript를 연결하고 `window.onload` 후 이벤트를 등록한다.
 
@@ -157,7 +355,9 @@ window.onload = () => {
 
 ---
 
-# 4. `defer` 개선
+<a id="js-16-section-8"></a>
+
+## 4. `defer` 개선
 
 ```html
 <script
@@ -176,7 +376,9 @@ DOM 요소만 필요하다면 `defer`로 충분한 경우가 많다.
 
 ---
 
-# 5. Drag 상태 변수
+<a id="js-16-section-9"></a>
+
+## 5. Drag 상태 변수
 
 원본:
 
@@ -198,7 +400,9 @@ Underscore는 Naming Convention일 뿐 접근 제한 기능이 아니다.
 
 ---
 
-# 6. 안전한 Log 함수
+<a id="js-16-section-10"></a>
+
+## 6. 안전한 Log 함수
 
 ```javascript
 function log(
@@ -222,7 +426,9 @@ function log(
 
 ---
 
-# 7. 원본 Log의 문제
+<a id="js-16-section-11"></a>
+
+## 7. 원본 Log의 문제
 
 원본:
 
@@ -236,7 +442,9 @@ item.innerHTML = message
 
 ---
 
-# 8. `contextmenu`
+<a id="js-16-section-12"></a>
+
+## 8. `contextmenu`
 
 ```javascript
 area.addEventListener(
@@ -255,7 +463,9 @@ area.addEventListener(
 
 ---
 
-# 9. `return false`와 `preventDefault()`
+<a id="js-16-section-13"></a>
+
+## 9. `return false`와 `preventDefault()`
 
 원본 Property 방식:
 
@@ -280,7 +490,9 @@ area.addEventListener(
 
 ---
 
-# 10. 우클릭 차단의 한계
+<a id="js-16-section-14"></a>
+
+## 10. 우클릭 차단의 한계
 
 우클릭 메뉴를 막아도 다음 접근을 막을 수 없다.
 
@@ -296,7 +508,9 @@ area.addEventListener(
 
 ---
 
-# 11. `selectstart`
+<a id="js-16-section-15"></a>
+
+## 11. `selectstart`
 
 ```javascript
 area.addEventListener(
@@ -311,7 +525,9 @@ area.addEventListener(
 
 ---
 
-# 12. CSS `user-select`
+<a id="js-16-section-16"></a>
+
+## 12. CSS `user-select`
 
 ```css
 #area {
@@ -325,7 +541,9 @@ area.addEventListener(
 
 ---
 
-# 13. Copy Event
+<a id="js-16-section-17"></a>
+
+## 13. Copy Event
 
 ```javascript
 copyArea.addEventListener(
@@ -342,7 +560,9 @@ copyArea.addEventListener(
 
 ---
 
-# 14. 현재 선택 텍스트
+<a id="js-16-section-18"></a>
+
+## 14. 현재 선택 텍스트
 
 ```javascript
 const selection = (
@@ -357,7 +577,9 @@ const selection = (
 
 ---
 
-# 15. 빈 선택 검사
+<a id="js-16-section-19"></a>
+
+## 15. 빈 선택 검사
 
 ```javascript
 if (
@@ -372,7 +594,9 @@ if (
 
 ---
 
-# 16. 복사 텍스트에 출처 추가
+<a id="js-16-section-20"></a>
+
+## 16. 복사 텍스트에 출처 추가
 
 ```javascript
 const copiedText = (
@@ -385,7 +609,9 @@ const copiedText = (
 
 ---
 
-# 17. Clipboard 데이터 변경
+<a id="js-16-section-21"></a>
+
+## 17. Clipboard 데이터 변경
 
 ```javascript
 copyArea.addEventListener(
@@ -418,7 +644,9 @@ copyArea.addEventListener(
 
 ---
 
-# 18. `text/plain`
+<a id="js-16-section-22"></a>
+
+## 18. `text/plain`
 
 ```text
 text/plain
@@ -429,7 +657,9 @@ text/plain
 
 ---
 
-# 19. Clipboard API
+<a id="js-16-section-23"></a>
+
+## 19. Clipboard API
 
 ```javascript
 await navigator.clipboard.writeText(
@@ -448,7 +678,9 @@ Copy Event 자체를 변경할 때는 `event.clipboardData` 방식이 적합하�
 
 ---
 
-# 20. `mousedown`
+<a id="js-16-section-24"></a>
+
+## 20. `mousedown`
 
 ```javascript
 area2.addEventListener(
@@ -463,7 +695,9 @@ area2.addEventListener(
 
 ---
 
-# 21. `mouseup`
+<a id="js-16-section-25"></a>
+
+## 21. `mouseup`
 
 ```javascript
 area2.addEventListener(
@@ -478,7 +712,9 @@ area2.addEventListener(
 
 ---
 
-# 22. `click`
+<a id="js-16-section-26"></a>
+
+## 22. `click`
 
 ```javascript
 area2.addEventListener(
@@ -493,7 +729,9 @@ area2.addEventListener(
 
 ---
 
-# 23. 기본 클릭 순서
+<a id="js-16-section-27"></a>
+
+## 23. 기본 클릭 순서
 
 ```text
 mousedown
@@ -505,7 +743,9 @@ Pointer 이동과 Target 변경에 따라 실제 세부 순서는 달라질 수 
 
 ---
 
-# 24. `dblclick`
+<a id="js-16-section-28"></a>
+
+## 24. `dblclick`
 
 ```javascript
 area2.addEventListener(
@@ -522,7 +762,9 @@ area2.addEventListener(
 
 ---
 
-# 25. Double Click 시간
+<a id="js-16-section-29"></a>
+
+## 25. Double Click 시간
 
 원본의 “0.3초 이내”라는 설명은 고정 기준이 아니다.
 
@@ -535,7 +777,9 @@ Double Click 판정 간격은 다음 영향을 받을 수 있다.
 
 ---
 
-# 26. Mouse Event 객체
+<a id="js-16-section-30"></a>
+
+## 26. Mouse Event 객체
 
 ```javascript
 area2.addEventListener(
@@ -550,7 +794,9 @@ area2.addEventListener(
 
 ---
 
-# 27. `offsetX`, `offsetY`
+<a id="js-16-section-31"></a>
+
+## 27. `offsetX`, `offsetY`
 
 ```javascript
 console.log(
@@ -565,7 +811,9 @@ Event Target 내부를 기준으로 한 좌표다.
 
 ---
 
-# 28. `pageX`, `pageY`
+<a id="js-16-section-32"></a>
+
+## 28. `pageX`, `pageY`
 
 ```javascript
 console.log(
@@ -580,7 +828,9 @@ Scroll된 거리도 포함한다.
 
 ---
 
-# 29. `clientX`, `clientY`
+<a id="js-16-section-33"></a>
+
+## 29. `clientX`, `clientY`
 
 ```javascript
 console.log(
@@ -595,7 +845,9 @@ console.log(
 
 ---
 
-# 30. `screenX`, `screenY`
+<a id="js-16-section-34"></a>
+
+## 30. `screenX`, `screenY`
 
 ```javascript
 console.log(
@@ -610,7 +862,9 @@ Browser Window의 위치에 따라 달라진다.
 
 ---
 
-# 31. 좌표계 비교
+<a id="js-16-section-35"></a>
+
+## 31. 좌표계 비교
 
 | Property | 기준 |
 | --- | --- |
@@ -621,7 +875,9 @@ Browser Window의 위치에 따라 달라진다.
 
 ---
 
-# 32. 좌표 출력 함수
+<a id="js-16-section-36"></a>
+
+## 32. 좌표 출력 함수
 
 ```javascript
 function getMousePosition(
@@ -650,7 +906,9 @@ function getMousePosition(
 
 ---
 
-# 33. `mouseover`
+<a id="js-16-section-37"></a>
+
+## 33. `mouseover`
 
 ```javascript
 area2.addEventListener(
@@ -667,7 +925,9 @@ Pointer가 요소 또는 자식 요소 경계로 들어올 때 발생할 수 있
 
 ---
 
-# 34. 원본 오타
+<a id="js-16-section-38"></a>
+
+## 34. 원본 오타
 
 내 원본의 Event Type은 올바르다.
 
@@ -685,7 +945,9 @@ moseover
 
 ---
 
-# 35. `mouseout`
+<a id="js-16-section-39"></a>
+
+## 35. `mouseout`
 
 ```javascript
 area2.addEventListener(
@@ -702,7 +964,9 @@ Pointer가 요소 또는 자식 요소 경계를 벗어날 때 발생할 수 있
 
 ---
 
-# 36. `mouseenter`, `mouseleave`
+<a id="js-16-section-40"></a>
+
+## 36. `mouseenter`, `mouseleave`
 
 ```javascript
 area2.addEventListener(
@@ -726,7 +990,9 @@ area2.addEventListener(
 
 ---
 
-# 37. Hover 이벤트 차이
+<a id="js-16-section-41"></a>
+
+## 37. Hover 이벤트 차이
 
 ```text
 mouseover / mouseout
@@ -742,7 +1008,9 @@ mouseenter / mouseleave
 
 ---
 
-# 38. CSS Hover 대안
+<a id="js-16-section-42"></a>
+
+## 38. CSS Hover 대안
 
 ```css
 .area:hover {
@@ -754,7 +1022,9 @@ mouseenter / mouseleave
 
 ---
 
-# 39. `mousemove`
+<a id="js-16-section-43"></a>
+
+## 39. `mousemove`
 
 ```javascript
 area2.addEventListener(
@@ -772,7 +1042,9 @@ Pointer가 움직일 때 매우 자주 발생한다.
 
 ---
 
-# 40. 원본 Mousemove Log 문제
+<a id="js-16-section-44"></a>
+
+## 40. 원본 Mousemove Log 문제
 
 원본은 Mousemove 한 번마다 Log Node를 여러 개 생성한다.
 
@@ -788,7 +1060,9 @@ Pointer가 움직일 때 매우 자주 발생한다.
 
 ---
 
-# 41. `requestAnimationFrame()`
+<a id="js-16-section-45"></a>
+
+## 41. `requestAnimationFrame()`
 
 ```javascript
 let pendingEvent = null
@@ -823,7 +1097,9 @@ area2.addEventListener(
 
 ---
 
-# 42. 커서 추적 이미지
+<a id="js-16-section-46"></a>
+
+## 42. 커서 추적 이미지
 
 ```javascript
 document.addEventListener(
@@ -844,7 +1120,9 @@ document.addEventListener(
 
 ---
 
-# 43. 10px Offset 이유
+<a id="js-16-section-47"></a>
+
+## 43. 10px Offset 이유
 
 Pointer 바로 아래에 이미지가 있으면 이미지가 새로운 Event Target이 되어 움직임을 방해할 수 있다.
 
@@ -852,7 +1130,9 @@ Offset을 추가해 Pointer와 요소를 분리한다.
 
 ---
 
-# 44. `pointer-events: none`
+<a id="js-16-section-48"></a>
+
+## 44. `pointer-events: none`
 
 ```css
 #game {
@@ -866,7 +1146,9 @@ Offset을 추가해 Pointer와 요소를 분리한다.
 
 ---
 
-# 45. `position: absolute`
+<a id="js-16-section-49"></a>
+
+## 45. `position: absolute`
 
 ```css
 #game {
@@ -880,7 +1162,9 @@ Fixed 요소라면 `clientX`, `clientY`가 더 자연스러울 수 있다.
 
 ---
 
-# 46. Mousemove Listener 통합
+<a id="js-16-section-50"></a>
+
+## 46. Mousemove Listener 통합
 
 원본은 Body에 Mousemove Listener를 두 개 등록한다.
 
@@ -898,7 +1182,9 @@ Fixed 요소라면 `clientX`, `clientY`가 더 자연스러울 수 있다.
 
 ---
 
-# 47. Drag 시작
+<a id="js-16-section-51"></a>
+
+## 47. Drag 시작
 
 ```javascript
 dragBox.addEventListener(
@@ -915,7 +1201,9 @@ dragBox.addEventListener(
 
 ---
 
-# 48. Drag Offset 저장 이유
+<a id="js-16-section-52"></a>
+
+## 48. Drag Offset 저장 이유
 
 요소 중앙을 눌렀는데 Pointer 좌표를 그대로 `left`, `top`으로 사용하면 요소의 좌상단이 Pointer 위치로 순간 이동한다.
 
@@ -929,7 +1217,9 @@ dragBox.addEventListener(
 
 ---
 
-# 49. Drag 중 이동
+<a id="js-16-section-53"></a>
+
+## 49. Drag 중 이동
 
 ```javascript
 document.addEventListener(
@@ -952,7 +1242,9 @@ document.addEventListener(
 
 ---
 
-# 50. 원본 Drag 종료
+<a id="js-16-section-54"></a>
+
+## 50. 원본 Drag 종료
 
 원본은 Drag 요소 자체에 `mouseup`을 등록한다.
 
@@ -967,7 +1259,9 @@ dragBox.addEventListener(
 
 ---
 
-# 51. 요소 밖 Mouseup 문제
+<a id="js-16-section-55"></a>
+
+## 51. 요소 밖 Mouseup 문제
 
 Drag 중 Pointer가 요소 밖으로 나간 뒤 버튼을 놓으면 요소의 `mouseup`이 발생하지 않을 수 있다.
 
@@ -975,7 +1269,9 @@ Drag 중 Pointer가 요소 밖으로 나간 뒤 버튼을 놓으면 요소의 `m
 
 ---
 
-# 52. Document에서 Drag 종료
+<a id="js-16-section-56"></a>
+
+## 52. Document에서 Drag 종료
 
 ```javascript
 document.addEventListener(
@@ -990,7 +1286,9 @@ document.addEventListener(
 
 ---
 
-# 53. Window Blur 처리
+<a id="js-16-section-57"></a>
+
+## 53. Window Blur 처리
 
 ```javascript
 window.addEventListener(
@@ -1005,7 +1303,9 @@ Drag 중 Browser Window가 Focus를 잃는 경우도 상태를 정리할 수 있
 
 ---
 
-# 54. Drag 상태 클래스
+<a id="js-16-section-58"></a>
+
+## 54. Drag 상태 클래스
 
 ```javascript
 dragBox.classList.add(
@@ -1034,7 +1334,9 @@ CSS:
 
 ---
 
-# 55. 이름 개선
+<a id="js-16-section-59"></a>
+
+## 55. 이름 개선
 
 원본에는 실제 `<img>`가 아닌 `<div id="img">`가 있다.
 
@@ -1054,7 +1356,9 @@ const dragBox = (
 
 ---
 
-# 56. 중복 ID 가능성
+<a id="js-16-section-60"></a>
+
+## 56. 중복 ID 가능성
 
 내 원본의 주석 처리된 내부 이미지까지 활성화하면 부모와 자식에 같은 `id="img"`가 생길 수 있다.
 
@@ -1062,7 +1366,9 @@ const dragBox = (
 
 ---
 
-# 57. Pointer Event
+<a id="js-16-section-61"></a>
+
+## 57. Pointer Event
 
 Mouse·Touch·Pen을 함께 지원하려면 Pointer Event를 사용할 수 있다.
 
@@ -1077,7 +1383,9 @@ dragBox.addEventListener(
 
 ---
 
-# 58. Pointer Capture
+<a id="js-16-section-62"></a>
+
+## 58. Pointer Capture
 
 ```javascript
 dragBox.setPointerCapture(
@@ -1089,7 +1397,9 @@ Pointer가 요소 밖으로 이동해도 해당 요소가 Pointer Event를 계�
 
 ---
 
-# 59. Pointer Drag 시작
+<a id="js-16-section-63"></a>
+
+## 59. Pointer Drag 시작
 
 ```javascript
 dragBox.addEventListener(
@@ -1123,7 +1433,9 @@ dragBox.addEventListener(
 
 ---
 
-# 60. Pointer Drag 이동
+<a id="js-16-section-64"></a>
+
+## 60. Pointer Drag 이동
 
 ```javascript
 dragBox.addEventListener(
@@ -1158,7 +1470,9 @@ dragBox.addEventListener(
 
 ---
 
-# 61. Pointer Drag 종료
+<a id="js-16-section-65"></a>
+
+## 61. Pointer Drag 종료
 
 ```javascript
 function stopDragging(
@@ -1190,7 +1504,9 @@ dragBox.addEventListener(
 
 ---
 
-# 62. `resize`
+<a id="js-16-section-66"></a>
+
+## 62. `resize`
 
 ```javascript
 window.addEventListener(
@@ -1208,7 +1524,9 @@ Browser Viewport 크기가 변경될 때 발생한다.
 
 ---
 
-# 63. `innerWidth`, `innerHeight`
+<a id="js-16-section-67"></a>
+
+## 63. `innerWidth`, `innerHeight`
 
 ```text
 window.innerWidth
@@ -1222,7 +1540,9 @@ CSS Pixel 단위다.
 
 ---
 
-# 64. `outerWidth`, `outerHeight`
+<a id="js-16-section-68"></a>
+
+## 64. `outerWidth`, `outerHeight`
 
 ```javascript
 window.outerWidth
@@ -1233,7 +1553,9 @@ Browser Chrome 영역 등을 포함한 Window 전체 외곽 크기다.
 
 ---
 
-# 65. Resize 성능
+<a id="js-16-section-69"></a>
+
+## 65. Resize 성능
 
 Resize 이벤트도 연속으로 매우 자주 발생할 수 있다.
 
@@ -1248,7 +1570,9 @@ viewportSize.textContent = (
 
 ---
 
-# 66. Resize 최적화
+<a id="js-16-section-70"></a>
+
+## 66. Resize 최적화
 
 ```javascript
 let resizeFrameId = null
@@ -1284,7 +1608,9 @@ window.addEventListener(
 
 ---
 
-# 67. 외부 이미지와 `alt`
+<a id="js-16-section-71"></a>
+
+## 67. 외부 이미지와 `alt`
 
 원본은 외부 검색 이미지 URL을 사용하고 `alt`가 없다.
 
@@ -1302,7 +1628,9 @@ window.addEventListener(
 
 ---
 
-# 68. 내 코드와 강사님 코드 비교
+<a id="js-16-section-72"></a>
+
+## 68. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1316,7 +1644,7 @@ window.addEventListener(
 | 내부 주석 이미지 | 중복 ID 가능 | 없음 |
 | Resize 문구 | 설명형 | 축약형 |
 
-## 68-1. 내 코드의 장점
+### 68-1. 내 코드의 장점
 
 - Mouse Event와 좌표계 설명이 자세하다.
 - 추적 이미지에 10px Offset을 주는 이유를 기록했다.
@@ -1324,7 +1652,7 @@ window.addEventListener(
 - Clipboard와 Resize 개념을 강사님보다 자세히 정리했다.
 - 실습 코드의 실행 이유를 주석으로 남겼다.
 
-## 68-2. 내 코드의 개선점
+### 68-2. 내 코드의 개선점
 
 - `"moseover"` Log 오타가 있다.
 - `mouseover`와 `mouseenter`를 동일하게 설명했다.
@@ -1336,7 +1664,7 @@ window.addEventListener(
 - `#img` 이름과 중복 ID 가능성이 있다.
 - 외부 이미지와 `alt` 누락 문제가 있다.
 
-## 68-3. 강사님 코드의 장점
+### 68-3. 강사님 코드의 장점
 
 - Mouse Event 종류와 좌표계를 간결하게 실습한다.
 - Copy Event에서 출처 추가를 구현한다.
@@ -1344,7 +1672,7 @@ window.addEventListener(
 - Resize에서 Viewport 크기를 읽는다.
 - 전체 실행 흐름이 짧고 명확하다.
 
-## 68-4. 강사님 코드의 보충점
+### 68-4. 강사님 코드의 보충점
 
 - 우클릭·선택 차단의 한계를 설명해야 한다.
 - `mouseover`와 `mouseenter` 차이가 필요하다.
@@ -1355,9 +1683,11 @@ window.addEventListener(
 
 ---
 
-# 69. 기존 코드에서 개선한 이유
+<a id="js-16-section-73"></a>
 
-## 69-1. 기본 동작 취소
+## 69. 기존 코드에서 개선한 이유
+
+### 69-1. 기본 동작 취소
 
 기존:
 
@@ -1371,7 +1701,7 @@ return false
 event.preventDefault()
 ```
 
-## 69-2. 안전한 Log
+### 69-2. 안전한 Log
 
 기존:
 
@@ -1385,7 +1715,7 @@ item.innerHTML = message
 item.textContent = message
 ```
 
-## 69-3. Mousemove 표시
+### 69-3. Mousemove 표시
 
 기존:
 
@@ -1402,7 +1732,7 @@ coordinates.textContent = (
 )
 ```
 
-## 69-4. Drag 종료
+### 69-4. Drag 종료
 
 기존:
 
@@ -1424,7 +1754,9 @@ document.addEventListener(
 
 ---
 
-# 70. 실무형 예제: Pointer 기반 Drag Component
+<a id="js-16-section-74"></a>
+
+## 70. 실무형 예제: Pointer 기반 Drag Component
 
 ```javascript
 function createDraggable(
@@ -1557,7 +1889,7 @@ function createDraggable(
 }
 ```
 
-## 70-1. 실행
+### 70-1. 실행
 
 ```javascript
 const dragBox = (
@@ -1576,7 +1908,7 @@ const destroyDrag = (
 // destroyDrag()
 ```
 
-## 70-2. 코드에서 무엇을 사용하는 걸까?
+### 70-2. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1590,79 +1922,93 @@ const destroyDrag = (
 
 ---
 
-# 71. 대표 오류로 이해하기
+<a id="js-16-section-75"></a>
 
-## 71-1. `window.getSelection()`이 `null`
+## 71. 대표 오류로 이해하기
+
+<a id="index-section-93"></a>
+
+### 71-1. `window.getSelection()`이 `null`
 
 Optional Chaining으로 안전하게 처리한다.
 
-## 71-2. Mousemove마다 DOM Node 생성
+### 71-2. Mousemove마다 DOM Node 생성
 
 화면과 Memory 부담이 빠르게 증가한다.
 
-## 71-3. `clientX`와 `pageX` 혼동
+### 71-3. `clientX`와 `pageX` 혼동
 
 Scroll 상태에서 요소 위치가 어긋날 수 있다.
 
-## 71-4. Drag Offset 미저장
+### 71-4. Drag Offset 미저장
 
 요소 좌상단이 Pointer 위치로 점프한다.
 
-## 71-5. 요소 내부 Mouseup만 사용
+### 71-5. 요소 내부 Mouseup만 사용
 
 요소 밖에서 놓으면 Drag가 끝나지 않을 수 있다.
 
-## 71-6. 추적 이미지가 Pointer Event를 가로챔
+### 71-6. 추적 이미지가 Pointer Event를 가로챔
 
 `pointer-events: none`을 사용한다.
 
 ---
 
-# 72. 자주 하는 실수
+<a id="js-16-section-76"></a>
 
-## 72-1. Context Menu 차단을 보안 기능으로 생각
+## 72. 자주 하는 실수
+
+<a id="index-section-100"></a>
+
+### 72-1. Context Menu 차단을 보안 기능으로 생각
 
 콘텐츠 접근을 실제로 막지 못한다.
 
-## 72-2. Copy 출처를 원문과 바로 연결
+### 72-2. Copy 출처를 원문과 바로 연결
 
 공백이나 줄바꿈을 추가한다.
 
-## 72-3. Double Click 시간을 고정값으로 단정
+### 72-3. Double Click 시간을 고정값으로 단정
 
 사용자·운영체제 설정의 영향을 받는다.
 
-## 72-4. Mouseover와 Mouseenter를 같은 이벤트로 생각
+### 72-4. Mouseover와 Mouseenter를 같은 이벤트로 생각
 
 Bubbling과 자식 경계 동작이 다르다.
 
-## 72-5. Client 좌표를 문서 전체 좌표로 생각
+<a id="index-section-104"></a>
+
+### 72-5. Client 좌표를 문서 전체 좌표로 생각
 
 Viewport 기준이다.
 
-## 72-6. Mousemove에 무거운 작업 수행
+### 72-6. Mousemove에 무거운 작업 수행
 
 `requestAnimationFrame()`과 기존 요소 갱신을 사용한다.
 
-## 72-7. Div에 `img`라는 ID 사용
+<a id="index-section-106"></a>
+
+### 72-7. Div에 `img`라는 ID 사용
 
 역할이 명확한 이름을 사용한다.
 
-## 72-8. 동일 ID 중복
+### 72-8. 동일 ID 중복
 
 각 ID는 문서에서 고유해야 한다.
 
-## 72-9. Mouse Event만 사용해 Touch 미지원
+### 72-9. Mouse Event만 사용해 Touch 미지원
 
 Pointer Event를 검토한다.
 
-## 72-10. Resize마다 새 Log 추가
+### 72-10. Resize마다 새 Log 추가
 
 하나의 상태 표시 요소만 갱신한다.
 
 ---
 
-# 73. 핵심 요약
+<a id="js-16-section-77"></a>
+
+## 73. 핵심 요약
 
 ```text
 contextmenu
@@ -1711,7 +2057,9 @@ pointercancel
 
 ---
 
-# 74. 최종 체크리스트
+<a id="js-16-section-78"></a>
+
+## 74. 최종 체크리스트
 
 - [ ] `contextmenu` 기본 동작을 취소할 수 있는가?
 - [ ] 우클릭 차단이 보안 기능이 아님을 이해했는가?
@@ -1736,7 +2084,9 @@ pointercancel
 
 ---
 
-# 마무리
+<a id="js-16-section-79"></a>
+
+## 마무리
 
 마우스 이벤트의 핵심은 좌표를 출력하는 것에서 끝나지 않는다.
 
@@ -1753,7 +2103,9 @@ Mouse·Touch·Pen을 함께 지원하는 구조로 확장하는 것
 ```
 
 이 흐름을 이해하면 이후 폼 이벤트와 이벤트 전파 문서에서 더 복잡한 사용자 상호작용을 안정적으로 구현할 수 있다.
-# V3 실행 추적 카드 — 포인터 동작 → 좌표/대상 → 상태 변경
+<a id="js-16-section-80"></a>
+
+## V3 실행 추적 카드 — 포인터 동작 → 좌표/대상 → 상태 변경
 
 mousedown·mousemove·mouseup은 서로 다른 시점의 이벤트다. 드래그는 눌림 상태와 시작 좌표를 저장하고 이동 중 차이를 계산한 뒤 놓을 때 정리한다.
 

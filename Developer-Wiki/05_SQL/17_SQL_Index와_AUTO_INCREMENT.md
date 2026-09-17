@@ -4,6 +4,58 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-17-section-2)
+- [개념에서 실제 실행까지 — 인덱스와 AUTO_INCREMENT란? — 탐색 경로와 행 식별자](#sql-17-section-3)
+- [19. 내 코드와 강사님 코드 비교](#sql-17-section-22)
+- [24. 종합실습](#sql-17-section-27)
+- [25. 정답과 해설](#sql-17-section-28)
+- [26. 최종 체크리스트](#sql-17-section-29)
+- [27. 핵심 요약](#sql-17-section-30)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-17-section-1)
+- [학습 목표](#sql-17-section-2)
+- [개념에서 실제 실행까지 — 인덱스와 AUTO_INCREMENT란? — 탐색 경로와 행 식별자](#sql-17-section-3)
+- [1. Index 기본 개념](#sql-17-section-4)
+- [2. 실습 Table 준비](#sql-17-section-5)
+- [3. Index 종류](#sql-17-section-6)
+- [4. CREATE INDEX](#sql-17-section-7)
+- [5. SHOW INDEX 읽기](#sql-17-section-8)
+- [6. EXPLAIN 기본](#sql-17-section-9)
+- [7. 선택도와 Index 효율](#sql-17-section-10)
+- [8. Composite Index](#sql-17-section-11)
+- [9. ORDER BY와 Index](#sql-17-section-12)
+- [10. Covering Index](#sql-17-section-13)
+- [11. Index가 잘 사용되지 않는 조건](#sql-17-section-14)
+- [12. Index Hint](#sql-17-section-15)
+- [13. DROP INDEX와 변경](#sql-17-section-16)
+- [14. 과도한 Index의 문제](#sql-17-section-17)
+- [15. AUTO_INCREMENT 기본](#sql-17-section-18)
+- [16. LAST_INSERT_ID()](#sql-17-section-19)
+- [17. AUTO_INCREMENT Gap](#sql-17-section-20)
+- [18. 시작값과 초기화](#sql-17-section-21)
+- [19. 내 코드와 강사님 코드 비교](#sql-17-section-22)
+- [20. 개선된 통합 예제](#sql-17-section-23)
+- [21. 실무 Index 절차](#sql-17-section-24)
+- [22. 자주 하는 실수](#sql-17-section-25)
+- [23. 디버깅 방법](#sql-17-section-26)
+- [24. 종합실습](#sql-17-section-27)
+- [25. 정답과 해설](#sql-17-section-28)
+- [26. 최종 체크리스트](#sql-17-section-29)
+- [27. 핵심 요약](#sql-17-section-30)
+- [📎 다음 문서](#sql-17-section-31)
+- [🔬 V3 동작 백과 — Index 탐색과 자동 번호 생성](#sql-17-section-32)
+
+</details>
+
+---
+
+<a id="sql-17-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -19,17 +71,154 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-17-section-2"></a>
 
-- Index의 역할과 읽기·쓰기 비용의 Trade-off를 설명한다.
-- Primary·Unique·일반·복합 Index를 목적에 맞게 구분한다.
-- 복합 Index의 Column 순서와 왼쪽 Prefix 원리를 이해한다.
-- `SHOW INDEX`와 `EXPLAIN`으로 Index 후보와 실제 선택을 확인한다.
-- Index Hint를 최후 수단으로 사용해야 하는 이유를 설명한다.
-- AUTO_INCREMENT Column을 설계하고 생성된 값을 안전하게 조회한다.
-- 삭제·실패·Rollback 때문에 번호 사이에 Gap이 생길 수 있음을 이해한다.
+## 학습 목표
+
+- 인덱스 비용·실행 계획·자동 번호의 역할을 구분한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-17-section-3"></a>
+
+## 개념에서 실제 실행까지 — 인덱스와 AUTO_INCREMENT란? — 탐색 경로와 행 식별자
+
+### 무엇이며 왜 배워야 할까?
+
+인덱스는 조건에 맞는 데이터를 찾는 탐색 경로를 제공한다. 모든 테이블을 읽는 것보다 유리할 수 있지만 쓰기 시 인덱스 갱신 비용과 공간 비용이 추가된다. 14행 같은 작은 데이터에서는 전체 스캔이 합리적일 수 있다. 인덱스를 만들었다고 성능 개선이 완료되었다고 쓰지 않는다.
+
+복합 인덱스는 여러 열의 조합 순서가 중요하다. 기본적인 B-tree에서 (deptno,sal)과 (sal,deptno)는 같은 검색 계약이 아니다. EXPLAIN은 옵티마이저가 선택한 계획을 확인하는 도구이며 rows는 보통 추정값이다. FORCE INDEX는 시연·진단 목적과 실제 데이터 근거 없이 항상 쓰는 최적화 규칙을 구분한다.
+
+AUTO_INCREMENT는 새 행의 식별 숫자를 자동으로 배정한다. 번호가 비지 않는 순번·조회 순서·총 행 수를 보장하지 않는다. 롤백·실패·삭제 등으로 간격이 생길 수 있다. MAX(id)+1은 동시 연결이 같은 다음 값을 계산하는 충돌 위험이 있다.
+
+내 원본의 ‘PK일 때만 가능’ 메모는 과도하다. AUTO_INCREMENT 열은 인덱스 키여야 하는 등의 조건을 만족해야 하지만 반드시 PRIMARY KEY일 필요는 없다. 아래 UNIQUE 키 예제로 이를 확인한다. LAST_INSERT_ID는 연결 단위의 자동 생성 값이므로 다른 연결이나 SELECT MAX로 대체해 같은 의미라고 설명하지 않는다.
+
+### 입력은 어디에서 오는가?
+
+기존 EMP·DEPT를 변경하지 않는 새 wiki_demo_* 테이블을 사용한다. 이 이름이 이미 있으면 다른 새 이름으로 구분하고 기존 객체를 삭제·덮어쓰지 않는다. 일반 DDL은 진행 중인 트랜잭션과 분리한다. 아래 예제는 새 실습 테이블에서 한 번 실행하는 순서다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+CREATE TABLE wiki_demo_17_board (
+  id INT NOT NULL AUTO_INCREMENT,
+  title VARCHAR(30) NOT NULL,
+  UNIQUE KEY wiki_uq_17_id(id)
+) ENGINE=InnoDB;
+INSERT INTO wiki_demo_17_board(title) VALUES('first');
+SELECT LAST_INSERT_ID() AS created_id;
+INSERT INTO wiki_demo_17_board(title) VALUES('second');
+SELECT id,title FROM wiki_demo_17_board ORDER BY id;
+```
+
+Result Grid의 열·행 값:
+
+```text
+created_id
+1
+id	title
+1	first
+2	second
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 자동 번호 열을 UNIQUE 인덱스 키로 정의한다.
+2. id를 생략한 INSERT가 새 번호 1을 배정한다.
+3. 같은 연결에서 LAST_INSERT_ID로 그 자동 배정 값을 확인한다.
+4. 다음 INSERT로 번호 2가 생성된다. 번호와 행 수·정렬은 별도 개념이다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 912~921행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+
+-- increment는 Primary Key일때만 가능
+-- 아래처럼 함수형태로 만들어서 사용할 수 있다
+create table emp_auto (
+	empno int auto_increment, -- increment를 사용하면 자동증가 시킬 수 있음
+	ename varchar(50),
+	
+	primary key(empno)
+);
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 839~848행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+select max(empno)+1 from emp;
+
+-- sequence
+create table emp_auto (
+	empno int auto_increment,
+	ename varchar(50),
+
+	primary key(empno)
+);
+```
+
+두 원본은 deptno 인덱스·FORCE INDEX·emp_auto를 시연한다. CREATE INDEX를 기존 EMP에 복사하기보다 전용 실습 구조와 계획 비교를 사용한다. 내 CHAR_LENGTH 추가와 급여 한글 설명은 인덱스 사용 여부와 별개다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 실제 EXPLAIN 비교 — 경로 변화와 성능을 구분하기
+
+💡 초기화 EMP를 전용 테이블로 복사한 뒤 인덱스 전·후 계획을 비교했다. 이 CREATE TABLE AS SELECT는 구조 제약 복제 예제가 아니다.
+
+```sql
+CREATE TABLE wiki_demo_17_emp AS SELECT empno,deptno,sal FROM emp;
+EXPLAIN SELECT empno FROM wiki_demo_17_emp WHERE deptno=10 AND sal>2000;
+CREATE INDEX wiki_idx_17_dept_sal ON wiki_demo_17_emp(deptno,sal);
+EXPLAIN SELECT empno FROM wiki_demo_17_emp WHERE deptno=10 AND sal>2000;
+```
+
+이 검증 환경에서 관찰한 계획:
+
+```text
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+1	SIMPLE	wiki_demo_17_emp	ALL	NULL	NULL	NULL	NULL	14	Using where
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+1	SIMPLE	wiki_demo_17_emp	range	wiki_idx_17_dept_sal	wiki_idx_17_dept_sal	10	NULL	2	Using index condition
+```
+
+첫 계획의 ALL·rows 14는 전체 스캔과 추정 입력을, 두 번째 range·인덱스 key·rows 2는 범위 탐색 선택을 보여 준다. 이 숫자는 실제 처리 시간 측정이나 모든 환경의 계획 보장이 아니다. Using index condition도 전체 SELECT 열이 인덱스로만 충족된다는 뜻으로 단정하지 않는다. 데이터 규모·분포·통계를 바꾸면 계획도 달라질 수 있다.
+
+### 이해 확인 실습
+
+1. 중간 id를 삭제하면 다음 INSERT가 자동으로 그 빈 번호를 채우는가?
+2. EXPLAIN에서 인덱스 key가 표시되면 실제 성능 개선까지 증명했는가?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 그런 연속성 계약은 없다. 행 식별자와 사용자에게 보여 줄 순번을 분리한다.
+2. 아니다. 계획 선택과 처리 시간·실제 행 수는 별개다. 대표 데이터·실측·쓰기 비용도 확인한다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-17-section-4"></a>
 
 ## 1. Index 기본 개념
 
@@ -55,6 +244,8 @@ Optimizer는 예상 비용을 비교해 Table Scan이 더 싸다고 판단할 �
 
 Key 값과 Row 위치를 저장하고 유지하기 위한 공간이 필요하다.
 
+<a id="index-section-21"></a>
+
 ### 5. DML 비용이 증가한다
 
 `INSERT`, Indexed Column의 `UPDATE`, `DELETE` 때 관련 Index도 함께 변경해야 한다.
@@ -64,6 +255,8 @@ Key 값과 Row 위치를 저장하고 유지하기 위한 공간이 필요하다
 Column마다 무조건 Index를 만드는 것이 아니라 실제 `WHERE`, `JOIN`, `ORDER BY`, `GROUP BY` Pattern을 분석한다.
 
 ---
+
+<a id="sql-17-section-5"></a>
 
 ## 2. 실습 Table 준비
 
@@ -96,7 +289,11 @@ SHOW CREATE TABLE emp_index_test;
 
 ---
 
+<a id="sql-17-section-6"></a>
+
 ## 3. Index 종류
+
+<a id="index-section-29"></a>
 
 ### 11. Primary Key Index
 
@@ -133,6 +330,8 @@ ON emp_index_test (deptno, job);
 
 여러 Column을 정해진 순서로 묶는다.
 
+<a id="index-section-33"></a>
+
 ### 15. Foreign Key Index
 
 InnoDB Foreign Key Column에는 검사에 필요한 Index가 요구되며 적합한 Index가 없으면 자동 생성될 수 있다.
@@ -142,6 +341,8 @@ InnoDB Foreign Key Column에는 검사에 필요한 Index가 요구되며 적합
 일반 B-tree Index와 전문 검색, 공간 Data Index를 같은 기준으로 사용하지 않는다.
 
 ---
+
+<a id="sql-17-section-7"></a>
 
 ## 4. CREATE INDEX
 
@@ -181,6 +382,8 @@ HAVING COUNT(*) > 1;
 실행 시간, Lock 방식, 임시 공간, I/O, Replication 지연을 검토한다.
 
 ---
+
+<a id="sql-17-section-8"></a>
 
 ## 5. SHOW INDEX 읽기
 
@@ -227,6 +430,8 @@ ORDER BY index_name, seq_in_index;
 
 ---
 
+<a id="sql-17-section-9"></a>
+
 ## 6. EXPLAIN 기본
 
 ### 29. 실제 실행 전에 계획 확인
@@ -264,6 +469,8 @@ Optimizer가 사용할 수 있다고 판단한 Index 후보다.
 
 ---
 
+<a id="sql-17-section-10"></a>
+
 ## 7. 선택도와 Index 효율
 
 ### 36. 선택도
@@ -295,6 +502,8 @@ Sample `EMP`처럼 Row가 적은 Table에서 Index가 선택되지 않아도 Ind
 많은 Row를 Index로 찾은 뒤 Table Data를 반복 접근하면 Scan보다 비쌀 수 있다.
 
 ---
+
+<a id="sql-17-section-11"></a>
 
 ## 8. Composite Index
 
@@ -350,6 +559,8 @@ Index Column 배치는 동등 조건, 범위, 정렬과 실제 Query Pattern을 
 
 ---
 
+<a id="sql-17-section-12"></a>
+
 ## 9. ORDER BY와 Index
 
 ### 47. Index 순서로 정렬 비용을 줄일 수 있다
@@ -388,6 +599,8 @@ LIMIT 10
 
 ---
 
+<a id="sql-17-section-13"></a>
+
 ## 10. Covering Index
 
 ### 52. 필요한 Column을 Index만으로 충족한다
@@ -410,6 +623,8 @@ Index 크기와 DML 비용, Cache 효율이 나빠질 수 있다.
 필요한 Column만 조회하면 Network와 Table 접근을 줄이고 Index 선택 가능성도 개선할 수 있다.
 
 ---
+
+<a id="sql-17-section-14"></a>
 
 ## 11. Index가 잘 사용되지 않는 조건
 
@@ -446,6 +661,8 @@ Column 자료형과 비교값 자료형이 다르면 변환과 Index 사용에 �
 제외되는 Row가 적으면 결국 대부분 Data를 읽게 되어 Index 효율이 낮을 수 있다.
 
 ---
+
+<a id="sql-17-section-15"></a>
 
 ## 12. Index Hint
 
@@ -493,6 +710,8 @@ Optimizer의 선택이 틀렸다는 근거와 지속적인 검증 절차가 있�
 
 ---
 
+<a id="sql-17-section-16"></a>
+
 ## 13. DROP INDEX와 변경
 
 ### 68. Index 삭제
@@ -513,6 +732,8 @@ DROP INDEX ix_emp_index_sal;
 
 Slow Query, 실행 계획, Application SQL, FK 의존 여부를 확인한다.
 
+<a id="index-section-99"></a>
+
 ### 71. Index DDL은 Transaction Rollback 대상이 아니다
 
 생성·삭제 전 Backup보다 재생성 DDL, 운영 영향과 복구 절차를 준비한다.
@@ -522,6 +743,8 @@ Slow Query, 실행 계획, Application SQL, FK 의존 여부를 확인한다.
 Index 존재 여부가 아니라 실제 주요 Query의 Plan과 성능을 검증한다.
 
 ---
+
+<a id="sql-17-section-17"></a>
 
 ## 14. 과도한 Index의 문제
 
@@ -550,6 +773,8 @@ Table Data와 Index Entry를 함께 제거한다.
 단, 짧은 관측 기간의 “미사용” 통계만으로 즉시 삭제하지 않는다. 월말·배치 Query도 고려한다.
 
 ---
+
+<a id="sql-17-section-18"></a>
 
 ## 15. AUTO_INCREMENT 기본
 
@@ -593,6 +818,8 @@ VALUES (DEFAULT, '두 번째 글');
 
 ---
 
+<a id="sql-17-section-19"></a>
+
 ## 16. LAST_INSERT_ID()
 
 ### 85. 생성된 ID 확인
@@ -603,6 +830,8 @@ VALUES ('새 글', '본문');
 
 SELECT LAST_INSERT_ID() AS new_board_id;
 ```
+
+<a id="index-section-117"></a>
 
 ### 86. 현재 Connection에 종속된다
 
@@ -635,6 +864,8 @@ INSERT가 오류로 실패했다면 `LAST_INSERT_ID()`가 정의되지 않은 �
 Transaction이 취소됐더라도 Session의 함수 결과를 “현재 존재하는 Row ID”로 가정하지 않는다.
 
 ---
+
+<a id="sql-17-section-20"></a>
 
 ## 17. AUTO_INCREMENT Gap
 
@@ -674,6 +905,8 @@ Gap은 정상 동작일 수 있다. 감사에는 별도의 Event·상태 이력�
 
 ---
 
+<a id="sql-17-section-21"></a>
+
 ## 18. 시작값과 초기화
 
 ### 96. 다음 시작값 설정
@@ -711,6 +944,8 @@ PK를 변경하면 FK, Log, 외부 참조가 깨질 수 있다.
 화면의 1, 2, 3 순번은 `ROW_NUMBER()` 같은 조회 결과 표현으로 다루고 영구 ID와 구분한다.
 
 ---
+
+<a id="sql-17-section-22"></a>
 
 ## 19. 내 코드와 강사님 코드 비교
 
@@ -778,6 +1013,8 @@ SELECT LAST_INSERT_ID() AS board_id;
 
 ---
 
+<a id="sql-17-section-23"></a>
+
 ## 20. 개선된 통합 예제
 
 ### 108. 게시글 Table과 검색 Index
@@ -829,6 +1066,8 @@ LIMIT 20;
 
 ---
 
+<a id="sql-17-section-24"></a>
+
 ## 21. 실무 Index 절차
 
 ### 112. 느린 Query를 먼저 수집한다
@@ -863,6 +1102,8 @@ Production Data 분포와 동시 부하에서 읽기 개선과 쓰기 비용을 
 문제가 생기면 정확한 Index 이름으로 복구할 수 있도록 생성·삭제 DDL과 승인 절차를 보관한다.
 
 ---
+
+<a id="sql-17-section-25"></a>
 
 ## 22. 자주 하는 실수
 
@@ -899,6 +1140,8 @@ Rollback과 실패만으로도 Gap이 생긴다.
 참조 무결성과 외부 식별자가 깨질 수 있다.
 
 ---
+
+<a id="sql-17-section-26"></a>
 
 ## 23. 디버깅 방법
 
@@ -937,6 +1180,8 @@ FROM emp_index_test;
 
 같은 선두 Column을 가진 Index와 완전히 같은 Column 조합을 목록으로 비교한다.
 
+<a id="index-section-169"></a>
+
 ### 131. AUTO_INCREMENT 상태 확인
 
 ```sql
@@ -953,11 +1198,15 @@ SELECT LAST_INSERT_ID();
 
 오류 여부와 같은 Connection인지 확인한다.
 
+<a id="index-section-171"></a>
+
 ### 133. Rollback Gap 재현
 
 실습 Table에서 Transaction Insert → ID 확인 → Rollback → 재Insert 순으로 실행해 Gap이 정상적으로 생길 수 있음을 확인한다.
 
 ---
+
+<a id="sql-17-section-27"></a>
 
 ## 24. 종합실습
 
@@ -968,6 +1217,8 @@ SELECT LAST_INSERT_ID();
 ### 135. 문제 2 — 복합 Index
 
 부서별 직무 조건과 급여 정렬 Query를 위한 `(DEPTNO, JOB, SAL)` Index를 만들고 왼쪽 Prefix 활용 가능 조건을 설명한다.
+
+<a id="index-section-175"></a>
 
 ### 136. 문제 3 — Index Metadata
 
@@ -982,6 +1233,8 @@ Information Schema에서 `EMP_INDEX_TEST`의 Index명, Unique 여부, Column 순
 Transaction 안에서 게시글을 입력하고 Rollback한 뒤 다시 입력하여 ID가 연속되지 않을 수 있음을 확인한다.
 
 ---
+
+<a id="sql-17-section-28"></a>
 
 ## 25. 정답과 해설
 
@@ -1072,6 +1325,8 @@ Rollback된 Row의 예약 번호는 재사용되지 않을 수 있으므로 Gap�
 
 ---
 
+<a id="sql-17-section-29"></a>
+
 ## 26. 최종 체크리스트
 
 ### 144. Index 설계 체크
@@ -1096,6 +1351,8 @@ Rollback된 Row의 예약 번호는 재사용되지 않을 수 있으므로 Gap�
 - [ ] Gap과 Rollback을 정상 동작으로 처리하는가?
 
 ---
+
+<a id="sql-17-section-30"></a>
 
 ## 27. 핵심 요약
 
@@ -1130,6 +1387,8 @@ Index의 목적은 Index 자체를 사용하는 것이 아니라 중요한 Query
 
 ---
 
+<a id="sql-17-section-31"></a>
+
 ## 📎 다음 문서
 
 다음 원본 흐름은 계층과 반복 구조를 조회하는 Recursive CTE이다.
@@ -1139,6 +1398,8 @@ Index의 목적은 Index 자체를 사용하는 것이 아니라 중요한 Query
 ```
 
 ---
+
+<a id="sql-17-section-32"></a>
 
 ## 🔬 V3 동작 백과 — Index 탐색과 자동 번호 생성
 
@@ -1170,6 +1431,8 @@ WHERE deptno = 20                       → 활용 가능성
 WHERE deptno = 20 AND job = 'CLERK'    → 두 Column 활용 가능성
 WHERE job = 'CLERK'                    → 왼쪽 Column 부재로 제한 가능
 ```
+
+<a id="index-section-194"></a>
 
 ### AUTO_INCREMENT
 

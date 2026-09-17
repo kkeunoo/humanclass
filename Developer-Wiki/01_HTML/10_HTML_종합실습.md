@@ -1,13 +1,76 @@
 ---
 title: HTML 종합실습
-version: v3.0-encyclopedia
-last_updated: 2026-08-07
+version: v4.1-detailed-learning
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # HTML 종합실습
 
-## 문서 정보
+## 문서 내 목차
+
+- [프로젝트 개요](#html-1)
+- [학습 목표](#html-2)
+- [개념에서 실제 동작까지](#html-3)
+- [1. 요구사항 정리](#html-4)
+- [2. 전체 Semantic 구조](#html-5)
+- [3. 기본 Document Structure](#html-6)
+- [4. Header](#html-7)
+- [5. `aria-current`](#html-8)
+- [6. Hero](#html-9)
+- [7. Hero Heading 구조](#html-10)
+- [8. 과정 Section](#html-11)
+- [9. Course Card를 `article`로 구성](#html-12)
+- [10. 장식 Image의 `alt`](#html-13)
+- [11. CSS 과정 Card](#html-14)
+- [12. JavaScript 과정 Card](#html-15)
+- [13. 순서가 중요한 학습 단계](#html-16)
+- [14. 과정 정보 설명 목록](#html-17)
+- [15. 시간표 Section](#html-18)
+- [16. Table Wrapper](#html-19)
+- [17. 수업 Media Section](#html-20)
+- [18. Video](#html-21)
+- [19. YouTube Embed](#html-22)
+- [20. 교육 특징](#html-23)
+- [21. 보조 안내에 `aside`](#html-24)
+- [22. 상담 신청 Section](#html-25)
+- [23. 이름 Input](#html-26)
+- [24. Email Input](#html-27)
+- [25. 전화번호 Input](#html-28)
+- [26. 관심 과정 Select](#html-29)
+- [27. 상담 방식 Radio Group](#html-30)
+- [28. 학습 목적 Checkbox](#html-31)
+- [29. 상담 내용 Textarea](#html-32)
+- [30. 개인정보 동의 Checkbox](#html-33)
+- [31. Submit Button](#html-34)
+- [32. Form 전체 예제](#html-35)
+- [33. POST와 HTTPS](#html-36)
+- [34. FAQ Section](#html-37)
+- [35. Footer](#html-38)
+- [36. `address`](#html-39)
+- [37. Page 내부 Fragment Link](#html-40)
+- [38. 외부 Link](#html-41)
+- [39. Download Link](#html-42)
+- [40. 날짜에는 `time`](#html-43)
+- [41. 약어에는 `abbr`](#html-44)
+- [42. HTML Comment](#html-45)
+- [43. 완성 HTML](#html-46)
+- [44. 사용된 HTML 개념](#html-47)
+- [45. 왜 이런 구조를 사용하는가?](#html-48)
+- [46. 대표 오류와 해결](#html-49)
+- [47. Validator 검수 항목](#html-50)
+- [48. 접근성 검수 항목](#html-51)
+- [49. DevTools 검수 항목](#html-52)
+- [50. 확장 과제](#html-53)
+- [51. 리팩토링 과제](#html-54)
+- [52. 종합실습 체크리스트](#html-55)
+- [53. 핵심 요약](#html-56)
+- [마무리](#html-57)
+- [브라우저 해석 복습 카드 — 요구사항에서 문서·요청·접근성까지](#html-58)
+
+
+
+### 문서 정보
 
 | 항목 | 내용 |
 | --- | --- |
@@ -23,7 +86,9 @@ status: Completed
 
 ---
 
-# 프로젝트 개요
+<a id="html-1"></a>
+
+## 프로젝트 개요
 
 IT 국비교육 과정 소개 Page를 만든다.
 
@@ -57,44 +122,81 @@ CSS와 JavaScript를 아직 적용하지 않아도 HTML만 읽었을 때 정보 
 
 ---
 
-# 학습 목표
+<a id="html-2"></a>
 
-- HTML5 기본 Document Structure를 직접 작성한다.
-- `lang`, `charset`, `viewport`, `title`, `description`을 구성한다.
-- `header`, `nav`, `main`, `section`, `article`, `aside`, `footer`를 목적에 맞게 사용한다.
-- Heading Level을 Page 정보 계층에 맞게 구성한다.
-- Navigation Link에 의미 있는 Link Text를 작성한다.
-- List를 항목 관계에 따라 `ul`, `ol`, `dl`로 구분한다.
-- Image에 목적에 맞는 `alt`를 제공한다.
-- Video와 `iframe`에 필요한 접근성 정보를 제공한다.
-- Table에 `caption`, `thead`, `tbody`, `th`, `scope`를 적용한다.
-- Form Control에 `label`, `id`, `name`, `autocomplete`을 연결한다.
-- Checkbox·Radio·Select·Textarea를 실제 신청 Form에 활용한다.
-- GET과 POST의 목적을 구분한다.
-- `fieldset`, `legend`로 Form Group을 구조화한다.
-- `aria-current`, `aria-labelledby`, `aria-describedby`를 필요한 곳에 제한적으로 사용한다.
-- Duplicate ID, 잘못된 중첩, 의미 없는 `<br>` 반복을 피한다.
-- HTML Validator와 DevTools로 문서 구조를 검수한다.
+## 학습 목표
 
----
+- 주요 요소와 속성의 의미·차이를 설명한다.
+- 입력부터 브라우저 처리와 결과까지 추적한다.
+- 원본 코드를 비교하고 오류를 재현·수정한다.
 
-# 1. 요구사항 정리
+<a id="learning-flow"></a>
 
-## 1.1 Header
+### 개발자 도구에서 값을 읽고 확인하기
+
+종합실습 페이지을 실제 브라우저에서 연 상태에서 개발자 도구의 Console에 다음을 입력합니다. 아래 코드는 HTML에 삽입할 태그가 아니라 브라우저의 JavaScript 확인 명령입니다. 💡 DOM·폼 API를 이용한 확인법으로, JavaScript 과정에서 더 자세히 배웁니다.
+
+```javascript
+document.querySelectorAll('form').length
+```
+
+**예상 결과:** 페이지에 실제 작성한 form의 개수
+
+최종 예제를 부분 구현한 상태라면 값이 달라집니다. 여기서는 고정 숫자를 정답으로 강요하지 않고 요구사항에 맞춰 폼이 있는지 확인합니다. 폼 존재만으로 서버 저장 성공을 증명하지 않습니다. HTML은 Python의 print가 없으므로 화면 결과와 Console에서 읽은 값을 분리해 확인합니다. 오류가 나면 명령을 입력한 페이지가 맞는지, 해당 요소가 실제로 있는지, 입력을 먼저 했는지 확인합니다.
+
+
+<a id="html-3"></a>
+
+## 개념에서 실제 동작까지
+
+### 먼저 이해하기: 완성 코드보다 요구사항과 확인 결과를 먼저 본다
+
+종합실습은 앞에서 배운 작은 요소를 연결해 전체 페이지를 만드는 연습입니다. 여러 기능이 함께 실패할 수 있으므로 한 번에 큰 코드를 복사하는 것보다 부분별 구현과 확인이 중요합니다.
+
+**수업과 보충의 경계:** 아래 교육 과정 페이지는 기존 Wiki의 통합 학습 프로젝트입니다. 강사님 번호형 원본에서 같은 완성 페이지를 작성했다고 주장하지 않습니다. 01~07의 제목·링크·목록·표·미디어·폼을 조합하는 💡 응용 실습입니다.
+
+| 단계 | 만들어 볼 부분 | 기대 결과 |
+| --- | --- | --- |
+| 1 | 문서 기본 구조·title | 올바른 탭 이름과 본문 제목 |
+| 2 | 메뉴·fragment 링크 | 누르면 해당 id 위치로 이동 |
+| 3 | 과정 목록·시간표 | 항목과 행·열 관계를 구분 가능 |
+| 4 | 이미지·영상 | 요청 성공과 대체 설명·제어 확인 |
+| 5 | 상담 폼 | name에 따른 입력 항목 구성 |
+| 6 | 통합 검수 | 오류를 부분별로 추적 가능 |
+
+예를 들어 상담 폼의 action="/consult"는 “여기로 보내라”는 설정일 뿐 해당 서버 기능을 생성하지 않습니다. 정적 개발 서버만 실행 중이라면 요청을 받아 저장하는 단계는 미완성일 수 있습니다. 저장 성공을 확인하려면 별도 백엔드와 저장 결과가 필요합니다.
+
+페이지 실습은 먼저 자신이 고른 작은 부분의 코드를 읽고 화면·DOM·요청을 비교합니다. 기존 문서의 완성 HTML은 마지막 대조 자료이며 처음부터 외워야 할 코드가 아닙니다. 이미지·자막·다운로드 예제의 파일이 모두 제공된다고 가정하지 말고 실습 전에 실제 존재 여부를 확인합니다.
+
+**추가 기초 문제:** 메뉴 링크의 #courses와 대상 id가 다르면 무엇이 실패하는가?
+**해설:** 같은 문서의 대상 탐색이 실패합니다. 메뉴가 화면에 보이는 것과 이동이 성공하는 것은 별개입니다.
+
+**추가 응용 문제:** 입력값은 보이는데 요청에 없으면 무엇부터 확인하는가?
+**해설:** name·disabled·체크 상태·해당 폼 소속과 제출 동작을 먼저 확인합니다. 입력 화면만으로 전송 성공을 판단하지 않습니다.
+
+**추가 도전 문제:** 실제 서버 없이 어디까지 완료했다고 기록할 수 있는가?
+**판단 기준:** 화면 구조, 링크 이동, 자원 요청, 전송 요청 구성까지 검증한 부분을 적습니다. 서버 처리·DB 저장·메일 발송은 실제 기능과 결과를 확인하지 않았다면 미완료로 분리합니다.
+
+
+<a id="html-4"></a>
+
+## 1. 요구사항 정리
+
+### 1.1 Header
 
 - Site Logo
 - 주요 Navigation
 - 현재 Page 표시
 - 상담 신청 Link
 
-## 1.2 Hero
+### 1.2 Hero
 
 - Page 대표 Heading
 - 소개 문단
 - 과정 보기 Link
 - 상담 신청 Link
 
-## 1.3 과정 소개
+### 1.3 과정 소개
 
 - Section Heading
 - 과정 Card 3개
@@ -102,7 +204,7 @@ CSS와 JavaScript를 아직 적용하지 않아도 HTML만 읽었을 때 정보 
 - 기술 Stack은 List 사용
 - 상세 Page Link 제공
 
-## 1.4 시간표
+### 1.4 시간표
 
 - `table`
 - `caption`
@@ -110,14 +212,16 @@ CSS와 JavaScript를 아직 적용하지 않아도 HTML만 읽었을 때 정보 
 - Data Row
 - 요일·시간·과목 관계가 명확해야 함
 
-## 1.5 Media
+### 1.5 Media
 
 - 교육 현장 Image
 - Caption
 - 소개 Video
 - YouTube Embed 예시
 
-## 1.6 상담 신청 Form
+<a id="index-section-14"></a>
+
+### 1.6 상담 신청 Form
 
 - 이름
 - Email
@@ -128,12 +232,12 @@ CSS와 JavaScript를 아직 적용하지 않아도 HTML만 읽었을 때 정보 
 - 개인정보 동의
 - 제출 Button
 
-## 1.7 FAQ
+### 1.7 FAQ
 
 - 질문과 답변
 - `details`, `summary` 사용
 
-## 1.8 Footer
+### 1.8 Footer
 
 - 사업자·교육기관 정보
 - Footer Navigation
@@ -141,7 +245,9 @@ CSS와 JavaScript를 아직 적용하지 않아도 HTML만 읽었을 때 정보 
 
 ---
 
-# 2. 전체 Semantic 구조
+<a id="html-5"></a>
+
+## 2. 전체 Semantic 구조
 
 먼저 Page의 큰 영역을 작성한다.
 
@@ -187,7 +293,9 @@ CSS와 JavaScript를 아직 적용하지 않아도 HTML만 읽었을 때 정보 
 
 ---
 
-# 3. 기본 Document Structure
+<a id="html-6"></a>
+
+## 3. 기본 Document Structure
 
 ```html
 <!doctype html>
@@ -218,7 +326,9 @@ CSS와 JavaScript를 아직 적용하지 않아도 HTML만 읽었을 때 정보 
 
 ---
 
-# 4. Header
+<a id="html-7"></a>
+
+## 4. Header
 
 ```html
 <header class="site-header">
@@ -265,7 +375,9 @@ CSS와 JavaScript를 아직 적용하지 않아도 HTML만 읽었을 때 정보 
 
 ---
 
-# 5. `aria-current`
+<a id="html-8"></a>
+
+## 5. `aria-current`
 
 현재 Page Link에는 다음처럼 현재 상태를 표시할 수 있다.
 
@@ -282,7 +394,9 @@ CSS Class만으로 시각적 표시를 하는 것보다 현재 Page라는 의미
 
 ---
 
-# 6. Hero
+<a id="html-9"></a>
+
+## 6. Hero
 
 ```html
 <section
@@ -333,7 +447,9 @@ CSS Class만으로 시각적 표시를 하는 것보다 현재 Page라는 의미
 
 ---
 
-# 7. Hero Heading 구조
+<a id="html-10"></a>
+
+## 7. Hero Heading 구조
 
 Page 대표 제목은 `h1`으로 작성한다.
 
@@ -352,7 +468,9 @@ h3
 
 ---
 
-# 8. 과정 Section
+<a id="html-11"></a>
+
+## 8. 과정 Section
 
 ```html
 <section
@@ -385,7 +503,9 @@ h3
 
 ---
 
-# 9. Course Card를 `article`로 구성
+<a id="html-12"></a>
+
+## 9. Course Card를 `article`로 구성
 
 ```html
 <article class="course-card">
@@ -422,7 +542,9 @@ Card 자체가 독립적인 과정 Content이므로 `article`이 적합하다.
 
 ---
 
-# 10. 장식 Image의 `alt`
+<a id="html-13"></a>
+
+## 10. 장식 Image의 `alt`
 
 Card Image가 제목과 설명을 반복하는 단순 장식이라면 다음처럼 빈 `alt`를 사용할 수 있다.
 
@@ -439,7 +561,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 11. CSS 과정 Card
+<a id="html-14"></a>
+
+## 11. CSS 과정 Card
 
 ```html
 <article class="course-card">
@@ -474,7 +598,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 12. JavaScript 과정 Card
+<a id="html-15"></a>
+
+## 12. JavaScript 과정 Card
 
 ```html
 <article class="course-card">
@@ -509,7 +635,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 13. 순서가 중요한 학습 단계
+<a id="html-16"></a>
+
+## 13. 순서가 중요한 학습 단계
 
 ```html
 <section
@@ -534,7 +662,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 14. 과정 정보 설명 목록
+<a id="html-17"></a>
+
+## 14. 과정 정보 설명 목록
 
 ```html
 <dl class="course-info">
@@ -574,7 +704,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 15. 시간표 Section
+<a id="html-18"></a>
+
+## 15. 시간표 Section
 
 ```html
 <section
@@ -657,7 +789,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 16. Table Wrapper
+<a id="html-19"></a>
+
+## 16. Table Wrapper
 
 반응형 화면에서 Table이 가로로 길어질 수 있으므로 CSS용 Wrapper를 둘 수 있다.
 
@@ -673,7 +807,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 17. 수업 Media Section
+<a id="html-20"></a>
+
+## 17. 수업 Media Section
 
 ```html
 <section
@@ -701,7 +837,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 18. Video
+<a id="html-21"></a>
+
+## 18. Video
 
 ```html
 <video
@@ -732,7 +870,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 19. YouTube Embed
+<a id="html-22"></a>
+
+## 19. YouTube Embed
 
 ```html
 <iframe
@@ -748,7 +888,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 20. 교육 특징
+<a id="html-23"></a>
+
+## 20. 교육 특징
 
 ```html
 <section
@@ -783,7 +925,9 @@ Screen Reader가 중복 정보를 읽는 것을 줄인다.
 
 ---
 
-# 21. 보조 안내에 `aside`
+<a id="html-24"></a>
+
+## 21. 보조 안내에 `aside`
 
 ```html
 <aside
@@ -805,7 +949,9 @@ Page 핵심 흐름을 보조하는 Content이므로 `aside`를 사용할 수 있
 
 ---
 
-# 22. 상담 신청 Section
+<a id="html-25"></a>
+
+## 22. 상담 신청 Section
 
 ```html
 <section
@@ -834,7 +980,9 @@ Page 핵심 흐름을 보조하는 Content이므로 `aside`를 사용할 수 있
 
 ---
 
-# 23. 이름 Input
+<a id="html-26"></a>
+
+## 23. 이름 Input
 
 ```html
 <div class="form-field">
@@ -854,7 +1002,9 @@ Page 핵심 흐름을 보조하는 Content이므로 `aside`를 사용할 수 있
 
 ---
 
-# 24. Email Input
+<a id="html-27"></a>
+
+## 24. Email Input
 
 ```html
 <div class="form-field">
@@ -874,7 +1024,9 @@ Page 핵심 흐름을 보조하는 Content이므로 `aside`를 사용할 수 있
 
 ---
 
-# 25. 전화번호 Input
+<a id="html-28"></a>
+
+## 25. 전화번호 Input
 
 ```html
 <div class="form-field">
@@ -896,7 +1048,9 @@ Placeholder는 Label 대신이 아니라 입력 예시로 사용한다.
 
 ---
 
-# 26. 관심 과정 Select
+<a id="html-29"></a>
+
+## 26. 관심 과정 Select
 
 ```html
 <div class="form-field">
@@ -930,7 +1084,9 @@ Placeholder는 Label 대신이 아니라 입력 예시로 사용한다.
 
 ---
 
-# 27. 상담 방식 Radio Group
+<a id="html-30"></a>
+
+## 27. 상담 방식 Radio Group
 
 ```html
 <fieldset>
@@ -972,7 +1128,9 @@ Placeholder는 Label 대신이 아니라 입력 예시로 사용한다.
 
 ---
 
-# 28. 학습 목적 Checkbox
+<a id="html-31"></a>
+
+## 28. 학습 목적 Checkbox
 
 여러 항목을 선택할 수 있으므로 Checkbox를 사용한다.
 
@@ -1013,7 +1171,9 @@ Placeholder는 Label 대신이 아니라 입력 예시로 사용한다.
 
 ---
 
-# 29. 상담 내용 Textarea
+<a id="html-32"></a>
+
+## 29. 상담 내용 Textarea
 
 ```html
 <div class="form-field">
@@ -1035,7 +1195,9 @@ Textarea 안에 `<br>`이나 HTML Comment를 구조용으로 넣지 않는다.
 
 ---
 
-# 30. 개인정보 동의 Checkbox
+<a id="html-33"></a>
+
+## 30. 개인정보 동의 Checkbox
 
 ```html
 <label>
@@ -1054,7 +1216,9 @@ Textarea 안에 `<br>`이나 HTML Comment를 구조용으로 넣지 않는다.
 
 ---
 
-# 31. Submit Button
+<a id="html-34"></a>
+
+## 31. Submit Button
 
 ```html
 <button type="submit">
@@ -1066,7 +1230,9 @@ Textarea 안에 `<br>`이나 HTML Comment를 구조용으로 넣지 않는다.
 
 ---
 
-# 32. Form 전체 예제
+<a id="html-35"></a>
+
+## 32. Form 전체 예제
 
 ```html
 <form
@@ -1180,7 +1346,9 @@ Textarea 안에 `<br>`이나 HTML Comment를 구조용으로 넣지 않는다.
 
 ---
 
-# 33. POST와 HTTPS
+<a id="html-36"></a>
+
+## 33. POST와 HTTPS
 
 Form이 POST라고 자동으로 안전한 것은 아니다.
 
@@ -1199,7 +1367,9 @@ Server Validation
 
 ---
 
-# 34. FAQ Section
+<a id="html-37"></a>
+
+## 34. FAQ Section
 
 ```html
 <section
@@ -1238,7 +1408,9 @@ Server Validation
 
 ---
 
-# 35. Footer
+<a id="html-38"></a>
+
+## 35. Footer
 
 ```html
 <footer class="site-footer">
@@ -1280,7 +1452,9 @@ Server Validation
 
 ---
 
-# 36. `address`
+<a id="html-39"></a>
+
+## 36. `address`
 
 `address`는 단순 주소 Styling Element가 아니다.
 
@@ -1297,7 +1471,9 @@ Server Validation
 
 ---
 
-# 37. Page 내부 Fragment Link
+<a id="html-40"></a>
+
+## 37. Page 내부 Fragment Link
 
 Hero에서 상담 Form으로 이동할 수 있다.
 
@@ -1319,7 +1495,9 @@ Hero에서 상담 Form으로 이동할 수 있다.
 
 ---
 
-# 38. 외부 Link
+<a id="html-41"></a>
+
+## 38. 외부 Link
 
 ```html
 <a
@@ -1335,7 +1513,9 @@ Hero에서 상담 Form으로 이동할 수 있다.
 
 ---
 
-# 39. Download Link
+<a id="html-42"></a>
+
+## 39. Download Link
 
 ```html
 <a
@@ -1350,7 +1530,9 @@ Cross-origin Resource나 Server Header에 따라 `download` 동작이 달라질 
 
 ---
 
-# 40. 날짜에는 `time`
+<a id="html-43"></a>
+
+## 40. 날짜에는 `time`
 
 ```html
 <p>
@@ -1365,7 +1547,9 @@ Machine-readable 값을 제공한다.
 
 ---
 
-# 41. 약어에는 `abbr`
+<a id="html-44"></a>
+
+## 41. 약어에는 `abbr`
 
 ```html
 <p>
@@ -1380,7 +1564,9 @@ Machine-readable 값을 제공한다.
 
 ---
 
-# 42. HTML Comment
+<a id="html-45"></a>
+
+## 42. HTML Comment
 
 좋은 Comment:
 
@@ -1399,7 +1585,9 @@ Machine-readable 값을 제공한다.
 
 ---
 
-# 43. 완성 HTML
+<a id="html-46"></a>
+
+## 43. 완성 HTML
 
 ```html
 <!doctype html>
@@ -2024,7 +2212,9 @@ Machine-readable 값을 제공한다.
 
 ---
 
-# 44. 사용된 HTML 개념
+<a id="html-47"></a>
+
+## 44. 사용된 HTML 개념
 
 | 학습 범위 | 적용 위치 |
 | --- | --- |
@@ -2045,9 +2235,11 @@ Machine-readable 값을 제공한다.
 
 ---
 
-# 45. 왜 이런 구조를 사용하는가?
+<a id="html-48"></a>
 
-## 45.1 Page 역할이 분명하다
+## 45. 왜 이런 구조를 사용하는가?
+
+### 45.1 Page 역할이 분명하다
 
 ```text
 header
@@ -2072,11 +2264,11 @@ footer
 → Site 마무리 정보
 ```
 
-## 45.2 CSS 없이도 읽기 쉽다
+### 45.2 CSS 없이도 읽기 쉽다
 
 DOM 순서가 실제 읽는 순서와 같다.
 
-## 45.3 JavaScript가 없어도 기본 기능이 가능하다
+### 45.3 JavaScript가 없어도 기본 기능이 가능하다
 
 - Link는 기본 이동 가능
 - Form은 기본 Submit 가능
@@ -2087,23 +2279,31 @@ Progressive Enhancement에 유리하다.
 
 ---
 
-# 46. 대표 오류와 해결
+<a id="html-49"></a>
 
-## 46.1 `h1`이 여러 개라서 무조건 오류인가?
+## 46. 대표 오류와 해결
+
+<a id="index-section-65"></a>
+
+### 46.1 `h1`이 여러 개라서 무조건 오류인가?
 
 HTML5에서 여러 `h1` 자체가 문법 오류는 아니지만 Page 전체 정보 계층을 명확하게 만들기 위해 대표 제목 하나를 두고 하위 Heading을 계층적으로 구성하는 방식이 이해하기 쉽다.
 
-## 46.2 `section` 안에 Heading이 없음
+<a id="index-section-66"></a>
+
+### 46.2 `section` 안에 Heading이 없음
 
 독립된 주제가 아니라 단순 Wrapper인지 먼저 확인한다.
 
 필요하다면 `div`로 변경한다.
 
-## 46.3 Image `alt`가 중복됨
+### 46.3 Image `alt`가 중복됨
 
 Card 제목과 Link Text가 이미 같은 정보를 제공하면 장식 Image에 `alt=""`를 검토한다.
 
-## 46.4 Form 값이 Server로 안 감
+<a id="index-section-68"></a>
+
+### 46.4 Form 값이 Server로 안 감
 
 다음을 확인한다.
 
@@ -2115,25 +2315,27 @@ Submit Button 동작
 Server Endpoint
 ```
 
-## 46.5 Radio가 여러 개 동시에 선택됨
+### 46.5 Radio가 여러 개 동시에 선택됨
 
 같은 Group이면 동일한 `name`을 사용한다.
 
-## 46.6 Label 클릭이 Input과 연결되지 않음
+### 46.6 Label 클릭이 Input과 연결되지 않음
 
 `label for`와 `input id`가 정확히 일치하는지 확인한다.
 
-## 46.7 Table Header 관계가 모호함
+### 46.7 Table Header 관계가 모호함
 
 `scope="col"`과 `scope="row"`를 확인한다.
 
-## 46.8 Fragment Link가 이동하지 않음
+### 46.8 Fragment Link가 이동하지 않음
 
 `href="#id"`와 대상 `id` 값이 일치하는지 확인한다.
 
 ---
 
-# 47. Validator 검수 항목
+<a id="html-50"></a>
+
+## 47. Validator 검수 항목
 
 - Duplicate ID
 - 잘못된 Element 중첩
@@ -2148,7 +2350,9 @@ Validator가 통과해도 접근성과 UX가 자동으로 보장되는 것은 �
 
 ---
 
-# 48. 접근성 검수 항목
+<a id="html-51"></a>
+
+## 48. 접근성 검수 항목
 
 - Keyboard만으로 Navigation 가능
 - Focus 순서가 DOM 순서와 일치
@@ -2163,7 +2367,9 @@ Validator가 통과해도 접근성과 UX가 자동으로 보장되는 것은 �
 
 ---
 
-# 49. DevTools 검수 항목
+<a id="html-52"></a>
+
+## 49. DevTools 검수 항목
 
 ```text
 Elements
@@ -2181,7 +2387,9 @@ Console
 
 ---
 
-# 50. 확장 과제
+<a id="html-53"></a>
+
+## 50. 확장 과제
 
 - Mobile Navigation Toggle 추가
 - Skip Link 추가
@@ -2197,7 +2405,9 @@ Console
 
 ---
 
-# 51. 리팩토링 과제
+<a id="html-54"></a>
+
+## 51. 리팩토링 과제
 
 다음처럼 Project 구조를 분리한다.
 
@@ -2226,7 +2436,9 @@ project/
 
 ---
 
-# 52. 종합실습 체크리스트
+<a id="html-55"></a>
+
+## 52. 종합실습 체크리스트
 
 - [ ] `doctype`을 작성했는가?
 - [ ] `lang="ko"`를 작성했는가?
@@ -2271,7 +2483,9 @@ project/
 
 ---
 
-# 53. 핵심 요약
+<a id="html-56"></a>
+
+## 53. 핵심 요약
 
 ```text
 Document
@@ -2310,7 +2524,9 @@ Project Quality
 
 ---
 
-# 마무리
+<a id="html-57"></a>
+
+## 마무리
 
 HTML 종합실습의 핵심은 많은 Tag를 한 Page에 넣는 것이 아니다.
 
@@ -2331,10 +2547,15 @@ Validator와 실제 Browser에서 검수하는 것
 ```
 
 이 구조를 이해하고 직접 수정할 수 있다면 HTML Tag를 암기하는 단계를 넘어, 실제 Web Page의 정보 구조와 접근성을 설계할 수 있다.
-# V3 브라우저 해석 추적 카드 — 요구사항에서 문서·요청·접근성까지
+<a id="html-58"></a>
+
+## 브라우저 해석 복습 카드 — 요구사항에서 문서·요청·접근성까지
 
 실습은 콘텐츠 목록을 먼저 만들고 제목 계층과 시맨틱 영역을 정한 뒤 링크·이미지·표·폼을 의미에 맞게 배치한다. 그 다음 CSS와 JavaScript가 연결될 class/id를 최소한으로 추가한다.
 
 정상 화면뿐 아니라 이미지 404, 긴 텍스트, 빈 필수 입력, 키보드 탐색, 좁은 viewport를 시험한다. Elements의 DOM, Network 요청, Accessibility 역할·이름을 결과 기록에 포함한다.
 
 **원본 연결:** 내 코드와 강사님 코드의 `workspace_html/01~07 전체 원본과 과제·평가 자료를 결합한 종합 확장`에서 실제 DOM·요청·접근성 차이를 확인한다.
+
+
+[HTML 파트 목차로 돌아가기](./README.md)

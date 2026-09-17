@@ -4,6 +4,46 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-09-section-2)
+- [개념에서 실제 실행까지 — CASE란? — 조건마다 반환할 값을 선택하기](#sql-09-section-3)
+- [8. 내 코드와 강사님 코드 비교](#sql-09-section-11)
+- [12. 종합실습](#sql-09-section-15)
+- [13. 정답과 해설](#sql-09-section-16)
+- [14. 최종 체크리스트](#sql-09-section-17)
+- [15. 핵심 요약](#sql-09-section-18)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-09-section-1)
+- [학습 목표](#sql-09-section-2)
+- [개념에서 실제 실행까지 — CASE란? — 조건마다 반환할 값을 선택하기](#sql-09-section-3)
+- [1. CASE가 필요한 이유](#sql-09-section-4)
+- [2. Simple CASE](#sql-09-section-5)
+- [3. Searched CASE](#sql-09-section-6)
+- [4. 평가 순서와 ELSE](#sql-09-section-7)
+- [5. CASE와 NULL](#sql-09-section-8)
+- [6. CASE 결과의 자료형](#sql-09-section-9)
+- [7. SELECT 이외의 CASE 활용](#sql-09-section-10)
+- [8. 내 코드와 강사님 코드 비교](#sql-09-section-11)
+- [9. 개선된 통합 예제](#sql-09-section-12)
+- [10. 자주 하는 실수](#sql-09-section-13)
+- [11. 디버깅 방법](#sql-09-section-14)
+- [12. 종합실습](#sql-09-section-15)
+- [13. 정답과 해설](#sql-09-section-16)
+- [14. 최종 체크리스트](#sql-09-section-17)
+- [15. 핵심 요약](#sql-09-section-18)
+- [📎 다음 문서](#sql-09-section-19)
+- [🔬 V3 동작 백과 — CASE는 Row마다 어떻게 분기하는가?](#sql-09-section-20)
+
+</details>
+
+---
+
+<a id="sql-09-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -19,15 +59,129 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-09-section-2"></a>
 
-- Simple CASE와 Searched CASE의 문법과 용도를 구분한다.
-- `WHEN`의 평가 순서와 `ELSE` 생략 시 결과를 설명할 수 있다.
-- `SELECT`, `ORDER BY`, `GROUP BY`, 집계함수 안에서 `CASE`를 활용한다.
-- `NULL`, 자료형, 경계값 때문에 생기는 오류를 예방한다.
-- 반복되는 조건을 정리하여 읽기 쉬운 Query를 작성한다.
+## 학습 목표
+
+- 첫 일치·ELSE·경계값과 표시 변경을 구분한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-09-section-3"></a>
+
+## 개념에서 실제 실행까지 — CASE란? — 조건마다 반환할 값을 선택하기
+
+### 무엇이며 왜 배워야 할까?
+
+CASE는 SQL 안에서 값을 선택하는 표현식이다. SELECT 목록에서는 행마다 표시 값이나 계산 결과를 만든다. WHERE에서는 필터에 사용할 값을 만들 수도 있지만 조건 자체를 더 명확하게 적는 편이 나을 수 있다. 저장 프로그램의 CASE 문과는 문법과 역할이 다르다.
+
+Simple CASE는 CASE job WHEN 'CLERK'처럼 기준 값과 비교하고 Searched CASE는 WHEN sal>=3000처럼 각 조건을 직접 적는다. 위에서부터 첫 참인 WHEN의 결과를 선택한다. 급여 5000은 >=2000에도 맞지만 먼저 >=3000을 적으면 high로 선택된다. 작은 경계부터 적으면 높은 구간이 앞 조건에 가려진다.
+
+ELSE가 없고 어느 조건도 맞지 않으면 NULL이다. NULL을 Simple CASE의 WHEN NULL로 직접 비교해 처리하지 말고 IS NULL 조건으로 검사한다. CASE의 각 결과 자료형도 최종 표현식 형식에 영향을 주므로 숫자와 표시 문자열을 섞기 전에 목적을 정한다.
+
+### 입력은 어디에서 오는가?
+
+EMP·DEPT·SALGRADE는 초기화 자료 그대로 준비된 상태다. EMP 14행, DEPT 4행, SALGRADE 5행이다. 다른 DML로 데이터를 바꿨다면 아래 결과와 달라질 수 있다. 상수 SELECT 예제는 테이블 없이도 실행할 수 있다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+SELECT ename, sal,
+       CASE WHEN sal >= 3000 THEN 'high'
+            WHEN sal >= 2000 THEN 'middle'
+            ELSE 'low' END AS salary_band
+FROM emp
+WHERE empno IN (7369, 7782, 7839)
+ORDER BY empno;
+```
+
+Result Grid의 열·행 값:
+
+```text
+ename	sal	salary_band
+SMITH	800.00	low
+CLARK	2450.00	middle
+KING	5000.00	high
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 급여가 서로 다른 SMITH·CLARK·KING을 선택한다.
+2. 각 행에서 sal>=3000을 먼저 검사한다.
+3. 앞 조건이 안 맞으면 sal>=2000을 검사하고 나머지는 ELSE로 선택한다.
+4. 원본 급여와 구간 문자열을 함께 출력해 실제 구간 연결을 확인한다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 332~341행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+-- when과 then으로 조건을 줘서 바꿀 수 있음
+select 
+	job, sal, 
+	case job
+		when 'CLERK' then sal * 1.05
+		when 'SALESMAN' then sal * 1.03
+		else sal
+	end as upsal
+from emp;
+```
+
+<a id="index-section-11"></a>
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 303~312행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+
+select 
+	job, sal,
+	case job
+		when 'CLERK' then sal * 1.05
+		when 'SALESMAN' then sal * 1.03
+		else sal
+	end as upsal
+from emp;
+```
+
+두 원본은 직무에 따라 급여를 1.05·1.03배로 표시하는 두 형태 CASE를 다룬다. 계산 열 upsal은 급여 인상 UPDATE를 완료했다는 의미가 아니다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 이해 확인 실습
+
+1. WHEN sal>=2000을 앞에 두면 KING의 표시 값은?
+2. ELSE 없는 CASE에서 일치 WHEN이 없으면?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. middle이다. 첫 조건에서 이미 참이 되어 뒤의 >=3000을 선택하지 않는다.
+2. NULL이다. 비교·집계에서 누락되어 보일 수 있어 결과 계약을 명시한다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-09-section-4"></a>
 
 ## 1. CASE가 필요한 이유
 
@@ -70,6 +224,8 @@ FROM emp;
 SELECT CASE WHEN 10 > 5 THEN 'TRUE' ELSE 'FALSE' END AS result;
 ```
 
+<a id="index-section-19"></a>
+
 ### 4. CASE의 기본 구성
 
 ```text
@@ -82,6 +238,8 @@ CASE
 `CASE`를 시작했다면 반드시 `END`로 닫아야 한다.
 
 ---
+
+<a id="sql-09-section-5"></a>
 
 ## 2. Simple CASE
 
@@ -154,6 +312,8 @@ END
 이때는 Searched CASE를 사용한다.
 
 ---
+
+<a id="sql-09-section-6"></a>
 
 ## 3. Searched CASE
 
@@ -238,6 +398,8 @@ FROM emp;
 
 ---
 
+<a id="sql-09-section-7"></a>
+
 ## 4. 평가 순서와 ELSE
 
 ### 16. 위에서 아래로 평가한다
@@ -297,6 +459,8 @@ SELECT
 FROM emp;
 ```
 
+<a id="index-section-38"></a>
+
 ### 20. 모든 조건이 False 또는 Unknown일 수 있다
 
 `NULL`이 포함된 비교는 Unknown이 될 수 있다.
@@ -314,6 +478,8 @@ FROM emp;
 `NULL`을 별도로 구분하려면 `WHEN comm IS NULL`을 먼저 작성한다.
 
 ---
+
+<a id="sql-09-section-8"></a>
 
 ## 5. CASE와 NULL
 
@@ -379,6 +545,8 @@ FROM emp;
 
 ---
 
+<a id="sql-09-section-9"></a>
+
 ## 6. CASE 결과의 자료형
 
 ### 25. THEN과 ELSE는 가능한 한 같은 종류로 맞춘다
@@ -440,6 +608,8 @@ FROM emp;
 
 ---
 
+<a id="sql-09-section-10"></a>
+
 ## 7. SELECT 이외의 CASE 활용
 
 ### 29. ORDER BY에서 사용자 정의 순서 만들기
@@ -473,6 +643,8 @@ SELECT
 FROM emp
 ORDER BY salary_rank, sal DESC;
 ```
+
+<a id="index-section-52"></a>
 
 ### 31. GROUP BY에서 같은 분류식 사용하기
 
@@ -541,6 +713,8 @@ FROM emp;
 ```
 
 ---
+
+<a id="sql-09-section-11"></a>
 
 ## 8. 내 코드와 강사님 코드 비교
 
@@ -623,6 +797,8 @@ FROM emp;
 
 ---
 
+<a id="sql-09-section-12"></a>
+
 ## 9. 개선된 통합 예제
 
 ### 42. 사원 정보 보고서 만들기
@@ -695,6 +871,8 @@ LEFT JOIN dept AS d
 `CASE`는 분류 규칙에, 기준 테이블의 값을 가져오는 작업은 JOIN에 사용하는 것이 자연스럽다.
 
 ---
+
+<a id="sql-09-section-13"></a>
 
 ## 10. 자주 하는 실수
 
@@ -775,6 +953,8 @@ GROUP BY salary_level;
 
 ---
 
+<a id="sql-09-section-14"></a>
+
 ## 11. 디버깅 방법
 
 ### 51. 조건을 Boolean 결과로 먼저 확인한다
@@ -847,6 +1027,8 @@ ORDER BY comm;
 
 ---
 
+<a id="sql-09-section-15"></a>
+
 ## 12. 종합실습
 
 ### 56. 문제 1 — 부서명 표시
@@ -870,6 +1052,8 @@ ORDER BY comm;
 부서별 전체 인원, 급여 2000 이상 인원, Commission을 받은 인원을 조회한다.
 
 ---
+
+<a id="sql-09-section-16"></a>
 
 ## 13. 정답과 해설
 
@@ -961,6 +1145,8 @@ ORDER BY deptno;
 
 ---
 
+<a id="sql-09-section-17"></a>
+
 ## 14. 최종 체크리스트
 
 ### 66. 문법 체크
@@ -985,6 +1171,8 @@ ORDER BY deptno;
 - [ ] 사용자 정의 정렬에 안정적인 Tie-breaker가 있는가?
 
 ---
+
+<a id="sql-09-section-18"></a>
 
 ## 15. 핵심 요약
 
@@ -1013,6 +1201,8 @@ ELSE 생략
 
 ---
 
+<a id="sql-09-section-19"></a>
+
 ## 📎 다음 문서
 
 다음 원본 흐름은 집합연산이다.
@@ -1022,6 +1212,8 @@ ELSE 생략
 ```
 
 ---
+
+<a id="sql-09-section-20"></a>
 
 ## 🔬 V3 동작 백과 — CASE는 Row마다 어떻게 분기하는가?
 

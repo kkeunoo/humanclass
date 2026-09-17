@@ -1,7 +1,7 @@
 ---
 title: JavaScript 함수와 콜백·타이머
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,97 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: 함수는 호출할 때 동작하고, return은 호출자에게 값을 준다](#js-08-section-4)
+- [26. 함수 참조와 호출 결과 비교](#js-08-section-30)
+- [57. 내 코드와 강사님 코드 비교](#js-08-section-61)
+- [59. 실무형 예제: 지연 작업 실행기](#js-08-section-63)
+- [60. 대표 오류로 이해하기](#js-08-section-64)
+- [61. 자주 하는 실수](#js-08-section-65)
+- [62. 핵심 요약](#js-08-section-66)
+- [63. 최종 체크리스트](#js-08-section-67)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-08-section-1)
+- [핵심 개념](#js-08-section-2)
+- [학습 목표](#js-08-section-3)
+- [개념에서 실제 실행까지: 함수는 호출할 때 동작하고, return은 호출자에게 값을 준다](#js-08-section-4)
+- [1. 함수 선언](#js-08-section-5)
+- [2. 함수 호출](#js-08-section-6)
+- [3. 함수 자체와 실행 결과](#js-08-section-7)
+- [4. 매개변수와 인수](#js-08-section-8)
+- [5. 출력하는 함수](#js-08-section-9)
+- [6. 반환하는 함수](#js-08-section-10)
+- [7. `return`의 두 역할](#js-08-section-11)
+- [8. 덧셈 함수](#js-08-section-12)
+- [9. 중첩 함수 호출](#js-08-section-13)
+- [10. 이전 변수에 의존한 중첩 호출](#js-08-section-14)
+- [11. 함수 지역 변수](#js-08-section-15)
+- [12. 같은 이름의 지역·외부 변수](#js-08-section-16)
+- [13. 블록 스코프](#js-08-section-17)
+- [14. Shadowing](#js-08-section-18)
+- [15. TDZ](#js-08-section-19)
+- [16. 반복문의 블록 변수](#js-08-section-20)
+- [17. 인수가 부족한 경우](#js-08-section-21)
+- [18. `undefined` 방어](#js-08-section-22)
+- [19. 기본 매개변수](#js-08-section-23)
+- [20. 기본값 적용 조건](#js-08-section-24)
+- [21. 중복 방어 코드](#js-08-section-25)
+- [22. 인수를 많이 전달한 경우](#js-08-section-26)
+- [23. 나머지 매개변수](#js-08-section-27)
+- [24. 익명 함수](#js-08-section-28)
+- [25. 함수 참조 복사](#js-08-section-29)
+- [26. 함수 참조와 호출 결과 비교](#js-08-section-30)
+- [27. 콜백 함수](#js-08-section-31)
+- [28. 콜백 용어](#js-08-section-32)
+- [29. 콜백 타입 검사](#js-08-section-33)
+- [30. 같은 이름의 함수 선언](#js-08-section-34)
+- [31. 함수 별칭](#js-08-section-35)
+- [32. 선언 없는 전역 대입](#js-08-section-36)
+- [33. Console 객체 참조](#js-08-section-37)
+- [34. 메서드 참조](#js-08-section-38)
+- [35. `console.log` 덮어쓰기](#js-08-section-39)
+- [36. 내장 API 덮어쓰기 위험](#js-08-section-40)
+- [37. 숫자 내림차순 함수](#js-08-section-41)
+- [38. 기본 `sort()` 문제](#js-08-section-42)
+- [39. 원본 배열 변경 문제](#js-08-section-43)
+- [40. 안전한 숫자 내림차순](#js-08-section-44)
+- [41. 함수 호출 결과 전달](#js-08-section-45)
+- [42. 함수 자체 전달](#js-08-section-46)
+- [43. 전달된 함수 실행](#js-08-section-47)
+- [44. `setTimeout()`](#js-08-section-48)
+- [45. 타이머의 실행 시점](#js-08-section-49)
+- [46. 함수 참조 전달](#js-08-section-50)
+- [47. 인수가 필요한 타이머 콜백](#js-08-section-51)
+- [48. `clearTimeout()`](#js-08-section-52)
+- [49. `setInterval()`](#js-08-section-53)
+- [50. `clearInterval()`](#js-08-section-54)
+- [51. 타이머 ID](#js-08-section-55)
+- [52. 재귀 함수](#js-08-section-56)
+- [53. 잘못된 재귀형 타이머](#js-08-section-57)
+- [54. 올바른 재귀형 타이머](#js-08-section-58)
+- [55. 재귀형 `setTimeout()`과 `setInterval()`](#js-08-section-59)
+- [56. 취소 가능한 재귀 타이머](#js-08-section-60)
+- [57. 내 코드와 강사님 코드 비교](#js-08-section-61)
+- [58. 기존 코드에서 개선 코드로 바꾼 이유](#js-08-section-62)
+- [59. 실무형 예제: 지연 작업 실행기](#js-08-section-63)
+- [60. 대표 오류로 이해하기](#js-08-section-64)
+- [61. 자주 하는 실수](#js-08-section-65)
+- [62. 핵심 요약](#js-08-section-66)
+- [63. 최종 체크리스트](#js-08-section-67)
+- [마무리](#js-08-section-68)
+- [V3 실행 추적 카드 — 함수 등록 → 호출/예약 → 콜백 실행](#js-08-section-69)
+
+</details>
+
+---
+
+<a id="js-08-section-1"></a>
+
+## 개요
 
 함수는 특정 작업을 하나의 이름으로 묶은 재사용 가능한 코드다.
 
@@ -65,7 +155,9 @@ setTimeout(
 
 ---
 
-# 핵심 개념
+<a id="js-08-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -88,29 +180,119 @@ setTimeout(
 
 ---
 
-# 학습 목표
+<a id="js-08-section-3"></a>
 
-- 함수 선언과 호출을 구분할 수 있다.
-- 매개변수와 인수를 설명할 수 있다.
-- `print()`와 같은 출력과 `return`의 차이를 이해한다.
-- 반환값을 변수와 다른 함수 호출에 사용할 수 있다.
-- 중첩 함수 호출의 실행 순서를 추적할 수 있다.
-- 함수·블록 스코프를 구분할 수 있다.
-- Shadowing과 TDZ를 설명할 수 있다.
-- 기본 매개변수를 작성할 수 있다.
-- 인수가 부족하거나 많을 때의 동작을 이해한다.
-- 익명 함수를 변수에 저장할 수 있다.
-- 함수 참조와 호출 결과를 구분할 수 있다.
-- 콜백 함수를 안전하게 실행할 수 있다.
-- 내장 메서드를 덮어쓰는 위험을 설명할 수 있다.
-- 숫자 배열을 원본 변경 없이 정렬할 수 있다.
-- `setTimeout()`과 `setInterval()`을 사용할 수 있다.
-- `clearTimeout()`과 `clearInterval()`로 예약을 취소할 수 있다.
-- 재귀 호출과 재귀형 타이머 예약을 구분할 수 있다.
+## 학습 목표
+
+- 함수 전달과 즉시 호출, 타이머 예약을 구분한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. 함수 선언
+<a id="js-08-section-4"></a>
+
+## 개념에서 실제 실행까지: 함수는 호출할 때 동작하고, return은 호출자에게 값을 준다
+
+함수 선언은 실행할 절차를 준비한다. getArea(10,20)는 width와 height에 인수를 넣고 면적을 로그로 출력하지만 return이 없으므로 호출 결과는 undefined다. getArea2는 200을 반환하여 다른 계산에 사용할 수 있다. return 자체가 화면이나 Console에 출력하는 것은 아니다.
+
+수업의 test(noName)는 함수 참조를 전달하고 test 내부에서 fn()으로 호출한다. test2(test1())는 안쪽 함수를 지금 실행한 결과 3을 전달한다. 콜백이라는 말이 항상 비동기를 뜻하지도 않는다: test 안의 fn()은 지금 동기 실행된다. 반면 setTimeout에 준 함수는 예약 후에 실행된다.
+
+두 원본의 기계_1초후_한번더(함수)는 setTimeout 첫 인수에서 자기 자신을 즉시 호출한다. 타이머를 기다리는 재귀가 아니라 동기 재귀로 스택이 넘칠 수 있는 오류 예제다. 원본의 console.log 덮어쓰기 실험도 다른 실습 로그에 영향을 준다. 💡 새 실습에서는 원래 Console을 변경하지 말고 별도 함수로 감싼다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/08_function.html`
+
+```javascript
+function getArea(width, height) {
+                console.log(`width: ${width}, height: ${height}`)
+                let area = width * height;
+                console.log('면적 : ', area);
+            }
+            
+            getArea(10, 20);
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/08_function.html`
+
+```javascript
+function getArea(width, height){
+        console.log(`width: ${width}, height: ${height}`)
+        let area = width * height
+        console.log('면적: ', area)
+    }
+    getArea(10, 20)
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+function printArea(w, h) { console.log(w * h); }
+function getArea(w, h) { return w * h; }
+console.log(printArea(10, 20));
+console.log(getArea(10, 20) + 5);
+function run(fn) { console.log("호출 전"); fn(); console.log("호출 후"); }
+run(() => console.log("콜백"));
+```
+
+예상 출력:
+
+```text
+200
+undefined
+205
+호출 전
+콜백
+호출 후
+```
+
+### 결과를 역추적하는 방법
+
+재귀 예약은 setTimeout(() => repeat(fn), 1000)처럼 함수를 나중에 호출하는 콜백으로 감싼다. 반복 중단 상태나 timer ID도 관리해야 한다. 기본 매개변수는 undefined에 적용되고 null에는 적용되지 않는다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** function area(w,h){console.log(w*h)}의 호출 결과로 +5를 계산한다.
+
+**응용·디버깅 실습:** setTimeout 안에 재귀 함수를 호출한 결과를 직접 인수로 넣은 코드를 수정한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. 로그200 뒤 호출 결과undefined이므로 undefined+5는NaN이다. return w*h를 넣어야205를 얻는다.
+2. setTimeout(()=>repeat(fn),1000)처럼 콜백으로 감싼다. 종료 조건도 추가한다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** setTimeout(hello(),1000)는 왜 예약 전달이 아닐까?
+
+**해설:** hello()를 현재 즉시 평가한 반환값을 첫 인수로 넘긴다. hello 자체 또는 () => hello()를 넘겨야 호출을 나중에 하도록 준비한다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-08-section-5"></a>
+
+## 1. 함수 선언
 
 ```javascript
 function hello() {
@@ -122,7 +304,9 @@ function hello() {
 
 ---
 
-# 2. 함수 호출
+<a id="js-08-section-6"></a>
+
+## 2. 함수 호출
 
 ```javascript
 hello()
@@ -138,7 +322,9 @@ hello world
 
 ---
 
-# 3. 함수 자체와 실행 결과
+<a id="js-08-section-7"></a>
+
+## 3. 함수 자체와 실행 결과
 
 ```javascript
 console.log(hello)
@@ -153,7 +339,9 @@ console.log(hello())
 
 ---
 
-# 4. 매개변수와 인수
+<a id="js-08-section-8"></a>
+
+## 4. 매개변수와 인수
 
 ```javascript
 function getArea(
@@ -183,7 +371,9 @@ getArea(10, 20)
 
 ---
 
-# 5. 출력하는 함수
+<a id="js-08-section-9"></a>
+
+## 5. 출력하는 함수
 
 ```javascript
 function getArea(
@@ -218,7 +408,9 @@ undefined
 
 ---
 
-# 6. 반환하는 함수
+<a id="js-08-section-10"></a>
+
+## 6. 반환하는 함수
 
 ```javascript
 function getArea(
@@ -249,7 +441,9 @@ console.log(result)
 
 ---
 
-# 7. `return`의 두 역할
+<a id="js-08-section-11"></a>
+
+## 7. `return`의 두 역할
 
 ```text
 1. 호출 위치로 값 반환
@@ -270,7 +464,9 @@ function example() {
 
 ---
 
-# 8. 덧셈 함수
+<a id="js-08-section-12"></a>
+
+## 8. 덧셈 함수
 
 ```javascript
 function plus(
@@ -295,7 +491,9 @@ console.log(
 
 ---
 
-# 9. 중첩 함수 호출
+<a id="js-08-section-13"></a>
+
+## 9. 중첩 함수 호출
 
 ```javascript
 const result = plus(
@@ -326,7 +524,9 @@ plus(2, 11)
 
 ---
 
-# 10. 이전 변수에 의존한 중첩 호출
+<a id="js-08-section-14"></a>
+
+## 10. 이전 변수에 의존한 중첩 호출
 
 내 코드 원본:
 
@@ -352,7 +552,9 @@ const result = plus(
 
 ---
 
-# 11. 함수 지역 변수
+<a id="js-08-section-15"></a>
+
+## 11. 함수 지역 변수
 
 ```javascript
 function plus(
@@ -373,7 +575,9 @@ ReferenceError
 
 ---
 
-# 12. 같은 이름의 지역·외부 변수
+<a id="js-08-section-16"></a>
+
+## 12. 같은 이름의 지역·외부 변수
 
 ```javascript
 function calculate() {
@@ -402,7 +606,9 @@ console.log(value)
 
 ---
 
-# 13. 블록 스코프
+<a id="js-08-section-17"></a>
+
+## 13. 블록 스코프
 
 ```javascript
 {
@@ -423,7 +629,9 @@ console.log(value)
 
 ---
 
-# 14. Shadowing
+<a id="js-08-section-18"></a>
+
+## 14. Shadowing
 
 ```javascript
 const value = 10
@@ -448,7 +656,9 @@ console.log(value)
 
 ---
 
-# 15. TDZ
+<a id="js-08-section-19"></a>
+
+## 15. TDZ
 
 ```text
 {
@@ -467,7 +677,9 @@ ReferenceError
 
 ---
 
-# 16. 반복문의 블록 변수
+<a id="js-08-section-20"></a>
+
+## 16. 반복문의 블록 변수
 
 ```javascript
 for (
@@ -488,7 +700,9 @@ for (
 
 ---
 
-# 17. 인수가 부족한 경우
+<a id="js-08-section-21"></a>
+
+## 17. 인수가 부족한 경우
 
 ```javascript
 function plus(
@@ -516,7 +730,9 @@ NaN
 
 ---
 
-# 18. `undefined` 방어
+<a id="js-08-section-22"></a>
+
+## 18. `undefined` 방어
 
 원본:
 
@@ -545,7 +761,9 @@ if (y === undefined) {
 
 ---
 
-# 19. 기본 매개변수
+<a id="js-08-section-23"></a>
+
+## 19. 기본 매개변수
 
 ```javascript
 function plus(
@@ -568,7 +786,9 @@ console.log(
 
 ---
 
-# 20. 기본값 적용 조건
+<a id="js-08-section-24"></a>
+
+## 20. 기본값 적용 조건
 
 ```javascript
 plus(2)
@@ -585,7 +805,9 @@ plus(2, null)
 
 ---
 
-# 21. 중복 방어 코드
+<a id="js-08-section-25"></a>
+
+## 21. 중복 방어 코드
 
 다음 함수의 내부 `if`는 중복이다.
 
@@ -615,7 +837,9 @@ function plus(
 
 ---
 
-# 22. 인수를 많이 전달한 경우
+<a id="js-08-section-26"></a>
+
+## 22. 인수를 많이 전달한 경우
 
 ```javascript
 function plus(
@@ -640,7 +864,9 @@ console.log(
 
 ---
 
-# 23. 나머지 매개변수
+<a id="js-08-section-27"></a>
+
+## 23. 나머지 매개변수
 
 추가 인수를 모두 사용하려면 rest parameter를 사용할 수 있다.
 
@@ -673,7 +899,9 @@ console.log(
 
 ---
 
-# 24. 익명 함수
+<a id="js-08-section-28"></a>
+
+## 24. 익명 함수
 
 ```javascript
 const noName = function () {
@@ -689,7 +917,9 @@ noName()
 
 ---
 
-# 25. 함수 참조 복사
+<a id="js-08-section-29"></a>
+
+## 25. 함수 참조 복사
 
 ```javascript
 const noName2 = noName
@@ -701,7 +931,9 @@ noName2()
 
 ---
 
-# 26. 함수 참조와 호출 결과 비교
+<a id="js-08-section-30"></a>
+
+## 26. 함수 참조와 호출 결과 비교
 
 ```text
 noName
@@ -715,7 +947,9 @@ noName()
 
 ---
 
-# 27. 콜백 함수
+<a id="js-08-section-31"></a>
+
+## 27. 콜백 함수
 
 ```javascript
 function runCallback(
@@ -736,7 +970,9 @@ runCallback(noName)
 
 ---
 
-# 28. 콜백 용어
+<a id="js-08-section-32"></a>
+
+## 28. 콜백 용어
 
 ```text
 noName
@@ -750,7 +986,9 @@ callback
 
 ---
 
-# 29. 콜백 타입 검사
+<a id="js-08-section-33"></a>
+
+## 29. 콜백 타입 검사
 
 ```javascript
 function runCallback(
@@ -775,7 +1013,9 @@ function runCallback(
 
 ---
 
-# 30. 같은 이름의 함수 선언
+<a id="js-08-section-34"></a>
+
+## 30. 같은 이름의 함수 선언
 
 ```javascript
 function printMessage() {
@@ -806,7 +1046,9 @@ printMessage()
 
 ---
 
-# 31. 함수 별칭
+<a id="js-08-section-35"></a>
+
+## 31. 함수 별칭
 
 ```javascript
 const print = printMessage
@@ -818,7 +1060,9 @@ print()
 
 ---
 
-# 32. 선언 없는 전역 대입
+<a id="js-08-section-36"></a>
+
+## 32. 선언 없는 전역 대입
 
 원본 강사님 코드에는 다음 형태가 있다.
 
@@ -846,7 +1090,9 @@ let x = test1()
 
 ---
 
-# 33. Console 객체 참조
+<a id="js-08-section-37"></a>
+
+## 33. Console 객체 참조
 
 ```javascript
 const consoleReference = console
@@ -858,7 +1104,9 @@ consoleReference.log(123)
 
 ---
 
-# 34. 메서드 참조
+<a id="js-08-section-38"></a>
+
+## 34. 메서드 참조
 
 ```javascript
 const originalLog = (
@@ -874,7 +1122,9 @@ originalLog(1234)
 
 ---
 
-# 35. `console.log` 덮어쓰기
+<a id="js-08-section-39"></a>
+
+## 35. `console.log` 덮어쓰기
 
 원본 실험:
 
@@ -896,7 +1146,9 @@ TypeError: console.log is not a function
 
 ---
 
-# 36. 내장 API 덮어쓰기 위험
+<a id="js-08-section-40"></a>
+
+## 36. 내장 API 덮어쓰기 위험
 
 ```javascript
 const originalLog = console.log
@@ -920,7 +1172,9 @@ console.log = function (
 
 ---
 
-# 37. 숫자 내림차순 함수
+<a id="js-08-section-41"></a>
+
+## 37. 숫자 내림차순 함수
 
 원본:
 
@@ -940,7 +1194,9 @@ function desc(
 
 ---
 
-# 38. 기본 `sort()` 문제
+<a id="js-08-section-42"></a>
+
+## 38. 기본 `sort()` 문제
 
 ```javascript
 console.log(
@@ -958,7 +1214,9 @@ console.log(
 
 ---
 
-# 39. 원본 배열 변경 문제
+<a id="js-08-section-43"></a>
+
+## 39. 원본 배열 변경 문제
 
 `sort()`와 `reverse()`는 인수로 받은 배열을 직접 변경한다.
 
@@ -978,7 +1236,9 @@ console.log(numbers)
 
 ---
 
-# 40. 안전한 숫자 내림차순
+<a id="js-08-section-44"></a>
+
+## 40. 안전한 숫자 내림차순
 
 ```javascript
 function sortDescending(
@@ -1014,7 +1274,9 @@ console.log(numbers)
 
 ---
 
-# 41. 함수 호출 결과 전달
+<a id="js-08-section-45"></a>
+
+## 41. 함수 호출 결과 전달
 
 ```javascript
 function test1() {
@@ -1046,7 +1308,9 @@ test1 실행
 
 ---
 
-# 42. 함수 자체 전달
+<a id="js-08-section-46"></a>
+
+## 42. 함수 자체 전달
 
 ```javascript
 test2(test1)
@@ -1058,7 +1322,9 @@ test2(test1)
 
 ---
 
-# 43. 전달된 함수 실행
+<a id="js-08-section-47"></a>
+
+## 43. 전달된 함수 실행
 
 ```javascript
 function test2(
@@ -1079,7 +1345,9 @@ test2(test1)
 
 ---
 
-# 44. `setTimeout()`
+<a id="js-08-section-48"></a>
+
+## 44. `setTimeout()`
 
 ```javascript
 const timeoutId = setTimeout(
@@ -1101,7 +1369,9 @@ const timeoutId = setTimeout(
 
 ---
 
-# 45. 타이머의 실행 시점
+<a id="js-08-section-49"></a>
+
+## 45. 타이머의 실행 시점
 
 `setTimeout(callback, 1000)`은 정확히 1초 후 실행을 보장하지 않는다.
 
@@ -1116,7 +1386,9 @@ const timeoutId = setTimeout(
 
 ---
 
-# 46. 함수 참조 전달
+<a id="js-08-section-50"></a>
+
+## 46. 함수 참조 전달
 
 올바른 형태:
 
@@ -1142,7 +1414,9 @@ setTimeout(
 
 ---
 
-# 47. 인수가 필요한 타이머 콜백
+<a id="js-08-section-51"></a>
+
+## 47. 인수가 필요한 타이머 콜백
 
 ```javascript
 function greet(
@@ -1165,7 +1439,9 @@ setTimeout(
 
 ---
 
-# 48. `clearTimeout()`
+<a id="js-08-section-52"></a>
+
+## 48. `clearTimeout()`
 
 ```javascript
 const timeoutId = setTimeout(
@@ -1184,7 +1460,9 @@ clearTimeout(timeoutId)
 
 ---
 
-# 49. `setInterval()`
+<a id="js-08-section-53"></a>
+
+## 49. `setInterval()`
 
 ```javascript
 const intervalId = setInterval(
@@ -1199,7 +1477,9 @@ const intervalId = setInterval(
 
 ---
 
-# 50. `clearInterval()`
+<a id="js-08-section-54"></a>
+
+## 50. `clearInterval()`
 
 ```javascript
 const intervalId = setInterval(
@@ -1227,7 +1507,9 @@ setTimeout(
 
 ---
 
-# 51. 타이머 ID
+<a id="js-08-section-55"></a>
+
+## 51. 타이머 ID
 
 | 예약 | 취소 |
 | --- | --- |
@@ -1238,7 +1520,9 @@ setTimeout(
 
 ---
 
-# 52. 재귀 함수
+<a id="js-08-section-56"></a>
+
+## 52. 재귀 함수
 
 ```javascript
 function countdown(
@@ -1262,7 +1546,9 @@ function countdown(
 
 ---
 
-# 53. 잘못된 재귀형 타이머
+<a id="js-08-section-57"></a>
+
+## 53. 잘못된 재귀형 타이머
 
 원본 개념:
 
@@ -1279,7 +1565,9 @@ setTimeout(
 
 ---
 
-# 54. 올바른 재귀형 타이머
+<a id="js-08-section-58"></a>
+
+## 54. 올바른 재귀형 타이머
 
 ```javascript
 function repeat(
@@ -1300,7 +1588,9 @@ function repeat(
 
 ---
 
-# 55. 재귀형 `setTimeout()`과 `setInterval()`
+<a id="js-08-section-59"></a>
+
+## 55. 재귀형 `setTimeout()`과 `setInterval()`
 
 | 방식 | 특징 |
 | --- | --- |
@@ -1311,7 +1601,9 @@ function repeat(
 
 ---
 
-# 56. 취소 가능한 재귀 타이머
+<a id="js-08-section-60"></a>
+
+## 56. 취소 가능한 재귀 타이머
 
 ```javascript
 function createRepeater(
@@ -1354,7 +1646,9 @@ const stop = createRepeater(
 
 ---
 
-# 57. 내 코드와 강사님 코드 비교
+<a id="js-08-section-61"></a>
+
+## 57. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1369,14 +1663,14 @@ const stop = createRepeater(
 | 정렬 | 기본 문자열 정렬 사용 | 동일 |
 | 타이머 | 재귀형 코드 설명 상세 | 선언과 예약 중심 |
 
-## 57-1. 내 코드의 장점
+### 57-1. 내 코드의 장점
 
 - 함수 선언과 호출 차이를 초보자 관점에서 상세히 설명했다.
 - 스코프·Shadowing·TDZ를 단계적으로 기록했다.
 - 함수 참조와 실행 결과를 여러 예제로 확인했다.
 - 콜백과 타이머의 실행 시점을 연결해 설명했다.
 
-## 57-2. 내 코드의 개선점
+### 57-2. 내 코드의 개선점
 
 - 이전 변수 `result`에 의존하는 중첩 호출은 실행 순서 의존성이 있다.
 - `== undefined`보다 기본 매개변수 또는 엄격 비교가 적합하다.
@@ -1384,14 +1678,14 @@ const stop = createRepeater(
 - 숫자 정렬에 기본 `sort()`를 사용하면 잘못된 결과가 나올 수 있다.
 - 재귀형 타이머는 함수 호출 결과가 아니라 함수 참조를 예약해야 한다.
 
-## 57-3. 강사님 코드의 장점
+### 57-3. 강사님 코드의 장점
 
 - 함수 기본부터 콜백과 타이머까지 한 흐름으로 연결한다.
 - 함수도 값처럼 저장·전달할 수 있음을 다양한 예제로 보여 준다.
 - 실제 타이머 예약과 취소 함수를 소개한다.
 - 중첩 호출의 평가 순서를 직접 확인할 수 있다.
 
-## 57-4. 강사님 코드의 보충점
+### 57-4. 강사님 코드의 보충점
 
 - 선언 없는 전역 대입을 피해야 한다.
 - 엄격 비교를 사용해야 한다.
@@ -1401,9 +1695,11 @@ const stop = createRepeater(
 
 ---
 
-# 58. 기존 코드에서 개선 코드로 바꾼 이유
+<a id="js-08-section-62"></a>
 
-## 58-1. 출력 함수에서 반환 함수로
+## 58. 기존 코드에서 개선 코드로 바꾼 이유
+
+### 58-1. 출력 함수에서 반환 함수로
 
 기존:
 
@@ -1431,7 +1727,7 @@ function getArea(
 }
 ```
 
-## 58-2. 느슨한 비교 제거
+### 58-2. 느슨한 비교 제거
 
 기존:
 
@@ -1445,7 +1741,7 @@ typeof callback == "function"
 typeof callback === "function"
 ```
 
-## 58-3. 정렬 원본 유지
+### 58-3. 정렬 원본 유지
 
 기존:
 
@@ -1463,7 +1759,7 @@ array.sort().reverse()
 )
 ```
 
-## 58-4. 타이머 콜백 참조
+### 58-4. 타이머 콜백 참조
 
 기존:
 
@@ -1485,7 +1781,9 @@ setTimeout(
 
 ---
 
-# 59. 실무형 예제: 지연 작업 실행기
+<a id="js-08-section-63"></a>
+
+## 59. 실무형 예제: 지연 작업 실행기
 
 ```javascript
 function runTask(
@@ -1530,7 +1828,7 @@ const taskId = runTask(
 // clearTimeout(taskId)
 ```
 
-## 59-1. 실행 결과
+### 59-1. 실행 결과
 
 약 1초 이후:
 
@@ -1538,7 +1836,7 @@ const taskId = runTask(
 작업 결과: 300
 ```
 
-## 59-2. 코드에서 무엇을 사용하는 걸까?
+### 59-2. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1552,89 +1850,101 @@ const taskId = runTask(
 
 ---
 
-# 60. 대표 오류로 이해하기
+<a id="js-08-section-64"></a>
 
-## 60-1. 함수 이름만 작성하고 실행 기대
+## 60. 대표 오류로 이해하기
+
+### 60-1. 함수 이름만 작성하고 실행 기대
 
 괄호가 없으면 함수가 실행되지 않는다.
 
-## 60-2. 반환값 없는 함수 결과 사용
+### 60-2. 반환값 없는 함수 결과 사용
 
 `undefined`가 저장된다.
 
-## 60-3. 지역 변수 외부 접근
+### 60-3. 지역 변수 외부 접근
 
 `ReferenceError`가 발생한다.
 
-## 60-4. `const` 선언 전 접근
+<a id="index-section-85"></a>
+
+### 60-4. `const` 선언 전 접근
 
 TDZ로 `ReferenceError`가 발생한다.
 
-## 60-5. 함수를 호출한 결과를 콜백으로 전달
+### 60-5. 함수를 호출한 결과를 콜백으로 전달
 
 등록 시점에 즉시 실행된다.
 
-## 60-6. 숫자를 함수처럼 호출
+### 60-6. 숫자를 함수처럼 호출
 
 ```text
 TypeError: value is not a function
 ```
 
-## 60-7. 종료 조건 없는 직접 재귀
+### 60-7. 종료 조건 없는 직접 재귀
 
 `RangeError: Maximum call stack size exceeded`가 발생할 수 있다.
 
-## 60-8. 타이머 ID를 저장하지 않음
+### 60-8. 타이머 ID를 저장하지 않음
 
 나중에 예약을 취소하기 어렵다.
 
 ---
 
-# 61. 자주 하는 실수
+<a id="js-08-section-65"></a>
 
-## 61-1. 함수 선언만 하고 호출하지 않음
+## 61. 자주 하는 실수
+
+### 61-1. 함수 선언만 하고 호출하지 않음
 
 함수 본문은 실행되지 않는다.
 
-## 61-2. `console.log()`와 `return`을 같은 역할로 이해
+<a id="index-section-92"></a>
+
+### 61-2. `console.log()`와 `return`을 같은 역할로 이해
 
 출력과 값 반환은 다르다.
 
-## 61-3. 중첩 호출의 바깥 함수부터 실행된다고 생각
+### 61-3. 중첩 호출의 바깥 함수부터 실행된다고 생각
 
 인수의 안쪽 호출이 먼저 평가된다.
 
-## 61-4. 기본 매개변수와 `undefined` 방어를 중복 작성
+### 61-4. 기본 매개변수와 `undefined` 방어를 중복 작성
 
 하나의 방식으로 단순화할 수 있다.
 
-## 61-5. 함수 참조에 괄호를 붙임
+### 61-5. 함수 참조에 괄호를 붙임
 
 콜백 전달 전에 즉시 실행된다.
 
-## 61-6. 같은 이름의 함수를 여러 번 선언
+### 61-6. 같은 이름의 함수를 여러 번 선언
 
 앞 구현이 가려진다.
 
-## 61-7. 선언 키워드 없이 반환값 저장
+### 61-7. 선언 키워드 없이 반환값 저장
 
 전역 오염 또는 `ReferenceError`가 발생한다.
 
-## 61-8. 내장 API를 직접 덮어쓰기
+### 61-8. 내장 API를 직접 덮어쓰기
 
 다른 코드 전체에 영향을 준다.
 
-## 61-9. 숫자 배열에 기본 `sort()` 사용
+<a id="index-section-99"></a>
+
+### 61-9. 숫자 배열에 기본 `sort()` 사용
 
 문자열 기준 정렬이 된다.
 
-## 61-10. 타이머 지연 시간을 정확한 실행 시각으로 생각
+### 61-10. 타이머 지연 시간을 정확한 실행 시각으로 생각
 
 이벤트 루프 상태에 따라 늦어질 수 있다.
 
 ---
 
-# 62. 핵심 요약
+<a id="js-08-section-66"></a>
+
+## 62. 핵심 요약
 
 ```text
 function name() {}
@@ -1683,7 +1993,9 @@ clearInterval()
 
 ---
 
-# 63. 최종 체크리스트
+<a id="js-08-section-67"></a>
+
+## 63. 최종 체크리스트
 
 - [ ] 함수 선언과 호출을 구분할 수 있는가?
 - [ ] 함수 자체와 실행 결과를 구분할 수 있는가?
@@ -1709,7 +2021,9 @@ clearInterval()
 
 ---
 
-# 마무리
+<a id="js-08-section-68"></a>
+
+## 마무리
 
 함수의 핵심은 코드를 이름으로 묶는 것에서 끝나지 않는다.
 
@@ -1726,7 +2040,9 @@ clearInterval()
 ```
 
 이 흐름을 이해하면 이후 화살표 함수, 이벤트 처리, 비동기 작업을 더 자연스럽게 학습할 수 있다.
-# V3 실행 추적 카드 — 함수 등록 → 호출/예약 → 콜백 실행
+<a id="js-08-section-69"></a>
+
+## V3 실행 추적 카드 — 함수 등록 → 호출/예약 → 콜백 실행
 
 함수 정의와 호출은 다르다. `setTimeout(callback, delay)`는 함수를 즉시 실행하지 않고 최소 지연 뒤 실행할 작업으로 등록하며 현재 호출 스택이 끝난 뒤 처리된다.
 

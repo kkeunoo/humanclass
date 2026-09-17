@@ -4,6 +4,50 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-11-section-2)
+- [개념에서 실제 실행까지 — 서브쿼리란? — 비교 값과 중간 테이블을 SQL에서 만들기](#sql-11-section-3)
+- [11. 내 코드와 강사님 코드 비교](#sql-11-section-14)
+- [16. 종합실습](#sql-11-section-19)
+- [17. 정답과 해설](#sql-11-section-20)
+- [18. 최종 체크리스트](#sql-11-section-21)
+- [19. 핵심 요약](#sql-11-section-22)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-11-section-1)
+- [학습 목표](#sql-11-section-2)
+- [개념에서 실제 실행까지 — 서브쿼리란? — 비교 값과 중간 테이블을 SQL에서 만들기](#sql-11-section-3)
+- [1. Subquery 기본 개념](#sql-11-section-4)
+- [2. 반환 형태로 분류하기](#sql-11-section-5)
+- [3. Scalar Subquery](#sql-11-section-6)
+- [4. 다중 행 Subquery와 IN](#sql-11-section-7)
+- [5. ANY와 ALL](#sql-11-section-8)
+- [6. EXISTS와 NOT EXISTS](#sql-11-section-9)
+- [7. Correlated Subquery](#sql-11-section-10)
+- [8. SELECT절 Subquery](#sql-11-section-11)
+- [9. FROM절 Subquery와 Derived Table](#sql-11-section-12)
+- [10. 다중 Column Subquery](#sql-11-section-13)
+- [11. 내 코드와 강사님 코드 비교](#sql-11-section-14)
+- [12. 개선된 통합 예제](#sql-11-section-15)
+- [13. 실무 활용 지침](#sql-11-section-16)
+- [14. 자주 하는 실수](#sql-11-section-17)
+- [15. 디버깅 방법](#sql-11-section-18)
+- [16. 종합실습](#sql-11-section-19)
+- [17. 정답과 해설](#sql-11-section-20)
+- [18. 최종 체크리스트](#sql-11-section-21)
+- [19. 핵심 요약](#sql-11-section-22)
+- [📎 다음 문서](#sql-11-section-23)
+- [🔬 V3 동작 백과 — 안쪽 Query의 결과가 바깥 조건이 되는 과정](#sql-11-section-24)
+
+</details>
+
+---
+
+<a id="sql-11-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -19,16 +63,156 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-11-section-2"></a>
 
-- Subquery와 Main Query의 역할을 구분한다.
-- Scalar·다중 행·다중 Column Subquery의 반환 형태를 설명한다.
-- `=`, `IN`, `ANY`, `ALL`, `EXISTS`를 결과 형태에 맞게 선택한다.
-- 상관 Subquery와 비상관 Subquery의 실행 논리를 구분한다.
-- `FROM`절 Derived Table에 Alias를 지정하고 중간 집계를 활용한다.
-- `NULL`, 다중 행 오류, 불필요한 중첩을 단계적으로 디버깅한다.
+## 학습 목표
+
+- 스칼라·다중 행·상관 조건과 부서별 최댓값을 구분한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-11-section-3"></a>
+
+## 개념에서 실제 실행까지 — 서브쿼리란? — 비교 값과 중간 테이블을 SQL에서 만들기
+
+### 무엇이며 왜 배워야 할까?
+
+서브쿼리는 다른 SQL 안에 들어 있는 SELECT다. 비교에 사용할 값, 포함 집합, 중간 테이블을 만들 수 있다. =나 > 오른쪽에서 하나의 값으로 사용하는 스칼라 서브쿼리는 한 열·최대 한 행이어야 한다. 결과가 0행이면 NULL, 여러 행이면 오류다. 이 제한을 모든 서브쿼리에 일반화하면 안 된다.
+
+IN은 여러 결과를 받는다. 그러나 sal IN(부서별 최대급여들)은 급여 숫자가 그 집합에 있는지만 검사한다. 어떤 사원이 ‘자기 부서의’ 최고 급여자인지 검사하려면 부서까지 연결해야 한다. 초기화 데이터에서는 우연히 같은 결과일 수 있지만 다른 부서 최고값과 같은 급여의 비최고 사원이 생기면 잘못 포함된다.
+
+상관 서브쿼리에서는 바깥 e.deptno를 안쪽 e2.deptno와 연결한다. 논리적으로 각 바깥 행의 부서에 맞는 최대값을 구해 비교한다. 실제 옵티마이저가 매번 같은 방식으로 실행한다는 성능 단정은 하지 않는다. 공동 최고 급여자는 =MAX 조건으로 모두 남는다.
+
+### 입력은 어디에서 오는가?
+
+EMP·DEPT·SALGRADE는 초기화 자료 그대로 준비된 상태다. EMP 14행, DEPT 4행, SALGRADE 5행이다. 다른 DML로 데이터를 바꿨다면 아래 결과와 달라질 수 있다. 상수 SELECT 예제는 테이블 없이도 실행할 수 있다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+SELECT e.deptno, e.ename, e.sal
+FROM emp AS e
+WHERE e.sal = (
+    SELECT MAX(e2.sal)
+    FROM emp AS e2
+    WHERE e2.deptno = e.deptno
+)
+ORDER BY e.deptno, e.empno;
+```
+
+Result Grid의 열·행 값:
+
+```text
+deptno	ename	sal
+10	KING	5000.00
+20	SCOTT	3000.00
+20	FORD	3000.00
+30	BLAKE	2850.00
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 바깥 EMP의 한 사원 행을 기준으로 본다.
+2. 안쪽 EMP에서 같은 deptno만 집계하여 MAX(sal)을 만든다.
+3. 바깥 사원의 sal과 자기 부서 최대값을 비교한다.
+4. 일치 행을 남기고 부서·사원번호로 정렬한다. 20부서 공동 최고 두 명을 유지한다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 471~480행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+select ename, sal
+from emp
+-- where sal = 3000 or sal = 2850 or sal = 5000;
+where sal in (3000, 2850, 5000);
+
+select ename, sal
+from emp
+where sal in (  select max(sal)
+				from emp
+			  	group by deptno);
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 438~447행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+select ename, sal
+from emp
+-- where sal = 3000 or sal = 2850 or sal = 5000;
+where sal in (3000, 2850, 5000);
+
+select ename, sal, deptno
+from emp
+-- where sal = 3000 or sal = 2850 or sal = 5000;
+where sal in (	select max(sal)
+				from emp
+```
+
+두 원본은 급여 숫자 집합에 대한 IN 예제를 사용한다. 원본 의도인 부서별 최고를 일반 데이터에서도 만족시키려면 상관 조건이나 (deptno,sal) 짝 비교로 보완한다. 이름은 UNIQUE 제약이 없으므로 ename 기준 스칼라 예제는 동명이인 가능성도 확인한다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 반례로 검증 — 숫자만 비교하면 자기 부서를 놓친다
+
+💡 원본 데이터에서는 보이지 않는 오류를 드러내기 위해 세 행의 보충 CTE를 만들었다. a는 10부서에서 k보다 낮은 급여지만 20부서 최고급여와 같아 숫자 집합만 비교하면 포함된다. 같은 부서 조건은 a를 제외한다. 원본 EMP를 변경하지 않는다.
+
+```sql
+WITH sample(empno,deptno,ename,sal) AS (
+ SELECT 1,10,'a',3000 UNION ALL
+ SELECT 2,10,'k',5000 UNION ALL
+ SELECT 3,20,'m',3000
+)
+SELECT e.ename,
+ e.sal IN (SELECT MAX(sal) FROM sample GROUP BY deptno) AS number_only,
+ e.sal = (SELECT MAX(e2.sal) FROM sample e2 WHERE e2.deptno=e.deptno) AS own_dept_top
+FROM sample e ORDER BY e.empno;
+```
+
+검증 결과:
+
+```text
+ename	number_only	own_dept_top
+a	1	0
+k	1	1
+m	1	1
+```
+
+### 이해 확인 실습
+
+1. 부서 30의 비최고 사원이 다른 부서 최고급여와 같은 금액이면 sal IN만으로 구별할 수 있을까?
+2. ename='SCOTT' 조건에서 두 동명이인이 조회되면 >(...서브쿼리...)는?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 없다. 부서 정보를 함께 비교해야 자기 부서 최고인지 확정할 수 있다.
+2. 스칼라 문맥에서 여러 행 오류가 난다. 이름은 초기화 DDL의 UNIQUE가 아니므로 PK 등 식별 기준을 사용한다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-11-section-4"></a>
 
 ## 1. Subquery 기본 개념
 
@@ -95,6 +279,8 @@ WHERE sal > (SELECT AVG(sal) FROM emp);
 
 ---
 
+<a id="sql-11-section-5"></a>
+
 ## 2. 반환 형태로 분류하기
 
 ### 6. Subquery는 여러 형태의 결과를 반환할 수 있다
@@ -127,6 +313,8 @@ FROM (Subquery)
 ```
 
 ---
+
+<a id="sql-11-section-6"></a>
 
 ## 3. Scalar Subquery
 
@@ -202,6 +390,8 @@ WHERE deptno = (
 
 ---
 
+<a id="sql-11-section-7"></a>
+
 ## 4. 다중 행 Subquery와 IN
 
 ### 15. 여러 값 중 하나와 일치하는지 검사한다
@@ -222,6 +412,8 @@ WHERE deptno IN (
 -- 오류: IN 왼쪽은 한 값인데 Subquery는 두 Column
 -- WHERE deptno IN (SELECT deptno, dname FROM dept)
 ```
+
+<a id="index-section-36"></a>
 
 ### 17. `IN`은 `= ANY`와 논리적으로 연결된다
 
@@ -276,6 +468,8 @@ WHERE NOT EXISTS (
 ```
 
 ---
+
+<a id="sql-11-section-8"></a>
 
 ## 5. ANY와 ALL
 
@@ -345,6 +539,8 @@ WHERE sal < ALL (
 
 ---
 
+<a id="sql-11-section-9"></a>
+
 ## 6. EXISTS와 NOT EXISTS
 
 ### 26. EXISTS는 Row 존재 여부만 검사한다
@@ -396,6 +592,8 @@ WHERE EXISTS (
 ```
 
 ---
+
+<a id="sql-11-section-10"></a>
 
 ## 7. Correlated Subquery
 
@@ -468,6 +666,8 @@ WHERE e.sal > (
 
 ---
 
+<a id="sql-11-section-11"></a>
+
 ## 8. SELECT절 Subquery
 
 ### 37. 각 Row에 계산된 기준값을 함께 표시한다
@@ -515,6 +715,8 @@ LEFT JOIN dept AS d
 같은 조건의 Subquery를 Column마다 반복하지 말고 JOIN, CTE, Derived Table로 한 번 계산하는 방식을 검토한다.
 
 ---
+
+<a id="sql-11-section-12"></a>
 
 ## 9. FROM절 Subquery와 Derived Table
 
@@ -581,6 +783,8 @@ ORDER BY deptno;
 
 ---
 
+<a id="sql-11-section-13"></a>
+
 ## 10. 다중 Column Subquery
 
 ### 46. 한 행의 여러 값을 함께 비교한다
@@ -616,6 +820,8 @@ WHERE (deptno, job) IN (
 다중 Column Subquery가 복잡해지면 무엇을 연결하는지 `JOIN ... ON`으로 표현하는 방식을 함께 검토한다.
 
 ---
+
+<a id="sql-11-section-14"></a>
 
 ## 11. 내 코드와 강사님 코드 비교
 
@@ -680,6 +886,8 @@ WHERE deptno IN (
 
 ---
 
+<a id="sql-11-section-15"></a>
+
 ## 12. 개선된 통합 예제
 
 ### 56. 부서 평균보다 급여가 높은 사원 보고서
@@ -735,6 +943,8 @@ ORDER BY e.deptno, e.empno;
 
 ---
 
+<a id="sql-11-section-16"></a>
+
 ## 13. 실무 활용 지침
 
 ### 59. Subquery 결과의 계약을 먼저 적는다
@@ -763,6 +973,8 @@ NULL이 가능한가?
 Subquery가 여러 단계로 중첩되면 CTE를 사용해 각 중간 결과의 의미를 드러낸다.
 
 ---
+
+<a id="sql-11-section-17"></a>
 
 ## 14. 자주 하는 실수
 
@@ -795,6 +1007,8 @@ MariaDB의 `FROM (SELECT ...)` 뒤에는 사용할 이름을 지정한다.
 MariaDB Optimizer가 Query를 변환할 수 있으므로 `EXPLAIN`과 실제 실행 조건으로 확인한다.
 
 ---
+
+<a id="sql-11-section-18"></a>
 
 ## 15. 디버깅 방법
 
@@ -841,6 +1055,8 @@ FROM emp AS e
 ORDER BY e.deptno, e.empno;
 ```
 
+<a id="index-section-105"></a>
+
 ### 75. EXPLAIN으로 실행 계획을 확인한다
 
 ```sql
@@ -863,6 +1079,8 @@ WHERE EXISTS (
 5. 마지막에 정렬과 표시 형식을 추가한다.
 
 ---
+
+<a id="sql-11-section-19"></a>
 
 ## 16. 종합실습
 
@@ -887,6 +1105,8 @@ WHERE EXISTS (
 부서별 최고 급여를 받는 사원을 조회한다. 동점자는 모두 표시한다.
 
 ---
+
+<a id="sql-11-section-20"></a>
 
 ## 17. 정답과 해설
 
@@ -966,6 +1186,8 @@ ORDER BY e.deptno, e.empno;
 
 ---
 
+<a id="sql-11-section-21"></a>
+
 ## 18. 최종 체크리스트
 
 ### 87. 문법 체크
@@ -990,6 +1212,8 @@ ORDER BY e.deptno, e.empno;
 - [ ] 성능 판단을 추측이 아니라 `EXPLAIN`으로 확인했는가?
 
 ---
+
+<a id="sql-11-section-22"></a>
 
 ## 19. 핵심 요약
 
@@ -1021,6 +1245,8 @@ Subquery의 핵심은 중첩 자체가 아니라 **안쪽 Query가 몇 행·몇 
 
 ---
 
+<a id="sql-11-section-23"></a>
+
 ## 📎 다음 문서
 
 다음 원본 흐름은 기존 방식과 ANSI 문법을 포함한 JOIN이다.
@@ -1030,6 +1256,8 @@ Subquery의 핵심은 중첩 자체가 아니라 **안쪽 Query가 몇 행·몇 
 ```
 
 ---
+
+<a id="sql-11-section-24"></a>
 
 ## 🔬 V3 동작 백과 — 안쪽 Query의 결과가 바깥 조건이 되는 과정
 

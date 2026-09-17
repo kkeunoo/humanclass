@@ -4,6 +4,59 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-18-section-2)
+- [개념에서 실제 실행까지 — Recursive CTE란? — 시작 행에서 다음 관계를 반복 찾기](#sql-18-section-3)
+- [20. 내 코드와 강사님 코드 비교](#sql-18-section-23)
+- [25. 종합실습](#sql-18-section-28)
+- [26. 정답과 해설](#sql-18-section-29)
+- [27. 최종 체크리스트](#sql-18-section-30)
+- [28. 핵심 요약](#sql-18-section-31)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-18-section-1)
+- [학습 목표](#sql-18-section-2)
+- [개념에서 실제 실행까지 — Recursive CTE란? — 시작 행에서 다음 관계를 반복 찾기](#sql-18-section-3)
+- [1. CTE 기본 개념](#sql-18-section-4)
+- [2. Recursive CTE 구조](#sql-18-section-5)
+- [3. 숫자 Sequence](#sql-18-section-6)
+- [4. 시작값·끝값 Parameter](#sql-18-section-7)
+- [5. 날짜 Sequence](#sql-18-section-8)
+- [6. 문자열과 반복](#sql-18-section-9)
+- [7. 조직 계층 Data](#sql-18-section-10)
+- [8. 전체 조직도 조회](#sql-18-section-11)
+- [9. 들여쓰기와 경로](#sql-18-section-12)
+- [10. 특정 Root의 하위 조직](#sql-18-section-13)
+- [11. 상위 관리자 탐색](#sql-18-section-14)
+- [12. 여러 Root와 Forest](#sql-18-section-15)
+- [13. Category Tree 예제](#sql-18-section-16)
+- [14. UNION ALL과 UNION](#sql-18-section-17)
+- [15. Cycle 문제](#sql-18-section-18)
+- [16. 재귀 제한](#sql-18-section-19)
+- [17. 자료형과 CAST](#sql-18-section-20)
+- [18. 정렬과 탐색 순서](#sql-18-section-21)
+- [19. 집계와 계층](#sql-18-section-22)
+- [20. 내 코드와 강사님 코드 비교](#sql-18-section-23)
+- [21. 개선된 통합 예제](#sql-18-section-24)
+- [22. 실무 활용 지침](#sql-18-section-25)
+- [23. 자주 하는 실수](#sql-18-section-26)
+- [24. 디버깅 방법](#sql-18-section-27)
+- [25. 종합실습](#sql-18-section-28)
+- [26. 정답과 해설](#sql-18-section-29)
+- [27. 최종 체크리스트](#sql-18-section-30)
+- [28. 핵심 요약](#sql-18-section-31)
+- [📎 다음 문서](#sql-18-section-32)
+- [🔬 V3 동작 백과 — 재귀 Result는 반복마다 어떻게 늘어나는가?](#sql-18-section-33)
+
+</details>
+
+---
+
+<a id="sql-18-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -19,18 +72,156 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-18-section-2"></a>
 
-- 일반 CTE와 Recursive CTE의 차이를 설명한다.
-- Anchor Member와 Recursive Member의 역할을 구분한다.
-- 종료 조건이 새 Row를 만들지 못할 때 재귀가 끝나는 원리를 이해한다.
-- 숫자·날짜 Sequence를 안전한 상한과 함께 생성한다.
-- 조직·Category 계층의 깊이, 경로, Root를 조회한다.
-- 순환 Data와 중복 경로 때문에 생기는 무한 반복을 방지한다.
-- Anchor에서 재귀 Column의 자료형과 길이를 충분히 정의한다.
-- `max_recursive_iterations`를 안전장치로 이해하고 논리 오류를 먼저 수정한다.
+## 학습 목표
+
+- 앵커·재귀 단계·종료·경로 자료형을 이해한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-18-section-3"></a>
+
+## 개념에서 실제 실행까지 — Recursive CTE란? — 시작 행에서 다음 관계를 반복 찾기
+
+### 무엇이며 왜 배워야 할까?
+
+CTE는 한 SQL에서 이름을 붙여 사용하는 중간 결과다. 영구 테이블을 새로 저장하는 CREATE TABLE과 다르다. 재귀 CTE는 시작 결과인 앵커와 이전 단계의 결과를 사용해 다음 값을 만드는 재귀 부분을 결합한다.
+
+숫자 1을 앵커로 만들고 n<4인 현재 값에 1을 더하면 2·3·4가 생긴다. n=4에서는 조건이 거짓이라 새 행을 만들지 않고 종료한다. 종료 조건은 다음 값이 아니라 현재 반복에 들어오는 값을 검사한다는 점을 확인한다.
+
+EMP 조직도에서는 mgr IS NULL인 KING이 앵커이고 이전 단계 사원의 empno를 mgr로 가진 하위를 JOIN으로 찾는다. 고아 관계는 루트에서 도달하지 못할 수 있고 순환 관계는 무한 반복 위험이 있으므로 정상 트리라는 가정을 명시해야 한다.
+
+문자열 경로는 단계마다 길어질 수 있다. 앵커가 결정하는 열 크기보다 늘어나는 결과를 대비해 충분한 CAST를 앵커에 지정한다. 내·강사님 원본은 sort_key에 CAST를 쓰지만 들여쓰기 표현식도 길이 확장이 필요할 수 있다. 버전·설정에 따라 잘림·오류 동작이 달라지므로 무조건 성공한다고 설명하지 않는다.
+
+### 입력은 어디에서 오는가?
+
+초기화 자료의 EMP·DEPT 또는 SQL 안에서 직접 만든 CTE를 사용한다. 각 코드에 명시된 입력을 읽고 전체 EMP와 작은 가상 입력을 구분한다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+WITH RECURSIVE numbers(n,path) AS (
+  SELECT 1, CAST('1' AS CHAR(30))
+  UNION ALL
+  SELECT n+1, CONCAT(path,'>',n+1)
+  FROM numbers
+  WHERE n<4
+)
+SELECT n,path FROM numbers ORDER BY n;
+```
+
+Result Grid의 열·행 값:
+
+```text
+n	path
+1	1
+2	1>2
+3	1>2>3
+4	1>2>3>4
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 앵커가 n=1,path='1' 한 행을 만든다.
+2. 첫 재귀는 현재 n=1에서 n+1=2,path='1>2'를 만든다.
+3. 같은 방식으로 3·4를 만들고 n=4가 되면 n<4를 통과하지 않는다.
+4. 최종 SELECT가 누적된 네 행을 n으로 정렬한다. 영구 객체로 저장되지 않는다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 939~948행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+where mgr = 7839;
+
+-- 아래처럼 재귀함수로 각 Level을 부여할 수 있다
+with recursive emp_recu as (
+	select 
+		empno, ename, mgr, 
+		lpad(ename, length(ename), ' '),
+		1 as level,
+		cast(ename as char(200)) as sort_key
+	from emp
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 868~877행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+from emp
+where mgr = 7839;
+
+with recursive emp_recu as (
+	select 
+		empno, ename, mgr,
+		lpad(ename, length(ename), ' '),
+		1 as level,
+		cast(ename as char(200)) as sort_key
+	from emp
+```
+
+두 원본 모두 직접 UNION ALL한 1·2레벨 시연 뒤 emp_recu를 사용한다. 두 SELECT만 직접 적은 버전은 임의 깊이를 탐색하는 완성 재귀가 아니다. 💡 숫자·날짜 생성·순환 보호는 이 구조를 확장한 학습이다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 조직도의 단계별 인원
+
+두 원본의 EMP 재귀를 표시 문자열 대신 깊이와 인원으로 줄여 검증했다. KING 1명에서 시작하고 관리자 연결을 따라 3·8·2명으로 확장해 전체 14명이 된다. 이 초기화 데이터에서는 루트 한 개·순환 없음이라는 가정이 맞지만 임의 조직 자료에는 별도 검사가 필요하다.
+
+```sql
+WITH RECURSIVE organization(empno,depth) AS (
+ SELECT empno,1 FROM emp WHERE mgr IS NULL
+ UNION ALL
+ SELECT e.empno,o.depth+1 FROM emp e JOIN organization o ON e.mgr=o.empno
+)
+SELECT depth,COUNT(*) AS employees FROM organization GROUP BY depth ORDER BY depth;
+```
+
+검증 결과:
+
+```text
+depth	employees
+1	1
+2	3
+3	8
+4	2
+```
+
+### 이해 확인 실습
+
+1. WHERE n<4를 n<=4로 바꾸면 마지막 값은?
+2. 원본의 루트와 직속 하위만 UNION한 SQL이 임의 깊이의 계층을 모두 탐색하는가?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 5다. 현재 값 4가 조건을 통과해 다음 값 5를 생성하고 그다음 멈춘다.
+2. 아니다. 고정 두 레벨이다. 재귀 반복과 종료·순환 검사가 필요하다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-18-section-4"></a>
 
 ## 1. CTE 기본 개념
 
@@ -67,6 +258,8 @@ Recursive CTE
 
 ---
 
+<a id="sql-18-section-5"></a>
+
 ## 2. Recursive CTE 구조
 
 ### 5. 기본 문법
@@ -86,6 +279,8 @@ FROM cte_name;
 ### 6. Anchor Member
 
 반복의 시작 Row를 만든다. CTE 자신을 참조하지 않는다.
+
+<a id="index-section-24"></a>
 
 ### 7. Recursive Member
 
@@ -110,6 +305,8 @@ Recursive Member가 더 이상 새 Row를 반환하지 않으면 반복이 끝�
 ```
 
 ---
+
+<a id="sql-18-section-6"></a>
 
 ## 3. 숫자 Sequence
 
@@ -165,6 +362,8 @@ SELECT n FROM even_numbers;
 
 ---
 
+<a id="sql-18-section-7"></a>
+
 ## 4. 시작값·끝값 Parameter
 
 ### 17. Session 변수 활용 예제
@@ -201,11 +400,15 @@ WITH RECURSIVE numbers AS (
 SELECT n FROM numbers;
 ```
 
+<a id="index-section-39"></a>
+
 ### 20. Application Parameter는 Binding한다
 
 문자열 조합으로 SQL을 만들지 말고 Prepared Statement Parameter를 사용한다.
 
 ---
+
+<a id="sql-18-section-8"></a>
 
 ## 5. 날짜 Sequence
 
@@ -269,6 +472,8 @@ Calendar가 왼쪽 기준이므로 일치하는 Data가 없어도 날짜 Row는 
 
 ---
 
+<a id="sql-18-section-9"></a>
+
 ## 6. 문자열과 반복
 
 ### 26. 반복 문자열 만들기
@@ -302,9 +507,11 @@ FROM levels;
 
 ### 29. 숫자 범위도 Anchor 자료형을 확인한다
 
-재귀 계산 결과가 `INT` 범위를 넘을 가능성이 있으면 Anchor에서 `CAST(... AS BIGINT)` 등으로 넓힌다.
+재귀 계산 결과의 정수 범위를 검토할 때 MariaDB가 지원하는 `CAST(... AS SIGNED)` 또는 `UNSIGNED` 등을 입력의 의미에 맞게 사용한다. `BIGINT`는 컬럼 자료형 이름이지만 MariaDB에서 `CAST(... AS BIGINT)` 구문은 지원하지 않아 오류가 난다. 숫자 크기·부호·오버플로도 별도로 검증한다.
 
 ---
+
+<a id="sql-18-section-10"></a>
 
 ## 7. 조직 계층 Data
 
@@ -341,6 +548,8 @@ WHERE mgr = 7839;
 Self Join을 여러 번 이어 쓰면 정해진 깊이는 조회할 수 있지만 조직 깊이가 가변적이면 Recursive CTE가 적합하다.
 
 ---
+
+<a id="sql-18-section-11"></a>
 
 ## 8. 전체 조직도 조회
 
@@ -402,6 +611,8 @@ SELECT * FROM org;
 재귀 생성 순서가 원하는 조직도 표시 순서를 자동 보장한다고 가정하지 않는다.
 
 ---
+
+<a id="sql-18-section-12"></a>
 
 ## 9. 들여쓰기와 경로
 
@@ -472,6 +683,8 @@ CAST(CONCAT('/', empno, '/') AS CHAR(1000)) AS id_path
 
 ---
 
+<a id="sql-18-section-13"></a>
+
 ## 10. 특정 Root의 하위 조직
 
 ### 45. 특정 사원을 Anchor로 선택한다
@@ -511,6 +724,8 @@ Anchor가 Row를 만들지 못하므로 Recursive Member도 실행할 출발점�
 결과 0행이 “하위 직원 없음”인지 “Root 없음”인지 구분하려면 Anchor 대상 존재를 먼저 검사한다.
 
 ---
+
+<a id="sql-18-section-14"></a>
 
 ## 11. 상위 관리자 탐색
 
@@ -562,6 +777,8 @@ WHERE distance > 0
 
 ---
 
+<a id="sql-18-section-15"></a>
+
 ## 12. 여러 Root와 Forest
 
 ### 53. Root가 여러 개일 수 있다
@@ -612,6 +829,8 @@ GROUP BY root_empno;
 이 Query는 위 CTE와 같은 문장 안에서 사용해야 한다.
 
 ---
+
+<a id="sql-18-section-16"></a>
 
 ## 13. Category Tree 예제
 
@@ -679,6 +898,8 @@ ORDER BY category_path;
 
 ---
 
+<a id="sql-18-section-17"></a>
+
 ## 14. UNION ALL과 UNION
 
 ### 60. UNION ALL은 중복 Row를 유지한다
@@ -702,6 +923,8 @@ Graph 탐색에서 동일한 완전 Row가 반복되는 것을 막는 데 도움
 한 Node에 부모가 하나인 Tree인지, 여러 경로가 가능한 Graph인지에 따라 중복 결과의 의미가 달라진다.
 
 ---
+
+<a id="sql-18-section-18"></a>
 
 ## 15. Cycle 문제
 
@@ -781,6 +1004,8 @@ SELECT * FROM graph_walk;
 
 ---
 
+<a id="sql-18-section-19"></a>
+
 ## 16. 재귀 제한
 
 ### 71. 현재 제한 확인
@@ -801,6 +1026,8 @@ MariaDB 10.6 이상 문서의 기본값은 1000이지만 실제 환경 값을 �
 
 종료 조건, Cycle, 예상 최대 깊이, Anchor 범위를 먼저 확인한다.
 
+<a id="index-section-106"></a>
+
 ### 75. Session 범위 설정
 
 ```sql
@@ -818,6 +1045,8 @@ WHERE parent.depth < 20
 조직 최대 깊이가 20이라는 업무 규칙이 있다면 Server 한도와 별도로 명시한다.
 
 ---
+
+<a id="sql-18-section-20"></a>
 
 ## 17. 자료형과 CAST
 
@@ -856,6 +1085,8 @@ CAST(NULL AS SIGNED INTEGER) AS parent_id
 경로, 날짜, 숫자 누적 결과를 의도한 자료형으로 명시한다.
 
 ---
+
+<a id="sql-18-section-21"></a>
 
 ## 18. 정렬과 탐색 순서
 
@@ -896,6 +1127,8 @@ CAST(LPAD(empno, 10, '0') AS CHAR(2000)) AS sort_path
 사람이 읽는 이름 경로와 안정적인 정렬용 Key는 별도 Column으로 관리한다.
 
 ---
+
+<a id="sql-18-section-22"></a>
 
 ## 19. 집계와 계층
 
@@ -939,6 +1172,8 @@ Graph 구조에서는 한 Node가 여러 경로로 도달 가능하다. Row의 �
 
 ---
 
+<a id="sql-18-section-23"></a>
+
 ## 20. 내 코드와 강사님 코드 비교
 
 ### 94. 종료 조건 없는 숫자 생성
@@ -981,6 +1216,8 @@ FROM emp
 WHERE mgr IS NULL;
 ```
 
+<a id="index-section-133"></a>
+
 ### 98. Self Join 반복 방식
 
 ```sql
@@ -1005,6 +1242,8 @@ LEFT JOIN emp AS senior ON senior.empno = manager.mgr;
 - 고정 한두 단계는 Self Join이 더 단순할 수 있다.
 
 ---
+
+<a id="sql-18-section-24"></a>
 
 ## 21. 개선된 통합 예제
 
@@ -1083,6 +1322,8 @@ Recursive CTE 실행 전에 존재하지 않는 부모 참조를 진단한다.
 
 ---
 
+<a id="sql-18-section-25"></a>
+
 ## 22. 실무 활용 지침
 
 ### 104. 출발점과 이동 방향을 문장으로 적는다
@@ -1117,6 +1358,8 @@ Adjacency List 외에 Closure Table, Materialized Path 등 읽기·쓰기 Patter
 Parent Key Index, Anchor 선택도, 각 Level Row 수, Path 계산 비용을 확인한다.
 
 ---
+
+<a id="sql-18-section-26"></a>
 
 ## 23. 자주 하는 실수
 
@@ -1157,6 +1400,8 @@ Depth·Path가 바뀌면 동일 Node도 다른 Row가 된다.
 CTE는 해당 SQL 문장에서만 참조할 수 있다.
 
 ---
+
+<a id="sql-18-section-27"></a>
 
 ## 24. 디버깅 방법
 
@@ -1234,6 +1479,8 @@ SELECT * FROM org;
 
 ---
 
+<a id="sql-18-section-28"></a>
+
 ## 25. 종합실습
 
 ### 129. 문제 1 — 숫자 Sequence
@@ -1257,6 +1504,8 @@ SELECT * FROM org;
 조직도에 ID 경로와 이름 경로를 추가하고 현재 경로에 이미 있는 사원을 다시 방문하지 않도록 한다.
 
 ---
+
+<a id="sql-18-section-29"></a>
 
 ## 26. 정답과 해설
 
@@ -1364,6 +1613,8 @@ ORDER BY id_path;
 
 ---
 
+<a id="sql-18-section-30"></a>
+
 ## 27. 최종 체크리스트
 
 ### 139. 구조 체크
@@ -1388,6 +1639,8 @@ ORDER BY id_path;
 - [ ] 고아 Node와 잘못된 부모 관계를 사전 검증했는가?
 
 ---
+
+<a id="sql-18-section-31"></a>
 
 ## 28. 핵심 요약
 
@@ -1422,6 +1675,8 @@ Recursive CTE의 핵심은 반복 문법이 아니라 **출발점, 다음 Row를
 
 ---
 
+<a id="sql-18-section-32"></a>
+
 ## 📎 다음 문서
 
 다음 단계는 지금까지 학습한 SQL을 유지보수 가능한 형태로 정리하는 실무 코딩 스타일이다.
@@ -1431,6 +1686,8 @@ Recursive CTE의 핵심은 반복 문법이 아니라 **출발점, 다음 Row를
 ```
 
 ---
+
+<a id="sql-18-section-33"></a>
 
 ## 🔬 V3 동작 백과 — 재귀 Result는 반복마다 어떻게 늘어나는가?
 

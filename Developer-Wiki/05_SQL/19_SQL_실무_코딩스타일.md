@@ -4,6 +4,60 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-19-section-2)
+- [개념에서 실제 실행까지 — SQL 리팩토링이란? — 같은 질문을 더 분명하게 표현](#sql-19-section-3)
+- [21. 내 코드와 강사님 코드 비교](#sql-19-section-24)
+- [26. 종합실습](#sql-19-section-29)
+- [27. 정답과 해설](#sql-19-section-30)
+- [28. 최종 체크리스트](#sql-19-section-31)
+- [29. 핵심 요약](#sql-19-section-32)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-19-section-1)
+- [학습 목표](#sql-19-section-2)
+- [개념에서 실제 실행까지 — SQL 리팩토링이란? — 같은 질문을 더 분명하게 표현](#sql-19-section-3)
+- [1. 좋은 SQL의 기준](#sql-19-section-4)
+- [2. Keyword와 Identifier 표기](#sql-19-section-5)
+- [3. Table·Column Naming](#sql-19-section-6)
+- [4. Alias](#sql-19-section-7)
+- [5. SELECT Formatting](#sql-19-section-8)
+- [6. SELECT * 사용 기준](#sql-19-section-9)
+- [7. WHERE와 조건식](#sql-19-section-10)
+- [8. NULL 작성 기준](#sql-19-section-11)
+- [9. JOIN 스타일](#sql-19-section-12)
+- [10. GROUP BY와 집계](#sql-19-section-13)
+- [11. CASE와 계산식](#sql-19-section-14)
+- [12. Subquery와 CTE](#sql-19-section-15)
+- [13. UNION 스타일](#sql-19-section-16)
+- [14. Parameter Binding](#sql-19-section-17)
+- [15. 안전한 DML 스타일](#sql-19-section-18)
+- [16. Transaction 스타일](#sql-19-section-19)
+- [17. DDL·Schema 스타일](#sql-19-section-20)
+- [18. Index·성능 스타일](#sql-19-section-21)
+- [19. Comment와 문서화](#sql-19-section-22)
+- [20. SQL_MODE와 환경](#sql-19-section-23)
+- [21. 내 코드와 강사님 코드 비교](#sql-19-section-24)
+- [22. 개선된 통합 예제](#sql-19-section-25)
+- [23. 실무 Code Review 절차](#sql-19-section-26)
+- [24. 자주 하는 실수](#sql-19-section-27)
+- [25. 디버깅 방법](#sql-19-section-28)
+- [26. 종합실습](#sql-19-section-29)
+- [27. 정답과 해설](#sql-19-section-30)
+- [28. 최종 체크리스트](#sql-19-section-31)
+- [29. 핵심 요약](#sql-19-section-32)
+- [📎 다음 문서](#sql-19-section-33)
+- [🔬 V3 백과사전식 SQL 작성 절차](#sql-19-section-34)
+
+</details>
+
+---
+
+<a id="sql-19-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -19,17 +73,147 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-19-section-2"></a>
 
-- SQL Keyword, Identifier, Alias, 들여쓰기 규칙을 일관되게 적용한다.
-- 관계 조건, Filtering, 집계, 표시 Logic을 구조적으로 분리한다.
-- NULL·날짜·경계값·중복 때문에 생기는 논리 오류를 예방한다.
-- Prepared Statement로 값 Parameter를 Binding한다.
-- 변경 전 Preview와 Transaction을 사용하는 안전한 DML 절차를 적용한다.
-- `EXPLAIN`과 실제 측정으로 성능 개선을 검증한다.
-- Code Review에서 정확성·안전성·성능·유지보수성을 함께 평가한다.
+## 학습 목표
+
+- 관계·필터·열·정렬·경계 검증 기준을 적용한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-19-section-3"></a>
+
+## 개념에서 실제 실행까지 — SQL 리팩토링이란? — 같은 질문을 더 분명하게 표현
+
+### 무엇이며 왜 배워야 할까?
+
+SQL 리팩토링은 보기 좋게 줄만 바꾸는 작업이 아니다. 같은 업무 질문과 결과 계약을 유지하면서 관계·조건·집계·변경 범위를 읽기 쉽게 표현하고 검증하는 일이다. INNER와 LEFT를 바꾸거나 NULL을 0으로 바꾸거나 DISTINCT를 추가하면 결과 계약이 달라질 수 있어 ‘정리’와 ‘기능 변경’을 구분한다.
+
+여러 테이블 JOIN 뒤에 조건을 몰아서 적으면 어떤 관계가 빠졌는지 찾기 어렵다. 각 JOIN에 관련 ON을 두고 SELECT 열에 출처 별칭을 붙이면 관계와 표시 목적이 드러난다. 어느 조건이 WHERE에서 사원을 제한하는지와 어떤 조건이 ON에서 급여 구간을 연결하는지도 구분한다.
+
+대용량 데이터에서 날짜 열에 YEAR·SUBSTRING을 씌워 필터하는 방식은 인덱스 활용 측면에서 검토할 대상이다. 범위 조건은 날짜 의미를 직접 표현하고, DATETIME까지 확장할 때 연말 자정 뒤의 값을 누락하지 않도록 반열린 구간을 쓴다. 이것만으로 실제 계획·시간 개선을 입증한 것은 아니다.
+
+💡 19번은 별도 수업 구현 파일이 아니라 앞선 SQL을 다시 사용할 작성·검수 기준이다. 원본에서 내 ‘문제6 개선’처럼 명시적 JOIN으로 정리한 사례와 연결한다.
+
+### 입력은 어디에서 오는가?
+
+초기화 자료의 EMP·DEPT 또는 SQL 안에서 직접 만든 CTE를 사용한다. 각 코드에 명시된 입력을 읽고 전체 EMP와 작은 가상 입력을 구분한다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+SELECT COUNT(*) AS hired_count,
+       MIN(hiredate) AS first_hired,
+       MAX(hiredate) AS last_hired
+FROM emp
+WHERE hiredate >= '1981-01-01'
+  AND hiredate < '1982-01-01';
+```
+
+Result Grid의 열·행 값:
+
+```text
+hired_count	first_hired	last_hired
+10	1981-02-20	1981-12-03
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 1981년 1월 1일 이상, 1982년 1월 1일 미만으로 입력 사원을 제한한다.
+2. COUNT로 선택된 전체 10명을 확인한다.
+3. MIN/MAX로 선택 범위의 실제 최소·최대 입사일을 관찰한다.
+4. 원래 연도 질문을 유지하면서 문자열 추출 대신 날짜 조건을 직접 사용한다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 1068~1077행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+-- group by e.ename
+order by s.grade desc, e.sal desc, e.ename desc; 
+
+-- 문제6 개선
+select e.ename, e.sal, s.grade, d.dname
+from emp e 
+	join dept d
+		on (e.deptno = d.deptno)
+	join salgrade s
+		on (e.sal between s.losal and s.hisal)
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 1003~1012행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+단, 급여 등급 3 이상만 조회.
+급여 등급 내림차순, 등급이 같은 경우 급여 내림차순, 급여가 같은 경우 이름 내림차순
+*/
+select e.ename, e.sal, s.grade, d.dname
+from salgrade s
+	left outer join emp e 
+		on (e.sal <= s.hisal and e.sal >= s.losal)
+	left outer join dept d
+		on(e.deptno = d.deptno)
+where s.grade >= 3
+```
+
+내 문제1의 마지막 풀이에는 바깥 연도 조건이 없어 다른 해의 같은 최소급여 사원도 들어갈 수 있다. 강사님은 바깥에서 hiredate like '1981%'를 확인한다. 더 명확한 범위 조건은 바깥·안쪽 모두의 업무 대상을 맞춘다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 1981년 최저급여 — 바깥·안쪽 범위를 일치시키기
+
+내 원본의 문제1 최종 풀이에서 빠진 바깥 연도 조건을 보완했다. 최소급여를 계산한 집합과 그 급여를 가진 사원을 찾는 집합 모두 1981년으로 제한한다. 다른 해의 동급여 사원이 있어도 잘못 포함되지 않는다.
+
+```sql
+SELECT ename,sal,hiredate FROM emp
+WHERE hiredate>='1981-01-01' AND hiredate<'1982-01-01'
+AND sal=(SELECT MIN(sal) FROM emp
+ WHERE hiredate>='1981-01-01' AND hiredate<'1982-01-01')
+ORDER BY empno;
+```
+
+검증 결과:
+
+```text
+ename	sal	hiredate
+JAMES	950.00	1981-12-03
+```
+
+### 이해 확인 실습
+
+1. DATETIME 조건에 <= '1981-12-31'을 쓰면 연말 하루 전체를 보장하는가?
+2. 조회 결과만 동일하면 LEFT JOIN을 INNER JOIN으로 바꿔도 항상 리팩토링인가?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 아니다. 자정으로 해석되어 이후 시간이 빠질 수 있다. <'1982-01-01'로 다음 경계 전까지 표현한다.
+2. 현재 데이터에서만 같을 수 있다. 빈 관계를 보존하는 계약이 달라지면 기능 변경이다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-19-section-4"></a>
 
 ## 1. 좋은 SQL의 기준
 
@@ -58,6 +242,8 @@ Schema와 요구사항 변경 시 수정 범위와 영향이 명확해야 한다
 MariaDB 전용 문법을 사용할 수 있지만 지원 Version과 다른 DBMS와의 차이를 문서화한다.
 
 ---
+
+<a id="sql-19-section-5"></a>
 
 ## 2. Keyword와 Identifier 표기
 
@@ -103,11 +289,15 @@ FROM legacy_table;
 
 ---
 
+<a id="sql-19-section-6"></a>
+
 ## 3. Table·Column Naming
 
 ### 13. 단수·복수 규칙을 팀에서 통일한다
 
 `employee` 또는 `employees` 중 하나를 선택하고 Repository 안에서 혼용하지 않는다.
+
+<a id="index-section-32"></a>
 
 ### 14. Primary Key Naming
 
@@ -154,6 +344,8 @@ amount_krw
 
 ---
 
+<a id="sql-19-section-7"></a>
+
 ## 4. Alias
 
 ### 19. 짧지만 역할이 드러나는 Alias
@@ -164,6 +356,8 @@ FROM emp AS e
 JOIN dept AS d
     ON d.deptno = e.deptno;
 ```
+
+<a id="index-section-39"></a>
 
 ### 20. Self Join은 역할 이름을 쓴다
 
@@ -199,6 +393,8 @@ ROUND(AVG(sal), 2) AS avg_salary
 한 Query에서 `dept`, `department`, `d`를 무계획하게 섞지 않는다.
 
 ---
+
+<a id="sql-19-section-8"></a>
 
 ## 5. SELECT Formatting
 
@@ -251,6 +447,8 @@ FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT
 
 ---
 
+<a id="sql-19-section-9"></a>
+
 ## 6. SELECT * 사용 기준
 
 ### 30. 탐색 단계에서는 사용할 수 있다
@@ -280,6 +478,8 @@ Column 추가·순서 변경이 API Response, Mapping, Network 비용에 예기�
 필요한 Column만 조회하면 Index만으로 Query를 처리할 가능성도 높아질 수 있다.
 
 ---
+
+<a id="sql-19-section-10"></a>
 
 ## 7. WHERE와 조건식
 
@@ -333,6 +533,8 @@ Dynamic Query Builder 내부 목적이 아니라면 최종 SQL에서는 제거�
 
 ---
 
+<a id="sql-19-section-11"></a>
+
 ## 8. NULL 작성 기준
 
 ### 41. 등호로 비교하지 않는다
@@ -371,6 +573,8 @@ Nullable 일반 Column이 아니라 오른쪽 PK를 `IS NULL`로 검사한다.
 
 ---
 
+<a id="sql-19-section-12"></a>
+
 ## 9. JOIN 스타일
 
 ### 46. ANSI JOIN을 사용한다
@@ -394,6 +598,8 @@ JOIN dept AS d
 WHERE e.sal >= 2000
 ```
 
+<a id="index-section-73"></a>
+
 ### 49. Outer Join의 오른쪽 조건 위치를 검토한다
 
 모든 왼쪽 Row를 보존하려면 오른쪽 연결 제한을 `ON`에 둔다.
@@ -414,6 +620,8 @@ ON order_item.order_id = customer_order.order_id
 
 ---
 
+<a id="sql-19-section-13"></a>
+
 ## 10. GROUP BY와 집계
 
 ### 53. 일반 Column을 Grouping 기준에 맞춘다
@@ -428,6 +636,8 @@ GROUP BY d.deptno, d.dname;
 ### 54. ONLY_FULL_GROUP_BY에 맞는 Query를 작성한다
 
 현재 환경에서 Mode가 꺼져 실행된다고 비결정적 일반 Column을 선택하지 않는다.
+
+<a id="index-section-80"></a>
 
 ### 55. WHERE와 HAVING을 구분한다
 
@@ -457,6 +667,8 @@ avg_processing_seconds
 
 ---
 
+<a id="sql-19-section-14"></a>
+
 ## 11. CASE와 계산식
 
 ### 59. 조건은 위에서 아래로 읽힌다
@@ -484,6 +696,8 @@ AVG(CASE WHEN deptno = 20 THEN sal END)
 분류 규칙이 기준 Data라면 Mapping Table과 JOIN도 검토한다.
 
 ---
+
+<a id="sql-19-section-15"></a>
 
 ## 12. Subquery와 CTE
 
@@ -522,6 +736,8 @@ Server 반복 제한만 믿지 않는다.
 
 ---
 
+<a id="sql-19-section-16"></a>
+
 ## 13. UNION 스타일
 
 ### 70. 공통 Result Schema를 먼저 정한다
@@ -545,6 +761,8 @@ Result Column명은 첫 Branch를 기준으로 정해진다.
 잘못된 JOIN이나 Source 중복을 먼저 진단한다.
 
 ---
+
+<a id="sql-19-section-17"></a>
 
 ## 14. Parameter Binding
 
@@ -575,6 +793,8 @@ Binding은 값과 SQL 구조를 분리한다.
 
 Table명, Column명, `ASC / DESC` 같은 SQL 구조는 허용 목록으로 검증한 뒤 안전하게 조합한다.
 
+<a id="index-section-108"></a>
+
 ### 79. LIKE 값도 Parameter화한다
 
 Wildcard를 Application에서 의도적으로 붙이거나 SQL 함수로 결합하되 사용자 입력의 Pattern 의미를 정의한다.
@@ -584,6 +804,8 @@ Wildcard를 Application에서 의도적으로 붙이거나 SQL 함수로 결합�
 SQL Template, 실행 시간, Parameter Type과 필요 최소 정보만 남기고 개인정보·Credential을 Masking한다.
 
 ---
+
+<a id="sql-19-section-18"></a>
 
 ## 15. 안전한 DML 스타일
 
@@ -626,6 +848,8 @@ WHERE 없는 UPDATE·DELETE가 정말 필요한 경우에도 대상 Count, Backu
 
 ---
 
+<a id="sql-19-section-19"></a>
+
 ## 16. Transaction 스타일
 
 ### 88. 업무 단위와 Transaction 경계를 맞춘다
@@ -660,6 +884,8 @@ START TRANSACTION
 
 ---
 
+<a id="sql-19-section-20"></a>
+
 ## 17. DDL·Schema 스타일
 
 ### 94. 자료형에 업무 근거를 둔다
@@ -669,6 +895,8 @@ START TRANSACTION
 ### 95. NOT NULL과 DEFAULT 의미를 문서화한다
 
 오류를 피하기 위한 임의 Default보다 실제 업무 상태를 표현한다.
+
+<a id="index-section-128"></a>
 
 ### 96. Constraint 이름을 명시한다
 
@@ -691,6 +919,8 @@ NULL, 중복, 길이, 범위, FK 위반을 확인한다.
 `DROP`, `TRUNCATE`, Column 삭제·축소 전 Backup, Dependency, Downtime을 검토한다.
 
 ---
+
+<a id="sql-19-section-21"></a>
 
 ## 18. Index·성능 스타일
 
@@ -724,6 +954,8 @@ MariaDB의 `ANALYZE` 또는 `ANALYZE FORMAT=JSON`은 Statement를 실행하고 R
 
 ---
 
+<a id="sql-19-section-22"></a>
+
 ## 19. Comment와 문서화
 
 ### 107. 무엇보다 왜를 설명한다
@@ -755,6 +987,8 @@ Ticket, 정책 Version, Data Contract와 연결한다.
 
 ---
 
+<a id="sql-19-section-23"></a>
+
 ## 20. SQL_MODE와 환경
 
 ### 112. 현재 Mode 확인
@@ -780,6 +1014,8 @@ SQL_MODE, Time Zone, Character Set, Collation, Isolation Level 차이를 관리�
 MariaDB 기능과 문법을 MySQL 또는 다른 DBMS와 같다고 가정하지 않는다.
 
 ---
+
+<a id="sql-19-section-24"></a>
 
 ## 21. 내 코드와 강사님 코드 비교
 
@@ -842,6 +1078,8 @@ SELECT ROW_COUNT() AS affected_rows;
 
 ---
 
+<a id="sql-19-section-25"></a>
+
 ## 22. 개선된 통합 예제
 
 ### 122. 요구사항
@@ -903,6 +1141,8 @@ Main Query
 
 ---
 
+<a id="sql-19-section-26"></a>
+
 ## 23. 실무 Code Review 절차
 
 ### 126. 요구사항 확인
@@ -930,6 +1170,8 @@ DML 대상, Transaction, Cascade, 암시적 Commit, 재실행 결과를 검토�
 Timeout, Lock, Monitoring, Rollback, Version·설정 차이, 개인정보 Log를 확인한다.
 
 ---
+
+<a id="sql-19-section-27"></a>
 
 ## 24. 자주 하는 실수
 
@@ -967,6 +1209,8 @@ Estimate와 Runtime은 다를 수 있다.
 
 ---
 
+<a id="sql-19-section-28"></a>
+
 ## 25. 디버깅 방법
 
 ### 140. Query를 Clause 단위로 줄인다
@@ -989,6 +1233,8 @@ NULL, 0, 빈 문자열, 미일치 FK, 사원이 없는 부서 같은 Case를 검
 
 ORDER BY 값이 같은 Row를 만들고 PK Tie-breaker가 있는지 본다.
 
+<a id="index-section-185"></a>
+
 ### 145. SQL_MODE와 Session 상태를 기록한다
 
 ```sql
@@ -1004,6 +1250,8 @@ SELECT
 불필요한 Column·Join·조건을 제거해 오류가 남는 가장 작은 SQL과 Sample Data로 분리한다.
 
 ---
+
+<a id="sql-19-section-29"></a>
 
 ## 26. 종합실습
 
@@ -1028,6 +1276,8 @@ SELECT
 부서별 평균 급여 Query에서 잘못된 Grouping, 불안정한 정렬, 불필요한 `SELECT *`, 강제 Index가 있는지 검토한다.
 
 ---
+
+<a id="sql-19-section-30"></a>
 
 ## 27. 정답과 해설
 
@@ -1112,6 +1362,8 @@ WHERE e.empno IS NULL;
 
 ---
 
+<a id="sql-19-section-31"></a>
+
 ## 28. 최종 체크리스트
 
 ### 157. 읽기·정확성 체크
@@ -1136,6 +1388,8 @@ WHERE e.empno IS NULL;
 - [ ] Version, SQL_MODE, Time Zone, Collation 차이를 확인했는가?
 
 ---
+
+<a id="sql-19-section-32"></a>
 
 ## 29. 핵심 요약
 
@@ -1170,6 +1424,8 @@ DML
 
 ---
 
+<a id="sql-19-section-33"></a>
+
 ## 📎 다음 문서
 
 다음 문서는 SQL 01~19의 개념을 하나의 Scenario로 해결하는 종합실습이다.
@@ -1179,6 +1435,8 @@ DML
 ```
 
 ---
+
+<a id="sql-19-section-34"></a>
 
 ## 🔬 V3 백과사전식 SQL 작성 절차
 

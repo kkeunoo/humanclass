@@ -1,7 +1,7 @@
 ---
 title: JavaScript DOM 선택과 속성·클래스 조작
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,104 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: DOM은 브라우저가 만든 문서 객체이며 선택자는 그 객체를 찾는다](#js-11-section-4)
+- [65. 내 코드와 강사님 코드 비교](#js-11-section-69)
+- [67. 실무형 예제: 메뉴 선택 상태 관리](#js-11-section-71)
+- [68. 대표 오류로 이해하기](#js-11-section-72)
+- [69. 자주 하는 실수](#js-11-section-73)
+- [70. 핵심 요약](#js-11-section-74)
+- [71. 최종 체크리스트](#js-11-section-75)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-11-section-1)
+- [핵심 개념](#js-11-section-2)
+- [학습 목표](#js-11-section-3)
+- [개념에서 실제 실행까지: DOM은 브라우저가 만든 문서 객체이며 선택자는 그 객체를 찾는다](#js-11-section-4)
+- [1. DOM](#js-11-section-5)
+- [2. `document`](#js-11-section-6)
+- [3. Element와 Node](#js-11-section-7)
+- [4. 객체를 문자열로 연결](#js-11-section-8)
+- [5. `getElementById()`](#js-11-section-9)
+- [6. 요소를 찾지 못한 경우](#js-11-section-10)
+- [7. `null` 안전 처리](#js-11-section-11)
+- [8. 중복 `id`](#js-11-section-12)
+- [9. 중복 `id`에서 선택 결과](#js-11-section-13)
+- [10. `getElementsByTagName()`](#js-11-section-14)
+- [11. 빈 `HTMLCollection`](#js-11-section-15)
+- [12. 빈 컬렉션도 Truthy](#js-11-section-16)
+- [13. `getElementsByClassName()`](#js-11-section-17)
+- [14. 여러 클래스가 있는 요소](#js-11-section-18)
+- [15. 특정 요소 내부 검색](#js-11-section-19)
+- [16. 원본의 한글 `id`](#js-11-section-20)
+- [17. `querySelector()`](#js-11-section-21)
+- [18. `querySelector()` 결과 없음](#js-11-section-22)
+- [19. CSS 선택자 활용](#js-11-section-23)
+- [20. `querySelectorAll()`](#js-11-section-24)
+- [21. 빈 `NodeList`](#js-11-section-25)
+- [22. `NodeList` 순회](#js-11-section-26)
+- [23. `HTMLCollection` 순회](#js-11-section-27)
+- [24. HTMLCollection과 NodeList](#js-11-section-28)
+- [25. Live collection](#js-11-section-29)
+- [26. Static NodeList](#js-11-section-30)
+- [27. 선택 메서드 기준](#js-11-section-31)
+- [28. 속성 선택 대상](#js-11-section-32)
+- [29. `hasAttribute()`](#js-11-section-33)
+- [30. `getAttribute()`](#js-11-section-34)
+- [31. 없는 속성 조회](#js-11-section-35)
+- [32. `setAttribute()`](#js-11-section-36)
+- [33. 사용자 정의 속성](#js-11-section-37)
+- [34. `dataset`](#js-11-section-38)
+- [35. `removeAttribute()`](#js-11-section-39)
+- [36. 속성 property 접근](#js-11-section-40)
+- [37. Attribute와 Property](#js-11-section-41)
+- [38. Boolean 속성](#js-11-section-42)
+- [39. 이미지 `src` 변경](#js-11-section-43)
+- [40. 외부 이미지 URL 주의](#js-11-section-44)
+- [41. 이미지 변경 예제](#js-11-section-45)
+- [42. `classList`](#js-11-section-46)
+- [43. `classList.add()`](#js-11-section-47)
+- [44. 여러 클래스 추가](#js-11-section-48)
+- [45. `classList.remove()`](#js-11-section-49)
+- [46. `classList.toggle()`](#js-11-section-50)
+- [47. `toggle()` 반환값](#js-11-section-51)
+- [48. 강제 토글](#js-11-section-52)
+- [49. `classList.contains()`](#js-11-section-53)
+- [50. Contains 후 직접 Add·Remove](#js-11-section-54)
+- [51. `className`과 `classList`](#js-11-section-55)
+- [52. 요소 제거 `remove()`](#js-11-section-56)
+- [53. `remove()` 후 객체 참조](#js-11-section-57)
+- [54. 삭제와 숨김](#js-11-section-58)
+- [55. `hidden` property](#js-11-section-59)
+- [56. CSS 클래스 기반 숨김](#js-11-section-60)
+- [57. 스크립트 실행 시점](#js-11-section-61)
+- [58. Body 끝에 Script 배치](#js-11-section-62)
+- [59. `defer`](#js-11-section-63)
+- [60. `DOMContentLoaded`](#js-11-section-64)
+- [61. 안전한 선택 함수](#js-11-section-65)
+- [62. 선택 결과 변수명](#js-11-section-66)
+- [63. 원본 HTML 개선](#js-11-section-67)
+- [64. 원본 선택 코드 개선](#js-11-section-68)
+- [65. 내 코드와 강사님 코드 비교](#js-11-section-69)
+- [66. 기존 코드에서 개선 코드로 바꾼 이유](#js-11-section-70)
+- [67. 실무형 예제: 메뉴 선택 상태 관리](#js-11-section-71)
+- [68. 대표 오류로 이해하기](#js-11-section-72)
+- [69. 자주 하는 실수](#js-11-section-73)
+- [70. 핵심 요약](#js-11-section-74)
+- [71. 최종 체크리스트](#js-11-section-75)
+- [마무리](#js-11-section-76)
+- [V3 실행 추적 카드 — CSS 선택자 → Element/null → 속성·클래스 변경](#js-11-section-77)
+
+</details>
+
+---
+
+<a id="js-11-section-1"></a>
+
+## 개요
 
 DOM은 HTML 문서를 JavaScript에서 객체처럼 다룰 수 있도록 표현한 구조다.
 
@@ -64,7 +161,9 @@ DOM을 이용하면 다음 작업이 가능하다.
 
 ---
 
-# 핵심 개념
+<a id="js-11-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -82,27 +181,121 @@ DOM을 이용하면 다음 작업이 가능하다.
 
 ---
 
-# 학습 목표
+<a id="js-11-section-3"></a>
 
-- DOM과 `document`의 역할을 설명할 수 있다.
-- 단일 요소 선택과 여러 요소 선택을 구분할 수 있다.
-- 찾지 못한 단일 요소가 `null`임을 이해한다.
-- 빈 `HTMLCollection`과 `NodeList`가 Truthy임을 설명할 수 있다.
-- `getElementById()`와 `querySelector()`를 구분할 수 있다.
-- `getElementsByTagName()`과 `getElementsByClassName()`을 사용할 수 있다.
-- 특정 요소 내부에서 다시 요소를 검색할 수 있다.
-- `querySelectorAll()`의 반환값을 순회할 수 있다.
-- 중복 `id`가 잘못된 HTML 구조임을 설명할 수 있다.
-- `hasAttribute()`, `getAttribute()`, `setAttribute()`, `removeAttribute()`를 사용할 수 있다.
-- 속성 property와 attribute 차이를 기초 수준에서 설명할 수 있다.
-- `classList.add()`, `remove()`, `toggle()`, `contains()`를 사용할 수 있다.
-- 요소를 숨기는 것과 DOM에서 삭제하는 것을 구분할 수 있다.
-- 스크립트 위치와 `defer`의 관계를 설명할 수 있다.
-- 선택 결과가 `null`일 때 안전하게 처리할 수 있다.
+## 학습 목표
+
+- 선택 결과의 자료형과 null 원인을 추적한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. DOM
+<a id="js-11-section-4"></a>
+
+## 개념에서 실제 실행까지: DOM은 브라우저가 만든 문서 객체이며 선택자는 그 객체를 찾는다
+
+HTML 문자열은 파싱 과정에서 요소·텍스트 노드로 만들어진다. document는 문서 객체이고 선택 함수는 이미 만들어진 노드에 접근한다. script가 해당 HTML보다 먼저 실행되면 아직 노드가 없어서 null을 받는다. 선택자 오타와 로딩 시점 오류는 결과는 같아도 원인은 다르다.
+
+두 원본 모두 id=view를 두 번 써 선택 방식 차이를 실험한다. getElementById와 querySelector는 첫 일치 요소, querySelectorAll은 일치 목록을 준다. 이는 ID 중복을 정상 설계로 허용한다는 뜻이 아니다. 실제 문서에서는 고유 ID를 사용한다. getElementsByClassName/TagName의 HTMLCollection, querySelectorAll의 정적 NodeList는 Array와 다르다.
+
+내 원본의 ''+title 결과 [object HTMLHeadingElement]는 객체 문자열 표현이지 실제 Heap 주소가 아니다. classList도 배열이 아니라 DOMTokenList다. remove한 요소는 DOM에서 분리되지만 참조가 남으면 다시 append할 수 있다. '절대 되돌릴 수 없음'과는 다르다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/11_dom.html`
+
+```javascript
+// html body에 있는 h1이 가져와진 것
+            const title = document.getElementById('title')
+            console.log(title)
+            // [object HTMLHeadingElement] 가 나오는데, heap영역의 주소값이 나옴
+            // javascript는 주소값을 가려서 보여주기 때문에 위 멘트로 나옴
+            console.log(''+title)
+
+            // 아래처럼 없는 id 등 선언되지 않은 것을 불러오면 'null = 주소값이 없다'
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/11_dom.html`
+
+```javascript
+// id 속성으로 DOM을 가져오기
+        const title = document.getElementById('title')
+        console.log(title)
+        console.log(''+title)
+
+        // 없으면 null
+        const title2 = document.getElementById('title2')
+        console.log(title2)
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 브라우저 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+const title = document.getElementById("title");
+console.log(title?.tagName);
+console.log(document.getElementById("missing"));
+console.log(document.querySelectorAll(".menu").length);
+console.log(Array.isArray(document.querySelectorAll(".menu")));
+console.log(Boolean(document.querySelectorAll(".missing")));
+```
+
+예상 출력:
+
+```text
+H1
+null
+3
+false
+true
+```
+
+### 결과를 역추적하는 방법
+
+원본 11_dom.html의 body가 만들어진 후 실행하는 Console 예제다. 강사님 파일은 메뉴 목록이 하나 더 있어 .menu가6개다. 빈 목록도 객체이므로 Truthy다. 존재 여부는 단일 요소의 null, 목록의 length를 각각 검사한다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** 메뉴 요소를 나중에 하나 추가했을 때 live HTMLCollection과 querySelectorAll 목록을 비교한다.
+
+**응용·디버깅 실습:** querySelector가null일 때 우선 점검할3가지를 적는다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. 기존 HTMLCollection은 추가를 반영하고 querySelectorAll의 정적 NodeList는 다시 조회해야 한다.
+2. 선택자 철자, 해당 HTML 존재, script 실행 시점이다. 선택자문법 자체가 잘못되면 null이 아니라SyntaxError일 수도 있다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** classList.add("blue")를 두 번 하면 class에 blue가 두 개 생길까?
+
+**해설:** 아니다. 토큰은 중복되지 않는다. toggle의 반환값은 실행 뒤 해당 클래스 존재 여부다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-11-section-5"></a>
+
+## 1. DOM
 
 원본 주석:
 
@@ -127,7 +320,9 @@ document
 
 ---
 
-# 2. `document`
+<a id="js-11-section-6"></a>
+
+## 2. `document`
 
 ```javascript
 console.log(document)
@@ -139,7 +334,9 @@ console.log(document)
 
 ---
 
-# 3. Element와 Node
+<a id="js-11-section-7"></a>
+
+## 3. Element와 Node
 
 HTML 태그 하나는 일반적으로 Element 객체로 다룬다.
 
@@ -157,7 +354,9 @@ const title = document.getElementById(
 
 ---
 
-# 4. 객체를 문자열로 연결
+<a id="js-11-section-8"></a>
+
+## 4. 객체를 문자열로 연결
 
 원본:
 
@@ -181,7 +380,9 @@ console.log(title)
 
 ---
 
-# 5. `getElementById()`
+<a id="js-11-section-9"></a>
+
+## 5. `getElementById()`
 
 ```javascript
 const title = document.getElementById(
@@ -193,7 +394,9 @@ const title = document.getElementById(
 
 ---
 
-# 6. 요소를 찾지 못한 경우
+<a id="js-11-section-10"></a>
+
+## 6. 요소를 찾지 못한 경우
 
 ```javascript
 const title2 = document.getElementById(
@@ -213,7 +416,9 @@ null
 
 ---
 
-# 7. `null` 안전 처리
+<a id="js-11-section-11"></a>
+
+## 7. `null` 안전 처리
 
 ```javascript
 const title = document.getElementById(
@@ -235,7 +440,9 @@ title?.classList.add(
 
 ---
 
-# 8. 중복 `id`
+<a id="js-11-section-12"></a>
+
+## 8. 중복 `id`
 
 원본 HTML에는 다음 구조가 있다.
 
@@ -251,7 +458,9 @@ title?.classList.add(
 
 ---
 
-# 9. 중복 `id`에서 선택 결과
+<a id="js-11-section-13"></a>
+
+## 9. 중복 `id`에서 선택 결과
 
 ```javascript
 const view = document.getElementById(
@@ -272,7 +481,9 @@ const view = document.getElementById(
 
 ---
 
-# 10. `getElementsByTagName()`
+<a id="js-11-section-14"></a>
+
+## 10. `getElementsByTagName()`
 
 ```javascript
 const divs = document.getElementsByTagName(
@@ -286,7 +497,9 @@ console.log(divs)
 
 ---
 
-# 11. 빈 `HTMLCollection`
+<a id="js-11-section-15"></a>
+
+## 11. 빈 `HTMLCollection`
 
 ```javascript
 const unknownElements = (
@@ -310,7 +523,9 @@ console.log(
 
 ---
 
-# 12. 빈 컬렉션도 Truthy
+<a id="js-11-section-16"></a>
+
+## 12. 빈 컬렉션도 Truthy
 
 ```javascript
 if (unknownElements) {
@@ -332,7 +547,9 @@ if (
 
 ---
 
-# 13. `getElementsByClassName()`
+<a id="js-11-section-17"></a>
+
+## 13. `getElementsByClassName()`
 
 ```javascript
 const menus = (
@@ -348,7 +565,9 @@ console.log(menus)
 
 ---
 
-# 14. 여러 클래스가 있는 요소
+<a id="js-11-section-18"></a>
+
+## 14. 여러 클래스가 있는 요소
 
 ```html
 <li class="menu li1">치킨</li>
@@ -366,7 +585,9 @@ document.getElementsByClassName(
 
 ---
 
-# 15. 특정 요소 내부 검색
+<a id="js-11-section-19"></a>
+
+## 15. 특정 요소 내부 검색
 
 ```javascript
 const menuList = document.getElementById(
@@ -384,7 +605,9 @@ const pizzas = (
 
 ---
 
-# 16. 원본의 한글 `id`
+<a id="js-11-section-20"></a>
+
+## 16. 원본의 한글 `id`
 
 원본:
 
@@ -400,7 +623,9 @@ const pizzas = (
 
 ---
 
-# 17. `querySelector()`
+<a id="js-11-section-21"></a>
+
+## 17. `querySelector()`
 
 ```javascript
 const pizzaView = document.querySelector(
@@ -412,7 +637,9 @@ CSS 선택자를 사용해 첫 번째 일치 요소 하나를 반환한다.
 
 ---
 
-# 18. `querySelector()` 결과 없음
+<a id="js-11-section-22"></a>
+
+## 18. `querySelector()` 결과 없음
 
 ```javascript
 const view4 = document.querySelector(
@@ -430,7 +657,9 @@ null
 
 ---
 
-# 19. CSS 선택자 활용
+<a id="js-11-section-23"></a>
+
+## 19. CSS 선택자 활용
 
 ```javascript
 document.querySelector(
@@ -450,7 +679,9 @@ document.querySelector(
 
 ---
 
-# 20. `querySelectorAll()`
+<a id="js-11-section-24"></a>
+
+## 20. `querySelectorAll()`
 
 ```javascript
 const views = document.querySelectorAll(
@@ -466,7 +697,9 @@ console.log(views)
 
 ---
 
-# 21. 빈 `NodeList`
+<a id="js-11-section-25"></a>
+
+## 21. 빈 `NodeList`
 
 ```javascript
 const items = document.querySelectorAll(
@@ -486,7 +719,9 @@ console.log(items.length)
 
 ---
 
-# 22. `NodeList` 순회
+<a id="js-11-section-26"></a>
+
+## 22. `NodeList` 순회
 
 ```javascript
 const menuItems = (
@@ -504,7 +739,9 @@ menuItems.forEach(
 
 ---
 
-# 23. `HTMLCollection` 순회
+<a id="js-11-section-27"></a>
+
+## 23. `HTMLCollection` 순회
 
 `HTMLCollection`은 환경과 사용 방식에 따라 직접 `forEach()`를 사용할 수 없다.
 
@@ -530,7 +767,9 @@ const menuArray = Array.from(
 
 ---
 
-# 24. HTMLCollection과 NodeList
+<a id="js-11-section-28"></a>
+
+## 24. HTMLCollection과 NodeList
 
 | 항목 | `HTMLCollection` | `NodeList` |
 | --- | --- | --- |
@@ -542,7 +781,9 @@ const menuArray = Array.from(
 
 ---
 
-# 25. Live collection
+<a id="js-11-section-29"></a>
+
+## 25. Live collection
 
 ```javascript
 const divs = (
@@ -566,7 +807,9 @@ DOM 변경이 기존 컬렉션에 자동 반영될 수 있다.
 
 ---
 
-# 26. Static NodeList
+<a id="js-11-section-30"></a>
+
+## 26. Static NodeList
 
 ```javascript
 const divs = document.querySelectorAll(
@@ -590,7 +833,9 @@ console.log(divs.length)
 
 ---
 
-# 27. 선택 메서드 기준
+<a id="js-11-section-31"></a>
+
+## 27. 선택 메서드 기준
 
 | 목적 | 권장 |
 | --- | --- |
@@ -604,7 +849,9 @@ console.log(divs.length)
 
 ---
 
-# 28. 속성 선택 대상
+<a id="js-11-section-32"></a>
+
+## 28. 속성 선택 대상
 
 ```javascript
 const image = document.querySelector(
@@ -618,7 +865,9 @@ console.log(image)
 
 ---
 
-# 29. `hasAttribute()`
+<a id="js-11-section-33"></a>
+
+## 29. `hasAttribute()`
 
 ```javascript
 const hasSrc = image.hasAttribute(
@@ -640,7 +889,9 @@ console.log(hasSrc)
 
 ---
 
-# 30. `getAttribute()`
+<a id="js-11-section-34"></a>
+
+## 30. `getAttribute()`
 
 ```javascript
 const src = image.getAttribute(
@@ -654,7 +905,9 @@ HTML에 작성된 속성값을 문자열로 반환한다.
 
 ---
 
-# 31. 없는 속성 조회
+<a id="js-11-section-35"></a>
+
+## 31. 없는 속성 조회
 
 ```javascript
 const value = image.getAttribute(
@@ -672,7 +925,9 @@ null
 
 ---
 
-# 32. `setAttribute()`
+<a id="js-11-section-36"></a>
+
+## 32. `setAttribute()`
 
 ```javascript
 image.setAttribute(
@@ -685,7 +940,9 @@ image.setAttribute(
 
 ---
 
-# 33. 사용자 정의 속성
+<a id="js-11-section-37"></a>
+
+## 33. 사용자 정의 속성
 
 원본:
 
@@ -707,7 +964,9 @@ image.setAttribute(
 
 ---
 
-# 34. `dataset`
+<a id="js-11-section-38"></a>
+
+## 34. `dataset`
 
 ```html
 <img
@@ -731,7 +990,9 @@ console.log(
 
 ---
 
-# 35. `removeAttribute()`
+<a id="js-11-section-39"></a>
+
+## 35. `removeAttribute()`
 
 ```javascript
 image.removeAttribute(
@@ -745,7 +1006,9 @@ image.removeAttribute(
 
 ---
 
-# 36. 속성 property 접근
+<a id="js-11-section-40"></a>
+
+## 36. 속성 property 접근
 
 일부 표준 속성은 객체 property로도 접근할 수 있다.
 
@@ -758,7 +1021,9 @@ image.alt = "변경된 설명"
 
 ---
 
-# 37. Attribute와 Property
+<a id="js-11-section-41"></a>
+
+## 37. Attribute와 Property
 
 | 구분 | 예 |
 | --- | --- |
@@ -775,7 +1040,9 @@ image.alt = "변경된 설명"
 
 ---
 
-# 38. Boolean 속성
+<a id="js-11-section-42"></a>
+
+## 38. Boolean 속성
 
 ```html
 <button disabled>저장</button>
@@ -797,7 +1064,9 @@ button.disabled = false
 
 ---
 
-# 39. 이미지 `src` 변경
+<a id="js-11-section-43"></a>
+
+## 39. 이미지 `src` 변경
 
 원본:
 
@@ -817,7 +1086,9 @@ setTimeout(
 
 ---
 
-# 40. 외부 이미지 URL 주의
+<a id="js-11-section-44"></a>
+
+## 40. 외부 이미지 URL 주의
 
 원본 이미지는 외부 사이트의 긴 URL에 의존한다.
 
@@ -841,7 +1112,9 @@ setTimeout(
 
 ---
 
-# 41. 이미지 변경 예제
+<a id="js-11-section-45"></a>
+
+## 41. 이미지 변경 예제
 
 ```javascript
 const image = document.querySelector(
@@ -868,7 +1141,9 @@ if (image !== null) {
 
 ---
 
-# 42. `classList`
+<a id="js-11-section-46"></a>
+
+## 42. `classList`
 
 ```javascript
 const div2 = document.querySelector(
@@ -884,7 +1159,9 @@ console.log(
 
 ---
 
-# 43. `classList.add()`
+<a id="js-11-section-47"></a>
+
+## 43. `classList.add()`
 
 ```javascript
 div1.classList.add(
@@ -898,7 +1175,9 @@ div1.classList.add(
 
 ---
 
-# 44. 여러 클래스 추가
+<a id="js-11-section-48"></a>
+
+## 44. 여러 클래스 추가
 
 ```javascript
 div1.classList.add(
@@ -911,7 +1190,9 @@ div1.classList.add(
 
 ---
 
-# 45. `classList.remove()`
+<a id="js-11-section-49"></a>
+
+## 45. `classList.remove()`
 
 ```javascript
 div1.classList.remove(
@@ -925,7 +1206,9 @@ div1.classList.remove(
 
 ---
 
-# 46. `classList.toggle()`
+<a id="js-11-section-50"></a>
+
+## 46. `classList.toggle()`
 
 ```javascript
 div1.classList.toggle(
@@ -937,7 +1220,9 @@ div1.classList.toggle(
 
 ---
 
-# 47. `toggle()` 반환값
+<a id="js-11-section-51"></a>
+
+## 47. `toggle()` 반환값
 
 ```javascript
 const isActive = (
@@ -953,7 +1238,9 @@ console.log(isActive)
 
 ---
 
-# 48. 강제 토글
+<a id="js-11-section-52"></a>
+
+## 48. 강제 토글
 
 ```javascript
 div1.classList.toggle(
@@ -975,7 +1262,9 @@ div1.classList.toggle(
 
 ---
 
-# 49. `classList.contains()`
+<a id="js-11-section-53"></a>
+
+## 49. `classList.contains()`
 
 ```javascript
 const isBlue = (
@@ -991,7 +1280,9 @@ console.log(isBlue)
 
 ---
 
-# 50. Contains 후 직접 Add·Remove
+<a id="js-11-section-54"></a>
+
+## 50. Contains 후 직접 Add·Remove
 
 ```javascript
 if (
@@ -1013,7 +1304,9 @@ if (
 
 ---
 
-# 51. `className`과 `classList`
+<a id="js-11-section-55"></a>
+
+## 51. `className`과 `classList`
 
 ```javascript
 element.className = "blue"
@@ -1033,7 +1326,9 @@ element.classList.add(
 
 ---
 
-# 52. 요소 제거 `remove()`
+<a id="js-11-section-56"></a>
+
+## 52. 요소 제거 `remove()`
 
 ```javascript
 div2.remove()
@@ -1043,7 +1338,9 @@ div2.remove()
 
 ---
 
-# 53. `remove()` 후 객체 참조
+<a id="js-11-section-57"></a>
+
+## 53. `remove()` 후 객체 참조
 
 원본 주석은 “지우면 되돌릴 수 없다”고 설명한다.
 
@@ -1064,7 +1361,9 @@ parent?.append(
 
 ---
 
-# 54. 삭제와 숨김
+<a id="js-11-section-58"></a>
+
+## 54. 삭제와 숨김
 
 | 목적 | 방법 |
 | --- | --- |
@@ -1075,7 +1374,9 @@ parent?.append(
 
 ---
 
-# 55. `hidden` property
+<a id="js-11-section-59"></a>
+
+## 55. `hidden` property
 
 ```javascript
 div2.hidden = true
@@ -1091,7 +1392,9 @@ div2.hidden = false
 
 ---
 
-# 56. CSS 클래스 기반 숨김
+<a id="js-11-section-60"></a>
+
+## 56. CSS 클래스 기반 숨김
 
 ```css
 .is-hidden {
@@ -1109,7 +1412,9 @@ div2.classList.add(
 
 ---
 
-# 57. 스크립트 실행 시점
+<a id="js-11-section-61"></a>
+
+## 57. 스크립트 실행 시점
 
 원본 주석:
 
@@ -1123,7 +1428,9 @@ HTML 파싱 전에 요소를 선택하면 아직 DOM에 존재하지 않는다.
 
 ---
 
-# 58. Body 끝에 Script 배치
+<a id="js-11-section-62"></a>
+
+## 58. Body 끝에 Script 배치
 
 원본은 `<body>` 마지막에 `<script>`를 배치한다.
 
@@ -1145,7 +1452,9 @@ HTML 파싱 전에 요소를 선택하면 아직 DOM에 존재하지 않는다.
 
 ---
 
-# 59. `defer`
+<a id="js-11-section-63"></a>
+
+## 59. `defer`
 
 외부 JavaScript는 다음처럼 작성할 수 있다.
 
@@ -1162,7 +1471,9 @@ HTML 파싱 전에 요소를 선택하면 아직 DOM에 존재하지 않는다.
 
 ---
 
-# 60. `DOMContentLoaded`
+<a id="js-11-section-64"></a>
+
+## 60. `DOMContentLoaded`
 
 ```javascript
 document.addEventListener(
@@ -1185,7 +1496,9 @@ DOM 구성이 끝난 뒤 실행한다.
 
 ---
 
-# 61. 안전한 선택 함수
+<a id="js-11-section-65"></a>
+
+## 61. 안전한 선택 함수
 
 ```javascript
 function getRequiredElement(
@@ -1211,7 +1524,9 @@ function getRequiredElement(
 
 ---
 
-# 62. 선택 결과 변수명
+<a id="js-11-section-66"></a>
+
+## 62. 선택 결과 변수명
 
 좋지 않은 예:
 
@@ -1233,7 +1548,9 @@ const missingView = ...
 
 ---
 
-# 63. 원본 HTML 개선
+<a id="js-11-section-67"></a>
+
+## 63. 원본 HTML 개선
 
 중복 `id`와 한글 `id`를 정리한 예:
 
@@ -1268,7 +1585,9 @@ const missingView = ...
 
 ---
 
-# 64. 원본 선택 코드 개선
+<a id="js-11-section-68"></a>
+
+## 64. 원본 선택 코드 개선
 
 ```javascript
 const title = getRequiredElement(
@@ -1296,7 +1615,9 @@ pizzaItems.forEach(
 
 ---
 
-# 65. 내 코드와 강사님 코드 비교
+<a id="js-11-section-69"></a>
+
+## 65. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1310,7 +1631,7 @@ pizzaItems.forEach(
 | 요소 제거 | 복구 불가로 설명 | 단순 제거 |
 | 선택 방식 | 일부 `querySelector()` | `div1`, `div2`는 `getElementById()` |
 
-## 65-1. 내 코드의 장점
+### 65-1. 내 코드의 장점
 
 - DOM과 `document`의 관계를 상세히 기록했다.
 - 단일 선택 실패와 컬렉션 실패의 차이를 설명했다.
@@ -1318,7 +1639,7 @@ pizzaItems.forEach(
 - 속성·클래스 메서드의 동작을 자세히 기록했다.
 - 스크립트 위치에 따라 `null`이 발생할 수 있음을 설명했다.
 
-## 65-2. 내 코드의 개선점
+### 65-2. 내 코드의 개선점
 
 - 중복 `id`가 잘못된 HTML 구조임을 더 명확히 해야 한다.
 - `HTMLCollection`을 배열이라고 설명한 부분을 수정해야 한다.
@@ -1328,14 +1649,14 @@ pizzaItems.forEach(
 - `remove()` 후 변수 참조가 있으면 재삽입할 수 있다.
 - 전역 변수 선언에 `let`보다 `const`를 사용할 수 있는 곳이 많다.
 
-## 65-3. 강사님 코드의 장점
+### 65-3. 강사님 코드의 장점
 
 - DOM 선택부터 속성·클래스 조작까지 한 흐름으로 구성되어 있다.
 - 두 메뉴 목록을 사용해 문서 전체 선택과 내부 선택을 비교할 수 있다.
 - 선택 메서드별 반환 형태를 직접 확인할 수 있다.
 - `classList` 핵심 기능을 간결하게 실습한다.
 
-## 65-4. 강사님 코드의 보충점
+### 65-4. 강사님 코드의 보충점
 
 - 중복 `id`의 HTML 유효성 문제를 설명할 필요가 있다.
 - `HTMLCollection`과 `NodeList`의 차이를 보충할 수 있다.
@@ -1346,9 +1667,11 @@ pizzaItems.forEach(
 
 ---
 
-# 66. 기존 코드에서 개선 코드로 바꾼 이유
+<a id="js-11-section-70"></a>
 
-## 66-1. 중복 ID 제거
+## 66. 기존 코드에서 개선 코드로 바꾼 이유
+
+### 66-1. 중복 ID 제거
 
 기존:
 
@@ -1364,7 +1687,7 @@ pizzaItems.forEach(
 <div id="second-view"></div>
 ```
 
-## 66-2. 컬렉션 존재 검사
+### 66-2. 컬렉션 존재 검사
 
 기존:
 
@@ -1384,7 +1707,7 @@ if (
 }
 ```
 
-## 66-3. 사용자 정의 속성
+### 66-3. 사용자 정의 속성
 
 기존:
 
@@ -1403,7 +1726,7 @@ element.dataset.center = (
 )
 ```
 
-## 66-4. 요소 숨김
+### 66-4. 요소 숨김
 
 기존:
 
@@ -1419,7 +1742,9 @@ element.hidden = true
 
 ---
 
-# 67. 실무형 예제: 메뉴 선택 상태 관리
+<a id="js-11-section-71"></a>
+
+## 67. 실무형 예제: 메뉴 선택 상태 관리
 
 ```javascript
 const menuList = getRequiredElement(
@@ -1466,7 +1791,7 @@ menuItems.forEach(
 )
 ```
 
-## 67-1. 코드에서 무엇을 사용하는 걸까?
+### 67-1. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1479,79 +1804,89 @@ menuItems.forEach(
 
 ---
 
-# 68. 대표 오류로 이해하기
+<a id="js-11-section-72"></a>
 
-## 68-1. 선택 결과가 `null`
+## 68. 대표 오류로 이해하기
+
+### 68-1. 선택 결과가 `null`
 
 존재하지 않는 요소에 `classList`를 사용하면 `TypeError`가 발생한다.
 
-## 68-2. 빈 컬렉션을 `false`로 예상
+<a id="index-section-90"></a>
+
+### 68-2. 빈 컬렉션을 `false`로 예상
 
 빈 객체이므로 Truthy다.
 
-## 68-3. HTMLCollection에서 `forEach()` 호출
+<a id="index-section-91"></a>
+
+### 68-3. HTMLCollection에서 `forEach()` 호출
 
 환경에 따라 메서드가 없어 `TypeError`가 발생할 수 있다.
 
-## 68-4. 중복 ID 선택
+### 68-4. 중복 ID 선택
 
 첫 번째 요소만 선택되어 다른 요소가 무시될 수 있다.
 
-## 68-5. Head Script에서 즉시 선택
+### 68-5. Head Script에서 즉시 선택
 
 HTML 파싱 전이면 `null`이다.
 
-## 68-6. 요소 제거 후 다시 선택
+### 68-6. 요소 제거 후 다시 선택
 
 DOM에서 삭제되었으므로 같은 선택자로 찾을 수 없다.
 
 ---
 
-# 69. 자주 하는 실수
+<a id="js-11-section-73"></a>
 
-## 69-1. 모든 선택 메서드가 배열을 반환한다고 생각
+## 69. 자주 하는 실수
+
+### 69-1. 모든 선택 메서드가 배열을 반환한다고 생각
 
 단일 Element·`null`·`HTMLCollection`·`NodeList`가 서로 다르다.
 
-## 69-2. 빈 컬렉션을 Falsy라고 생각
+### 69-2. 빈 컬렉션을 Falsy라고 생각
 
 객체 자체는 Truthy다.
 
-## 69-3. `id`를 여러 요소에 사용
+### 69-3. `id`를 여러 요소에 사용
 
 문서 내 고유해야 한다.
 
-## 69-4. `querySelector()`가 모든 요소를 반환한다고 생각
+### 69-4. `querySelector()`가 모든 요소를 반환한다고 생각
 
 첫 번째 요소 하나만 반환한다.
 
-## 69-5. `querySelectorAll()`이 live라고 생각
+### 69-5. `querySelectorAll()`이 live라고 생각
 
 일반적으로 static `NodeList`다.
 
-## 69-6. `classList`를 실제 배열이라고 생각
+### 69-6. `classList`를 실제 배열이라고 생각
 
 `DOMTokenList`다.
 
-## 69-7. `setAttribute()`만 모든 상태에 사용
+### 69-7. `setAttribute()`만 모든 상태에 사용
 
 표준 DOM property가 더 적합한 경우가 있다.
 
-## 69-8. `remove()`와 숨김을 같은 기능으로 이해
+### 69-8. `remove()`와 숨김을 같은 기능으로 이해
 
 DOM 삭제와 표시 상태 변경은 다르다.
 
-## 69-9. 외부 이미지 URL을 영구 경로로 생각
+### 69-9. 외부 이미지 URL을 영구 경로로 생각
 
 언제든 바뀌거나 차단될 수 있다.
 
-## 69-10. Script 실행 시점을 고려하지 않음
+### 69-10. Script 실행 시점을 고려하지 않음
 
 선택 대상이 아직 파싱되지 않았을 수 있다.
 
 ---
 
-# 70. 핵심 요약
+<a id="js-11-section-74"></a>
+
+## 70. 핵심 요약
 
 ```text
 document
@@ -1606,7 +1941,9 @@ defer
 
 ---
 
-# 71. 최종 체크리스트
+<a id="js-11-section-75"></a>
+
+## 71. 최종 체크리스트
 
 - [ ] DOM과 `document`의 역할을 설명할 수 있는가?
 - [ ] 단일 선택과 다중 선택을 구분할 수 있는가?
@@ -1632,7 +1969,9 @@ defer
 
 ---
 
-# 마무리
+<a id="js-11-section-76"></a>
+
+## 마무리
 
 DOM 조작의 핵심은 요소를 선택하는 것에서 끝나지 않는다.
 
@@ -1649,7 +1988,9 @@ DOM 조작의 핵심은 요소를 선택하는 것에서 끝나지 않는다.
 ```
 
 이 흐름을 이해하면 이후 DOM 생성·텍스트 변경·이벤트 처리 문서에서 화면을 더 안전하게 제어할 수 있다.
-# V3 실행 추적 카드 — CSS 선택자 → Element/null → 속성·클래스 변경
+<a id="js-11-section-77"></a>
+
+## V3 실행 추적 카드 — CSS 선택자 → Element/null → 속성·클래스 변경
 
 `querySelector`는 첫 Element 또는 `null`을 반환한다. script가 요소보다 먼저 실행되거나 선택자가 틀리면 `null`이고 속성 접근 시 TypeError가 난다.
 

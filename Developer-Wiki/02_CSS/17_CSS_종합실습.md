@@ -1,11 +1,55 @@
 ---
 title: CSS 종합실습
-version: v3.0-encyclopedia
-last_updated: 2026-08-07
+version: v4.1-detailed-learning
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # CSS 종합실습
+
+## 문서 내 목차
+
+- [문서 정보](#css-1)
+- [프로젝트 개요](#css-2)
+- [학습 목표](#css-3)
+- [개념에서 실제 동작까지](#css-4)
+- [1. 요구사항](#css-5)
+- [2. HTML 구조](#css-6)
+- [3. 디자인 토큰](#css-7)
+- [4. Reset과 기본 Style](#css-8)
+- [5. 공통 Container](#css-9)
+- [6. 접근성 Utility](#css-10)
+- [7. Header](#css-11)
+- [8. Hero Layout](#css-12)
+- [9. 공통 Button](#css-13)
+- [10. Dashboard Layout](#css-14)
+- [11. Panel](#css-15)
+- [12. Progress](#css-16)
+- [13. Notice List](#css-17)
+- [14. Section Heading과 Toolbar](#css-18)
+- [15. Course Grid](#css-19)
+- [16. Course Card](#css-20)
+- [17. CTA](#css-21)
+- [18. Footer](#css-22)
+- [19. Hover 가능 장치](#css-23)
+- [20. Tablet 반응형](#css-24)
+- [21. Desktop 반응형](#css-25)
+- [22. Reduced Motion](#css-26)
+- [23. Dark Mode 선택 과제](#css-27)
+- [24. 완성 CSS 코드](#css-28)
+- [25. 실행 결과](#css-29)
+- [26. 사용된 CSS 개념](#css-30)
+- [27. 실무에서는 왜 이렇게 작성하는가?](#css-31)
+- [28. 대표 오류와 해결](#css-32)
+- [29. 개선 과제](#css-33)
+- [30. 리팩토링 과제](#css-34)
+- [31. 종합실습 체크리스트](#css-35)
+- [32. 핵심 요약](#css-36)
+- [마무리](#css-37)
+- [렌더링 복습 카드 — 요구사항에서 반응형 화면까지](#css-38)
+
+
+<a id="css-1"></a>
 
 ## 문서 정보
 
@@ -23,7 +67,9 @@ status: Completed
 
 ---
 
-# 프로젝트 개요
+<a id="css-2"></a>
+
+## 프로젝트 개요
 
 IT 교육 과정과 학습 현황을 보여 주는 반응형 대시보드를 만든다.
 
@@ -64,55 +110,102 @@ Desktop
 
 ---
 
-# 학습 목표
+<a id="css-3"></a>
 
-- 실제 페이지 요구사항을 Layout과 Component로 나눌 수 있다.
-- CSS Custom Property로 색상·간격·Radius·Shadow를 관리할 수 있다.
-- Mobile First 방식으로 Style을 작성할 수 있다.
-- Flexbox와 Grid의 역할을 구분할 수 있다.
-- Position을 Badge·Overlay처럼 필요한 곳에만 사용할 수 있다.
-- 긴 Text와 Card Overflow를 안전하게 처리할 수 있다.
-- Hover·Focus·Disabled 상태를 함께 설계할 수 있다.
-- Transition과 Transform을 필요한 속성에만 적용할 수 있다.
-- `prefers-reduced-motion`을 지원할 수 있다.
-- `clamp()`, `min()`, `max()`로 유연한 크기를 만들 수 있다.
-- Component Class와 Modifier를 사용할 수 있다.
-- 접근성 있는 Focus Style과 충분한 Contrast를 제공할 수 있다.
-- 개발자 도구로 Box Model·Grid·Flex·Overflow를 점검할 수 있다.
+## 학습 목표
 
----
+- 주요 속성의 의미와 차이를 설명한다.
+- 대상과 계산 기준을 찾고 결과를 예측한다.
+- 원본을 비교하고 적용·배치 오류를 수정한다.
 
-# 1. 요구사항
+<a id="learning-flow"></a>
 
-## 1-1. 전체 Layout
+<a id="css-4"></a>
+
+## 개념에서 실제 동작까지
+
+### 종합실습이란? 작은 규칙을 연결해 요구사항을 확인하는 연습
+
+완성 CSS를 한 번에 복사하는 대신 HTML 구조·자원·스타일 적용·크기·배치·상태·반응형을 순서대로 연결합니다. 앞에서 설명한 계산과 검수 방법을 실제 페이지에 적용하는 것이 목표입니다.
+
+**수업과 보충의 경계:** 이 문서의 대시보드 프로젝트는 기존 Wiki의 💡 통합 학습 예제입니다. 사용자·강사님 번호형 CSS 소스에 같은 완성 페이지가 있다고 소개하지 않습니다.
+
+| 구현 단계 | 기대 결과 | 실패 때 우선 확인 |
+| --- | --- | --- |
+| 기본 문서·CSS 연결 | reset·글자 스타일 적용 | href·Network·선택자 |
+| 컨테이너·박스 | 폭과 간격이 예측대로 | 단위·border-box·margin |
+| 카드·목록 | 의도한 축과 줄 배치 | flex/grid 부모·직접 자식 |
+| 이미지·배경 | 비율과 대체 정보 적절 | 자원·cover/contain·alt |
+| 상태 변화 | hover·focus 결과 확인 | 상태 조건·transition 위치 |
+| 반응형 | 경계 전후 줄 수 변화 | 쿼리 평가·우선순위·넘침 |
+
+하나의 화면에서 보이는 결과만으로 완료하지 않습니다. 긴 제목, 카드 수 변화, 이미지 요청 실패, 작은 화면, 키보드 포커스와 움직임 감소 조건을 각각 시험합니다. 모든 브라우저·사용자 조건을 검증하지 않았다면 완료 범위를 제한해 기록합니다.
+
+**추가 기초 문제:** CSS가 전혀 안 보이면 색상 숫자부터 바꾸는가?
+**해설:** 파일 URL·응답·link와 스타일 규칙 매칭을 먼저 확인합니다.
+
+**추가 응용 문제:** 카드 줄이 넘치면 overflow:hidden으로 무조건 해결하는가?
+**해설:** 합산 폭·gap·padding/border·최소 크기를 계산하고 콘텐츠가 실제로 잘리지 않는 해결을 선택합니다.
+
+**추가 도전 문제:** 작은 화면에서 투명 메뉴가 남으면 무엇을 확인하는가?
+**판단 기준:** 자리·클릭·포커스·접근성 노출·토글 상태를 구분해 원인을 설명하고, 원본 예제와 자신의 개선안을 구분합니다.
+
+완성 코드는 마지막 대조 자료입니다. 먼저 각 작은 조각의 입력·선택 대상·계산·실제 결과를 설명한 뒤 전체에 연결합니다.
+
+
+### 개발자 도구에서 실제 값을 읽기
+
+종합실습 페이지을 브라우저에서 열고 Console에 다음을 입력합니다. 💡 JavaScript를 이용한 CSS 진단 명령이며 CSS 파일에 쓰는 코드가 아닙니다.
+
+```javascript
+document.documentElement.scrollWidth > document.documentElement.clientWidth
+```
+
+**예상 결과:** 의도하지 않은 문서 가로 넘침이 없으면 false
+
+오버플로 비교는 진단 신호입니다. 실제 스크롤바 모양과 전체 접근성까지 검증하는 명령은 아닙니다. 요소가 없다는 오류가 나오면 페이지와 선택 대상을 먼저 확인합니다. getComputedStyle은 API에서 계산·해석된 스타일을 읽고 getBoundingClientRect는 변환이 반영된 표시 경계 상자를 읽습니다. margin까지 포함한 전체 점유를 자동 반환하는 값은 아닙니다. CSS에는 Python의 print가 없으므로 화면 결과와 Console 값 확인을 구분합니다.
+
+### 짧은 점검 문제와 해설
+
+**문제:** 카드 줄이 넘치면 무조건 overflow:hidden인가?
+
+**해설:** 합산 폭·gap·최소 크기를 먼저 찾고 읽어야 할 내용을 자르지 않는 수정안을 선택합니다.
+
+먼저 답을 가리고 이유를 말한 뒤 본문의 단계별 예제와 종합실습으로 확인합니다.
+
+<a id="css-5"></a>
+
+## 1. 요구사항
+
+### 1-1. 전체 Layout
 
 - Mobile First로 작성한다.
 - 전체 너비를 제한하는 Container를 사용한다.
 - Desktop에서는 Sidebar와 Main Content를 2열로 배치한다.
 - Mobile에서는 한 열로 자연스럽게 쌓인다.
 
-## 1-2. Header
+### 1-2. Header
 
 - Logo와 Navigation을 표시한다.
 - Mobile에서는 Navigation이 줄바꿈된다.
 - 현재 Page Link를 시각적으로 구분한다.
 - Hover와 Keyboard Focus 상태를 함께 제공한다.
 
-## 1-3. Hero
+### 1-3. Hero
 
 - 배경 Gradient와 장식 효과를 사용한다.
 - 제목 크기는 `clamp()`로 유연하게 설정한다.
 - CTA Button 두 개를 배치한다.
 - 작은 화면에서는 Button을 세로 배치한다.
 
-## 1-4. 과정 Card
+### 1-4. 과정 Card
 
 - 제목, 설명, Level, 진행률, 학습 Button을 포함한다.
 - Card 수에 따라 Grid가 자동으로 조정된다.
 - Hover 가능 장치에서만 Card가 살짝 올라간다.
 - 긴 설명은 Layout을 깨지 않게 처리한다.
 
-## 1-5. 상태와 접근성
+### 1-5. 상태와 접근성
 
 - 완료 과정은 Modifier Class로 구분한다.
 - 비활성 Button은 `disabled` 상태를 사용한다.
@@ -121,7 +214,9 @@ Desktop
 
 ---
 
-# 2. HTML 구조
+<a id="css-6"></a>
+
+## 2. HTML 구조
 
 ```html
 <body>
@@ -420,7 +515,9 @@ Desktop
 
 ---
 
-# 3. 디자인 토큰
+<a id="css-7"></a>
+
+## 3. 디자인 토큰
 
 ```css
 :root {
@@ -465,7 +562,9 @@ Desktop
 
 ---
 
-# 4. Reset과 기본 Style
+<a id="css-8"></a>
+
+## 4. Reset과 기본 Style
 
 ```css
 *,
@@ -514,7 +613,9 @@ a {
 
 ---
 
-# 5. 공통 Container
+<a id="css-9"></a>
+
+## 5. 공통 Container
 
 ```css
 .container {
@@ -529,7 +630,9 @@ a {
 
 ---
 
-# 6. 접근성 Utility
+<a id="css-10"></a>
+
+## 6. 접근성 Utility
 
 ```css
 .u-visually-hidden {
@@ -547,7 +650,9 @@ a {
 
 ---
 
-# 7. Header
+<a id="css-11"></a>
+
+## 7. Header
 
 ```css
 .site-header {
@@ -615,7 +720,9 @@ a {
 
 ---
 
-# 8. Hero Layout
+<a id="css-12"></a>
+
+## 8. Hero Layout
 
 ```css
 .hero {
@@ -749,7 +856,9 @@ a {
 
 ---
 
-# 9. 공통 Button
+<a id="css-13"></a>
+
+## 9. 공통 Button
 
 ```css
 .button {
@@ -822,7 +931,9 @@ a {
 
 ---
 
-# 10. Dashboard Layout
+<a id="css-14"></a>
+
+## 10. Dashboard Layout
 
 ```css
 .dashboard {
@@ -845,7 +956,9 @@ a {
 
 ---
 
-# 11. Panel
+<a id="css-15"></a>
+
+## 11. Panel
 
 ```css
 .panel {
@@ -870,7 +983,9 @@ a {
 
 ---
 
-# 12. Progress
+<a id="css-16"></a>
+
+## 12. Progress
 
 ```css
 .progress-summary {
@@ -916,7 +1031,9 @@ a {
 
 ---
 
-# 13. Notice List
+<a id="css-17"></a>
+
+## 13. Notice List
 
 ```css
 .notice-list {
@@ -945,7 +1062,9 @@ a {
 
 ---
 
-# 14. Section Heading과 Toolbar
+<a id="css-18"></a>
+
+## 14. Section Heading과 Toolbar
 
 ```css
 .section-heading {
@@ -1003,7 +1122,9 @@ a {
 
 ---
 
-# 15. Course Grid
+<a id="css-19"></a>
+
+## 15. Course Grid
 
 ```css
 .course-grid {
@@ -1022,7 +1143,9 @@ a {
 
 ---
 
-# 16. Course Card
+<a id="css-20"></a>
+
+## 16. Course Card
 
 ```css
 .course-card {
@@ -1126,7 +1249,9 @@ a {
 
 ---
 
-# 17. CTA
+<a id="css-21"></a>
+
+## 17. CTA
 
 ```css
 .cta {
@@ -1165,7 +1290,9 @@ a {
 
 ---
 
-# 18. Footer
+<a id="css-22"></a>
+
+## 18. Footer
 
 ```css
 .site-footer {
@@ -1180,7 +1307,9 @@ a {
 
 ---
 
-# 19. Hover 가능 장치
+<a id="css-23"></a>
+
+## 19. Hover 가능 장치
 
 ```css
 @media (
@@ -1206,7 +1335,9 @@ a {
 
 ---
 
-# 20. Tablet 반응형
+<a id="css-24"></a>
+
+## 20. Tablet 반응형
 
 ```css
 @media (
@@ -1231,7 +1362,9 @@ a {
 
 ---
 
-# 21. Desktop 반응형
+<a id="css-25"></a>
+
+## 21. Desktop 반응형
 
 ```css
 @media (
@@ -1266,7 +1399,9 @@ a {
 
 ---
 
-# 22. Reduced Motion
+<a id="css-26"></a>
+
+## 22. Reduced Motion
 
 ```css
 @media (
@@ -1290,7 +1425,9 @@ a {
 
 ---
 
-# 23. Dark Mode 선택 과제
+<a id="css-27"></a>
+
+## 23. Dark Mode 선택 과제
 
 ```css
 @media (
@@ -1311,7 +1448,9 @@ a {
 
 ---
 
-# 24. 완성 CSS 코드
+<a id="css-28"></a>
+
+## 24. 완성 CSS 코드
 
 ```css
 :root {
@@ -2067,7 +2206,9 @@ a {
 
 ---
 
-# 25. 실행 결과
+<a id="css-29"></a>
+
+## 25. 실행 결과
 
 Mobile:
 
@@ -2101,7 +2242,9 @@ Heading과 Toolbar 가로 정렬
 
 ---
 
-# 26. 사용된 CSS 개념
+<a id="css-30"></a>
+
+## 26. 사용된 CSS 개념
 
 | 학습 범위 | 적용 위치 |
 | --- | --- |
@@ -2124,9 +2267,11 @@ Heading과 Toolbar 가로 정렬
 
 ---
 
-# 27. 실무에서는 왜 이렇게 작성하는가?
+<a id="css-31"></a>
 
-## 27-1. 디자인 토큰
+## 27. 실무에서는 왜 이렇게 작성하는가?
+
+### 27-1. 디자인 토큰
 
 색상·간격·Radius·Shadow를 한곳에서 관리한다.
 
@@ -2136,17 +2281,17 @@ Heading과 Toolbar 가로 정렬
 → 여러 Component에 동시에 반영
 ```
 
-## 27-2. Mobile First
+### 27-2. Mobile First
 
 작은 화면에서 기본 Layout을 만든 뒤 필요한 공간이 생길 때 확장한다.
 
-## 27-3. Flex와 Grid 분리
+### 27-3. Flex와 Grid 분리
 
 - Header·Button Group → Flex
 - Dashboard·Card 목록 → Grid
 - Badge·장식 → Position
 
-## 27-4. 상태 Class
+### 27-4. 상태 Class
 
 ```text
 .course-card.is-complete
@@ -2154,7 +2299,7 @@ Heading과 Toolbar 가로 정렬
 
 상태와 Component를 분리한다.
 
-## 27-5. 접근성
+### 27-5. 접근성
 
 - Focus Outline
 - `aria-current`
@@ -2165,9 +2310,11 @@ Heading과 Toolbar 가로 정렬
 
 ---
 
-# 28. 대표 오류와 해결
+<a id="css-32"></a>
 
-## 28-1. Sticky Sidebar가 동작하지 않음
+## 28. 대표 오류와 해결
+
+### 28-1. Sticky Sidebar가 동작하지 않음
 
 확인할 항목:
 
@@ -2178,7 +2325,7 @@ top 또는 inset-block-start
 Scroll 공간
 ```
 
-## 28-2. Card가 가로로 넘침
+### 28-2. Card가 가로로 넘침
 
 ```css
 .dashboard__main {
@@ -2188,19 +2335,19 @@ Scroll 공간
 
 Grid·Flex Item의 최소 크기를 줄일 수 있게 한다.
 
-## 28-3. Hero Text가 너무 커짐
+### 28-3. Hero Text가 너무 커짐
 
 `clamp()`의 최대값을 조정한다.
 
-## 28-4. Hover 확대가 Mobile에서도 남음
+### 28-4. Hover 확대가 Mobile에서도 남음
 
 Hover 가능 장치 Media Query 안에서만 적용한다.
 
-## 28-5. Progress Bar가 Container를 넘음
+### 28-5. Progress Bar가 Container를 넘음
 
 `--progress` 값을 0~100% 범위로 관리한다.
 
-## 28-6. 가로 Scroll이 생김
+### 28-6. 가로 Scroll이 생김
 
 다음을 확인한다.
 
@@ -2215,7 +2362,9 @@ Grid minmax()
 
 ---
 
-# 29. 개선 과제
+<a id="css-33"></a>
+
+## 29. 개선 과제
 
 - Mobile Navigation Toggle
 - 실제 검색·필터 JavaScript 연결
@@ -2231,7 +2380,9 @@ Grid minmax()
 
 ---
 
-# 30. 리팩토링 과제
+<a id="css-34"></a>
+
+## 30. 리팩토링 과제
 
 다음 구조로 파일을 분리한다.
 
@@ -2254,7 +2405,9 @@ styles/
 
 ---
 
-# 31. 종합실습 체크리스트
+<a id="css-35"></a>
+
+## 31. 종합실습 체크리스트
 
 - [ ] 역할 기반 Class 이름을 사용했는가?
 - [ ] ID와 긴 후손 Selector를 Style에 남용하지 않았는가?
@@ -2284,7 +2437,9 @@ styles/
 
 ---
 
-# 32. 핵심 요약
+<a id="css-36"></a>
+
+## 32. 핵심 요약
 
 ```text
 Token
@@ -2329,7 +2484,9 @@ Position
 
 ---
 
-# 마무리
+<a id="css-37"></a>
+
+## 마무리
 
 CSS 종합실습의 핵심은 여러 속성을 많이 사용하는 것이 아니다.
 
@@ -2346,10 +2503,16 @@ Mobile·Keyboard·Touch·Reduced Motion 환경을 고려하고
 ```
 
 이 페이지를 이해하고 직접 확장할 수 있다면 CSS 속성을 외우는 단계를 넘어, 실제 반응형 UI를 구조적으로 설계할 수 있다.
-# V3 렌더링 추적 카드 — 요구사항에서 반응형 화면까지
+<a id="css-38"></a>
+
+## 렌더링 복습 카드 — 요구사항에서 반응형 화면까지
 
 먼저 DOM 구조와 레이아웃 영역을 정하고 박스 모델, typography, 색상, 상태, 반응형 순으로 구축한다. 각 단계에서 넓은 화면과 좁은 화면을 검증한다.
 
 정상 콘텐츠뿐 아니라 긴 제목, 빈 이미지, 큰 글자 확대, 키보드 focus, overflow를 시험한다. 완성 화면 비교와 함께 Computed·Layout 근거를 기록한다.
 
 **원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/01~15 전체 원본과 실습 폴더를 결합한 종합 확장`에서 실제 선택자·계산값·화면 차이를 확인한다.
+
+
+[CSS 파트 목차로 돌아가기](./README.md)
+

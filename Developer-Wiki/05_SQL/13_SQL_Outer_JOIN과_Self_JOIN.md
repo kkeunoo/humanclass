@@ -4,6 +4,52 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-13-section-2)
+- [개념에서 실제 실행까지 — Outer JOIN과 Self JOIN이란? — 없는 관계도 보여 주기](#sql-13-section-3)
+- [13. 내 코드와 강사님 코드 비교](#sql-13-section-16)
+- [18. 종합실습](#sql-13-section-21)
+- [19. 정답과 해설](#sql-13-section-22)
+- [20. 최종 체크리스트](#sql-13-section-23)
+- [21. 핵심 요약](#sql-13-section-24)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-13-section-1)
+- [학습 목표](#sql-13-section-2)
+- [개념에서 실제 실행까지 — Outer JOIN과 Self JOIN이란? — 없는 관계도 보여 주기](#sql-13-section-3)
+- [1. Outer Join이 필요한 이유](#sql-13-section-4)
+- [2. LEFT JOIN](#sql-13-section-5)
+- [3. RIGHT JOIN](#sql-13-section-6)
+- [4. ON과 WHERE의 중요한 차이](#sql-13-section-7)
+- [5. NULL과 표시값](#sql-13-section-8)
+- [6. Outer Join과 집계](#sql-13-section-9)
+- [7. Anti Join](#sql-13-section-10)
+- [8. FULL OUTER JOIN 결과](#sql-13-section-11)
+- [9. Self Join 기본](#sql-13-section-12)
+- [10. 사원–관리자 Self Join](#sql-13-section-13)
+- [11. 여러 단계의 Self Join](#sql-13-section-14)
+- [12. Outer Join과 다중 Table](#sql-13-section-15)
+- [13. 내 코드와 강사님 코드 비교](#sql-13-section-16)
+- [14. 개선된 통합 예제](#sql-13-section-17)
+- [15. 실무 활용 지침](#sql-13-section-18)
+- [16. 자주 하는 실수](#sql-13-section-19)
+- [17. 디버깅 방법](#sql-13-section-20)
+- [18. 종합실습](#sql-13-section-21)
+- [19. 정답과 해설](#sql-13-section-22)
+- [20. 최종 체크리스트](#sql-13-section-23)
+- [21. 핵심 요약](#sql-13-section-24)
+- [📎 다음 문서](#sql-13-section-25)
+- [🔬 V3 동작 백과 — 일치하지 않는 Row와 같은 Table의 관계](#sql-13-section-26)
+
+</details>
+
+---
+
+<a id="sql-13-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -19,17 +65,149 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-13-section-2"></a>
 
-- INNER JOIN과 Outer Join의 Row 보존 차이를 설명한다.
-- `LEFT JOIN`과 `RIGHT JOIN`에서 보존되는 Table을 판단한다.
-- `ON`과 `WHERE`의 조건 위치가 Outer Join 결과에 미치는 영향을 이해한다.
-- `IS NULL`을 사용해 일치하지 않는 Row를 찾는 Anti Join을 작성한다.
-- 같은 `EMP` Table에 서로 다른 Alias를 부여하여 Self Join한다.
-- 최고 관리자처럼 연결 대상이 없는 Row를 보존한다.
-- Full Outer Join이 필요한 결과를 MariaDB에서 안전하게 조합한다.
+## 학습 목표
+
+- 보존할 행·NULL 확장·ON과 WHERE 차이를 설명한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-13-section-3"></a>
+
+## 개념에서 실제 실행까지 — Outer JOIN과 Self JOIN이란? — 없는 관계도 보여 주기
+
+### 무엇이며 왜 배워야 할까?
+
+LEFT JOIN은 왼쪽의 각 행을 결과에서 보존하고, 연결 상대가 없으면 오른쪽 열을 NULL로 확장한 행을 만든다. 오른쪽 상대가 여러 행이면 왼쪽도 여러 번 반복된다. 따라서 ‘왼쪽 행이 최소 한 번 나온다’와 ‘항상 정확히 한 행 나온다’는 다르다.
+
+DEPT 40에는 사원이 없다. 부서별 사원 수 보고서에서 DEPT를 왼쪽에 두면 OPERATIONS도 표시할 수 있다. 그 NULL 확장 행에서 COUNT(*)는 1이지만 COUNT(e.empno)는 0이다. 사원 수를 세는 목적에는 NULL이 될 수 없는 사원 키를 센다.
+
+ON에 e.sal>=3000을 넣으면 고급여 사원이 없는 부서도 남는다. 같은 조건을 WHERE에 넣으면 확장된 NULL 행이 UNKNOWN으로 제거되어 보존 의도가 사라질 수 있다.
+
+Self JOIN은 별도 테이블 종류가 아니라 같은 테이블에 서로 다른 역할 별칭을 붙여 연결하는 방법이다. EMP e의 mgr와 EMP manager의 empno를 연결하면 이름·관리자 이름을 한 결과로 얻는다. 초기화 DDL은 MGR 자체의 FK를 정의하지 않으므로 논리 관계와 실제 제약을 구분한다.
+
+### 입력은 어디에서 오는가?
+
+EMP·DEPT·SALGRADE는 초기화 자료 그대로 준비된 상태다. EMP 14행, DEPT 4행, SALGRADE 5행이다. 다른 DML로 데이터를 바꿨다면 아래 결과와 달라질 수 있다. 상수 SELECT 예제는 테이블 없이도 실행할 수 있다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+SELECT d.deptno, d.dname, COUNT(e.empno) AS high_salary_count
+FROM dept AS d
+LEFT JOIN emp AS e
+  ON e.deptno = d.deptno AND e.sal >= 3000
+GROUP BY d.deptno, d.dname
+ORDER BY d.deptno;
+```
+
+Result Grid의 열·행 값:
+
+```text
+deptno	dname	high_salary_count
+10	ACCOUNTING	1
+20	RESEARCH	2
+30	SALES	0
+40	OPERATIONS	0
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. DEPT를 보고서의 전체 부서 목록으로 둔다.
+2. EMP와 부서 번호 및 급여 조건을 ON에서 연결한다.
+3. 일치 사원이 없는 부서에는 오른쪽 NULL 확장 행을 만든다.
+4. COUNT(e.empno)로 실제 연결 사원만 집계하여 0명 부서를 남긴다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 618~627행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+
+select e1.empno, e1.ename, e2.empno, e2.ename
+from emp e1
+	left outer join emp e2 on e1.mgr = e2.empno;
+	-- left outer는 왼쪽에 있는 column 대상이 한 번은 무조건 나오게 해주는 것
+
+select e1.empno, e1.ename, e2.empno, e2.ename
+from emp e1
+	right outer join emp e2 on e1.mgr = e2.empno;
+	-- SMITH ~ MILLER는 한 번 이상 다 나와야 하기 때문에 출력된 것이고, 부하가 없음
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 579~588행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+
+select e1.empno, e1.ename, e2.empno, e2.ename
+from emp e1
+	left outer join emp e2 on e1.mgr = e2.empno;
+
+select e1.empno, e1.ename, e2.empno, e2.ename
+from emp e1
+	right outer join emp e2 on e1.mgr = e2.empno;
+
+select * from dept;
+```
+
+두 원본 모두 관리자 Self JOIN의 INNER·LEFT·RIGHT 형태와 모든 부서 조회를 다룬다. 급여 등급별 인원 문제에서 강사님 COUNT(*)는 빈 등급을 1명으로 세지만 내 COUNT(ename)은 현재 자료에서는 이를 피한다. 더 분명한 계약에는 EMPNO 키를 사용한다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 빈 등급에서 COUNT(*)와 사원 키 COUNT의 차이
+
+💡 급여 10000~20000의 보충 등급을 결과 안에서만 만들었다. 초기화 EMP에 해당 사원이 없어 LEFT JOIN은 오른쪽 NULL 확장 한 행을 만든다. 전체 행 수와 실제 사원 수의 차이를 직접 확인한다. 강사님 등급별 COUNT(*)의 반례이며 원본 등급 테이블을 수정하지 않는다.
+
+```sql
+SELECT s.grade,COUNT(*) AS joined_rows,COUNT(e.empno) AS employees
+FROM (SELECT 6 AS grade,10000 AS losal,20000 AS hisal) AS s
+LEFT JOIN emp AS e ON e.sal BETWEEN s.losal AND s.hisal
+GROUP BY s.grade;
+```
+
+검증 결과:
+
+```text
+grade	joined_rows	employees
+6	1	0
+```
+
+### 이해 확인 실습
+
+1. 위 SQL의 급여 조건을 WHERE e.sal>=3000으로 옮기면 30·40부서는?
+2. 부서 40의 COUNT(*)와 COUNT(e.empno)는 각각?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 사라진다. 오른쪽 매칭이 없거나 조건이 맞지 않은 행이 WHERE에서 통과하지 못한다.
+2. LEFT JOIN에서 1과 0이다. 전자는 NULL 확장 행도 센다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-13-section-4"></a>
 
 ## 1. Outer Join이 필요한 이유
 
@@ -75,6 +253,8 @@ RIGHT JOIN
 `LEFT JOIN`과 `LEFT OUTER JOIN`, `RIGHT JOIN`과 `RIGHT OUTER JOIN`은 각각 같은 의미다.
 
 ---
+
+<a id="sql-13-section-5"></a>
 
 ## 2. LEFT JOIN
 
@@ -122,6 +302,8 @@ WHERE e.empno IS NULL;
 
 ---
 
+<a id="sql-13-section-6"></a>
+
 ## 3. RIGHT JOIN
 
 ### 11. 오른쪽 Table을 보존한다
@@ -167,6 +349,8 @@ Table 순서를 바꾸면 같은 보존 방향을 `LEFT JOIN`으로 표현할 �
 Table 순서만 바꾸고 Alias 또는 정렬 기준을 잘못 바꾸지 않도록 결과 Column을 함께 검토한다.
 
 ---
+
+<a id="sql-13-section-7"></a>
 
 ## 4. ON과 WHERE의 중요한 차이
 
@@ -224,6 +408,8 @@ WHERE d.loc IN ('DALLAS', 'CHICAGO');
 
 ---
 
+<a id="sql-13-section-8"></a>
+
 ## 5. NULL과 표시값
 
 ### 21. NULL은 연결 실패를 나타낼 수 있다
@@ -257,6 +443,8 @@ ORDER BY d.deptno, e.empno;
 
 ---
 
+<a id="sql-13-section-9"></a>
+
 ## 6. Outer Join과 집계
 
 ### 26. 모든 부서의 사원 수
@@ -272,6 +460,8 @@ LEFT JOIN emp AS e
 GROUP BY d.deptno, d.dname
 ORDER BY d.deptno;
 ```
+
+<a id="index-section-48"></a>
 
 ### 27. COUNT(*)를 주의한다
 
@@ -308,6 +498,8 @@ ORDER BY d.deptno;
 
 사원이 없는 부서의 `AVG(e.sal)`은 `NULL`이다. 0으로 표시할지는 보고서 의미에 따라 결정한다.
 
+<a id="index-section-52"></a>
+
 ### 31. HAVING과 보존 결과를 함께 검토한다
 
 ```sql
@@ -320,6 +512,8 @@ HAVING COUNT(e.empno) = 0;
 ```
 
 ---
+
+<a id="sql-13-section-10"></a>
 
 ## 7. Anti Join
 
@@ -370,6 +564,8 @@ WHERE NOT EXISTS (
 
 ---
 
+<a id="sql-13-section-11"></a>
+
 ## 8. FULL OUTER JOIN 결과
 
 ### 38. 양쪽의 모든 Row가 필요한 경우
@@ -411,6 +607,8 @@ WHERE d.deptno IS NULL;
 
 첫 번째 `LEFT JOIN`에 이미 일치 Row가 포함되어 있으므로 두 번째 분기는 `WHERE d.deptno IS NULL`로 사원 쪽에만 있는 Row를 추가한다.
 
+<a id="index-section-65"></a>
+
 ### 42. UNION만으로 중복을 숨기지 않는다
 
 `UNION ALL`과 명시적인 Anti Join 조건으로 각 분기의 역할을 드러내는 편이 안전하다.
@@ -420,6 +618,8 @@ WHERE d.deptno IS NULL;
 `EMP.DEPTNO → DEPT.DEPTNO` Foreign Key가 유효하면 존재하지 않는 부서 번호를 가진 사원은 저장되지 않는다. 문법과 실제 결과를 구분한다.
 
 ---
+
+<a id="sql-13-section-12"></a>
 
 ## 9. Self Join 기본
 
@@ -463,6 +663,8 @@ ON manager.empno = employee.mgr
 사원 Row의 `MGR` 값이 관리자 Row의 `EMPNO`를 가리킨다.
 
 ---
+
+<a id="sql-13-section-13"></a>
 
 ## 10. 사원–관리자 Self Join
 
@@ -523,6 +725,8 @@ WHERE mgr IS NULL;
 
 ---
 
+<a id="sql-13-section-14"></a>
+
 ## 11. 여러 단계의 Self Join
 
 ### 55. 사원–관리자–상위 관리자
@@ -557,6 +761,8 @@ ORDER BY employee.empno;
 잘못된 Data로 사원이 자신을 관리자라고 가리키거나 관리자 관계가 순환하면 계층 해석에 문제가 생긴다.
 
 ---
+
+<a id="sql-13-section-15"></a>
 
 ## 12. Outer Join과 다중 Table
 
@@ -599,6 +805,8 @@ employee ↔ manager
 다중 Outer Join일수록 각 조건이 `ON`인지 `WHERE`인지 한 단계씩 확인한다.
 
 ---
+
+<a id="sql-13-section-16"></a>
 
 ## 13. 내 코드와 강사님 코드 비교
 
@@ -654,6 +862,8 @@ LEFT JOIN emp AS e
 - NULL 표시와 관계 존재 판단을 혼동하지 않는다.
 
 ---
+
+<a id="sql-13-section-17"></a>
 
 ## 14. 개선된 통합 예제
 
@@ -712,6 +922,8 @@ ORDER BY d.deptno;
 
 ---
 
+<a id="sql-13-section-18"></a>
+
 ## 15. 실무 활용 지침
 
 ### 73. 보존할 기준 집합을 먼저 정한다
@@ -743,6 +955,8 @@ ORDER BY d.deptno;
 Join Key의 Index와 Data 분포가 중요하다. Outer Join이라는 이유만으로 성능을 단정하지 않는다.
 
 ---
+
+<a id="sql-13-section-19"></a>
 
 ## 16. 자주 하는 실수
 
@@ -782,6 +996,8 @@ MariaDB의 실제 지원 구문을 확인하고 `LEFT JOIN + 반대쪽 Anti Join
 `COALESCE`는 Query 결과의 표시값을 반환할 뿐 원본 Table을 수정하지 않는다.
 
 ---
+
+<a id="sql-13-section-20"></a>
 
 ## 17. 디버깅 방법
 
@@ -848,6 +1064,8 @@ WHERE employee.mgr IS NOT NULL
 
 `GROUP BY`를 제거하고 원본 결합 결과를 확인한 후 `COUNT`, `SUM`을 적용한다.
 
+<a id="index-section-126"></a>
+
 ### 94. EXPLAIN으로 실행 계획을 확인한다
 
 ```sql
@@ -859,6 +1077,8 @@ LEFT JOIN emp AS manager
 ```
 
 ---
+
+<a id="sql-13-section-21"></a>
 
 ## 18. 종합실습
 
@@ -883,6 +1103,8 @@ LEFT JOIN emp AS manager
 모든 사원의 번호, 이름, 부서명, 관리자 이름을 조회하고 사원 번호순으로 정렬한다.
 
 ---
+
+<a id="sql-13-section-22"></a>
 
 ## 19. 정답과 해설
 
@@ -961,6 +1183,8 @@ ORDER BY employee.empno;
 
 ---
 
+<a id="sql-13-section-23"></a>
+
 ## 20. 최종 체크리스트
 
 ### 105. 문법 체크
@@ -985,6 +1209,8 @@ ORDER BY employee.empno;
 - [ ] 가변 깊이 계층은 Recursive CTE가 더 적합하지 않은가?
 
 ---
+
+<a id="sql-13-section-24"></a>
 
 ## 21. 핵심 요약
 
@@ -1016,6 +1242,8 @@ Outer Join은 단순히 NULL을 만드는 문법이 아니라 **어느 집합을
 
 ---
 
+<a id="sql-13-section-25"></a>
+
 ## 📎 다음 문서
 
 다음 원본 흐름은 Table 구조를 정의하고 무결성을 설정하는 DDL과 제약조건이다.
@@ -1025,6 +1253,8 @@ Outer Join은 단순히 NULL을 만드는 문법이 아니라 **어느 집합을
 ```
 
 ---
+
+<a id="sql-13-section-26"></a>
 
 ## 🔬 V3 동작 백과 — 일치하지 않는 Row와 같은 Table의 관계
 
@@ -1069,6 +1299,8 @@ WHERE e.sal >= 3000
 ```
 
 두 번째 Query는 상대가 없는 Row의 `e.sal`이 NULL이므로 WHERE에서 제외되어 Outer JOIN 의미가 약해진다.
+
+<a id="index-section-150"></a>
 
 ### Self Join
 

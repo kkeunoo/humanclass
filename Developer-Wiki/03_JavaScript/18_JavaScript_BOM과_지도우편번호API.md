@@ -1,7 +1,7 @@
 ---
 title: JavaScript BOM과 지도·우편번호 API
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,104 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: BOM은 브라우저 창·주소·방문 기록을 다루는 기능이다](#js-18-section-4)
+- [14. 이동 방식 비교](#js-18-section-18)
+- [64. 내 코드와 강사님 코드 비교](#js-18-section-68)
+- [66. 실무형 예제: 주소 검색 초기화](#js-18-section-70)
+- [67. 대표 오류로 이해하기](#js-18-section-71)
+- [68. 자주 하는 실수](#js-18-section-72)
+- [69. 핵심 요약](#js-18-section-73)
+- [70. 최종 체크리스트](#js-18-section-74)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-18-section-1)
+- [핵심 개념](#js-18-section-2)
+- [학습 목표](#js-18-section-3)
+- [개념에서 실제 실행까지: BOM은 브라우저 창·주소·방문 기록을 다루는 기능이다](#js-18-section-4)
+- [1. BOM과 DOM](#js-18-section-5)
+- [2. Window 객체](#js-18-section-6)
+- [3. 전역 함수와 Window](#js-18-section-7)
+- [4. 원본 초기화](#js-18-section-8)
+- [5. `defer` 방식](#js-18-section-9)
+- [6. Location 객체](#js-18-section-10)
+- [7. `location.href`](#js-18-section-11)
+- [8. Location 주요 Property](#js-18-section-12)
+- [9. URL 객체로 분석](#js-18-section-13)
+- [10. `location.href` 변경](#js-18-section-14)
+- [11. HTTP 사용 문제](#js-18-section-15)
+- [12. `location.assign()`](#js-18-section-16)
+- [13. `location.replace()`](#js-18-section-17)
+- [14. 이동 방식 비교](#js-18-section-18)
+- [15. `location.reload()`](#js-18-section-19)
+- [16. 새로고침 후 상태](#js-18-section-20)
+- [17. History 객체](#js-18-section-21)
+- [18. `history.length`](#js-18-section-22)
+- [19. 한 단계 뒤로](#js-18-section-23)
+- [20. 한 단계 앞으로](#js-18-section-24)
+- [21. `history.go()`](#js-18-section-25)
+- [22. 원본 버튼 문구 불일치](#js-18-section-26)
+- [23. Button 문구 개선](#js-18-section-27)
+- [24. History 이동 제한](#js-18-section-28)
+- [25. `window.open()`](#js-18-section-29)
+- [26. 세 인수](#js-18-section-30)
+- [27. Popup Option](#js-18-section-31)
+- [28. Popup 반환값](#js-18-section-32)
+- [29. Popup 차단 처리](#js-18-section-33)
+- [30. 사용자 동작과 Popup](#js-18-section-34)
+- [31. 같은 Window Name](#js-18-section-35)
+- [32. `_blank`](#js-18-section-36)
+- [33. Same-Origin Policy](#js-18-section-37)
+- [34. `window.opener`](#js-18-section-38)
+- [35. `window.open()` 보안 설명](#js-18-section-39)
+- [36. Kakao Postcode Script](#js-18-section-40)
+- [37. 명시적 HTTPS](#js-18-section-41)
+- [38. Postcode 객체 생성](#js-18-section-42)
+- [39. `.open()`](#js-18-section-43)
+- [40. `oncomplete`](#js-18-section-44)
+- [41. Address와 Zonecode](#js-18-section-45)
+- [42. 원본 결과 처리](#js-18-section-46)
+- [43. 주소 Form](#js-18-section-47)
+- [44. 주소 결과 연결](#js-18-section-48)
+- [45. Readonly 사용](#js-18-section-49)
+- [46. API 존재 검사](#js-18-section-50)
+- [47. 실패 안내](#js-18-section-51)
+- [48. 안전한 주소 검색 함수](#js-18-section-52)
+- [49. 외부 Script Load Event](#js-18-section-53)
+- [50. 동적 Script 중복 방지](#js-18-section-54)
+- [51. 외부 API 의존성](#js-18-section-55)
+- [52. 이미지형 지도](#js-18-section-56)
+- [53. 이미지형 지도 장점](#js-18-section-57)
+- [54. 이미지형 지도 한계](#js-18-section-58)
+- [55. Mixed Content](#js-18-section-59)
+- [56. 지도 Link 보안](#js-18-section-60)
+- [57. 지도 이미지 `alt`](#js-18-section-61)
+- [58. Rough Map](#js-18-section-62)
+- [59. Container ID](#js-18-section-63)
+- [60. Timestamp·Key 일치](#js-18-section-64)
+- [61. Loader 중복 삽입](#js-18-section-65)
+- [62. Inline Style 개선](#js-18-section-66)
+- [63. 외부 지도 Fallback](#js-18-section-67)
+- [64. 내 코드와 강사님 코드 비교](#js-18-section-68)
+- [65. 기존 코드에서 개선한 이유](#js-18-section-69)
+- [66. 실무형 예제: 주소 검색 초기화](#js-18-section-70)
+- [67. 대표 오류로 이해하기](#js-18-section-71)
+- [68. 자주 하는 실수](#js-18-section-72)
+- [69. 핵심 요약](#js-18-section-73)
+- [70. 최종 체크리스트](#js-18-section-74)
+- [마무리](#js-18-section-75)
+- [V3 실행 추적 카드 — window 기능/사용자 선택 → 외부 API → 콜백 결과](#js-18-section-76)
+
+</details>
+
+---
+
+<a id="js-18-section-1"></a>
+
+## 개요
 
 BOM은 Browser Object Model의 약자다.
 
@@ -58,7 +155,9 @@ window.open(
 
 ---
 
-# 핵심 개념
+<a id="js-18-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -77,30 +176,118 @@ window.open(
 
 ---
 
-# 학습 목표
+<a id="js-18-section-3"></a>
 
-- BOM과 DOM의 차이를 설명할 수 있다.
-- `window` 객체의 역할을 이해한다.
-- `location` 객체와 `location.href` 문자열을 구분할 수 있다.
-- URL을 안전하게 변경할 수 있다.
-- `assign()`과 `replace()`의 차이를 이해한다.
-- 현재 페이지를 새로고침할 수 있다.
-- `history.back()`, `forward()`, `go()`를 사용할 수 있다.
-- 버튼 문구와 실제 History 이동 단계를 일치시킬 수 있다.
-- `window.open()`의 세 인수를 설명할 수 있다.
-- Popup 차단 여부를 확인할 수 있다.
-- 새 창 이름에 따른 재사용 동작을 이해한다.
-- Same-Origin과 `window.opener` 보안을 이해한다.
-- Kakao Postcode의 완료 Callback을 이해한다.
-- 주소와 우편번호를 실제 Form Input에 연결할 수 있다.
-- 외부 Script가 준비되지 않은 상태를 처리할 수 있다.
-- 이미지형 지도와 Script형 Rough Map을 구분할 수 있다.
-- HTTP 자원을 HTTPS 페이지에서 사용하면 생기는 문제를 설명할 수 있다.
-- 외부 Embed의 ID·Timestamp·Key를 일관되게 관리할 수 있다.
+## 학습 목표
+
+- 외부 스크립트 로드와 완료 콜백을 연결한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. BOM과 DOM
+<a id="js-18-section-4"></a>
+
+## 개념에서 실제 실행까지: BOM은 브라우저 창·주소·방문 기록을 다루는 기능이다
+
+DOM은 문서 요소, BOM은 window·location·history 등 브라우저 환경을 다룬다. 주소창의 전체 URL은 location.href로 읽고 값을 대입하면 실제 페이지 이동을 요청한다. 단순 변수 변경처럼 현재 문서가 그대로 유지되는 것이 아니다.
+
+두 원본의 '뒤로가기' 버튼은 history.back()이 주석이고 history.go(-2)가 실행된다. 실제로는 두 단계 이동을 시도하며 기록이 없으면 변화하지 않을 수 있다. window.open은 사용자 클릭 안에서 호출해야 팝업 차단 위험이 줄며 보안은 same-origin·opener 정책에 영향을 받는다. 모든 부모 정보를 무조건 읽을 수 있는 것은 아니다.
+
+우편번호 라이브러리 로드→클릭→new kakao.Postcode→open→사용자가 주소 선택→oncomplete(data) 순서다. 버튼을 누른 직후 선택 주소가 동기 반환되는 것이 아니다. data.address와 zonecode가 콜백 인수에서 들어온다. 지도 퍼가기 timestamp/key는 두 원본이 다르므로 내 지도에 강사님의 식별자만 일부 섞으면 안 된다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/18_map.html`
+
+```javascript
+new kakao.Postcode({
+                    oncomplete: function(data) {
+                        console.log(data)
+                        console.log(data.address)
+                        console.log(data.zonecode)
+                    }
+                }).open();
+            })
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/18_map.html`
+
+```javascript
+new kakao.Postcode({
+                oncomplete: function(data) {
+                    console.log(data)
+                    console.log(data.address)
+                    console.log(data.zonecode)
+                }
+            }).open();
+        })
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+const url = new URL("http://localhost:5500/javascript/18_map.html?mode=study#map");
+console.log(url.pathname, url.search, url.hash);
+function oncomplete(data) {
+  console.log(data.address, data.zonecode);
+}
+oncomplete({address: "학습용 주소", zonecode: "12345"});
+```
+
+예상 출력:
+
+```text
+/javascript/18_map.html ?mode=study #map
+학습용 주소 12345
+```
+
+### 결과를 역추적하는 방법
+
+여기는 콜백 모양만 재현한 mock이며 실제 주소 검색 결과가 아니다. 실제 서비스는 로드 성공, 팝업 정책, 도메인·정책을 확인한다. [Kakao 공식 우편번호 가이드](https://postcode.map.kakao.com/guide)에서 oncomplete 예제를 대조했다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** 뒤로가기 버튼이 history.go(-2)라면 실제 이동과 라벨 차이를 설명한다.
+
+**응용·디버깅 실습:** 우편번호 선택주소를 input에 표시할 시점을 정한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. 방문기록이 있으면두단계이동을 시도한다. 한단계뒤로라면history.back또는go(-1)로맞춘다.
+2. oncomplete 콜백에서 data.address/zonecode를value에넣는다. open 직후에는 아직 선택하지 않았다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** kakao is not defined라면 주소 데이터부터 고쳐야 할까?
+
+**해설:** 먼저 외부 script URL과 Network 로드 성공, 실행 순서, 전역 객체 존재를 확인한다. data 문제는 라이브러리 실행 뒤의 단계다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-18-section-5"></a>
+
+## 1. BOM과 DOM
 
 ```text
 DOM
@@ -114,7 +301,9 @@ DOM도 `window.document`를 통해 Window 객체 아래에서 접근할 수 있�
 
 ---
 
-# 2. Window 객체
+<a id="js-18-section-6"></a>
+
+## 2. Window 객체
 
 ```javascript
 console.log(window)
@@ -138,7 +327,9 @@ console.log(
 
 ---
 
-# 3. 전역 함수와 Window
+<a id="js-18-section-7"></a>
+
+## 3. 전역 함수와 Window
 
 브라우저의 일반 Script에서 전역에 선언된 함수·`var`는 `window` property와 연결될 수 있다.
 
@@ -154,7 +345,9 @@ Module Script에서는 전역 노출 방식이 다르다.
 
 ---
 
-# 4. 원본 초기화
+<a id="js-18-section-8"></a>
+
+## 4. 원본 초기화
 
 양쪽 원본은 `window.onload`에서 Button Listener를 등록한다.
 
@@ -169,7 +362,9 @@ Body와 외부 자원이 모두 Load된 뒤 실행된다.
 
 ---
 
-# 5. `defer` 방식
+<a id="js-18-section-9"></a>
+
+## 5. `defer` 방식
 
 DOM 요소 선택만 필요하다면 다음 구조를 사용할 수 있다.
 
@@ -186,7 +381,9 @@ init()
 
 ---
 
-# 6. Location 객체
+<a id="js-18-section-10"></a>
+
+## 6. Location 객체
 
 ```javascript
 console.log(location)
@@ -196,7 +393,9 @@ console.log(location)
 
 ---
 
-# 7. `location.href`
+<a id="js-18-section-11"></a>
+
+## 7. `location.href`
 
 ```javascript
 console.log(
@@ -216,7 +415,9 @@ http://127.0.0.1:5500/javascript/18_map.html
 
 ---
 
-# 8. Location 주요 Property
+<a id="js-18-section-12"></a>
+
+## 8. Location 주요 Property
 
 | Property | 의미 |
 | --- | --- |
@@ -231,7 +432,9 @@ http://127.0.0.1:5500/javascript/18_map.html
 
 ---
 
-# 9. URL 객체로 분석
+<a id="js-18-section-13"></a>
+
+## 9. URL 객체로 분석
 
 ```javascript
 const currentUrl = new URL(
@@ -251,7 +454,9 @@ console.log(
 
 ---
 
-# 10. `location.href` 변경
+<a id="js-18-section-14"></a>
+
+## 10. `location.href` 변경
 
 원본:
 
@@ -275,7 +480,9 @@ HTTPS를 명시한다.
 
 ---
 
-# 11. HTTP 사용 문제
+<a id="js-18-section-15"></a>
+
+## 11. HTTP 사용 문제
 
 HTTP URL은 다음 문제가 있을 수 있다.
 
@@ -287,7 +494,9 @@ HTTP URL은 다음 문제가 있을 수 있다.
 
 ---
 
-# 12. `location.assign()`
+<a id="js-18-section-16"></a>
+
+## 12. `location.assign()`
 
 ```javascript
 location.assign(
@@ -299,7 +508,9 @@ location.assign(
 
 ---
 
-# 13. `location.replace()`
+<a id="js-18-section-17"></a>
+
+## 13. `location.replace()`
 
 ```javascript
 location.replace(
@@ -313,7 +524,9 @@ location.replace(
 
 ---
 
-# 14. 이동 방식 비교
+<a id="js-18-section-18"></a>
+
+## 14. 이동 방식 비교
 
 | 방식 | 현재 Entry 유지 | 뒤로가기 |
 | --- | --- | --- |
@@ -323,7 +536,9 @@ location.replace(
 
 ---
 
-# 15. `location.reload()`
+<a id="js-18-section-19"></a>
+
+## 15. `location.reload()`
 
 ```javascript
 location.reload()
@@ -333,7 +548,9 @@ location.reload()
 
 ---
 
-# 16. 새로고침 후 상태
+<a id="js-18-section-20"></a>
+
+## 16. 새로고침 후 상태
 
 새로고침하면 일반 JavaScript 변수와 현재 DOM 변경은 초기화된다.
 
@@ -348,7 +565,9 @@ location.reload()
 
 ---
 
-# 17. History 객체
+<a id="js-18-section-21"></a>
+
+## 17. History 객체
 
 ```javascript
 console.log(history)
@@ -360,7 +579,9 @@ console.log(history)
 
 ---
 
-# 18. `history.length`
+<a id="js-18-section-22"></a>
+
+## 18. `history.length`
 
 ```javascript
 console.log(
@@ -372,7 +593,9 @@ console.log(
 
 ---
 
-# 19. 한 단계 뒤로
+<a id="js-18-section-23"></a>
+
+## 19. 한 단계 뒤로
 
 ```javascript
 history.back()
@@ -386,7 +609,9 @@ history.go(-1)
 
 ---
 
-# 20. 한 단계 앞으로
+<a id="js-18-section-24"></a>
+
+## 20. 한 단계 앞으로
 
 ```javascript
 history.forward()
@@ -402,7 +627,9 @@ history.go(1)
 
 ---
 
-# 21. `history.go()`
+<a id="js-18-section-25"></a>
+
+## 21. `history.go()`
 
 ```javascript
 history.go(-2)
@@ -412,7 +639,9 @@ history.go(-2)
 
 ---
 
-# 22. 원본 버튼 문구 불일치
+<a id="js-18-section-26"></a>
+
+## 22. 원본 버튼 문구 불일치
 
 원본 Button은 “뒤로가기”처럼 표시되지만 실제 코드는 다음을 실행한다.
 
@@ -424,7 +653,9 @@ history.go(-2)
 
 ---
 
-# 23. Button 문구 개선
+<a id="js-18-section-27"></a>
+
+## 23. Button 문구 개선
 
 ```html
 <button
@@ -446,7 +677,9 @@ goBackTwo.addEventListener(
 
 ---
 
-# 24. History 이동 제한
+<a id="js-18-section-28"></a>
+
+## 24. History 이동 제한
 
 다음 상황에서는 기대한 페이지로 이동하지 않을 수 있다.
 
@@ -458,7 +691,9 @@ goBackTwo.addEventListener(
 
 ---
 
-# 25. `window.open()`
+<a id="js-18-section-29"></a>
+
+## 25. `window.open()`
 
 ```javascript
 const popup = window.open(
@@ -470,7 +705,9 @@ const popup = window.open(
 
 ---
 
-# 26. 세 인수
+<a id="js-18-section-30"></a>
+
+## 26. 세 인수
 
 ```text
 첫 번째
@@ -485,7 +722,9 @@ const popup = window.open(
 
 ---
 
-# 27. Popup Option
+<a id="js-18-section-31"></a>
+
+## 27. Popup Option
 
 ```javascript
 const popupOptions = [
@@ -506,7 +745,9 @@ window.open(
 
 ---
 
-# 28. Popup 반환값
+<a id="js-18-section-32"></a>
+
+## 28. Popup 반환값
 
 ```javascript
 const popup = window.open(
@@ -524,7 +765,9 @@ console.log(popup)
 
 ---
 
-# 29. Popup 차단 처리
+<a id="js-18-section-33"></a>
+
+## 29. Popup 차단 처리
 
 ```javascript
 if (popup === null) {
@@ -537,7 +780,9 @@ if (popup === null) {
 
 ---
 
-# 30. 사용자 동작과 Popup
+<a id="js-18-section-34"></a>
+
+## 30. 사용자 동작과 Popup
 
 Popup은 Button Click 같은 직접적인 사용자 동작 안에서 열어야 차단 가능성을 줄일 수 있다.
 
@@ -556,7 +801,9 @@ Timer·비동기 Callback 뒤에서 열면 차단될 수 있다.
 
 ---
 
-# 31. 같은 Window Name
+<a id="js-18-section-35"></a>
+
+## 31. 같은 Window Name
 
 ```javascript
 window.open(
@@ -574,7 +821,9 @@ window.open(
 
 ---
 
-# 32. `_blank`
+<a id="js-18-section-36"></a>
+
+## 32. `_blank`
 
 ```javascript
 window.open(
@@ -589,7 +838,9 @@ window.open(
 
 ---
 
-# 33. Same-Origin Policy
+<a id="js-18-section-37"></a>
+
+## 33. Same-Origin Policy
 
 새 창과 현재 창이 다음 Origin 구성요소를 모두 공유해야 DOM 접근이 허용되는 범위가 넓다.
 
@@ -603,7 +854,9 @@ Port
 
 ---
 
-# 34. `window.opener`
+<a id="js-18-section-38"></a>
+
+## 34. `window.opener`
 
 새 창은 열어 준 창을 `window.opener`로 참조할 수 있는 경우가 있다.
 
@@ -621,7 +874,9 @@ Port
 
 ---
 
-# 35. `window.open()` 보안 설명
+<a id="js-18-section-39"></a>
+
+## 35. `window.open()` 보안 설명
 
 `window.open()` 자체가 무조건 위험한 것은 아니다.
 
@@ -636,7 +891,9 @@ Port
 
 ---
 
-# 36. Kakao Postcode Script
+<a id="js-18-section-40"></a>
+
+## 36. Kakao Postcode Script
 
 원본은 외부 Script를 불러온다.
 
@@ -650,7 +907,9 @@ Protocol-relative URL이다.
 
 ---
 
-# 37. 명시적 HTTPS
+<a id="js-18-section-41"></a>
+
+## 37. 명시적 HTTPS
 
 ```html
 <script
@@ -662,7 +921,9 @@ Protocol을 명시하면 HTTPS 페이지에서 동작을 예측하기 쉽다.
 
 ---
 
-# 38. Postcode 객체 생성
+<a id="js-18-section-42"></a>
+
+## 38. Postcode 객체 생성
 
 ```javascript
 const postcode = (
@@ -678,7 +939,9 @@ const postcode = (
 
 ---
 
-# 39. `.open()`
+<a id="js-18-section-43"></a>
+
+## 39. `.open()`
 
 ```javascript
 postcode.open()
@@ -700,7 +963,9 @@ new kakao.Postcode({
 
 ---
 
-# 40. `oncomplete`
+<a id="js-18-section-44"></a>
+
+## 40. `oncomplete`
 
 사용자가 검색 결과에서 주소를 선택해 검색이 완료되면 실행되는 Callback이다.
 
@@ -720,7 +985,9 @@ oncomplete(
 
 ---
 
-# 41. Address와 Zonecode
+<a id="js-18-section-45"></a>
+
+## 41. Address와 Zonecode
 
 | Property | 의미 |
 | --- | --- |
@@ -733,7 +1000,9 @@ oncomplete(
 
 ---
 
-# 42. 원본 결과 처리
+<a id="js-18-section-46"></a>
+
+## 42. 원본 결과 처리
 
 원본은 결과를 Console에 출력한다.
 
@@ -747,7 +1016,9 @@ console.log(data.zonecode)
 
 ---
 
-# 43. 주소 Form
+<a id="js-18-section-47"></a>
+
+## 43. 주소 Form
 
 ```html
 <label for="postcode">
@@ -789,7 +1060,9 @@ console.log(data.zonecode)
 
 ---
 
-# 44. 주소 결과 연결
+<a id="js-18-section-48"></a>
+
+## 44. 주소 결과 연결
 
 ```javascript
 findPostcodeButton.addEventListener(
@@ -816,7 +1089,9 @@ findPostcodeButton.addEventListener(
 
 ---
 
-# 45. Readonly 사용
+<a id="js-18-section-49"></a>
+
+## 45. Readonly 사용
 
 사용자가 검색 결과 필드를 임의로 바꾸지 않도록 다음 Input에 `readonly`를 사용할 수 있다.
 
@@ -829,7 +1104,9 @@ findPostcodeButton.addEventListener(
 
 ---
 
-# 46. API 존재 검사
+<a id="js-18-section-50"></a>
+
+## 46. API 존재 검사
 
 외부 Script가 Load되지 않았다면 `kakao` 접근에서 오류가 발생할 수 있다.
 
@@ -846,7 +1123,9 @@ const postcodeAvailable = (
 
 ---
 
-# 47. 실패 안내
+<a id="js-18-section-51"></a>
+
+## 47. 실패 안내
 
 ```javascript
 if (!postcodeAvailable) {
@@ -861,7 +1140,9 @@ if (!postcodeAvailable) {
 
 ---
 
-# 48. 안전한 주소 검색 함수
+<a id="js-18-section-52"></a>
+
+## 48. 안전한 주소 검색 함수
 
 ```javascript
 function openPostcodeSearch() {
@@ -905,7 +1186,9 @@ function openPostcodeSearch() {
 
 ---
 
-# 49. 외부 Script Load Event
+<a id="js-18-section-53"></a>
+
+## 49. 외부 Script Load Event
 
 ```javascript
 const script = (
@@ -941,7 +1224,9 @@ document.head.append(script)
 
 ---
 
-# 50. 동적 Script 중복 방지
+<a id="js-18-section-54"></a>
+
+## 50. 동적 Script 중복 방지
 
 ```javascript
 if (
@@ -958,7 +1243,9 @@ if (
 
 ---
 
-# 51. 외부 API 의존성
+<a id="js-18-section-55"></a>
+
+## 51. 외부 API 의존성
 
 외부 API는 다음 상황에 영향을 받는다.
 
@@ -974,7 +1261,9 @@ Fallback 안내가 필요하다.
 
 ---
 
-# 52. 이미지형 지도
+<a id="js-18-section-56"></a>
+
+## 52. 이미지형 지도
 
 원본 첫 지도는 이미지와 Link로 구성된 정적 지도 형태다.
 
@@ -987,7 +1276,9 @@ Fallback 안내가 필요하다.
 
 ---
 
-# 53. 이미지형 지도 장점
+<a id="js-18-section-57"></a>
+
+## 53. 이미지형 지도 장점
 
 - 구현이 간단함
 - JavaScript 의존이 적음
@@ -996,7 +1287,9 @@ Fallback 안내가 필요하다.
 
 ---
 
-# 54. 이미지형 지도 한계
+<a id="js-18-section-58"></a>
+
+## 54. 이미지형 지도 한계
 
 - 확대·축소 제한
 - 외부 이미지 URL 의존
@@ -1007,7 +1300,9 @@ Fallback 안내가 필요하다.
 
 ---
 
-# 55. Mixed Content
+<a id="js-18-section-59"></a>
+
+## 55. Mixed Content
 
 HTTPS 페이지에서 HTTP 이미지·Script를 Load하면 Browser가 차단하거나 경고할 수 있다.
 
@@ -1022,7 +1317,9 @@ http://...
 
 ---
 
-# 56. 지도 Link 보안
+<a id="js-18-section-60"></a>
+
+## 56. 지도 Link 보안
 
 ```html
 <a
@@ -1036,7 +1333,9 @@ http://...
 
 ---
 
-# 57. 지도 이미지 `alt`
+<a id="js-18-section-61"></a>
+
+## 57. 지도 이미지 `alt`
 
 ```html
 <img
@@ -1051,7 +1350,9 @@ http://...
 
 ---
 
-# 58. Rough Map
+<a id="js-18-section-62"></a>
+
+## 58. Rough Map
 
 두 번째 지도는 Loader Script와 `daum.roughmap.Lander`를 사용해 렌더링한다.
 
@@ -1066,7 +1367,9 @@ new daum.roughmap.Lander({
 
 ---
 
-# 59. Container ID
+<a id="js-18-section-63"></a>
+
+## 59. Container ID
 
 ```html
 <div
@@ -1079,7 +1382,9 @@ Renderer가 지정한 Embed Instance와 Container를 연결한다.
 
 ---
 
-# 60. Timestamp·Key 일치
+<a id="js-18-section-64"></a>
+
+## 60. Timestamp·Key 일치
 
 다음 값은 한 Embed 세트 안에서 서로 맞아야 한다.
 
@@ -1093,7 +1398,9 @@ Key
 
 ---
 
-# 61. Loader 중복 삽입
+<a id="js-18-section-65"></a>
+
+## 61. Loader 중복 삽입
 
 같은 Rough Map Loader를 페이지에 여러 번 삽입하지 않는다.
 
@@ -1109,7 +1416,9 @@ if (
 
 ---
 
-# 62. Inline Style 개선
+<a id="js-18-section-66"></a>
+
+## 62. Inline Style 개선
 
 외부 Embed가 긴 Inline Style을 제공하더라도 직접 작성하는 프로젝트 UI는 CSS File로 분리한다.
 
@@ -1122,7 +1431,9 @@ if (
 
 ---
 
-# 63. 외부 지도 Fallback
+<a id="js-18-section-67"></a>
+
+## 63. 외부 지도 Fallback
 
 ```html
 <div id="map-status">
@@ -1141,7 +1452,9 @@ mapStatus.textContent = (
 
 ---
 
-# 64. 내 코드와 강사님 코드 비교
+<a id="js-18-section-68"></a>
+
+## 64. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1156,7 +1469,7 @@ mapStatus.textContent = (
 | Button 문구 | 일부 동작과 불일치 | 일부 동작과 불일치 |
 | 외부 API 오류 처리 | 없음 | 없음 |
 
-## 64-1. 내 코드의 장점
+### 64-1. 내 코드의 장점
 
 - `location`과 `location.href`의 역할을 상세히 기록했다.
 - 새로고침과 History 이동 차이를 설명했다.
@@ -1165,7 +1478,7 @@ mapStatus.textContent = (
 - 이미지형 지도와 Rough Map을 모두 삽입했다.
 - 강사님 코드보다 학습 주석이 풍부하다.
 
-## 64-2. 내 코드의 개선점
+### 64-2. 내 코드의 개선점
 
 - HTTP URL로 이동한다.
 - “뒤로가기” Button이 실제로 두 단계 이동한다.
@@ -1178,14 +1491,14 @@ mapStatus.textContent = (
 - 지도 Image의 `alt`가 부족하다.
 - 외부 API Load 실패를 처리하지 않는다.
 
-## 64-3. 강사님 코드의 장점
+### 64-3. 강사님 코드의 장점
 
 - Location·History·Popup을 간결하게 실습한다.
 - Postcode Callback 구조를 확인할 수 있다.
 - 정적 지도와 Script형 지도를 비교할 수 있다.
 - 실제 외부 서비스 Embed 흐름을 경험할 수 있다.
 
-## 64-4. 강사님 코드의 보충점
+### 64-4. 강사님 코드의 보충점
 
 - HTTP·HTTPS 차이를 설명해야 한다.
 - Popup 차단과 Same-Origin 처리가 필요하다.
@@ -1196,9 +1509,11 @@ mapStatus.textContent = (
 
 ---
 
-# 65. 기존 코드에서 개선한 이유
+<a id="js-18-section-69"></a>
 
-## 65-1. HTTPS 이동
+## 65. 기존 코드에서 개선한 이유
+
+### 65-1. HTTPS 이동
 
 기존:
 
@@ -1216,7 +1531,7 @@ location.href = (
 )
 ```
 
-## 65-2. History 문구 일치
+### 65-2. History 문구 일치
 
 기존:
 
@@ -1232,7 +1547,7 @@ Button: 두 단계 뒤로
 Code: history.go(-2)
 ```
 
-## 65-3. Popup 반환값
+### 65-3. Popup 반환값
 
 기존:
 
@@ -1258,7 +1573,7 @@ if (popup === null) {
 }
 ```
 
-## 65-4. Postcode Form 연결
+### 65-4. Postcode Form 연결
 
 기존:
 
@@ -1278,7 +1593,9 @@ addressInput.value = (
 
 ---
 
-# 66. 실무형 예제: 주소 검색 초기화
+<a id="js-18-section-70"></a>
+
+## 66. 실무형 예제: 주소 검색 초기화
 
 ```javascript
 function getRequiredElement(
@@ -1379,7 +1696,7 @@ document.addEventListener(
 )
 ```
 
-## 66-1. 코드에서 무엇을 사용하는 걸까?
+### 66-1. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1394,79 +1711,91 @@ document.addEventListener(
 
 ---
 
-# 67. 대표 오류로 이해하기
+<a id="js-18-section-71"></a>
 
-## 67-1. `kakao is not defined`
+## 67. 대표 오류로 이해하기
+
+### 67-1. `kakao is not defined`
 
 외부 Script가 Load되지 않았거나 차단되었을 수 있다.
 
-## 67-2. Popup 반환값이 `null`
+### 67-2. Popup 반환값이 `null`
 
 Browser가 Popup을 차단했을 수 있다.
 
-## 67-3. Rough Map이 표시되지 않음
+### 67-3. Rough Map이 표시되지 않음
 
 Container ID·Timestamp·Key가 서로 일치하는지 확인한다.
 
-## 67-4. HTTPS에서 HTTP 지도 차단
+### 67-4. HTTPS에서 HTTP 지도 차단
 
 Mixed Content 문제다.
 
-## 67-5. History가 기대한 만큼 이동하지 않음
+### 67-5. History가 기대한 만큼 이동하지 않음
 
 해당 단계의 Entry가 없을 수 있다.
 
-## 67-6. 주소는 검색되지만 Form에 보이지 않음
+### 67-6. 주소는 검색되지만 Form에 보이지 않음
 
 Callback에서 Input Value에 연결하지 않았을 수 있다.
 
 ---
 
-# 68. 자주 하는 실수
+<a id="js-18-section-72"></a>
 
-## 68-1. BOM과 DOM을 같은 개념으로 생각
+## 68. 자주 하는 실수
+
+<a id="index-section-95"></a>
+
+### 68-1. BOM과 DOM을 같은 개념으로 생각
 
 문서 구조와 브라우저 기능의 역할이 다르다.
 
-## 68-2. `location` 객체와 `location.href` 문자열 혼동
+<a id="index-section-96"></a>
+
+### 68-2. `location` 객체와 `location.href` 문자열 혼동
 
 전체 객체와 특정 Property다.
 
-## 68-3. `replace()`도 History에 현재 페이지를 남긴다고 생각
+<a id="index-section-97"></a>
+
+### 68-3. `replace()`도 History에 현재 페이지를 남긴다고 생각
 
 현재 Entry를 교체한다.
 
-## 68-4. `history.go(-2)`를 한 단계 뒤로 이해
+### 68-4. `history.go(-2)`를 한 단계 뒤로 이해
 
 두 단계 이전이다.
 
-## 68-5. Popup이 항상 열린다고 생각
+### 68-5. Popup이 항상 열린다고 생각
 
 Browser 정책에 따라 차단될 수 있다.
 
-## 68-6. 새 창 내부를 항상 조작할 수 있다고 생각
+### 68-6. 새 창 내부를 항상 조작할 수 있다고 생각
 
 Same-Origin Policy의 영향을 받는다.
 
-## 68-7. 외부 Script가 항상 준비되었다고 가정
+### 68-7. 외부 Script가 항상 준비되었다고 가정
 
 존재와 Load 실패를 검사한다.
 
-## 68-8. Protocol-relative URL을 무조건 안전하다고 생각
+### 68-8. Protocol-relative URL을 무조건 안전하다고 생각
 
 HTTPS를 명시하는 편이 예측 가능하다.
 
-## 68-9. Embed ID·Key를 다른 코드와 섞음
+### 68-9. Embed ID·Key를 다른 코드와 섞음
 
 한 Embed에서 제공된 세트를 그대로 사용한다.
 
-## 68-10. 외부 API 실패 UI를 준비하지 않음
+### 68-10. 외부 API 실패 UI를 준비하지 않음
 
 주소·지도 기능이 없어도 사용자가 다음 행동을 알 수 있어야 한다.
 
 ---
 
-# 69. 핵심 요약
+<a id="js-18-section-73"></a>
+
+## 69. 핵심 요약
 
 ```text
 DOM
@@ -1519,7 +1848,9 @@ Rough Map
 
 ---
 
-# 70. 최종 체크리스트
+<a id="js-18-section-74"></a>
+
+## 70. 최종 체크리스트
 
 - [ ] BOM과 DOM의 차이를 설명할 수 있는가?
 - [ ] `window`가 브라우저 전역 객체임을 이해했는가?
@@ -1549,7 +1880,9 @@ Rough Map
 
 ---
 
-# 마무리
+<a id="js-18-section-75"></a>
+
+## 마무리
 
 BOM과 외부 API 사용의 핵심은 페이지를 이동하거나 외부 Script를 붙이는 것에서 끝나지 않는다.
 
@@ -1566,7 +1899,9 @@ HTTPS와 새 창 보안을 고려하고
 ```
 
 이 흐름을 이해하면 이후 JSON·AJAX·Fetch 문서에서 외부 데이터와 브라우저 화면을 더 안정적으로 연결할 수 있다.
-# V3 실행 추적 카드 — window 기능/사용자 선택 → 외부 API → 콜백 결과
+<a id="js-18-section-76"></a>
+
+## V3 실행 추적 카드 — window 기능/사용자 선택 → 외부 API → 콜백 결과
 
 BOM은 `window`, `location`, `history`, `navigator` 등 브라우저 환경을 다룬다. 지도·우편번호 API는 외부 스크립트가 제공한 객체를 호출하고 사용자 선택 결과를 콜백으로 받는다.
 

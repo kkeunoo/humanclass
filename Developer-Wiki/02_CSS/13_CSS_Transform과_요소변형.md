@@ -1,11 +1,83 @@
 ---
 title: CSS Transform과 요소 변형
-version: v3.0-encyclopedia
-last_updated: 2026-08-07
+version: v4.1-detailed-learning
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # CSS Transform과 요소 변형
+
+## 문서 내 목차
+
+- [문서 정보](#css-1)
+- [학습 목표](#css-2)
+- [개념에서 실제 동작까지](#css-3)
+- [1. Transform이란?](#css-4)
+- [2. 원본 HTML 구조](#css-5)
+- [3. 원본 공통 `.box`](#css-6)
+- [4. Transform과 Transition 연결](#css-7)
+- [5. `translate()`](#css-8)
+- [6. 원본 translate 실험값](#css-9)
+- [7. Translate 퍼센트의 기준](#css-10)
+- [8. `left: 50%`와 `translateX(50%)` 차이](#css-11)
+- [9. Transform은 원래 공간을 유지한다](#css-12)
+- [10. `scale()`](#css-13)
+- [11. 축별 Scale](#css-14)
+- [12. 내 코드의 scale 주석](#css-15)
+- [13. Scale 값의 의미](#css-16)
+- [14. Scale과 레이아웃](#css-17)
+- [15. `rotate()`](#css-18)
+- [16. 원본 Rotate](#css-19)
+- [17. 회전 중심](#css-20)
+- [18. 복합 Transform](#css-21)
+- [19. 내 코드와 강사님의 total 차이](#css-22)
+- [20. 내 코드 total 주석 문제](#css-23)
+- [21. Transform 함수 순서](#css-24)
+- [22. 원본 순서](#css-25)
+- [23. Transform 덮어쓰기](#css-26)
+- [24. 개별 Transform 속성 확장 학습](#css-27)
+- [25. 원본 중앙 정렬 부모](#css-28)
+- [26. 부모 너비 40%](#css-29)
+- [27. 부모 높이 40vh](#css-30)
+- [28. 원본 중앙 정렬 자식](#css-31)
+- [29. 중앙 정렬 계산 1단계](#css-32)
+- [30. 중앙 정렬 계산 2단계](#css-33)
+- [31. 중앙 정렬 기준 비교](#css-34)
+- [32. CSS 08의 calc 방식과 비교](#css-35)
+- [33. Flexbox·Grid 중앙 정렬과 비교](#css-36)
+- [34. Transform과 Stacking Context](#css-37)
+- [35. Transform과 Fixed 기준](#css-38)
+- [36. Transform과 Overflow](#css-39)
+- [37. Transform과 글자 선명도](#css-40)
+- [38. Hover뿐 아니라 Focus](#css-41)
+- [39. Focus Outline](#css-42)
+- [40. Reduced Motion](#css-43)
+- [41. Transform Origin](#css-44)
+- [42. 3D Transform 확장 학습](#css-45)
+- [43. 문서 언어와 제목](#css-46)
+- [44. 원본 파일명 오타](#css-47)
+- [45. 강사님 세미콜론 누락](#css-48)
+- [46. 반복 `<br>`](#css-49)
+- [47. 빈 Child 요소](#css-50)
+- [48. 내 코드 분석](#css-51)
+- [49. 강사님 코드 분석](#css-52)
+- [50. 내 코드와 강사님 코드 비교](#css-53)
+- [51. 원본 통합 개선 예제](#css-54)
+- [52. 카드 Hover 패턴](#css-55)
+- [53. 아이콘 회전 패턴](#css-56)
+- [54. 메뉴 열기 아이콘](#css-57)
+- [55. 중앙 모달 패턴](#css-58)
+- [56. Transform이 작동하지 않을 때 점검](#css-59)
+- [57. 중앙 정렬이 어긋날 때 점검](#css-60)
+- [58. 자주 하는 실수](#css-61)
+- [종합실습](#css-62)
+- [정답과 해설](#css-63)
+- [최종 체크리스트](#css-64)
+- [핵심 요약](#css-65)
+- [렌더링 복습 카드 — 레이아웃 뒤 시각 좌표 변환](#css-66)
+
+
+<a id="css-1"></a>
 
 ## 문서 정보
 
@@ -21,25 +93,80 @@ status: Completed
 
 ---
 
-# 학습 목표
+<a id="css-2"></a>
 
-- `transform`이 요소의 시각적 좌표계를 변형하는 속성임을 설명한다.
-- `translate()`로 요소를 가로·세로 이동한다.
-- `translate()`의 퍼센트가 부모가 아니라 요소 자신의 크기를 기준으로 계산된다는 점을 이해한다.
-- `scale()`, `scaleX()`, `scaleY()`의 차이를 설명한다.
-- `rotate()`의 양수와 음수 회전 방향을 이해한다.
-- 여러 transform 함수를 한 선언에 조합한다.
-- transform 함수의 작성 순서가 최종 결과에 영향을 준다는 점을 설명한다.
-- transform이 일반 문서 흐름의 원래 공간을 유지한다는 점을 이해한다.
-- `position: absolute`, `top: 50%`, `left: 50%`, `translate(-50%, -50%)`를 이용해 중앙 정렬한다.
-- `transform-origin`의 역할을 이해한다.
-- transition과 transform을 함께 사용해 부드러운 상태 변화를 만든다.
-- hover뿐 아니라 focus와 reduced motion을 고려한다.
-- 내 코드와 강사님 코드의 차이와 원본 파일명 오류를 찾는다.
+## 학습 목표
 
----
+- 주요 속성의 의미와 차이를 설명한다.
+- 대상과 계산 기준을 찾고 결과를 예측한다.
+- 원본을 비교하고 적용·배치 오류를 수정한다.
 
-# 1. Transform이란?
+<a id="learning-flow"></a>
+
+<a id="css-3"></a>
+
+## 개념에서 실제 동작까지
+
+### Transform이란? 원래 배치를 유지하며 시각 좌표를 바꾸는 기능
+
+transform은 요소의 이동·회전·확대를 표현합니다. 주변 배치는 원래 자리 기준이 유지되어 확대 후 이웃과 겹칠 수 있습니다. width를 늘려 옆 요소를 밀어내는 동작과 다릅니다.
+
+원본의 실제 차이:
+
+```css
+/* 내 total */
+.total:hover { transform: translate(50%, 50%) scaleX(1.5) rotate(-30deg); }
+/* 강사님 total */
+.total:hover { transform: translate(50%, 50%) scale(1.5) rotate(-30deg); }
+```
+
+내 코드는 X 방향만 확대하고 강사님은 두 방향을 확대합니다. 따로 있는 .scale 예제는 둘 다 scaleX(1.5)입니다. total의 차이를 모든 scale 실습의 차이로 일반화하지 않습니다. 변환 순서도 결과에 영향을 줍니다. 함수 목록을 좌표 변환으로 합성하므로 순서를 바꿔도 같다고 생각하지 않습니다.
+
+두 원본의 중앙 정렬:
+
+```css
+.parent { position: relative; }
+.parent .child { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+```
+
+💡 부모 기준 박스를 400×200, 자식 변환 기준 박스를 100×50으로 가정하면:
+
+| 단계 | 가로 | 세로 |
+| --- | --- | --- |
+| left/top 50% | 부모 기준 200 | 부모 기준 100 |
+| translate -50% | 자기 기준 -50 | 자기 기준 -25 |
+| 합쳐진 시작점 | 150 | 75 |
+
+원본에 실제 쓰인 부모 너비는 40%, 높이는 40vh이며 자식에는 1px border도 있습니다. 위 수치는 원본 실측값이 아니라 서로 다른 퍼센트 기준을 이해하는 계산 예제입니다. 실제 중앙 결과를 비교할 때 border 박스와 변환 기준을 함께 확인합니다.
+
+내 파일명은 13_tranform.html, 강사님은 13_transform.html입니다. 원본 파일을 옮기거나 이름을 바꾸지 않고 문서에서 정확한 경로를 적습니다.
+
+**확인:** hover 전후 레이아웃 자리와 rect 크기, Computed transform을 나누어 봅니다. transform을 두 선언으로 나누면 합쳐지는 것이 아니라 뒤 속성값이 앞 값을 덮을 수 있습니다.
+
+
+### 개발자 도구에서 실제 값을 읽기
+
+내 13_tranform.html / 강사님 13_transform.html을 브라우저에서 열고 Console에 다음을 입력합니다. 💡 JavaScript를 이용한 CSS 진단 명령이며 CSS 파일에 쓰는 코드가 아닙니다.
+
+```javascript
+document.querySelector('.translate').getBoundingClientRect().width
+```
+
+**예상 결과:** 102
+
+content width100에 좌우 border1씩인 원본입니다. translate만으로 width는 확대되지 않습니다. 요소가 없다는 오류가 나오면 페이지와 선택 대상을 먼저 확인합니다. getComputedStyle은 API에서 계산·해석된 스타일을 읽고 getBoundingClientRect는 변환이 반영된 표시 경계 상자를 읽습니다. margin까지 포함한 전체 점유를 자동 반환하는 값은 아닙니다. CSS에는 Python의 print가 없으므로 화면 결과와 Console 값 확인을 구분합니다.
+
+### 짧은 점검 문제와 해설
+
+**문제:** translate50%가 원본에서 정확히 50px인가?
+
+**해설:** 원본의 border 박스는102여서 일반적인 HTML 변환 기준에서는51px입니다.50은 border를 생략한 설명 예제 값입니다.
+
+먼저 답을 가리고 이유를 말한 뒤 본문의 단계별 예제와 종합실습으로 확인합니다.
+
+<a id="css-4"></a>
+
+## 1. Transform이란?
 
 `transform`은 요소를 이동, 확대·축소, 회전, 기울이기 할 수 있는 CSS 속성입니다.
 
@@ -65,7 +192,9 @@ transform은 일반적으로 요소의 **시각적 표시 결과**를 바꾸며,
 
 ---
 
-# 2. 원본 HTML 구조
+<a id="css-5"></a>
+
+## 2. 원본 HTML 구조
 
 내 코드와 강사님 코드는 다음 박스를 사용합니다.
 
@@ -87,7 +216,9 @@ transform은 일반적으로 요소의 **시각적 표시 결과**를 바꾸며,
 
 ---
 
-# 3. 원본 공통 `.box`
+<a id="css-6"></a>
+
+## 3. 원본 공통 `.box`
 
 내 코드:
 
@@ -134,7 +265,9 @@ transform은 일반적으로 요소의 **시각적 표시 결과**를 바꾸며,
 
 ---
 
-# 4. Transform과 Transition 연결
+<a id="css-7"></a>
+
+## 4. Transform과 Transition 연결
 
 원본 공통 박스:
 
@@ -156,7 +289,9 @@ hover 상태에서 transform 값이 바뀌므로 0.5초 동안 부드럽게 변�
 
 ---
 
-# 5. `translate()`
+<a id="css-8"></a>
+
+## 5. `translate()`
 
 기본 문법:
 
@@ -186,7 +321,9 @@ transform: translateY(20px);
 
 ---
 
-# 6. 원본 translate 실험값
+<a id="css-9"></a>
+
+## 6. 원본 translate 실험값
 
 내 코드와 강사님 코드:
 
@@ -206,7 +343,9 @@ y축 50%
 
 ---
 
-# 7. Translate 퍼센트의 기준
+<a id="css-10"></a>
+
+## 7. Translate 퍼센트의 기준
 
 중요:
 
@@ -223,20 +362,22 @@ width: 100px;
 height: 100px;
 ```
 
-따라서 대략:
+원본은 여기에 border: 1px solid red도 있습니다. 기본 content-box의 일반 HTML 요소는 변환 기준 border 박스가 102 × 102px이므로 다음처럼 계산합니다.
 
 ```text
-translateX(50%) → 자신의 너비 100px의 절반 = 50px
-translateY(50%) → 자신의 높이 100px의 절반 = 50px
+translateX(50%) → 참조 박스 너비 102px의 절반 = 51px
+translateY(50%) → 참조 박스 높이 102px의 절반 = 51px
 ```
 
-즉, 오른쪽 50px, 아래 50px 이동합니다.
+원본에서는 오른쪽 51px, 아래 51px 이동합니다. 테두리를 생략하거나 전체 border 박스가 100px인 별도 예제라면 50px입니다. 지정 content 너비와 변환 참조 박스를 구분합니다.
 
 이는 `position: absolute; left: 50%`의 퍼센트 기준과 다릅니다.
 
 ---
 
-# 8. `left: 50%`와 `translateX(50%)` 차이
+<a id="css-11"></a>
+
+## 8. `left: 50%`와 `translateX(50%)` 차이
 
 ```css
 left: 50%;
@@ -261,7 +402,9 @@ translateX(50%)    → 자기 자신 기준
 
 ---
 
-# 9. Transform은 원래 공간을 유지한다
+<a id="css-12"></a>
+
+## 9. Transform은 원래 공간을 유지한다
 
 ```css
 .box:hover {
@@ -279,7 +422,9 @@ translateX(50%)    → 자기 자신 기준
 
 ---
 
-# 10. `scale()`
+<a id="css-13"></a>
+
+## 10. `scale()`
 
 기본 문법:
 
@@ -308,7 +453,9 @@ transform: scale(1.5, 0.8);
 
 ---
 
-# 11. 축별 Scale
+<a id="css-14"></a>
+
+## 11. 축별 Scale
 
 ```css
 transform: scaleX(1.5);
@@ -322,7 +469,9 @@ transform: scaleY(1.5);
 
 ---
 
-# 12. 내 코드의 scale 주석
+<a id="css-15"></a>
+
+## 12. 내 코드의 scale 주석
 
 내 코드:
 
@@ -354,7 +503,9 @@ transform: scaleY(1.5);
 
 ---
 
-# 13. Scale 값의 의미
+<a id="css-16"></a>
+
+## 13. Scale 값의 의미
 
 ```text
 scale(1)
@@ -388,7 +539,9 @@ scale(-1)
 
 ---
 
-# 14. Scale과 레이아웃
+<a id="css-17"></a>
+
+## 14. Scale과 레이아웃
 
 ```css
 transform: scale(1.5);
@@ -402,7 +555,9 @@ transform: scale(1.5);
 
 ---
 
-# 15. `rotate()`
+<a id="css-18"></a>
+
+## 15. `rotate()`
 
 기본 문법:
 
@@ -428,7 +583,9 @@ rotate(0.5turn)
 
 ---
 
-# 16. 원본 Rotate
+<a id="css-19"></a>
+
+## 16. 원본 Rotate
 
 내 코드와 강사님 코드:
 
@@ -452,7 +609,9 @@ rotate(0.5turn)
 
 ---
 
-# 17. 회전 중심
+<a id="css-20"></a>
+
+## 17. 회전 중심
 
 기본적으로 요소의 중심을 기준으로 회전합니다.
 
@@ -482,7 +641,9 @@ transform-origin: top left;
 
 ---
 
-# 18. 복합 Transform
+<a id="css-21"></a>
+
+## 18. 복합 Transform
 
 여러 함수를 공백으로 이어 작성합니다.
 
@@ -497,7 +658,9 @@ transform:
 
 ---
 
-# 19. 내 코드와 강사님의 total 차이
+<a id="css-22"></a>
+
+## 19. 내 코드와 강사님의 total 차이
 
 내 코드:
 
@@ -533,7 +696,9 @@ transform:
 
 ---
 
-# 20. 내 코드 total 주석 문제
+<a id="css-23"></a>
+
+## 20. 내 코드 total 주석 문제
 
 내 코드:
 
@@ -558,7 +723,9 @@ transform:
 
 ---
 
-# 21. Transform 함수 순서
+<a id="css-24"></a>
+
+## 21. Transform 함수 순서
 
 다음 두 코드는 결과가 다를 수 있습니다.
 
@@ -587,7 +754,9 @@ transform 함수는 작성 순서에 따라 좌표계가 달라집니다.
 
 ---
 
-# 22. 원본 순서
+<a id="css-25"></a>
+
+## 22. 원본 순서
 
 원본:
 
@@ -604,7 +773,9 @@ transform:
 
 ---
 
-# 23. Transform 덮어쓰기
+<a id="css-26"></a>
+
+## 23. Transform 덮어쓰기
 
 다음처럼 여러 번 작성하면 합쳐지지 않습니다.
 
@@ -631,7 +802,9 @@ transform:
 
 ---
 
-# 24. 개별 Transform 속성 확장 학습
+<a id="css-27"></a>
+
+## 24. 개별 Transform 속성 확장 학습
 
 현대 CSS에서는 개별 속성을 사용할 수 있습니다.
 
@@ -649,7 +822,9 @@ transform:
 
 ---
 
-# 25. 원본 중앙 정렬 부모
+<a id="css-28"></a>
+
+## 25. 원본 중앙 정렬 부모
 
 내 코드:
 
@@ -674,7 +849,9 @@ transform:
 
 ---
 
-# 26. 부모 너비 40%
+<a id="css-29"></a>
+
+## 26. 부모 너비 40%
 
 ```css
 width: 40%;
@@ -686,7 +863,9 @@ width: 40%;
 
 ---
 
-# 27. 부모 높이 40vh
+<a id="css-30"></a>
+
+## 27. 부모 높이 40vh
 
 ```css
 height: 40vh;
@@ -710,7 +889,9 @@ height: 40dvh;
 
 ---
 
-# 28. 원본 중앙 정렬 자식
+<a id="css-31"></a>
+
+## 28. 원본 중앙 정렬 자식
 
 내 코드:
 
@@ -754,7 +935,9 @@ height: 40dvh;
 
 ---
 
-# 29. 중앙 정렬 계산 1단계
+<a id="css-32"></a>
+
+## 29. 중앙 정렬 계산 1단계
 
 ```css
 top: 50%;
@@ -767,7 +950,9 @@ left: 50%;
 
 ---
 
-# 30. 중앙 정렬 계산 2단계
+<a id="css-33"></a>
+
+## 30. 중앙 정렬 계산 2단계
 
 ```css
 transform: translate(-50%, -50%);
@@ -784,7 +969,9 @@ translateY(-50%) → 자식 자신의 높이 절반
 
 ---
 
-# 31. 중앙 정렬 기준 비교
+<a id="css-34"></a>
+
+## 31. 중앙 정렬 기준 비교
 
 ```text
 top: 50%, left: 50%
@@ -800,7 +987,9 @@ translate(-50%, -50%)
 
 ---
 
-# 32. CSS 08의 calc 방식과 비교
+<a id="css-35"></a>
+
+## 32. CSS 08의 calc 방식과 비교
 
 고정 크기 계산:
 
@@ -826,7 +1015,9 @@ Transform 방식의 장점:
 
 ---
 
-# 33. Flexbox·Grid 중앙 정렬과 비교
+<a id="css-36"></a>
+
+## 33. Flexbox·Grid 중앙 정렬과 비교
 
 겹침이나 절대 위치가 필요하지 않다면 Grid가 더 간단합니다.
 
@@ -858,7 +1049,9 @@ Flexbox:
 
 ---
 
-# 34. Transform과 Stacking Context
+<a id="css-37"></a>
+
+## 34. Transform과 Stacking Context
 
 transform 값이 `none`이 아니면 새로운 stacking context를 만들 수 있습니다.
 
@@ -881,7 +1074,9 @@ CSS 08에서 배운 stacking context와 연결됩니다.
 
 ---
 
-# 35. Transform과 Fixed 기준
+<a id="css-38"></a>
+
+## 35. Transform과 Fixed 기준
 
 특정 조상에 transform이 적용되면 그 안의 `position: fixed` 요소가 뷰포트가 아니라 해당 조상을 기준으로 동작하는 것처럼 보일 수 있습니다.
 
@@ -901,7 +1096,9 @@ CSS 08에서 배운 stacking context와 연결됩니다.
 
 ---
 
-# 36. Transform과 Overflow
+<a id="css-39"></a>
+
+## 36. Transform과 Overflow
 
 scale이나 rotate로 요소가 부모 밖으로 나가면 부모의 overflow 설정에 따라 잘릴 수 있습니다.
 
@@ -919,7 +1116,9 @@ scale이나 rotate로 요소가 부모 밖으로 나가면 부모의 overflow �
 
 ---
 
-# 37. Transform과 글자 선명도
+<a id="css-40"></a>
+
+## 37. Transform과 글자 선명도
 
 소수점 이동이나 확대·회전 시 글자가 약간 흐릿하게 보일 수 있습니다.
 
@@ -933,7 +1132,9 @@ transform: translateX(0.5px);
 
 ---
 
-# 38. Hover뿐 아니라 Focus
+<a id="css-41"></a>
+
+## 38. Hover뿐 아니라 Focus
 
 원본은 `div:hover`를 사용합니다.
 
@@ -956,7 +1157,9 @@ transform: translateX(0.5px);
 
 ---
 
-# 39. Focus Outline
+<a id="css-42"></a>
+
+## 39. Focus Outline
 
 ```css
 .box:focus-visible {
@@ -971,7 +1174,9 @@ transform으로 확대하거나 이동해도 포커스 표시가 잘리는지 �
 
 ---
 
-# 40. Reduced Motion
+<a id="css-43"></a>
+
+## 40. Reduced Motion
 
 ```css
 @media (prefers-reduced-motion: reduce) {
@@ -992,7 +1197,9 @@ transform으로 확대하거나 이동해도 포커스 표시가 잘리는지 �
 
 ---
 
-# 41. Transform Origin
+<a id="css-44"></a>
+
+## 41. Transform Origin
 
 ```css
 transform-origin: center center;
@@ -1018,7 +1225,9 @@ transform-origin: 100% 50%;
 
 ---
 
-# 42. 3D Transform 확장 학습
+<a id="css-45"></a>
+
+## 42. 3D Transform 확장 학습
 
 대표 함수:
 
@@ -1044,7 +1253,9 @@ scaleZ()
 
 ---
 
-# 43. 문서 언어와 제목
+<a id="css-46"></a>
+
+## 43. 문서 언어와 제목
 
 내 코드와 강사님 코드:
 
@@ -1064,7 +1275,9 @@ scaleZ()
 
 ---
 
-# 44. 원본 파일명 오타
+<a id="css-47"></a>
+
+## 44. 원본 파일명 오타
 
 내 코드 파일:
 
@@ -1093,7 +1306,9 @@ scaleZ()
 
 ---
 
-# 45. 강사님 세미콜론 누락
+<a id="css-48"></a>
+
+## 45. 강사님 세미콜론 누락
 
 강사님 코드:
 
@@ -1113,7 +1328,9 @@ transition: transform 0.5s;
 
 ---
 
-# 46. 반복 `<br>`
+<a id="css-49"></a>
+
+## 46. 반복 `<br>`
 
 내 코드 마지막:
 
@@ -1137,7 +1354,9 @@ body {
 
 ---
 
-# 47. 빈 Child 요소
+<a id="css-50"></a>
+
+## 47. 빈 Child 요소
 
 원본:
 
@@ -1161,9 +1380,11 @@ body {
 
 ---
 
-# 48. 내 코드 분석
+<a id="css-51"></a>
 
-## 48.1 장점
+## 48. 내 코드 분석
+
+### 48.1 장점
 
 - `scale`이 x축과 y축을 별도로 지정할 수 있음을 설명했다.
 - transition을 `0.5s`로 완전한 표기와 세미콜론으로 작성했다.
@@ -1171,7 +1392,7 @@ body {
 - translate, scaleX, rotate를 조합해 복합 변형을 직접 실습했다.
 - 하단 공간을 확보해 결과 확인을 쉽게 하려 한 것으로 보인다.
 
-## 48.2 개선점
+### 48.2 개선점
 
 - 파일명이 `13_tranform.html`로 오타다.
 - `.total`이 강사님과 달리 `scaleX(1.5)`를 사용한다.
@@ -1183,9 +1404,11 @@ body {
 
 ---
 
-# 49. 강사님 코드 분석
+<a id="css-52"></a>
 
-## 49.1 장점
+## 49. 강사님 코드 분석
+
+### 49.1 장점
 
 - 파일명이 정확한 `13_transform.html`이다.
 - translate, scaleX, rotate, total을 최소 코드로 비교한다.
@@ -1194,7 +1417,7 @@ body {
 - 내 코드의 반복 `<br>`가 없다.
 - 자식 테두리를 `blueviolet`으로 구분해 부모와 시각적으로 잘 분리한다.
 
-## 49.2 개선점
+### 49.2 개선점
 
 - `transition: all .5s` 뒤 세미콜론이 없다.
 - 필요한 속성인 `transform`만 transition하도록 개선할 수 있다.
@@ -1205,7 +1428,9 @@ body {
 
 ---
 
-# 50. 내 코드와 강사님 코드 비교
+<a id="css-53"></a>
+
+## 50. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1222,9 +1447,11 @@ body {
 
 ---
 
-# 51. 원본 통합 개선 예제
+<a id="css-54"></a>
 
-## HTML
+## 51. 원본 통합 개선 예제
+
+### HTML
 
 ```html
 <!DOCTYPE html>
@@ -1289,7 +1516,7 @@ body {
 </html>
 ```
 
-## CSS
+### CSS
 
 ```css
 *,
@@ -1388,7 +1615,9 @@ body {
 
 ---
 
-# 52. 카드 Hover 패턴
+<a id="css-55"></a>
+
+## 52. 카드 Hover 패턴
 
 ```css
 .card {
@@ -1412,7 +1641,9 @@ body {
 
 ---
 
-# 53. 아이콘 회전 패턴
+<a id="css-56"></a>
+
+## 53. 아이콘 회전 패턴
 
 ```css
 .accordion__icon {
@@ -1429,7 +1660,9 @@ body {
 
 ---
 
-# 54. 메뉴 열기 아이콘
+<a id="css-57"></a>
+
+## 54. 메뉴 열기 아이콘
 
 ```css
 .menu-button__line {
@@ -1444,7 +1677,9 @@ body {
 
 ---
 
-# 55. 중앙 모달 패턴
+<a id="css-58"></a>
+
+## 55. 중앙 모달 패턴
 
 Grid 방식:
 
@@ -1472,7 +1707,9 @@ Transform 방식:
 
 ---
 
-# 56. Transform이 작동하지 않을 때 점검
+<a id="css-59"></a>
+
+## 56. Transform이 작동하지 않을 때 점검
 
 1. 선택자가 실제 요소와 일치하는가?
 2. hover나 focus 상태가 발생하는가?
@@ -1487,7 +1724,9 @@ Transform 방식:
 
 ---
 
-# 57. 중앙 정렬이 어긋날 때 점검
+<a id="css-60"></a>
+
+## 57. 중앙 정렬이 어긋날 때 점검
 
 1. 부모에 `position: relative`가 있는가?
 2. 자식에 `position: absolute`가 있는가?
@@ -1502,86 +1741,92 @@ Transform 방식:
 
 ---
 
-# 58. 자주 하는 실수
+<a id="css-61"></a>
 
-## 58.1 Translate 퍼센트를 부모 기준으로 이해
+## 58. 자주 하는 실수
+
+### 58.1 Translate 퍼센트를 부모 기준으로 이해
 
 transform의 퍼센트 translate는 요소 자신을 기준으로 합니다.
 
-## 58.2 여러 transform을 별도 선언
+### 58.2 여러 transform을 별도 선언
 
 뒤 선언이 앞 선언을 덮어씁니다.
 
-## 58.3 함수 순서 무시
+<a id="index-section-74"></a>
+
+### 58.3 함수 순서 무시
 
 translate와 rotate 순서를 바꾸면 결과가 달라질 수 있습니다.
 
-## 58.4 Scale이 레이아웃을 밀 것으로 기대
+### 58.4 Scale이 레이아웃을 밀 것으로 기대
 
 원래 공간은 유지되어 주변 요소와 겹칠 수 있습니다.
 
-## 58.5 Width 확대와 scale을 동일하게 이해
+### 58.5 Width 확대와 scale을 동일하게 이해
 
 width는 레이아웃 크기를 바꾸고 scale은 시각적 크기를 바꿉니다.
 
-## 58.6 `rotate(-30deg)` 방향 혼동
+### 58.6 `rotate(-30deg)` 방향 혼동
 
 음수는 일반적으로 반시계 방향입니다.
 
-## 58.7 중앙 정렬에서 translate 부호 오류
+### 58.7 중앙 정렬에서 translate 부호 오류
 
 `50%`가 아니라 `-50%`로 자신의 절반을 되돌려야 합니다.
 
-## 58.8 Transform 때문에 stacking context 생성
+### 58.8 Transform 때문에 stacking context 생성
 
 z-index 관계가 달라질 수 있습니다.
 
-## 58.9 Hover만 제공
+### 58.9 Hover만 제공
 
 키보드와 터치 사용자를 고려해야 합니다.
 
-## 58.10 파일명 철자 오류
+### 58.10 파일명 철자 오류
 
 내 원본의 `13_tranform.html`처럼 링크와 경로 문제를 만들 수 있습니다.
 
 ---
 
 
-# 종합실습
+<a id="css-62"></a>
 
-## 문제 1. Pixel 이동
+## 종합실습
+
+### 문제 1. Pixel 이동
 
 요소를 오른쪽 `10px`, 아래 `20px` 이동하세요.
 
-## 문제 2. 퍼센트 이동
+### 문제 2. 퍼센트 이동
 
 요소 자신의 너비와 높이 절반만큼 오른쪽 아래로 이동하세요.
 
-## 문제 3. Translate 기준
+### 문제 3. Translate 기준
 
 `translateX(50%)`의 퍼센트 기준을 설명하세요.
 
-## 문제 4. 가로 확대
+### 문제 4. 가로 확대
 
 요소의 가로 크기만 1.5배 확대하세요.
 
-## 문제 5. 전체 확대
+### 문제 5. 전체 확대
 
 요소의 가로와 세로를 모두 1.5배 확대하세요.
 
-## 문제 6. 축소
+### 문제 6. 축소
 
 요소를 원래 크기의 70%로 축소하세요.
 
-## 문제 7. 반시계 회전
+### 문제 7. 반시계 회전
 
 요소를 반시계 방향으로 30도 회전하세요.
 
-## 문제 8. 복합 Transform
+### 문제 8. 복합 Transform
 
 오른쪽·아래로 자신의 50%만큼 이동하고, 전체 1.5배 확대하고, 반시계 30도 회전하세요.
 
-## 문제 9. 덮어쓰기
+### 문제 9. 덮어쓰기
 
 다음 코드의 최종 결과를 설명하세요.
 
@@ -1592,7 +1837,9 @@ z-index 관계가 달라질 수 있습니다.
 }
 ```
 
-## 문제 10. 함수 순서
+<a id="index-section-92"></a>
+
+### 문제 10. 함수 순서
 
 다음 두 transform이 같은 결과인지 설명하세요.
 
@@ -1608,51 +1855,55 @@ transform:
   translateX(100px);
 ```
 
-## 문제 11. Transform Origin
+### 문제 11. Transform Origin
 
 요소의 왼쪽 중앙을 기준으로 회전하도록 작성하세요.
 
-## 문제 12. 중앙 정렬 부모
+### 문제 12. 중앙 정렬 부모
 
 절대 위치 자식의 기준이 되는 `.parent`를 작성하세요.
 
-## 문제 13. 중앙 정렬 자식
+### 문제 13. 중앙 정렬 자식
 
 자식의 크기를 몰라도 부모 정중앙에 배치하는 코드를 작성하세요.
 
-## 문제 14. 기준 비교
+### 문제 14. 기준 비교
 
 중앙 정렬에서 `top: 50%`와 `translateY(-50%)`의 기준 차이를 설명하세요.
 
-## 문제 15. 내 코드와 강사님 차이
+### 문제 15. 내 코드와 강사님 차이
 
 `.total`의 `scaleX(1.5)`와 `scale(1.5)` 결과 차이를 설명하세요.
 
-## 문제 16. 파일명 오류
+### 문제 16. 파일명 오류
 
 내 코드의 원본 파일명 오류를 찾아 올바른 이름을 작성하세요.
 
-## 문제 17. Transition 개선
+<a id="index-section-99"></a>
+
+### 문제 17. Transition 개선
 
 원본의 `transition: all 0.5s`를 필요한 속성만 지정하도록 수정하세요.
 
-## 문제 18. Focus 상태
+### 문제 18. Focus 상태
 
 hover와 keyboard focus에서 같은 scale 효과를 적용하세요.
 
-## 문제 19. Reduced Motion
+### 문제 19. Reduced Motion
 
 움직임 감소 환경에서 transition과 transform을 제거하세요.
 
-## 문제 20. Grid 중앙 정렬
+### 문제 20. Grid 중앙 정렬
 
 절대 위치가 필요 없는 자식을 Grid로 중앙 정렬하세요.
 
-## 문제 21. Stacking Context
+<a id="index-section-103"></a>
+
+### 문제 21. Stacking Context
 
 transform이 `z-index` 문제에 영향을 줄 수 있는 이유를 설명하세요.
 
-## 문제 22. 종합 카드
+### 문제 22. 종합 카드
 
 다음 요구사항을 만족하는 카드 링크를 작성하세요.
 
@@ -1669,9 +1920,11 @@ transform이 `z-index` 문제에 영향을 줄 수 있는 이유를 설명하세
 
 ---
 
-# 정답과 해설
+<a id="css-63"></a>
 
-## 정답 1
+## 정답과 해설
+
+### 정답 1
 
 ```css
 .box {
@@ -1679,7 +1932,7 @@ transform이 `z-index` 문제에 영향을 줄 수 있는 이유를 설명하세
 }
 ```
 
-## 정답 2
+### 정답 2
 
 ```css
 .box {
@@ -1687,11 +1940,11 @@ transform이 `z-index` 문제에 영향을 줄 수 있는 이유를 설명하세
 }
 ```
 
-## 정답 3
+### 정답 3
 
 변형되는 요소 자신의 참조 박스 너비를 기준으로 계산합니다.
 
-## 정답 4
+### 정답 4
 
 ```css
 .box {
@@ -1699,7 +1952,7 @@ transform이 `z-index` 문제에 영향을 줄 수 있는 이유를 설명하세
 }
 ```
 
-## 정답 5
+### 정답 5
 
 ```css
 .box {
@@ -1707,7 +1960,7 @@ transform이 `z-index` 문제에 영향을 줄 수 있는 이유를 설명하세
 }
 ```
 
-## 정답 6
+### 정답 6
 
 ```css
 .box {
@@ -1715,7 +1968,7 @@ transform이 `z-index` 문제에 영향을 줄 수 있는 이유를 설명하세
 }
 ```
 
-## 정답 7
+### 정답 7
 
 ```css
 .box {
@@ -1723,7 +1976,7 @@ transform이 `z-index` 문제에 영향을 줄 수 있는 이유를 설명하세
 }
 ```
 
-## 정답 8
+### 정답 8
 
 ```css
 .box {
@@ -1734,7 +1987,7 @@ transform이 `z-index` 문제에 영향을 줄 수 있는 이유를 설명하세
 }
 ```
 
-## 정답 9
+### 정답 9
 
 최종 적용값은 다음 하나입니다.
 
@@ -1744,11 +1997,11 @@ transform: rotate(30deg);
 
 뒤 선언이 앞의 translate 선언 전체를 덮어씁니다.
 
-## 정답 10
+### 정답 10
 
 같은 결과가 아닐 수 있습니다. Transform 함수는 순서대로 결합되며 회전된 좌표계에서 이동하는 결과와 이동 후 회전하는 결과가 달라질 수 있습니다.
 
-## 정답 11
+### 정답 11
 
 ```css
 .box {
@@ -1756,7 +2009,7 @@ transform: rotate(30deg);
 }
 ```
 
-## 정답 12
+### 정답 12
 
 ```css
 .parent {
@@ -1774,7 +2027,7 @@ transform: rotate(30deg);
 }
 ```
 
-## 정답 13
+### 정답 13
 
 ```css
 .child {
@@ -1785,11 +2038,11 @@ transform: rotate(30deg);
 }
 ```
 
-## 정답 14
+### 정답 14
 
 `top: 50%`는 부모 containing block의 높이를 기준으로 자식의 위쪽 위치를 정합니다. `translateY(-50%)`는 자식 자신의 높이 절반만큼 위로 이동합니다.
 
-## 정답 15
+### 정답 15
 
 ```text
 scaleX(1.5)
@@ -1801,14 +2054,14 @@ scale(1.5)
 
 따라서 내 코드와 강사님 코드의 total 결과는 다릅니다.
 
-## 정답 16
+### 정답 16
 
 ```text
 원본: 13_tranform.html
 개선: 13_transform.html
 ```
 
-## 정답 17
+### 정답 17
 
 ```css
 .box {
@@ -1816,7 +2069,7 @@ scale(1.5)
 }
 ```
 
-## 정답 18
+### 정답 18
 
 ```css
 .box:hover,
@@ -1825,7 +2078,7 @@ scale(1.5)
 }
 ```
 
-## 정답 19
+### 정답 19
 
 ```css
 @media (prefers-reduced-motion: reduce) {
@@ -1840,7 +2093,7 @@ scale(1.5)
 }
 ```
 
-## 정답 20
+### 정답 20
 
 ```css
 .parent {
@@ -1849,11 +2102,11 @@ scale(1.5)
 }
 ```
 
-## 정답 21
+### 정답 21
 
 `none`이 아닌 transform은 새로운 stacking context를 만들 수 있습니다. 자식의 `z-index`는 해당 stacking context 안에서 제한되므로 다른 부모 그룹과의 레이어 순서가 예상과 달라질 수 있습니다.
 
-## 정답 22
+### 정답 22
 
 ### HTML
 
@@ -1941,9 +2194,13 @@ scale(1.5)
 
 ---
 
-# 최종 체크리스트
+<a id="css-64"></a>
 
-## Transform 기본
+## 최종 체크리스트
+
+<a id="index-section-131"></a>
+
+### Transform 기본
 
 - [ ] `translate`, `scale`, `rotate`의 역할을 구분했다.
 - [ ] translate 퍼센트 기준이 요소 자신임을 이해했다.
@@ -1951,7 +2208,7 @@ scale(1.5)
 - [ ] 음수 rotate 방향을 확인했다.
 - [ ] transform이 원래 레이아웃 공간을 유지함을 확인했다.
 
-## 복합 Transform
+### 복합 Transform
 
 - [ ] 여러 함수를 한 transform 선언에 작성했다.
 - [ ] 별도 transform 선언으로 앞 값을 덮어쓰지 않았다.
@@ -1959,7 +2216,7 @@ scale(1.5)
 - [ ] 내 코드의 `scaleX`와 강사님의 `scale` 차이를 확인했다.
 - [ ] transform-origin이 적절한지 검토했다.
 
-## 중앙 정렬
+### 중앙 정렬
 
 - [ ] 부모에 `position: relative`가 있다.
 - [ ] 자식에 `position: absolute`가 있다.
@@ -1968,7 +2225,7 @@ scale(1.5)
 - [ ] 부모 기준과 자식 기준 퍼센트를 구분했다.
 - [ ] Grid/Flex가 더 간단한 구조인지 검토했다.
 
-## 상호작용과 접근성
+### 상호작용과 접근성
 
 - [ ] transition은 `transform`만 명시했다.
 - [ ] hover와 focus-visible을 함께 제공했다.
@@ -1977,7 +2234,7 @@ scale(1.5)
 - [ ] reduced motion 환경을 고려했다.
 - [ ] 이동·회전 효과 없이도 기능을 이해할 수 있다.
 
-## 레이아웃과 성능
+### 레이아웃과 성능
 
 - [ ] scale 요소가 주변 콘텐츠와 겹치지 않는다.
 - [ ] 부모 overflow에 확대 영역이 잘리지 않는다.
@@ -1986,7 +2243,7 @@ scale(1.5)
 - [ ] 소수점 변형으로 글자가 흐려지지 않는지 확인했다.
 - [ ] 많은 요소에 과도한 transform 효과를 사용하지 않았다.
 
-## 원본 코드 검수
+### 원본 코드 검수
 
 - [ ] 내 파일명 `13_tranform.html` 오타를 기록했다.
 - [ ] 강사님 파일명 `13_transform.html`과 비교했다.
@@ -1999,14 +2256,16 @@ scale(1.5)
 
 ---
 
-# 핵심 요약
+<a id="css-65"></a>
+
+## 핵심 요약
 
 - `transform`은 요소를 이동, 확대·축소, 회전, 기울이는 시각적 변형 속성이다.
 - transform은 일반적으로 원래 레이아웃 공간을 유지한다.
 - `translate(x, y)`는 요소를 x축과 y축으로 이동한다.
 - transform translate의 퍼센트는 요소 자신의 크기를 기준으로 한다.
 - `left: 50%`는 부모 기준이고 `translateX(-50%)`는 자식 자신 기준이다.
-- 원본 `translate(50%, 50%)`는 100px 박스를 대략 오른쪽·아래 50px 이동한다.
+- 원본 `translate(50%, 50%)`는 content 100px과 양쪽 border 1px씩으로 된 참조 박스 102px을 기준으로 오른쪽·아래 51px 이동한다.
 - `scale(1.5)`는 가로와 세로를 모두 1.5배 확대한다.
 - `scaleX(1.5)`는 가로만 1.5배 확대한다.
 - 내 코드의 total은 `scaleX(1.5)`, 강사님 코드는 `scale(1.5)`이므로 결과가 다르다.
@@ -2025,10 +2284,15 @@ scale(1.5)
 - 내 원본 파일명 `13_tranform.html`에는 `s`가 빠진 철자 오류가 있다.
 - 강사님 코드의 `transition: all .5s`는 마지막 세미콜론이 없지만 현재는 처리될 수 있다.
 - 내 코드의 반복 `<br>`는 CSS 여백으로 대체하는 것이 좋다.
-# V3 렌더링 추적 카드 — 레이아웃 뒤 시각 좌표 변환
+<a id="css-66"></a>
+
+## 렌더링 복습 카드 — 레이아웃 뒤 시각 좌표 변환
 
 transform은 layout에서 잡힌 자리 자체를 다시 배치하기보다 그려지는 결과를 이동·회전·확대·기울인다. 여러 함수의 작성 순서에 따라 결과가 달라진다.
 
 translate로 이동해도 주변 요소는 원래 자리를 기준으로 배치될 수 있다. DevTools transform matrix와 transform-origin을 확인한다. 내 원본 파일명 `13_tranform.html`의 오탈자는 실제 경로 그대로 구분한다.
 
 **원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/13_tranform.html (강사님 원본은 13_transform.html)`에서 실제 선택자·계산값·화면 차이를 확인한다.
+
+
+[CSS 파트 목차로 돌아가기](./README.md)

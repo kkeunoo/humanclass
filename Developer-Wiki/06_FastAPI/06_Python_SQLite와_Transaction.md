@@ -1,11 +1,41 @@
 ---
 title: Python SQLite와 Transaction
-version: v3.0-final
-last_updated: 2026-08-25
+version: v4.0-detailed
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # Python SQLite와 Transaction
+
+## 목차
+
+- [문서 정보](#section-1)
+- [학습 목표](#section-2)
+- [개념에서 실제 실행까지 — 실행·확정·조회·종료는 다른 일이다](#section-3)
+- [1. SQLite란?](#section-4)
+- [2. Connection과 Cursor](#section-5)
+- [3. Table 생성](#section-6)
+- [4. Insert와 Parameter Binding](#section-7)
+- [5. 한 개짜리 Tuple](#section-8)
+- [6. fetchone과 fetchall](#section-9)
+- [7. sqlite3.Row와 Dict](#section-10)
+- [8. Pydantic DTO로 변환](#section-11)
+- [9. Update와 WHERE](#section-12)
+- [10. rowcount](#section-13)
+- [11. Transaction](#section-14)
+- [12. Commit과 Rollback](#section-15)
+- [13. Context Manager의 정확한 동작](#section-16)
+- [14. 안전한 Transaction 예제](#section-17)
+- [15. 내 코드와 강사님 코드 비교](#section-18)
+- [16. 실무 지침](#section-19)
+- [17. 자주 하는 실수와 Debugging](#section-20)
+- [18. 종합실습](#section-21)
+- [19. 정답 핵심](#section-22)
+- [최종 체크리스트](#section-23)
+- [핵심 요약](#section-24)
+
+
+<a id="section-1"></a>
 
 ## 문서 정보
 
@@ -17,28 +47,127 @@ status: Completed
 | 강사님 코드 | `workspace_teacher/workspace_python/todos/05_SQLite/sqlite.py`, `sqlite.db` |
 | 추가 메모 | Transaction, 업무 단위, Commit, Rollback |
 | 핵심 범위 | SQLite 연결, Cursor, DDL·DML, Parameter Binding, Fetch, Row Factory, DTO, Transaction, Context Manager |
-| 참고 전용 | 학습 중인 `03_database`의 DB Session·Commit·Rollback 방향 |
+| 참고 전용 | DB 연동 상세는 07번 문서에서 설명의 DB Session·Commit·Rollback 방향 |
 | 문서 형식 | FastAPI Developer-Wiki V2 |
 
-> 이 문서는 완료된 `05_SQLite` 수업만 다룬다. `03_database`는 SQLite 다음에 MariaDB·SQLModel·Session으로 확장되는 흐름만 확인했으며 정식 내용에는 포함하지 않는다.
+> 이 문서는 완료된 `05_SQLite` 수업만 다룬다. `03_database`는 SQLite 다음에 MariaDB·SQLModel·Session으로 확장되는 흐름만 확인했으며 07번 문서에서 정식으로 설명한다.
 
 ---
 
-# 학습 목표
+<a id="section-2"></a>
 
-- SQLite의 특징과 Python `sqlite3` Module의 역할을 설명할 수 있다.
-- Connection과 Cursor를 생성하고 종료할 수 있다.
-- Table 생성과 CRUD SQL을 실행할 수 있다.
-- Parameter Binding으로 값을 안전하게 전달할 수 있다.
-- `fetchone()`과 `fetchall()`을 구분할 수 있다.
-- `sqlite3.Row`를 Dict와 Pydantic DTO로 변환할 수 있다.
-- `rowcount`의 의미를 설명할 수 있다.
-- Transaction, Commit, Rollback과 업무 단위를 설명할 수 있다.
-- Connection Context Manager의 실제 동작을 설명할 수 있다.
+## 학습 목표
+
+- 입력 위치와 실제 처리 순서를 설명한다.
+- 수업 코드·개선 예제의 상태와 응답을 재현한다.
+- 실패 원인을 찾고 같은 기능을 다시 작성한다.
 
 ---
 
-# 1. SQLite란?
+<a id="section-3"></a>
+
+## 개념에서 실제 실행까지 — 실행·확정·조회·종료는 다른 일이다
+
+### SQLite와 앞 파트 MariaDB를 구분하기
+
+SQLite는 프로그램이 DB 파일을 직접 여는 DBMS이고 MariaDB는 별도 서버에 접속하는 DBMS다. 이번 원본은 sqlite3 표준 Library를 사용한다. MariaDB 문서에서 배운 DDL의 implicit commit 규칙을 SQLite에 그대로 적용하지 않는다. Cursor는 Connection 자체가 아니라 SQL 실행·조회 위치를 가진 객체다.
+
+<a id="index-section-6"></a>
+
+### Cursor 조회 위치와 실제 출력
+
+```python
+import sqlite3
+conn = sqlite3.connect(":memory:")
+try:
+    conn.execute("CREATE TABLE dept (deptno INTEGER PRIMARY KEY, dname TEXT)")
+    conn.executemany("INSERT INTO dept VALUES (?, ?)", [(10, "1강의실"), (20, "2강의실")])
+    conn.commit()
+    cursor = conn.execute("SELECT deptno, dname FROM dept ORDER BY deptno")
+    print(cursor.fetchone())
+    print(cursor.fetchall())
+    print(cursor.fetchone())
+finally:
+    conn.close()
+```
+
+```text
+(10, '1강의실')
+[(20, '2강의실')]
+None
+```
+
+
+첫 fetchone은 한 행을 소비한다. fetchall은 남은 행만 가져오고 다시 fetchone하면 None이다. cursor.fetchall()을 두 번 부르면 같은 결과가 두 번 반환되는 것은 아니다. ORDER BY 없이 첫 행의 의미를 업무 규칙으로 단정하지 않는다. dict(None)이나 DeptDTO(**dict(None))을 호출하기 전에 조회 실패를 분기한다.
+
+### 원본의 정확한 차이와 위험
+
+내 sqlite.py는 하단에서 조회·DTO 변환·전체 Update·with Update를 연속 실행한다. 강사님은 update_with()만 활성화했다. 둘 다 해당 Update의 WHERE는 없으므로 전체 행을 변경한다. 원본을 import해 함수만 가져오려 해도 하단 코드가 실행될 수 있으므로 그대로 import하여 검증하지 않는다.
+
+양쪽 update_with() 주석의 'close도 자동'은 틀리다. with conn은 열린 트랜잭션의 성공 commit·예외 rollback을 관리하지만 연결 자체를 닫지 않는다. [Python sqlite3 공식 설명](https://docs.python.org/3/library/sqlite3.html#how-to-use-the-connection-context-manager)
+
+### 같은 연결에서 보이는 변경과 Rollback
+
+```python
+import sqlite3
+conn = sqlite3.connect(":memory:")
+try:
+    conn.execute("CREATE TABLE account (id INTEGER PRIMARY KEY, balance INTEGER)")
+    conn.executemany("INSERT INTO account VALUES (?, ?)", [(1, 100), (2, 0)])
+    conn.commit()
+    try:
+        with conn:
+            conn.execute("UPDATE account SET balance=balance-30 WHERE id=1")
+            print("출금 후:", conn.execute("SELECT balance FROM account ORDER BY id").fetchall())
+            raise ValueError("입금 처리 실패")
+    except ValueError:
+        print("롤백 후:", conn.execute("SELECT balance FROM account ORDER BY id").fetchall())
+    with conn:
+        conn.execute("UPDATE account SET balance=balance-30 WHERE id=1")
+        conn.execute("UPDATE account SET balance=balance+30 WHERE id=2")
+    print("확정 후:", conn.execute("SELECT balance FROM account ORDER BY id").fetchall())
+finally:
+    conn.close()
+```
+
+```text
+출금 후: [(70,), (0,)]
+롤백 후: [(100,), (0,)]
+확정 후: [(70,), (30,)]
+```
+
+
+첫 출금은 같은 Connection에서 보이지만 미확정이다. 예외가 with 밖으로 전달되면 그 업무의 변경이 취소된다. 두 번째 업무는 출금·입금 둘 다 성공해 함께 확정된다. except를 with 내부에서 잡고 숨기면 Block이 정상 종료되어 commit될 수 있다는 차이도 중요하다. 앞에서 commit한 초기 100은 이후 rollback으로 없어지지 않는다.
+
+💡 Python 3.12부터 sqlite3의 autocommit 옵션이 추가되어 transaction 제어 모드를 명시할 수 있다. 위 예제는 기본 legacy 제어 모드 기준이다. autocommit=True와 같은 별도 설정에서는 동일한 with 설명을 무조건 적용하지 않는다.
+
+### Binding·DTO·rowcount를 연결하기
+
+SQLite는 ?와 tuple, PyMySQL은 %s와 tuple, SQLAlchemy text는 :name과 dict를 쓴다. Binding은 데이터와 SQL 구조를 분리하는 것이지 사용자의 ID 범위나 업무 권한을 검증하는 기능은 아니다.
+
+row_factory=sqlite3.Row를 Cursor 생성 전에 설정하면 이름으로 읽고 dict(row)로 바꿀 수 있다. DTO는 Data Transfer Object이며 DB 모델과 일대일로 항상 같아야 하는 것은 아니다. 원본 loc는 DB에서 NULL 가능하지만 DeptDTO는 str이므로 NULL 행에서 검증 문제가 생긴다. 개선은 loc: str | None = None이다.
+
+rowcount는 열 수가 아니라 최근 변경 SQL의 행 수다. 세 번 개별 INSERT의 마지막 rowcount는 1이고 누적 3이 아니다. SELECT는 일반적으로 rowcount로 결과 개수를 구하지 않으며 fetch 결과를 확인한다.
+
+### 확인 문제와 해설
+
+<details><summary>출금 직후 70이 출력됐다. commit이 된 증거인가?</summary>
+
+같은 연결에서 자기 미확정 변경이 보일 수 있으므로 아니다. transaction 상태와 commit/rollback 경계를 확인해야 한다.
+
+</details>
+
+<details><summary>with 블록을 끝냈는데 conn.execute가 된다. 왜일까?</summary>
+
+SQLite Connection context manager는 close하지 않기 때문이다. finally: conn.close() 또는 contextlib.closing을 별도로 사용한다.
+
+</details>
+
+---
+
+<a id="section-4"></a>
+
+## 1. SQLite란?
 
 SQLite는 별도 DB Server Process 없이 하나의 File에 Data를 저장하는 경량 관계형 Database다.
 
@@ -52,7 +181,7 @@ Application
 
 Python 표준 Library에 `sqlite3`가 포함되므로 일반적으로 별도 pip 설치가 필요 없다.
 
-## 1.1 sqlite.db는 어디에 만들어지는가?
+### 1.1 sqlite.db는 어디에 만들어지는가?
 
 ```python
 sqlite3.connect('sqlite.db')
@@ -82,7 +211,9 @@ connection = sqlite3.connect(DB_PATH)
 
 ---
 
-# 2. Connection과 Cursor
+<a id="section-5"></a>
+
+## 2. Connection과 Cursor
 
 ```python
 import sqlite3
@@ -103,7 +234,7 @@ connection.close()
 
 변수명은 `connect`보다 객체의 의미가 명확한 `connection` 또는 `conn`을 권장한다.
 
-## 2.1 실제 동작 순서
+### 2.1 실제 동작 순서
 
 ```text
 sqlite3.connect()
@@ -130,7 +261,9 @@ Cursor가 DB File 자체는 아니다. SQL을 실행하고 결과 위치를 관�
 
 ---
 
-# 3. Table 생성
+<a id="section-6"></a>
+
+## 3. Table 생성
 
 ```python
 def create_dept():
@@ -155,7 +288,9 @@ DDL의 Transaction 동작은 DBMS와 Driver 설정에 따라 차이가 있으므
 
 ---
 
-# 4. Insert와 Parameter Binding
+<a id="section-7"></a>
+
+## 4. Insert와 Parameter Binding
 
 ```python
 cursor.execute(
@@ -183,7 +318,7 @@ Parameter Binding의 핵심은 다음과 같다.
 
 원본 Comment의 “자료형을 한 번 걸러 변환한다”는 표현은 일부 방향은 맞지만, Pydantic처럼 업무 규칙을 검증하는 기능은 아니다. ID 범위나 문자열 길이는 별도 검증이 필요하다.
 
-## 4.1 값은 어떻게 SQL에 들어가는가?
+### 4.1 값은 어떻게 SQL에 들어가는가?
 
 Python Code:
 
@@ -217,7 +352,9 @@ SQL 구조와 Tuple을 별도 인자로 받음
 
 ---
 
-# 5. 한 개짜리 Tuple
+<a id="section-8"></a>
+
+## 5. 한 개짜리 Tuple
 
 ```python
 cursor.execute(
@@ -235,7 +372,9 @@ cursor.execute(
 
 ---
 
-# 6. fetchone과 fetchall
+<a id="section-9"></a>
+
+## 6. fetchone과 fetchall
 
 ```python
 row = cursor.fetchone()
@@ -249,7 +388,7 @@ rows = cursor.fetchall()
 
 `fetchone()`은 결과가 여러 건이어도 첫 Row만 가져온다. “한 건만 있어야 한다”는 검증을 대신하지 않으므로 SQL 조건과 Constraint를 함께 확인한다.
 
-## 6.1 실제 반환 형태
+### 6.1 실제 반환 형태
 
 Table Data:
 
@@ -282,7 +421,9 @@ print(all_rows, type(all_rows))
 
 ---
 
-# 7. sqlite3.Row와 Dict
+<a id="section-10"></a>
+
+## 7. sqlite3.Row와 Dict
 
 기본 조회 Row는 Tuple 형태다.
 
@@ -300,7 +441,7 @@ result = [dict(row) for row in rows]
 
 `row_factory`는 Cursor 생성 전에 Connection에 설정하는 것이 명확하다.
 
-## 7.1 변환 과정과 출력
+### 7.1 변환 과정과 출력
 
 ```python
 row = cursor.fetchone()
@@ -321,7 +462,9 @@ print(dict(row))
 
 ---
 
-# 8. Pydantic DTO로 변환
+<a id="section-11"></a>
+
+## 8. Pydantic DTO로 변환
 
 ```python
 from pydantic import BaseModel
@@ -348,7 +491,9 @@ DTO는 Data Transfer Object다. “데이터 변경 바구니”보다는 **계�
 
 ---
 
-# 9. Update와 WHERE
+<a id="section-12"></a>
+
+## 9. Update와 WHERE
 
 ```python
 cursor.execute(
@@ -381,7 +526,9 @@ Update와 Delete 전에 다음을 확인한다.
 
 ---
 
-# 10. rowcount
+<a id="section-13"></a>
+
+## 10. rowcount
 
 ```python
 print(cursor.rowcount)
@@ -404,7 +551,9 @@ cursor.executemany(
 
 ---
 
-# 11. Transaction
+<a id="section-14"></a>
+
+## 11. Transaction
 
 Transaction은 Database의 상태를 바꾸는 하나의 논리적인 업무 단위다.
 
@@ -426,7 +575,7 @@ B 계좌 입금
 
 둘 중 하나만 반영되면 안 되므로 함께 Commit하거나 함께 Rollback해야 한다.
 
-## 11.1 DB에서 실제 상태가 바뀌는 시점
+### 11.1 DB에서 실제 상태가 바뀌는 시점
 
 ```python
 connection.execute(
@@ -472,9 +621,13 @@ Rollback 후에는 같은 Transaction에서 수행한 미확정 변경이 취소
 
 ---
 
-# 12. Commit과 Rollback
+<a id="section-15"></a>
 
-## 12.1 Commit
+## 12. Commit과 Rollback
+
+<a id="index-section-29"></a>
+
+### 12.1 Commit
 
 ```python
 connection.commit()
@@ -482,7 +635,7 @@ connection.commit()
 
 현재 Transaction의 변경을 확정한다.
 
-## 12.2 Rollback
+### 12.2 Rollback
 
 ```python
 connection.rollback()
@@ -490,7 +643,7 @@ connection.rollback()
 
 현재 Transaction에서 아직 Commit하지 않은 변경을 취소한다.
 
-## 12.3 Transaction 경계
+### 12.3 Transaction 경계
 
 메모의 `commit~rollback`, `commit~commit`은 다음처럼 정리할 수 있다.
 
@@ -505,7 +658,9 @@ Commit이 완료된 변경은 이후 Rollback으로 되돌릴 수 없다. 이미
 
 ---
 
-# 13. Context Manager의 정확한 동작
+<a id="section-16"></a>
+
+## 13. Context Manager의 정확한 동작
 
 원본은 다음 구조를 사용한다.
 
@@ -538,7 +693,7 @@ with closing(sqlite3.connect('sqlite.db')) as connection:
         connection.execute(...)
 ```
 
-## 13.1 정상 종료와 예외 종료
+### 13.1 정상 종료와 예외 종료
 
 정상 종료:
 
@@ -563,7 +718,9 @@ with Block 진입
 
 ---
 
-# 14. 안전한 Transaction 예제
+<a id="section-17"></a>
+
+## 14. 안전한 Transaction 예제
 
 ```python
 import sqlite3
@@ -597,7 +754,9 @@ def update_department(deptno: int, dname: str) -> int:
 
 ---
 
-# 15. 내 코드와 강사님 코드 비교
+<a id="section-18"></a>
+
+## 15. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 | 판단 |
 | --- | --- | --- | --- |
@@ -609,7 +768,9 @@ def update_department(deptno: int, dname: str) -> int:
 
 ---
 
-# 16. 실무 지침
+<a id="section-19"></a>
+
+## 16. 실무 지침
 
 - SQL 문자열에 사용자 값을 직접 합치지 않는다.
 - Update·Delete 전에 같은 WHERE의 Select 결과를 확인한다.
@@ -621,7 +782,9 @@ def update_department(deptno: int, dname: str) -> int:
 
 ---
 
-# 17. 자주 하는 실수와 Debugging
+<a id="section-20"></a>
+
+## 17. 자주 하는 실수와 Debugging
 
 | 증상 | 원인 | 해결 |
 | --- | --- | --- |
@@ -635,7 +798,7 @@ def update_department(deptno: int, dname: str) -> int:
 
 ---
 
-## 17.1 수업 원본에서 다시 찾기
+### 17.1 수업 원본에서 다시 찾기
 
 | 배운 개념 | 내 코드 함수 | 강사님 코드 함수 | 다시 확인할 내용 |
 | --- | --- | --- | --- |
@@ -651,7 +814,7 @@ def update_department(deptno: int, dname: str) -> int:
 | Transaction Context | `update_with()` | `update_with()` | 정상 Commit·예외 Rollback, Close 별도 |
 | Transaction 메모 | 2026-08-24 개인 메모 | 다음 DB 수업으로 확장 | 업무 단위와 경계 |
 
-## 17.2 실행 전 주의
+### 17.2 실행 전 주의
 
 현재 `sqlite.py` 하단에는 여러 함수 호출이 활성화되어 있어 파일을 한 번 실행하면 조회뿐 아니라 전체 Update도 실행된다.
 
@@ -687,7 +850,9 @@ if __name__ == '__main__':
 
 ---
 
-# 18. 종합실습
+<a id="section-21"></a>
+
+## 18. 종합실습
 
 1. `dept` Table을 생성한다.
 2. Parameter Binding으로 세 부서를 한 번에 추가한다.
@@ -701,7 +866,9 @@ if __name__ == '__main__':
 
 ---
 
-# 19. 정답 핵심
+<a id="section-22"></a>
+
+## 19. 정답 핵심
 
 ```python
 import sqlite3
@@ -728,7 +895,9 @@ def get_departments() -> list[DeptDTO]:
 
 ---
 
-# 최종 체크리스트
+<a id="section-23"></a>
+
+## 최종 체크리스트
 
 - [ ] SQLite와 Server형 DBMS의 기본 차이를 설명할 수 있다.
 - [ ] Connection과 Cursor의 역할을 구분할 수 있다.
@@ -744,7 +913,9 @@ def get_departments() -> list[DeptDTO]:
 
 ---
 
-# 핵심 요약
+<a id="section-24"></a>
+
+## 핵심 요약
 
 ```text
 SQLite = File 기반 관계형 Database

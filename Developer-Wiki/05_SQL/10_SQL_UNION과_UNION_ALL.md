@@ -4,6 +4,49 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-10-section-2)
+- [개념에서 실제 실행까지 — UNION과 UNION ALL이란? — 행 집합을 위아래로 결합](#sql-10-section-3)
+- [4. UNION과 UNION ALL 비교](#sql-10-section-7)
+- [9. 내 코드와 강사님 코드 비교](#sql-10-section-12)
+- [14. 종합실습](#sql-10-section-17)
+- [15. 정답과 해설](#sql-10-section-18)
+- [16. 최종 체크리스트](#sql-10-section-19)
+- [17. 핵심 요약](#sql-10-section-20)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-10-section-1)
+- [학습 목표](#sql-10-section-2)
+- [개념에서 실제 실행까지 — UNION과 UNION ALL이란? — 행 집합을 위아래로 결합](#sql-10-section-3)
+- [1. 집합연산이 필요한 이유](#sql-10-section-4)
+- [2. UNION ALL](#sql-10-section-5)
+- [3. UNION](#sql-10-section-6)
+- [4. UNION과 UNION ALL 비교](#sql-10-section-7)
+- [5. 결합 조건: Column 개수와 순서](#sql-10-section-8)
+- [6. 자료형 맞추기](#sql-10-section-9)
+- [7. Column명과 Alias](#sql-10-section-10)
+- [8. ORDER BY와 LIMIT](#sql-10-section-11)
+- [9. 내 코드와 강사님 코드 비교](#sql-10-section-12)
+- [10. 개선된 통합 예제](#sql-10-section-13)
+- [11. 실무 활용 지침](#sql-10-section-14)
+- [12. 자주 하는 실수](#sql-10-section-15)
+- [13. 디버깅 방법](#sql-10-section-16)
+- [14. 종합실습](#sql-10-section-17)
+- [15. 정답과 해설](#sql-10-section-18)
+- [16. 최종 체크리스트](#sql-10-section-19)
+- [17. 핵심 요약](#sql-10-section-20)
+- [📎 다음 문서](#sql-10-section-21)
+- [🔬 V3 동작 백과 — 두 Result Set은 어떻게 합쳐지는가?](#sql-10-section-22)
+
+</details>
+
+---
+
+<a id="sql-10-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -19,16 +62,129 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-10-section-2"></a>
 
-- `UNION`과 `UNION ALL`의 공통점과 차이를 설명한다.
-- 결합되는 SELECT의 Column 개수와 위치별 자료형을 맞춘다.
-- 중복 제거가 필요한지 판단하여 적절한 연산자를 선택한다.
-- 결과 Column명과 `ORDER BY`의 적용 범위를 이해한다.
-- 서로 다른 형태의 결과를 `NULL`, Literal, `CAST`로 정렬한다.
-- 집합연산 오류를 단계적으로 디버깅하고 실무 보고서 Query에 활용한다.
+## 학습 목표
+
+- 열 위치·중복 제거·최종 정렬을 구분한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-10-section-3"></a>
+
+## 개념에서 실제 실행까지 — UNION과 UNION ALL이란? — 행 집합을 위아래로 결합
+
+### 무엇이며 왜 배워야 할까?
+
+UNION은 SELECT 결과를 위아래로 결합한다. JOIN처럼 관계에 따라 열을 옆으로 붙이는 기능과 다르다. 대응 열은 이름이 아니라 위치로 연결되므로 열 개수와 의미·자료형 호환을 확인해야 한다. 같은 자리의 ‘부서번호’와 ‘급여’를 합치면 문법상 가능해도 해석이 틀릴 수 있다.
+
+UNION은 결과 행 전체의 중복을 제거하고 UNION ALL은 반복되는 결과를 유지한다. 급여만 선택하면 서로 다른 사원이라도 같은 급여 결과가 중복 제거될 수 있다. 사원번호까지 선택하면 다른 행으로 구분된다. 업무상 중복의 정의와 선택 열을 함께 판단한다.
+
+결합했다고 첫 SELECT의 순서가 최종 출력 순서로 보장되지 않는다. 전체 결과에 ORDER BY를 적용한다. 중복 제거 비용 때문에 UNION ALL이 적합한 경우가 많지만 중복을 제거해야 하는 질문에 무조건 ALL을 적용하면 요구사항이 바뀐다.
+
+### 입력은 어디에서 오는가?
+
+EMP·DEPT·SALGRADE는 초기화 자료 그대로 준비된 상태다. EMP 14행, DEPT 4행, SALGRADE 5행이다. 다른 DML로 데이터를 바꿨다면 아래 결과와 달라질 수 있다. 상수 SELECT 예제는 테이블 없이도 실행할 수 있다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+SELECT 10 AS deptno
+UNION
+SELECT 10;
+SELECT 10 AS deptno
+UNION ALL
+SELECT 10;
+```
+
+Result Grid의 열·행 값:
+
+```text
+deptno
+10
+deptno
+10
+10
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 첫 가지에서 부서 10의 값을 만들고 같은 값을 두 번째 가지에도 만든다.
+2. UNION은 두 결과에서 동일한 10행을 하나로 정리한다.
+3. UNION ALL은 두 가지의 10행을 모두 남긴다.
+4. 예제는 입력 크기를 작게 줄인 보충 코드이며 원본 emp 전체 행 결합과 구분한다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 439~448행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+union
+select * from emp where deptno = 10;
+
+-- union all은 겹치더라도 나오게 함, union보다 활용도가 높음
+select * from emp where deptno = 10
+union all
+select * from emp where deptno = 10;
+
+select * from emp
+where sal > 1250;
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 404~413행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+select * from emp where deptno = 10;
+
+select * from emp where deptno = 10
+union all
+select * from emp where deptno = 10;
+
+/*
+select ename from emp where deptno = 10
+union all
+select ename, sal from emp where deptno = 10;
+```
+
+두 원본은 10부서 사원을 같은 조건으로 두 번 결합한다. 초기화 데이터에서 UNION은 3행, UNION ALL은 6행이다. DISTINCT처럼 결과의 모든 열 조합을 기준으로 판단한다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 이해 확인 실습
+
+1. 사원 둘의 급여가 3000이면 sal만 UNION한 결과에 두 번 남을까?
+2. 같은 세 사원을 두 번 UNION ALL하면? UNION이면?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 남지 않는다. sal만 선택한 동일 결과 행은 하나로 제거된다. ALL이면 반복을 유지한다.
+2. 각 결과 열이 같다는 조건에서 6행과 3행이다. 중복의 기준은 결과 행 전체다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-10-section-4"></a>
 
 ## 1. 집합연산이 필요한 이유
 
@@ -77,6 +233,8 @@ FROM table2;
 각 SELECT를 집합연산의 **분기(Branch)** 라고 생각하면 구조를 이해하기 쉽다.
 
 ---
+
+<a id="sql-10-section-5"></a>
 
 ## 2. UNION ALL
 
@@ -141,6 +299,8 @@ WHERE deptno = 20;
 
 ---
 
+<a id="sql-10-section-6"></a>
+
 ## 3. UNION
 
 ### 10. UNION은 전체 결과에서 중복 Row를 제거한다
@@ -201,6 +361,8 @@ UNION
 
 ---
 
+<a id="sql-10-section-7"></a>
+
 ## 4. UNION과 UNION ALL 비교
 
 ### 15. 핵심 차이
@@ -254,6 +416,8 @@ ORDER BY job;
 먼저 모든 Row를 보존한 뒤 바깥 Query에서 목적에 맞게 집계하는 방식이다.
 
 ---
+
+<a id="sql-10-section-8"></a>
 
 ## 5. 결합 조건: Column 개수와 순서
 
@@ -311,6 +475,8 @@ FROM dept;
 각 분기가 이 구조에 맞는 값을 같은 순서로 반환하도록 작성한다.
 
 ---
+
+<a id="sql-10-section-9"></a>
 
 ## 6. 자료형 맞추기
 
@@ -380,6 +546,8 @@ FROM dept;
 
 ---
 
+<a id="sql-10-section-10"></a>
+
 ## 7. Column명과 Alias
 
 ### 29. 최종 Column명은 첫 번째 SELECT를 기준으로 한다
@@ -412,6 +580,8 @@ FROM dept;
 `empno`, `deptno`를 합친 Column을 단순히 `empno`라고 두기보다 `object_no`처럼 두 Source를 포괄하는 이름이 적합하다.
 
 ---
+
+<a id="sql-10-section-11"></a>
 
 ## 8. ORDER BY와 LIMIT
 
@@ -493,6 +663,8 @@ ORDER BY source_type, object_no;
 
 ---
 
+<a id="sql-10-section-12"></a>
+
 ## 9. 내 코드와 강사님 코드 비교
 
 ### 38. 비교 기준
@@ -548,6 +720,8 @@ UNION ALL + DEPTNO, JOB 조회
 - 중복을 숨기기 위한 `UNION` 사용은 피한다.
 
 ---
+
+<a id="sql-10-section-13"></a>
 
 ## 10. 개선된 통합 예제
 
@@ -624,6 +798,8 @@ ORDER BY empno;
 
 ---
 
+<a id="sql-10-section-14"></a>
+
 ## 11. 실무 활용 지침
 
 ### 47. 먼저 결과 한 Row의 의미를 정한다
@@ -675,6 +851,8 @@ Column의 이름뿐 아니라 의미, 자료형, NULL 허용 여부를 정하면
 
 ---
 
+<a id="sql-10-section-15"></a>
+
 ## 12. 자주 하는 실수
 
 ### 52. Column 개수를 다르게 작성한다
@@ -711,6 +889,8 @@ Column의 이름뿐 아니라 의미, 자료형, NULL 허용 여부를 정하면
 사원 Row에 부서명을 붙이는 작업은 세로 결합이 아니라 관계에 따른 가로 결합이므로 JOIN을 사용한다.
 
 ---
+
+<a id="sql-10-section-16"></a>
 
 ## 13. 디버깅 방법
 
@@ -763,11 +943,15 @@ FROM (
 GROUP BY source_name;
 ```
 
+<a id="index-section-91"></a>
+
 ### 64. 복잡한 집합연산은 CTE로 이름을 붙인다
 
 분기마다 업무 의미를 나타내는 이름을 붙이면 조건과 Column Mapping을 검증하기 쉽다.
 
 ---
+
+<a id="sql-10-section-17"></a>
 
 ## 14. 종합실습
 
@@ -792,6 +976,8 @@ GROUP BY source_name;
 급여 3000 이상 또는 Commission이 양수인 사원의 고유 명단을 만든다. 같은 사원이 두 조건을 만족해도 한 번만 표시한다.
 
 ---
+
+<a id="sql-10-section-18"></a>
 
 ## 15. 정답과 해설
 
@@ -877,6 +1063,8 @@ ORDER BY empno;
 
 ---
 
+<a id="sql-10-section-19"></a>
+
 ## 16. 최종 체크리스트
 
 ### 75. 문법 체크
@@ -901,6 +1089,8 @@ ORDER BY empno;
 - [ ] 세로 결합은 UNION, 가로 결합은 JOIN이라는 목적이 맞는가?
 
 ---
+
+<a id="sql-10-section-20"></a>
 
 ## 17. 핵심 요약
 
@@ -929,6 +1119,8 @@ ORDER BY
 
 ---
 
+<a id="sql-10-section-21"></a>
+
 ## 📎 다음 문서
 
 다음 원본 흐름은 Subquery이다.
@@ -938,6 +1130,8 @@ ORDER BY
 ```
 
 ---
+
+<a id="sql-10-section-22"></a>
 
 ## 🔬 V3 동작 백과 — 두 Result Set은 어떻게 합쳐지는가?
 

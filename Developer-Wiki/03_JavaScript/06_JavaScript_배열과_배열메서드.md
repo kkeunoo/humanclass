@@ -1,7 +1,7 @@
 ---
 title: JavaScript 배열과 배열 메서드
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,97 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: 배열은 순서 있는 요소를 관리하는 객체다](#js-06-section-4)
+- [34. `slice()`와 `splice()` 비교](#js-06-section-38)
+- [40. `join()`과 `split()` 비교](#js-06-section-44)
+- [56. 내 코드와 강사님 코드 비교](#js-06-section-60)
+- [58. 실무형 예제: 장바구니 요약](#js-06-section-62)
+- [59. 대표 오류로 이해하기](#js-06-section-63)
+- [60. 자주 하는 실수](#js-06-section-64)
+- [61. 핵심 요약](#js-06-section-65)
+- [62. 최종 체크리스트](#js-06-section-66)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-06-section-1)
+- [핵심 개념](#js-06-section-2)
+- [학습 목표](#js-06-section-3)
+- [개념에서 실제 실행까지: 배열은 순서 있는 요소를 관리하는 객체다](#js-06-section-4)
+- [1. 배열 리터럴](#js-06-section-5)
+- [2. `new Array()`](#js-06-section-6)
+- [3. 생성자 숫자 하나 주의](#js-06-section-7)
+- [4. 배열의 자료형](#js-06-section-8)
+- [5. 여러 자료형 저장](#js-06-section-9)
+- [6. 배열 출력 방식](#js-06-section-10)
+- [7. 인덱스 접근](#js-06-section-11)
+- [8. 요소 변경](#js-06-section-12)
+- [9. `const` 배열](#js-06-section-13)
+- [10. 문자열 인덱스](#js-06-section-14)
+- [11. 존재하지 않는 인덱스](#js-06-section-15)
+- [12. 먼 인덱스에 값 대입](#js-06-section-16)
+- [13. 배열에 문자열 키 추가](#js-06-section-17)
+- [14. 배열 길이](#js-06-section-18)
+- [15. `length`를 이용한 순회](#js-06-section-19)
+- [16. 마지막 요소](#js-06-section-20)
+- [17. 다차원 배열](#js-06-section-21)
+- [18. 다차원 배열 접근](#js-06-section-22)
+- [19. 모든 음식 출력](#js-06-section-23)
+- [20. `for...of`로 개선](#js-06-section-24)
+- [21. `push()`](#js-06-section-25)
+- [22. `unshift()`](#js-06-section-26)
+- [23. `pop()`](#js-06-section-27)
+- [24. `shift()`](#js-06-section-28)
+- [25. 스택과 큐](#js-06-section-29)
+- [26. `reverse()`](#js-06-section-30)
+- [27. `sort()` 기본 동작](#js-06-section-31)
+- [28. 숫자 정렬 오류](#js-06-section-32)
+- [29. 숫자 오름차순·내림차순](#js-06-section-33)
+- [30. 메서드 체이닝](#js-06-section-34)
+- [31. `slice()`](#js-06-section-35)
+- [32. `slice()` 사용 형태](#js-06-section-36)
+- [33. `splice()`](#js-06-section-37)
+- [34. `slice()`와 `splice()` 비교](#js-06-section-38)
+- [35. `indexOf()`](#js-06-section-39)
+- [36. `includes()`](#js-06-section-40)
+- [37. 이메일 ID 추출](#js-06-section-41)
+- [38. `join()`](#js-06-section-42)
+- [39. `split()`](#js-06-section-43)
+- [40. `join()`과 `split()` 비교](#js-06-section-44)
+- [41. 쿼리스트링 원본 풀이](#js-06-section-45)
+- [42. `URLSearchParams`로 개선](#js-06-section-46)
+- [43. 이메일 도메인 추출](#js-06-section-47)
+- [44. 문제 1: 1부터 10까지 배열 만들기](#js-06-section-48)
+- [45. `Array.from()`으로 만들기](#js-06-section-49)
+- [46. 문제 2: 조건별 개수](#js-06-section-50)
+- [47. 문제 3: 미완주자 찾기](#js-06-section-51)
+- [48. 이름으로 미완주자 찾기](#js-06-section-52)
+- [49. 중복 이름이 있을 때](#js-06-section-53)
+- [50. 문제 4: 좌석 예약 상태](#js-06-section-54)
+- [51. 잔여 좌석](#js-06-section-55)
+- [52. 문제 5: 로또 번호](#js-06-section-56)
+- [53. `Set`을 사용하는 이유](#js-06-section-57)
+- [54. 숫자 야구 배열 설계](#js-06-section-58)
+- [55. 원본 변경 여부 정리](#js-06-section-59)
+- [56. 내 코드와 강사님 코드 비교](#js-06-section-60)
+- [57. 기존 코드에서 개선 코드로 바꾼 이유](#js-06-section-61)
+- [58. 실무형 예제: 장바구니 요약](#js-06-section-62)
+- [59. 대표 오류로 이해하기](#js-06-section-63)
+- [60. 자주 하는 실수](#js-06-section-64)
+- [61. 핵심 요약](#js-06-section-65)
+- [62. 최종 체크리스트](#js-06-section-66)
+- [마무리](#js-06-section-67)
+- [V3 실행 추적 카드 — 배열 참조 → 메서드 실행 → 원본/새 배열](#js-06-section-68)
+
+</details>
+
+---
+
+<a id="js-06-section-1"></a>
+
+## 개요
 
 배열은 여러 값을 하나의 변수에 순서대로 저장하는 자료구조다.
 
@@ -61,7 +151,9 @@ const fruits = [
 
 ---
 
-# 핵심 개념
+<a id="js-06-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -78,28 +170,141 @@ const fruits = [
 
 ---
 
-# 학습 목표
+<a id="js-06-section-3"></a>
 
-- 배열을 리터럴과 생성자로 만들 수 있다.
-- 배열 인덱스가 0부터 시작함을 이해한다.
-- 존재하지 않는 인덱스가 `undefined`를 반환함을 설명할 수 있다.
-- `const` 배열의 요소를 변경할 수 있는 이유를 설명할 수 있다.
-- `length`를 이용해 배열 전체를 순회할 수 있다.
-- 다차원 배열의 요소에 접근할 수 있다.
-- `push()`, `unshift()`, `pop()`, `shift()`를 사용할 수 있다.
-- `reverse()`와 `sort()`가 원본을 변경함을 이해한다.
-- 숫자 배열을 비교 함수로 정렬할 수 있다.
-- `slice()`와 `splice()`를 구분할 수 있다.
-- `indexOf()`와 `includes()`를 사용할 수 있다.
-- `join()`과 `split()`의 방향을 구분할 수 있다.
-- 쿼리스트링과 이메일 문자열을 안전하게 처리할 수 있다.
-- 배열 문제에서 `Set`, `filter()`, `includes()`를 활용할 수 있다.
+## 학습 목표
+
+- 원본 변경·반환값·얕은 복사를 구분한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. 배열 리터럴
+<a id="js-06-section-4"></a>
 
-## 1-1. 원본 코드
+## 개념에서 실제 실행까지: 배열은 순서 있는 요소를 관리하는 객체다
+
+배열은 번호가 붙은 여러 독립 변수를 자동 선언하는 기능이라기보다, 인덱스와 length로 여러 요소를 관리하는 객체다. const 배열도 요소 변경이 가능하며 변수에 다른 배열을 재할당하는 것은 금지된다.
+
+두 원본은 push/unshift/pop/shift, reverse/sort로 앞뒤 추가·삭제와 정렬을 실습한다. push와 unshift는 새 길이를 반환하고 pop/shift는 제거한 요소를 반환한다. sort/reverse는 원본을 바꾸고 그 배열 참조를 반환한다. 숫자는 기본 sort에서 문자열 비교를 하므로 [2,10,1]이 [1,10,2]가 된다.
+
+내 원본의 '문자 1Byte, 숫자 4byte', 'Stack은 KB, Heap은 GB'는 JavaScript 메모리 보장 규칙이 아니다. 구체적인 저장 방식·크기는 엔진 구현에 달려 있다. 또 unshift+shift는 같은 앞쪽으로 넣고 빼서 최신 요소가 먼저 나오는 형태다. FIFO 큐는 push+shift로 모델링한다. 참조 대입으로 원래 배열이 즉시 GC되는 것도 아니며 다른 참조가 남아 있으면 접근 가능하다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/06_array.html`
+
+```javascript
+// 맨 마지막에 하나 추가
+            arr.push(5)
+            console.log(arr)
+
+            // 맨 앞에 하나 추가
+            arr.unshift(0)
+            console.log(arr)
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/06_array.html`
+
+```javascript
+// 맨 마지막에 하나 추가
+        arr.push(5)
+        console.log(arr)
+        
+        // 맨 앞에 추가하기
+        arr.unshift(0)
+        console.log(arr)
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+const a = [2, 10, 1];
+const b = a;
+const c = a.slice();
+console.log(a.push(7));
+a.sort((x, y) => x - y);
+console.log(JSON.stringify(a), JSON.stringify(b), JSON.stringify(c));
+console.log(a === b, a === c);
+const queue = [];
+queue.push("먼저", "나중");
+console.log(queue.shift());
+```
+
+예상 출력:
+
+```text
+4
+[1,2,7,10] [1,2,7,10] [2,10,1]
+true false
+먼저
+```
+
+### 결과를 역추적하는 방법
+
+slice/spread의 새 배열도 중첩 객체를 공유하는 얕은 복사다. length는 실제 값의 개수와 다를 수 있다: arr[60]=60은 length를61로 만들며 중간은 빈 슬롯일 수 있다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+<a id="index-section-10"></a>
+
+### 개인 중복 테스트 파일: 요소 값과 배열 참조를 구별하기
+
+`workspace_html/javascript/java_중복테스트.html`의 실험 코드는 모두 주석 처리되어 있어 실행 로그가 없다. 한 요소 배열의 `a[0] == b[0]` 비교, 배열을 문자열이나숫자로변환한비교를 시도했다. 이것은 배열두개가같은객체인지의 비교와 다르다.
+
+```javascript
+const a = [3];
+const b = [3];
+console.log(a === b, a[0] === b[0]);
+console.log(Number(a), String(a));
+console.log(Number([3, 4]));
+```
+
+출력은 `false true`, `3 3`, `NaN`이다. 한 요소 배열의 우연한 숫자 변환이 다중 요소 배열에서도 성립한다고 일반화하지 않는다. 로또 중복 제거는 새 숫자를 기존 숫자 목록에 includes로 확인하거나 💡 Set을 사용하며, 서로다른배열을===로비교하는방법을사용하지않는다.
+
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** 참조복사b=a, 배열복사c=a.slice 후 a.push(3)의 영향을 비교한다.
+
+**응용·디버깅 실습:** [10,2,1]을 숫자 내림차순으로 정렬한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. b는a와 같은 배열이라 같이 바뀌고 c의 바깥 배열은 바뀌지 않는다. 객체 요소의 깊은 내용은 공유될 수 있다.
+2. sort((a,b)=>b-a)의 결과는[10,2,1]이다. 기본sort.reverse는 문자열 비교라 같은 정렬 규칙이 아니다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** const rows=[{done:false}]; const copy=rows.slice(); copy[0].done=true의 rows는?
+
+**해설:** rows[0].done도 true다. 바깥 배열만 새로 만들었고 요소 객체는 공유한다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-06-section-5"></a>
+
+## 1. 배열 리터럴
+
+### 1-1. 원본 코드
 
 ```javascript
 const array = []
@@ -117,7 +322,9 @@ const numbers = [
 
 ---
 
-# 2. `new Array()`
+<a id="js-06-section-6"></a>
+
+## 2. `new Array()`
 
 ```javascript
 const array = new Array()
@@ -137,7 +344,9 @@ const values = new Array(
 
 ---
 
-# 3. 생성자 숫자 하나 주의
+<a id="js-06-section-7"></a>
+
+## 3. 생성자 숫자 하나 주의
 
 ```javascript
 const values = new Array(3)
@@ -163,7 +372,9 @@ const values = [3]
 
 ---
 
-# 4. 배열의 자료형
+<a id="js-06-section-8"></a>
+
+## 4. 배열의 자료형
 
 ```javascript
 const array = []
@@ -195,7 +406,9 @@ true
 
 ---
 
-# 5. 여러 자료형 저장
+<a id="js-06-section-9"></a>
+
+## 5. 여러 자료형 저장
 
 ```javascript
 const values = [
@@ -214,7 +427,9 @@ JavaScript 배열에는 서로 다른 자료형을 함께 저장할 수 있다.
 
 ---
 
-# 6. 배열 출력 방식
+<a id="js-06-section-10"></a>
+
+## 6. 배열 출력 방식
 
 원본:
 
@@ -243,7 +458,9 @@ console.log("values:", values)
 
 ---
 
-# 7. 인덱스 접근
+<a id="js-06-section-11"></a>
+
+## 7. 인덱스 접근
 
 ```javascript
 const values = [
@@ -267,7 +484,9 @@ console.log(values[1])
 
 ---
 
-# 8. 요소 변경
+<a id="js-06-section-12"></a>
+
+## 8. 요소 변경
 
 ```javascript
 const values = [
@@ -289,7 +508,9 @@ console.log(values)
 
 ---
 
-# 9. `const` 배열
+<a id="js-06-section-13"></a>
+
+## 9. `const` 배열
 
 다음 코드는 가능하다.
 
@@ -317,7 +538,9 @@ values = [4, 5, 6]
 
 ---
 
-# 10. 문자열 인덱스
+<a id="js-06-section-14"></a>
+
+## 10. 문자열 인덱스
 
 ```javascript
 const text = "abc"
@@ -335,7 +558,9 @@ b
 
 ---
 
-# 11. 존재하지 않는 인덱스
+<a id="js-06-section-15"></a>
+
+## 11. 존재하지 않는 인덱스
 
 ```javascript
 const values = [
@@ -357,7 +582,9 @@ undefined
 
 ---
 
-# 12. 먼 인덱스에 값 대입
+<a id="js-06-section-16"></a>
+
+## 12. 먼 인덱스에 값 대입
 
 ```javascript
 const values = [
@@ -386,7 +613,9 @@ console.log(values.length)
 
 ---
 
-# 13. 배열에 문자열 키 추가
+<a id="js-06-section-17"></a>
+
+## 13. 배열에 문자열 키 추가
 
 원본:
 
@@ -414,7 +643,9 @@ console.log(values.length)
 
 ---
 
-# 14. 배열 길이
+<a id="js-06-section-18"></a>
+
+## 14. 배열 길이
 
 ```javascript
 const values = [
@@ -443,7 +674,9 @@ values.length - 1
 
 ---
 
-# 15. `length`를 이용한 순회
+<a id="js-06-section-19"></a>
+
+## 15. `length`를 이용한 순회
 
 ```javascript
 for (
@@ -459,7 +692,9 @@ for (
 
 ---
 
-# 16. 마지막 요소
+<a id="js-06-section-20"></a>
+
+## 16. 마지막 요소
 
 ```javascript
 const lastValue = (
@@ -475,9 +710,11 @@ const lastValue = values.at(-1)
 
 ---
 
-# 17. 다차원 배열
+<a id="js-06-section-21"></a>
 
-## 17-1. 원본 구조
+## 17. 다차원 배열
+
+### 17-1. 원본 구조
 
 ```javascript
 const westernFood = [
@@ -509,7 +746,9 @@ const foods = [
 
 ---
 
-# 18. 다차원 배열 접근
+<a id="js-06-section-22"></a>
+
+## 18. 다차원 배열 접근
 
 ```javascript
 console.log(foods[0])
@@ -533,7 +772,9 @@ foods[0][2]
 
 ---
 
-# 19. 모든 음식 출력
+<a id="js-06-section-23"></a>
+
+## 19. 모든 음식 출력
 
 ```javascript
 for (
@@ -555,7 +796,9 @@ for (
 
 ---
 
-# 20. `for...of`로 개선
+<a id="js-06-section-24"></a>
+
+## 20. `for...of`로 개선
 
 ```javascript
 for (const category of foods) {
@@ -569,7 +812,9 @@ for (const category of foods) {
 
 ---
 
-# 21. `push()`
+<a id="js-06-section-25"></a>
+
+## 21. `push()`
 
 ```javascript
 const values = [
@@ -596,7 +841,9 @@ console.log(newLength)
 
 ---
 
-# 22. `unshift()`
+<a id="js-06-section-26"></a>
+
+## 22. `unshift()`
 
 ```javascript
 values.unshift(0)
@@ -608,7 +855,9 @@ values.unshift(0)
 
 ---
 
-# 23. `pop()`
+<a id="js-06-section-27"></a>
+
+## 23. `pop()`
 
 ```javascript
 const removedValue = values.pop()
@@ -620,7 +869,9 @@ const removedValue = values.pop()
 
 ---
 
-# 24. `shift()`
+<a id="js-06-section-28"></a>
+
+## 24. `shift()`
 
 ```javascript
 const removedValue = values.shift()
@@ -632,7 +883,9 @@ const removedValue = values.shift()
 
 ---
 
-# 25. 스택과 큐
+<a id="js-06-section-29"></a>
+
+## 25. 스택과 큐
 
 | 구조 | 입력 | 출력 |
 | --- | --- | --- |
@@ -643,7 +896,9 @@ const removedValue = values.shift()
 
 ---
 
-# 26. `reverse()`
+<a id="js-06-section-30"></a>
+
+## 26. `reverse()`
 
 ```javascript
 const values = [
@@ -673,7 +928,9 @@ const reversed = [
 
 ---
 
-# 27. `sort()` 기본 동작
+<a id="js-06-section-31"></a>
+
+## 27. `sort()` 기본 동작
 
 ```javascript
 const values = [
@@ -694,7 +951,9 @@ values.sort()
 
 ---
 
-# 28. 숫자 정렬 오류
+<a id="js-06-section-32"></a>
+
+## 28. 숫자 정렬 오류
 
 ```javascript
 const values = [
@@ -716,7 +975,9 @@ console.log(values.sort())
 
 ---
 
-# 29. 숫자 오름차순·내림차순
+<a id="js-06-section-33"></a>
+
+## 29. 숫자 오름차순·내림차순
 
 ```javascript
 values.sort(
@@ -743,7 +1004,9 @@ values.sort(
 
 ---
 
-# 30. 메서드 체이닝
+<a id="js-06-section-34"></a>
+
+## 30. 메서드 체이닝
 
 원본:
 
@@ -763,7 +1026,9 @@ values.sort(
 
 ---
 
-# 31. `slice()`
+<a id="js-06-section-35"></a>
+
+## 31. `slice()`
 
 ```javascript
 const values = [
@@ -794,7 +1059,9 @@ const copied = values.slice(
 
 ---
 
-# 32. `slice()` 사용 형태
+<a id="js-06-section-36"></a>
+
+## 32. `slice()` 사용 형태
 
 ```javascript
 values.slice(2)
@@ -809,7 +1076,9 @@ values.slice()
 
 ---
 
-# 33. `splice()`
+<a id="js-06-section-37"></a>
+
+## 33. `splice()`
 
 원본 마지막 코드:
 
@@ -842,7 +1111,9 @@ values
 
 ---
 
-# 34. `slice()`와 `splice()` 비교
+<a id="js-06-section-38"></a>
+
+## 34. `slice()`와 `splice()` 비교
 
 | 메서드 | 목적 | 원본 변경 |
 | --- | --- | --- |
@@ -859,7 +1130,9 @@ values.splice(
 
 ---
 
-# 35. `indexOf()`
+<a id="js-06-section-39"></a>
+
+## 35. `indexOf()`
 
 ```javascript
 const values = [
@@ -885,7 +1158,9 @@ console.log(
 
 ---
 
-# 36. `includes()`
+<a id="js-06-section-40"></a>
+
+## 36. `includes()`
 
 값 존재 여부만 필요하다면 다음이 더 직접적이다.
 
@@ -903,7 +1178,9 @@ true
 
 ---
 
-# 37. 이메일 ID 추출
+<a id="js-06-section-41"></a>
+
+## 37. 이메일 ID 추출
 
 ```javascript
 const email = "todair@naver.com"
@@ -929,7 +1206,9 @@ todair
 
 ---
 
-# 38. `join()`
+<a id="js-06-section-42"></a>
+
+## 38. `join()`
 
 ```javascript
 const values = [
@@ -953,7 +1232,9 @@ a;b;c
 
 ---
 
-# 39. `split()`
+<a id="js-06-section-43"></a>
+
+## 39. `split()`
 
 ```javascript
 const text = "a;b;c"
@@ -972,7 +1253,9 @@ console.log(values)
 
 ---
 
-# 40. `join()`과 `split()` 비교
+<a id="js-06-section-44"></a>
+
+## 40. `join()`과 `split()` 비교
 
 ```text
 배열
@@ -988,7 +1271,9 @@ console.log(values)
 
 ---
 
-# 41. 쿼리스트링 원본 풀이
+<a id="js-06-section-45"></a>
+
+## 41. 쿼리스트링 원본 풀이
 
 원본은 URL을 `?`, `&`, `=` 순서로 나눈다.
 
@@ -1020,7 +1305,9 @@ for (const parameter of parameters) {
 
 ---
 
-# 42. `URLSearchParams`로 개선
+<a id="js-06-section-46"></a>
+
+## 42. `URLSearchParams`로 개선
 
 브라우저에는 쿼리스트링 전용 API가 있다.
 
@@ -1042,7 +1329,9 @@ console.log(query)
 
 ---
 
-# 43. 이메일 도메인 추출
+<a id="js-06-section-47"></a>
+
+## 43. 이메일 도메인 추출
 
 ```javascript
 const email = "test@naver.com"
@@ -1067,9 +1356,11 @@ naver
 
 ---
 
-# 44. 문제 1: 1부터 10까지 배열 만들기
+<a id="js-06-section-48"></a>
 
-## 44-1. 내 코드
+## 44. 문제 1: 1부터 10까지 배열 만들기
+
+### 44-1. 내 코드
 
 ```javascript
 const numbers = []
@@ -1089,7 +1380,9 @@ console.log(numbers)
 
 ---
 
-# 45. `Array.from()`으로 만들기
+<a id="js-06-section-49"></a>
+
+## 45. `Array.from()`으로 만들기
 
 ```javascript
 const numbers = Array.from(
@@ -1104,7 +1397,9 @@ const numbers = Array.from(
 
 ---
 
-# 46. 문제 2: 조건별 개수
+<a id="js-06-section-50"></a>
+
+## 46. 문제 2: 조건별 개수
 
 ```javascript
 const numbers = [
@@ -1139,7 +1434,9 @@ console.log(greaterThanFour.length)
 
 ---
 
-# 47. 문제 3: 미완주자 찾기
+<a id="js-06-section-51"></a>
+
+## 47. 문제 3: 미완주자 찾기
 
 ```javascript
 const participants = [
@@ -1178,7 +1475,9 @@ console.log(unfinished)
 
 ---
 
-# 48. 이름으로 미완주자 찾기
+<a id="js-06-section-52"></a>
+
+## 48. 이름으로 미완주자 찾기
 
 ```javascript
 const participants = [
@@ -1211,7 +1510,9 @@ console.log(unfinished)
 
 ---
 
-# 49. 중복 이름이 있을 때
+<a id="js-06-section-53"></a>
+
+## 49. 중복 이름이 있을 때
 
 `includes()` 방식은 동명이인이 있는 경우 정확하지 않을 수 있다.
 
@@ -1243,7 +1544,9 @@ const unfinished = participants.filter(
 
 ---
 
-# 50. 문제 4: 좌석 예약 상태
+<a id="js-06-section-54"></a>
+
+## 50. 문제 4: 좌석 예약 상태
 
 ```javascript
 const seats = Array(
@@ -1274,7 +1577,9 @@ Boolean 배열로 예약 상태를 표현할 수 있다.
 
 ---
 
-# 51. 잔여 좌석
+<a id="js-06-section-55"></a>
+
+## 51. 잔여 좌석
 
 ```javascript
 const remainingCount = seats.filter(
@@ -1288,7 +1593,9 @@ console.log(
 
 ---
 
-# 52. 문제 5: 로또 번호
+<a id="js-06-section-56"></a>
+
+## 52. 문제 5: 로또 번호
 
 원본의 첫 번째·두 번째 풀이는 모든 기존 번호와 비교하지 않아 중복을 완전히 막지 못할 수 있다.
 
@@ -1317,7 +1624,9 @@ console.log(result)
 
 ---
 
-# 53. `Set`을 사용하는 이유
+<a id="js-06-section-57"></a>
+
+## 53. `Set`을 사용하는 이유
 
 `Set`은 같은 값을 다시 추가해도 하나만 저장한다.
 
@@ -1340,7 +1649,9 @@ console.log(values.size)
 
 ---
 
-# 54. 숫자 야구 배열 설계
+<a id="js-06-section-58"></a>
+
+## 54. 숫자 야구 배열 설계
 
 ```javascript
 const answer = [
@@ -1387,7 +1698,9 @@ console.log(
 
 ---
 
-# 55. 원본 변경 여부 정리
+<a id="js-06-section-59"></a>
+
+## 55. 원본 변경 여부 정리
 
 | 메서드 | 원본 변경 | 반환값 |
 | --- | --- | --- |
@@ -1405,7 +1718,9 @@ console.log(
 
 ---
 
-# 56. 내 코드와 강사님 코드 비교
+<a id="js-06-section-60"></a>
+
+## 56. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1418,14 +1733,14 @@ console.log(
 | 배열 문제 | 대부분 직접 시도 | 문제 요구사항 중심 |
 | 로또 | 세 가지 풀이 시도 | 문제만 제시 |
 
-## 56-1. 내 코드의 장점
+### 56-1. 내 코드의 장점
 
 - 배열 요소 변경과 배열 재할당 차이를 상세히 기록했다.
 - 메서드의 반환값과 원본 변경 여부를 확인했다.
 - URL·이메일 문자열 문제를 직접 풀었다.
 - 미완주자·예약·로또 문제를 여러 방식으로 시도했다.
 
-## 56-2. 내 코드의 개선점
+### 56-2. 내 코드의 개선점
 
 - 배열을 단순히 “여러 변수를 만드는 기술”로만 설명하면 부족하다.
 - `typeof array`가 `"object"`인 것과 배열 검사를 구분해야 한다.
@@ -1435,14 +1750,14 @@ console.log(
 - 로또 풀이 일부는 모든 기존 번호와 비교하지 않아 중복될 수 있다.
 - `==`보다 `===`를 사용해야 한다.
 
-## 56-3. 강사님 코드의 장점
+### 56-3. 강사님 코드의 장점
 
 - 배열 생성부터 메서드까지 한 흐름으로 학습할 수 있다.
 - 다차원 배열과 중첩 반복문을 연결한다.
 - `slice()`, `indexOf()`, `join()`, `split()`을 실제 문자열 문제에 적용한다.
 - 배열 기반 종합 문제를 다양하게 제시한다.
 
-## 56-4. 강사님 코드의 보충점
+### 56-4. 강사님 코드의 보충점
 
 - `Array.isArray()` 설명이 필요하다.
 - 숫자 정렬 비교 함수가 필요하다.
@@ -1452,9 +1767,11 @@ console.log(
 
 ---
 
-# 57. 기존 코드에서 개선 코드로 바꾼 이유
+<a id="js-06-section-61"></a>
 
-## 57-1. 숫자 정렬
+## 57. 기존 코드에서 개선 코드로 바꾼 이유
+
+### 57-1. 숫자 정렬
 
 기존:
 
@@ -1470,7 +1787,7 @@ numbers.sort(
 )
 ```
 
-## 57-2. URL 분석
+### 57-2. URL 분석
 
 기존:
 
@@ -1488,7 +1805,7 @@ new URL(url)
     .get("query")
 ```
 
-## 57-3. 미완주자 탐색
+### 57-3. 미완주자 탐색
 
 기존:
 
@@ -1504,7 +1821,7 @@ participants.filter(
 )
 ```
 
-## 57-4. 로또 중복 제거
+### 57-4. 로또 중복 제거
 
 기존:
 
@@ -1520,7 +1837,9 @@ const numbers = new Set()
 
 ---
 
-# 58. 실무형 예제: 장바구니 요약
+<a id="js-06-section-62"></a>
+
+## 58. 실무형 예제: 장바구니 요약
 
 ```javascript
 const cart = [
@@ -1560,14 +1879,14 @@ console.log(
 )
 ```
 
-## 58-1. 출력 결과
+### 58-1. 출력 결과
 
 ```text
 상품: 키보드, 마우스
 총액: 115,000원
 ```
 
-## 58-2. 코드에서 무엇을 사용하는 걸까?
+### 58-2. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1579,13 +1898,17 @@ console.log(
 
 ---
 
-# 59. 대표 오류로 이해하기
+<a id="js-06-section-63"></a>
 
-## 59-1. 존재하지 않는 인덱스
+## 59. 대표 오류로 이해하기
+
+### 59-1. 존재하지 않는 인덱스
 
 오류가 아니라 `undefined`가 반환된다.
 
-## 59-2. `const` 배열 재할당
+<a id="index-section-86"></a>
+
+### 59-2. `const` 배열 재할당
 
 ```text
 const values = []
@@ -1594,69 +1917,79 @@ values = [1, 2]
 
 `TypeError`가 발생한다.
 
-## 59-3. 숫자 기본 정렬
+### 59-3. 숫자 기본 정렬
 
 `[10, 5, 3]`이 `[10, 3, 5]`로 정렬될 수 있다.
 
-## 59-4. `slice()`와 `splice()` 혼동
+### 59-4. `slice()`와 `splice()` 혼동
 
 원본 배열이 예상하지 못하게 변경될 수 있다.
 
-## 59-5. 찾지 못한 `indexOf()` 결과 사용
+### 59-5. 찾지 못한 `indexOf()` 결과 사용
 
 `-1`을 실제 인덱스처럼 사용하면 마지막 쪽을 잘못 자를 수 있다.
 
-## 59-6. 로또 중복 검사 누락
+### 59-6. 로또 중복 검사 누락
 
 새 숫자를 모든 기존 숫자와 비교하지 않으면 중복이 남는다.
 
 ---
 
-# 60. 자주 하는 실수
+<a id="js-06-section-64"></a>
 
-## 60-1. 배열 인덱스를 1부터 시작한다고 생각
+## 60. 자주 하는 실수
+
+### 60-1. 배열 인덱스를 1부터 시작한다고 생각
 
 첫 요소는 인덱스 0이다.
 
-## 60-2. `typeof`만으로 배열 확인
+<a id="index-section-93"></a>
+
+### 60-2. `typeof`만으로 배열 확인
 
 `Array.isArray()`를 사용한다.
 
-## 60-3. `const` 배열 요소도 변경 불가하다고 생각
+### 60-3. `const` 배열 요소도 변경 불가하다고 생각
 
 요소 변경은 가능하고 재할당만 불가능하다.
 
-## 60-4. 먼 인덱스에 직접 값 추가
+### 60-4. 먼 인덱스에 직접 값 추가
 
 희소 배열이 만들어진다.
 
-## 60-5. 배열에 이름 기반 속성 저장
+### 60-5. 배열에 이름 기반 속성 저장
 
 객체가 더 적합할 수 있다.
 
-## 60-6. `reverse()`·`sort()`가 새 배열을 반환한다고 생각
+### 60-6. `reverse()`·`sort()`가 새 배열을 반환한다고 생각
 
 원본을 직접 변경한다.
 
-## 60-7. 숫자 배열에 기본 `sort()` 사용
+<a id="index-section-98"></a>
+
+### 60-7. 숫자 배열에 기본 `sort()` 사용
 
 비교 함수를 전달한다.
 
-## 60-8. `slice()` 종료 인덱스도 포함한다고 생각
+### 60-8. `slice()` 종료 인덱스도 포함한다고 생각
 
 종료 인덱스 직전까지만 복사한다.
 
-## 60-9. `indexOf()`가 값을 찾지 못하면 `undefined`라고 생각
+<a id="index-section-100"></a>
+
+### 60-9. `indexOf()`가 값을 찾지 못하면 `undefined`라고 생각
 
 `-1`을 반환한다.
 
-## 60-10. `join()`이 배열을 변경한다고 생각
+### 60-10. `join()`이 배열을 변경한다고 생각
 
 새 문자열을 반환한다.
 
 ---
 
-# 61. 핵심 요약
+<a id="js-06-section-65"></a>
+
+## 61. 핵심 요약
 
 ```text
 []
@@ -1709,7 +2042,9 @@ split()
 
 ---
 
-# 62. 최종 체크리스트
+<a id="js-06-section-66"></a>
+
+## 62. 최종 체크리스트
 
 - [ ] 배열 리터럴을 작성할 수 있는가?
 - [ ] 인덱스가 0부터 시작함을 이해했는가?
@@ -1733,7 +2068,9 @@ split()
 
 ---
 
-# 마무리
+<a id="js-06-section-67"></a>
+
+## 마무리
 
 배열의 핵심은 여러 값을 한 변수에 넣는 것에서 끝나지 않는다.
 
@@ -1750,7 +2087,9 @@ split()
 ```
 
 이 흐름을 이해하면 이후 날짜·함수·DOM 문서에서도 여러 데이터를 효과적으로 관리할 수 있다.
-# V3 실행 추적 카드 — 배열 참조 → 메서드 실행 → 원본/새 배열
+<a id="js-06-section-68"></a>
+
+## V3 실행 추적 카드 — 배열 참조 → 메서드 실행 → 원본/새 배열
 
 배열은 객체이므로 다른 변수에 대입하면 같은 배열을 공유한다. `push`, `splice`, `sort`는 원본을 바꾸고 `map`, `filter`, `slice`는 새 배열을 반환한다.
 

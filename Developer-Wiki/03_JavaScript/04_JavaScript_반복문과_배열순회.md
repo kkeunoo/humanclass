@@ -1,7 +1,7 @@
 ---
 title: JavaScript 반복문과 배열 순회
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,95 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: 반복문은 반복되는 작업과 변하는 상태를 함께 표현한다](#js-04-section-4)
+- [25. `break`와 `continue` 비교](#js-04-section-29)
+- [38. `map()`과 `filter()` 비교](#js-04-section-42)
+- [40. 비교 함수 반환값](#js-04-section-44)
+- [53. 내 코드와 강사님 코드 비교](#js-04-section-57)
+- [55. 실무형 예제: 주문 목록 집계](#js-04-section-59)
+- [56. 대표 오류로 이해하기](#js-04-section-60)
+- [57. 자주 하는 실수](#js-04-section-61)
+- [58. 핵심 요약](#js-04-section-62)
+- [59. 최종 체크리스트](#js-04-section-63)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-04-section-1)
+- [핵심 개념](#js-04-section-2)
+- [학습 목표](#js-04-section-3)
+- [개념에서 실제 실행까지: 반복문은 반복되는 작업과 변하는 상태를 함께 표현한다](#js-04-section-4)
+- [1. `for` 기본 구조](#js-04-section-5)
+- [2. 반복 변수 이름](#js-04-section-6)
+- [3. 증가 반복](#js-04-section-7)
+- [4. 감소 반복](#js-04-section-8)
+- [5. 반복문 무한 실행 주의](#js-04-section-9)
+- [6. 1부터 5까지 합계](#js-04-section-10)
+- [7. 홀수·짝수 표시](#js-04-section-11)
+- [8. 삼항 연산자로 단순화](#js-04-section-12)
+- [9. 홀수 개수 세기](#js-04-section-13)
+- [10. 반복문 만드는 원리](#js-04-section-14)
+- [11. 구구단 한 단](#js-04-section-15)
+- [12. 중첩 반복문](#js-04-section-16)
+- [13. 중첩 반복문의 역할](#js-04-section-17)
+- [14. 주사위 하나의 모든 경우](#js-04-section-18)
+- [15. 주사위 두 개의 모든 경우](#js-04-section-19)
+- [16. 주사위 합별 조합](#js-04-section-20)
+- [17. 중복 조합 제거](#js-04-section-21)
+- [18. 로또 난수](#js-04-section-22)
+- [19. 난수 중복 문제](#js-04-section-23)
+- [20. `break`](#js-04-section-24)
+- [21. `>` 조건이 안전한 경우](#js-04-section-25)
+- [22. 중첩 반복문 종료](#js-04-section-26)
+- [23. 레이블을 이용한 중첩 종료](#js-04-section-27)
+- [24. `continue`](#js-04-section-28)
+- [25. `break`와 `continue` 비교](#js-04-section-29)
+- [26. 배열 준비](#js-04-section-30)
+- [27. `for...in`](#js-04-section-31)
+- [28. `for...of`](#js-04-section-32)
+- [29. 인덱스와 값 함께 순회](#js-04-section-33)
+- [30. `forEach()`](#js-04-section-34)
+- [31. `forEach()` 반환값](#js-04-section-35)
+- [32. `forEach()`의 `break`](#js-04-section-36)
+- [33. `map()`](#js-04-section-37)
+- [34. 반환값 없는 `map()`](#js-04-section-38)
+- [35. 영화 제목 길이 배열](#js-04-section-39)
+- [36. 화살표 함수 축약](#js-04-section-40)
+- [37. `filter()`](#js-04-section-41)
+- [38. `map()`과 `filter()` 비교](#js-04-section-42)
+- [39. `sort()`](#js-04-section-43)
+- [40. 비교 함수 반환값](#js-04-section-44)
+- [41. `sort()`는 원본 변경](#js-04-section-45)
+- [42. 마지막 요소 조회](#js-04-section-46)
+- [43. 문자열 누적 패턴](#js-04-section-47)
+- [44. `repeat()`로 단순화](#js-04-section-48)
+- [45. 직사각형 패턴](#js-04-section-49)
+- [46. 숫자 삼각형](#js-04-section-50)
+- [47. 감소 숫자 패턴](#js-04-section-51)
+- [48. 오른쪽 정렬 삼각형](#js-04-section-52)
+- [49. 가운데 정렬 피라미드](#js-04-section-53)
+- [50. 피라미드 공식](#js-04-section-54)
+- [51. 입력 줄 수 검증](#js-04-section-55)
+- [52. 반복 방식 선택 기준](#js-04-section-56)
+- [53. 내 코드와 강사님 코드 비교](#js-04-section-57)
+- [54. 기존 코드에서 개선 코드로 바꾼 이유](#js-04-section-58)
+- [55. 실무형 예제: 주문 목록 집계](#js-04-section-59)
+- [56. 대표 오류로 이해하기](#js-04-section-60)
+- [57. 자주 하는 실수](#js-04-section-61)
+- [58. 핵심 요약](#js-04-section-62)
+- [59. 최종 체크리스트](#js-04-section-63)
+- [마무리](#js-04-section-64)
+- [V3 실행 추적 카드 — 반복 대상 → 현재 값 → 본문 → 다음 값](#js-04-section-65)
+
+</details>
+
+---
+
+<a id="js-04-section-1"></a>
+
+## 개요
 
 반복문은 같은 작업을 여러 번 실행할 때 사용한다.
 
@@ -60,7 +148,9 @@ for (let number = 1; number <= 5; number += 1) {
 
 ---
 
-# 핵심 개념
+<a id="js-04-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -82,29 +172,140 @@ for (let number = 1; number <= 5; number += 1) {
 
 ---
 
-# 학습 목표
+<a id="js-04-section-3"></a>
 
-- `for`문의 실행 순서를 설명할 수 있다.
-- 증가·감소 반복문을 작성할 수 있다.
-- 합계와 개수를 누적할 수 있다.
-- 중첩 반복문으로 구구단과 조합을 만들 수 있다.
-- 반복 횟수를 계산할 수 있다.
-- `break`와 `continue`를 구분할 수 있다.
-- 중첩 반복문을 플래그로 종료할 수 있다.
-- `for...in`과 `for...of`의 차이를 설명할 수 있다.
-- `forEach()`가 `undefined`를 반환함을 이해한다.
-- `map()`과 `filter()`로 새 배열을 만들 수 있다.
-- `sort()`의 비교 함수 동작을 설명할 수 있다.
-- 문자열 누적으로 패턴을 만들 수 있다.
-- 입력받은 줄 수로 피라미드를 출력할 수 있다.
-- 난수 중복 가능성을 이해한다.
-- 실무 상황에 맞는 반복 방식을 선택할 수 있다.
+## 학습 목표
+
+- 조건 검사와 누적 상태를 회차별로 추적한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. `for` 기본 구조
+<a id="js-04-section-4"></a>
 
-## 1-1. 원본 코드
+## 개념에서 실제 실행까지: 반복문은 반복되는 작업과 변하는 상태를 함께 표현한다
+
+for는 초기화 한 번 → 조건 → 본문 → 증감 → 조건으로 움직인다. 1~5 합계의 sum은 반복 밖에서 만들고, i만 회차마다 바뀐다. sum을 본문 안에서 0으로 만들면 매번 초기화되어 합계가 남지 않는다.
+
+두 원본 모두 주차장 17번째 위치를 찾을 때 안쪽 break만으로는 바깥 반복이 끝나지 않으므로 flag를 사용한다. 1층 10자리 다음 2층 7번째에서 cnt=17이다. 주사위 두 개는 [1,2]와 [2,1]을 구별하면 36가지다. 안쪽 시작을 q=p로 바꾸는 것은 성능만 바꾸는 것이 아니라 '순서 없는 조합'이라는 문제 의미도 바꾼다.
+
+for...in은 배열 전용 index 반복문이 아니라 열거 가능한 문자열 키를 순회한다. 배열에 추가한 이름 있는 속성도 나타날 수 있어 값 순회는 for...of가 자연스럽다. map은 각 콜백 반환값을 새 배열에, filter는 참으로 평가된 원래 요소를 새 배열에 담는다. filter가 콜백 반환값 자체를 담는 것은 아니다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/04_for.html`
+
+```javascript
+let a = 1;
+           let sum = 0;
+           sum = sum + 1
+           sum += 2
+           sum += 3
+           sum += 4
+           sum += 5
+           console.log(sum)
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/04_for.html`
+
+```javascript
+let a = 1;
+    let sum = 0;
+    sum = sum + 1;
+    sum += 2;
+    sum += 3;
+    sum = sum + 4;
+    sum = sum + 5;
+    console.log(sum)
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+let sum = 0;
+const trace = [];
+for (let i = 1; i <= 3; i++) {
+  sum += i;
+  trace.push([i, sum]);
+}
+console.log(JSON.stringify(trace));
+const values = [1, 2, 3];
+console.log(JSON.stringify(values.map(n => n * 10)));
+console.log(JSON.stringify(values.filter(n => n % 2 !== 0)));
+```
+
+예상 출력:
+
+```text
+[[1,1],[2,3],[3,6]]
+[10,20,30]
+[1,3]
+```
+
+### 결과를 역추적하는 방법
+
+forEach 콜백의 return은 바깥 반복을 종료하지 않는다. break가 필요한 탐색은 for...of나 find/some을 선택한다. 희소 배열에서는 각 순회 방식의 빈 슬롯 처리도 다르다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 개인 복습 파일도 연결: 한 줄의 길이를 상태표로 확인하기
+
+`workspace_html/javascript/04_2_복습.html`은 '+'/'_' 패턴1~12단계를 반복한 개인 복습 파일이다. 같은 이름의 강사님 대응 파일은 없다. 대신 강사님 `04_1_pyramid.html`의 단계 요구사항과 비교한다. 내 최초 피라미드 풀이의 일부 `for(k=...)`는 선언이 없지만 복습 풀이에는 let을 사용한다.
+
+11단계는 왼쪽 공백수=N-row, 기호수=2×row-1, 오른쪽 공백수=N-row다. 줄 문자열은 매회초기화하고 각 반복에서 해당 수만큼 덧붙인 뒤 한 번 출력한다.
+
+| N=3의 row | 왼쪽 '_' | '+' 개수 | 오른쪽 '_' | 한 줄 결과 |
+| --- | --- | --- | --- | --- |
+| 1 | 2 | 1 | 2 | __+__ |
+| 2 | 1 | 3 | 1 | _+++_ |
+| 3 | 0 | 5 | 0 | +++++ |
+
+모든 줄 길이는2N-1이다.12단계prompt의 입력은 문자열 또는null이므로 그대로 반복 조건에 넣어 암시적변환에 의존하기보다, 취소·공백검사→Number변환→정수·크기제한을 적용한다. 매우 큰N은 Console출력과문자열생성만으로도브라우저를멈추게할수있다.
+
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** 주차장4층×10자리에서17번째 차의 층·자리를 찾아 두 반복을 종료한다.
+
+**응용·디버깅 실습:** [0,1,2]에 filter(n=>n)와 map(n=>n*2)를 적용한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. 2층7번째다. cnt=17에서 내부 break, flag 확인 후 외부 break를 한다.
+2. filter는[1,2], map은[0,2,4]다. 0은조건에서Falsy지만 변환 결과로는 유효하다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** sum += i의 sum을 const로 선언하면 왜 안 될까?
+
+**해설:** sum에 새 숫자를 재할당하기 때문이다. 배열 const에 trace.push를 하는 것은 참조 재할당이 아니라 배열 내용 변경이라 가능하다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-04-section-5"></a>
+
+## 1. `for` 기본 구조
+
+### 1-1. 원본 코드
 
 ```javascript
 for (let i = 1; i <= 10; i++) {
@@ -112,7 +313,7 @@ for (let i = 1; i <= 10; i++) {
 }
 ```
 
-## 1-2. 구성
+### 1-2. 구성
 
 ```javascript
 for (초기화식; 조건식; 증감식) {
@@ -127,7 +328,7 @@ for (초기화식; 조건식; 증감식) {
 | 실행 블록 | 조건식이 Truthy일 때 |
 | 증감식 | 실행 블록이 끝난 뒤 |
 
-## 1-3. 실행 순서
+### 1-3. 실행 순서
 
 ```text
 i = 1
@@ -139,7 +340,9 @@ i = 1
 
 ---
 
-# 2. 반복 변수 이름
+<a id="js-04-section-6"></a>
+
+## 2. 반복 변수 이름
 
 원본에서는 학습을 위해 `i`, `j`, `p`, `q`를 사용한다.
 
@@ -159,7 +362,9 @@ for (
 
 ---
 
-# 3. 증가 반복
+<a id="js-04-section-7"></a>
+
+## 3. 증가 반복
 
 ```javascript
 for (let number = 1; number <= 5; number += 1) {
@@ -181,9 +386,11 @@ for (let number = 1; number <= 5; number += 1) {
 
 ---
 
-# 4. 감소 반복
+<a id="js-04-section-8"></a>
 
-## 4-1. 원본 문제
+## 4. 감소 반복
+
+### 4-1. 원본 문제
 
 ```javascript
 for (let number = 5; number >= 1; number -= 1) {
@@ -191,7 +398,7 @@ for (let number = 5; number >= 1; number -= 1) {
 }
 ```
 
-## 4-2. 출력 결과
+### 4-2. 출력 결과
 
 ```text
 5
@@ -205,7 +412,9 @@ for (let number = 5; number >= 1; number -= 1) {
 
 ---
 
-# 5. 반복문 무한 실행 주의
+<a id="js-04-section-9"></a>
+
+## 5. 반복문 무한 실행 주의
 
 잘못된 코드:
 
@@ -222,9 +431,11 @@ for (let number = 1; number <= 5; number -= 1) {
 
 ---
 
-# 6. 1부터 5까지 합계
+<a id="js-04-section-10"></a>
 
-## 6-1. 반복 전 코드
+## 6. 1부터 5까지 합계
+
+### 6-1. 반복 전 코드
 
 ```javascript
 let sum = 0
@@ -236,7 +447,7 @@ sum += 4
 sum += 5
 ```
 
-## 6-2. 반복문으로 개선
+### 6-2. 반복문으로 개선
 
 ```javascript
 let sum = 0
@@ -248,7 +459,7 @@ for (let number = 1; number <= 5; number += 1) {
 console.log(sum)
 ```
 
-## 6-3. 출력 결과
+### 6-3. 출력 결과
 
 ```text
 15
@@ -258,9 +469,11 @@ console.log(sum)
 
 ---
 
-# 7. 홀수·짝수 표시
+<a id="js-04-section-11"></a>
 
-## 7-1. 내 코드
+## 7. 홀수·짝수 표시
+
+### 7-1. 내 코드
 
 ```javascript
 for (let number = 1; number <= 5; number += 1) {
@@ -272,7 +485,7 @@ for (let number = 1; number <= 5; number += 1) {
 }
 ```
 
-## 7-2. 출력 결과
+### 7-2. 출력 결과
 
 ```text
 1(홀)
@@ -286,7 +499,9 @@ for (let number = 1; number <= 5; number += 1) {
 
 ---
 
-# 8. 삼항 연산자로 단순화
+<a id="js-04-section-12"></a>
+
+## 8. 삼항 연산자로 단순화
 
 ```javascript
 for (let number = 1; number <= 5; number += 1) {
@@ -304,7 +519,9 @@ for (let number = 1; number <= 5; number += 1) {
 
 ---
 
-# 9. 홀수 개수 세기
+<a id="js-04-section-13"></a>
+
+## 9. 홀수 개수 세기
 
 ```javascript
 let oddCount = 0
@@ -331,7 +548,9 @@ count: 5
 
 ---
 
-# 10. 반복문 만드는 원리
+<a id="js-04-section-14"></a>
+
+## 10. 반복문 만드는 원리
 
 원본에서 정리한 반복문 설계 순서:
 
@@ -347,7 +566,9 @@ count: 5
 
 ---
 
-# 11. 구구단 한 단
+<a id="js-04-section-15"></a>
+
+## 11. 구구단 한 단
 
 ```javascript
 const dan = 2
@@ -370,7 +591,9 @@ for (let number = 1; number <= 9; number += 1) {
 
 ---
 
-# 12. 중첩 반복문
+<a id="js-04-section-16"></a>
+
+## 12. 중첩 반복문
 
 ```javascript
 for (let dan = 2; dan <= 9; dan += 1) {
@@ -393,7 +616,9 @@ for (let dan = 2; dan <= 9; dan += 1) {
 
 ---
 
-# 13. 중첩 반복문의 역할
+<a id="js-04-section-17"></a>
+
+## 13. 중첩 반복문의 역할
 
 ```text
 바깥 반복문
@@ -412,7 +637,9 @@ for (let dan = 2; dan <= 9; dan += 1) {
 
 ---
 
-# 14. 주사위 하나의 모든 경우
+<a id="js-04-section-18"></a>
+
+## 14. 주사위 하나의 모든 경우
 
 ```javascript
 for (let dice = 1; dice <= 6; dice += 1) {
@@ -433,7 +660,9 @@ for (let dice = 1; dice <= 6; dice += 1) {
 
 ---
 
-# 15. 주사위 두 개의 모든 경우
+<a id="js-04-section-19"></a>
+
+## 15. 주사위 두 개의 모든 경우
 
 ```javascript
 for (let firstDice = 1; firstDice <= 6; firstDice += 1) {
@@ -458,7 +687,9 @@ for (let firstDice = 1; firstDice <= 6; firstDice += 1) {
 
 ---
 
-# 16. 주사위 합별 조합
+<a id="js-04-section-20"></a>
+
+## 16. 주사위 합별 조합
 
 ```javascript
 for (let targetSum = 2; targetSum <= 12; targetSum += 1) {
@@ -489,7 +720,9 @@ for (let targetSum = 2; targetSum <= 12; targetSum += 1) {
 
 ---
 
-# 17. 중복 조합 제거
+<a id="js-04-section-21"></a>
+
+## 17. 중복 조합 제거
 
 `[1, 2]`와 `[2, 1]`을 같은 조합으로 본다면 두 번째 주사위의 시작값을 첫 번째 주사위 값으로 설정할 수 있다.
 
@@ -511,9 +744,11 @@ for (let firstDice = 1; firstDice <= 6; firstDice += 1) {
 
 ---
 
-# 18. 로또 난수
+<a id="js-04-section-22"></a>
 
-## 18-1. 원본 코드
+## 18. 로또 난수
+
+### 18-1. 원본 코드
 
 ```javascript
 for (let count = 1; count <= 6; count += 1) {
@@ -526,7 +761,7 @@ for (let count = 1; count <= 6; count += 1) {
 }
 ```
 
-## 18-2. 개선
+### 18-2. 개선
 
 ```javascript
 const lottoNumber = (
@@ -543,7 +778,9 @@ const lottoNumber = (
 
 ---
 
-# 19. 난수 중복 문제
+<a id="js-04-section-23"></a>
+
+## 19. 난수 중복 문제
 
 원본 코드에서는 같은 숫자가 여러 번 나올 수 있다.
 
@@ -570,9 +807,11 @@ console.log(
 
 ---
 
-# 20. `break`
+<a id="js-04-section-24"></a>
 
-## 20-1. 원본 코드
+## 20. `break`
+
+### 20-1. 원본 코드
 
 ```javascript
 for (let number = 1; number <= 100; number += 1) {
@@ -589,7 +828,9 @@ for (let number = 1; number <= 100; number += 1) {
 
 ---
 
-# 21. `>` 조건이 안전한 경우
+<a id="js-04-section-25"></a>
+
+## 21. `>` 조건이 안전한 경우
 
 원본 메모에서는 `number === 11`보다 `number > 10`이 더 안전할 수 있다고 설명한다.
 
@@ -606,7 +847,9 @@ if (number > 10) {
 
 ---
 
-# 22. 중첩 반복문 종료
+<a id="js-04-section-26"></a>
+
+## 22. 중첩 반복문 종료
 
 주차장 예제:
 
@@ -634,7 +877,9 @@ for (let floor = 1; floor <= 4; floor += 1) {
 
 ---
 
-# 23. 레이블을 이용한 중첩 종료
+<a id="js-04-section-27"></a>
+
+## 23. 레이블을 이용한 중첩 종료
 
 JavaScript는 레이블로 바깥 반복문을 직접 종료할 수 있다.
 
@@ -658,7 +903,9 @@ for (let floor = 1; floor <= 4; floor += 1) {
 
 ---
 
-# 24. `continue`
+<a id="js-04-section-28"></a>
+
+## 24. `continue`
 
 ```javascript
 for (let number = 1; number <= 10; number += 1) {
@@ -684,7 +931,9 @@ for (let number = 1; number <= 10; number += 1) {
 
 ---
 
-# 25. `break`와 `continue` 비교
+<a id="js-04-section-29"></a>
+
+## 25. `break`와 `continue` 비교
 
 | 키워드 | 동작 |
 | --- | --- |
@@ -693,7 +942,9 @@ for (let number = 1; number <= 10; number += 1) {
 
 ---
 
-# 26. 배열 준비
+<a id="js-04-section-30"></a>
+
+## 26. 배열 준비
 
 ```javascript
 const numbers = [
@@ -711,9 +962,11 @@ const numbers = [
 
 ---
 
-# 27. `for...in`
+<a id="js-04-section-31"></a>
 
-## 27-1. 원본 코드
+## 27. `for...in`
+
+### 27-1. 원본 코드
 
 ```javascript
 for (const index in numbers) {
@@ -724,7 +977,7 @@ for (const index in numbers) {
 
 `for...in`은 배열에서 인덱스처럼 보이는 **키**를 순회한다.
 
-## 27-2. 주의점
+### 27-2. 주의점
 
 - 키는 문자열이다.
 - 배열 순회 전용 문법이 아니다.
@@ -735,7 +988,9 @@ for (const index in numbers) {
 
 ---
 
-# 28. `for...of`
+<a id="js-04-section-32"></a>
+
+## 28. `for...of`
 
 ```javascript
 for (const value of numbers) {
@@ -749,7 +1004,9 @@ for (const value of numbers) {
 
 ---
 
-# 29. 인덱스와 값 함께 순회
+<a id="js-04-section-33"></a>
+
+## 29. 인덱스와 값 함께 순회
 
 ```javascript
 for (const [index, value] of numbers.entries()) {
@@ -761,9 +1018,11 @@ for (const [index, value] of numbers.entries()) {
 
 ---
 
-# 30. `forEach()`
+<a id="js-04-section-34"></a>
 
-## 30-1. 원본 코드
+## 30. `forEach()`
+
+### 30-1. 원본 코드
 
 ```javascript
 numbers.forEach(
@@ -787,7 +1046,9 @@ numbers.forEach(
 
 ---
 
-# 31. `forEach()` 반환값
+<a id="js-04-section-35"></a>
+
+## 31. `forEach()` 반환값
 
 ```javascript
 const result = numbers.forEach(
@@ -809,7 +1070,9 @@ undefined
 
 ---
 
-# 32. `forEach()`의 `break`
+<a id="js-04-section-36"></a>
+
+## 32. `forEach()`의 `break`
 
 `forEach()` 안에서는 일반 반복문처럼 `break`를 사용할 수 없다.
 
@@ -823,9 +1086,11 @@ undefined
 
 ---
 
-# 33. `map()`
+<a id="js-04-section-37"></a>
 
-## 33-1. 원본 코드
+## 33. `map()`
+
+### 33-1. 원본 코드
 
 ```javascript
 const parity = numbers.map(
@@ -851,7 +1116,9 @@ console.log(parity)
 
 ---
 
-# 34. 반환값 없는 `map()`
+<a id="js-04-section-38"></a>
+
+## 34. 반환값 없는 `map()`
 
 ```javascript
 const result = numbers.map(
@@ -873,7 +1140,9 @@ console.log(result)
 
 ---
 
-# 35. 영화 제목 길이 배열
+<a id="js-04-section-39"></a>
+
+## 35. 영화 제목 길이 배열
 
 ```javascript
 const movies = [
@@ -894,7 +1163,9 @@ console.log(titleLengths)
 
 ---
 
-# 36. 화살표 함수 축약
+<a id="js-04-section-40"></a>
+
+## 36. 화살표 함수 축약
 
 일반 함수:
 
@@ -918,7 +1189,9 @@ const lengths = movies.map(
 
 ---
 
-# 37. `filter()`
+<a id="js-04-section-41"></a>
+
+## 37. `filter()`
 
 ```javascript
 const longTitles = movies.filter(
@@ -932,7 +1205,9 @@ console.log(longTitles)
 
 ---
 
-# 38. `map()`과 `filter()` 비교
+<a id="js-04-section-42"></a>
+
+## 38. `map()`과 `filter()` 비교
 
 | 메서드 | 목적 | 결과 길이 |
 | --- | --- | --- |
@@ -942,9 +1217,11 @@ console.log(longTitles)
 
 ---
 
-# 39. `sort()`
+<a id="js-04-section-43"></a>
 
-## 39-1. 원본 코드
+## 39. `sort()`
+
+### 39-1. 원본 코드
 
 ```javascript
 titleLengths.sort(
@@ -964,7 +1241,9 @@ titleLengths.sort(
 
 ---
 
-# 40. 비교 함수 반환값
+<a id="js-04-section-44"></a>
+
+## 40. 비교 함수 반환값
 
 ```text
 음수
@@ -981,7 +1260,9 @@ titleLengths.sort(
 
 ---
 
-# 41. `sort()`는 원본 변경
+<a id="js-04-section-45"></a>
+
+## 41. `sort()`는 원본 변경
 
 ```javascript
 const values = [3, 1, 2]
@@ -1007,7 +1288,9 @@ const sortedValues = [
 
 ---
 
-# 42. 마지막 요소 조회
+<a id="js-04-section-46"></a>
+
+## 42. 마지막 요소 조회
 
 원본:
 
@@ -1029,7 +1312,9 @@ const lastValue = titleLengths.at(-1)
 
 ---
 
-# 43. 문자열 누적 패턴
+<a id="js-04-section-47"></a>
+
+## 43. 문자열 누적 패턴
 
 ```javascript
 let line = ""
@@ -1051,7 +1336,9 @@ console.log(line)
 
 ---
 
-# 44. `repeat()`로 단순화
+<a id="js-04-section-48"></a>
+
+## 44. `repeat()`로 단순화
 
 같은 문자열을 정해진 횟수만큼 반복할 때는 `repeat()`를 사용할 수 있다.
 
@@ -1071,7 +1358,9 @@ console.log("+".repeat(5))
 
 ---
 
-# 45. 직사각형 패턴
+<a id="js-04-section-49"></a>
+
+## 45. 직사각형 패턴
 
 ```javascript
 for (let row = 1; row <= 3; row += 1) {
@@ -1091,7 +1380,9 @@ for (let row = 1; row <= 3; row += 1) {
 
 ---
 
-# 46. 숫자 삼각형
+<a id="js-04-section-50"></a>
+
+## 46. 숫자 삼각형
 
 ```javascript
 for (let row = 1; row <= 5; row += 1) {
@@ -1115,7 +1406,9 @@ for (let row = 1; row <= 5; row += 1) {
 
 ---
 
-# 47. 감소 숫자 패턴
+<a id="js-04-section-51"></a>
+
+## 47. 감소 숫자 패턴
 
 ```javascript
 for (let row = 1; row <= 5; row += 1) {
@@ -1139,7 +1432,9 @@ for (let row = 1; row <= 5; row += 1) {
 
 ---
 
-# 48. 오른쪽 정렬 삼각형
+<a id="js-04-section-52"></a>
+
+## 48. 오른쪽 정렬 삼각형
 
 ```javascript
 const height = 5
@@ -1169,7 +1464,9 @@ _++++
 
 ---
 
-# 49. 가운데 정렬 피라미드
+<a id="js-04-section-53"></a>
+
+## 49. 가운데 정렬 피라미드
 
 ```javascript
 const height = 5
@@ -1201,7 +1498,9 @@ _+++++++_
 
 ---
 
-# 50. 피라미드 공식
+<a id="js-04-section-54"></a>
+
+## 50. 피라미드 공식
 
 | 영역 | 개수 |
 | --- | --- |
@@ -1222,7 +1521,9 @@ _+++++++_
 
 ---
 
-# 51. 입력 줄 수 검증
+<a id="js-04-section-55"></a>
+
+## 51. 입력 줄 수 검증
 
 원본은 `prompt()` 값을 바로 반복 조건에 사용한다.
 
@@ -1262,7 +1563,9 @@ if (
 
 ---
 
-# 52. 반복 방식 선택 기준
+<a id="js-04-section-56"></a>
+
+## 52. 반복 방식 선택 기준
 
 | 목적 | 권장 방식 |
 | --- | --- |
@@ -1277,7 +1580,9 @@ if (
 
 ---
 
-# 53. 내 코드와 강사님 코드 비교
+<a id="js-04-section-57"></a>
+
+## 53. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1289,14 +1594,14 @@ if (
 | `map()`·`filter()` | 화살표 함수까지 확장 | 일반 함수와 화살표 함수 비교 |
 | 피라미드 | 12단계 대부분 직접 구현 | 일부 단계와 추가 패턴 제공 |
 
-## 53-1. 내 코드의 장점
+### 53-1. 내 코드의 장점
 
 - 반복문을 만드는 사고 과정을 구체적으로 기록했다.
 - 주사위·주차장·배열 순회를 직접 확장했다.
 - `forEach()`, `map()`, `filter()` 차이를 직접 확인했다.
 - 피라미드 패턴을 여러 단계로 구현했다.
 
-## 53-2. 내 코드의 개선점
+### 53-2. 내 코드의 개선점
 
 - 배열에 `for...in`을 기본 순회 방식으로 권장하면 안 된다.
 - `map()`을 출력만 하는 목적으로 사용하지 않아야 한다.
@@ -1305,14 +1610,14 @@ if (
 - 선언 키워드가 누락된 `k` 변수는 전역 오염을 만들 수 있다.
 - 느슨한 비교보다 `===`를 사용해야 한다.
 
-## 53-3. 강사님 코드의 장점
+### 53-3. 강사님 코드의 장점
 
 - 반복문 설계 원리를 직접 설명한다.
 - 중첩 반복문으로 조합 문제를 단계적으로 보여 준다.
 - 배열 순회 메서드의 전달인자와 반환값을 비교한다.
 - 피라미드 패턴을 통해 행·열 규칙을 연습할 수 있다.
 
-## 53-4. 강사님 코드의 보충점
+### 53-4. 강사님 코드의 보충점
 
 - `for...in`의 배열 사용 주의가 필요하다.
 - `sort()`가 원본을 변경한다는 설명이 필요하다.
@@ -1321,9 +1626,11 @@ if (
 
 ---
 
-# 54. 기존 코드에서 개선 코드로 바꾼 이유
+<a id="js-04-section-58"></a>
 
-## 54-1. `i++`에서 `i += 1`
+## 54. 기존 코드에서 개선 코드로 바꾼 이유
+
+### 54-1. `i++`에서 `i += 1`
 
 둘 다 가능하지만 팀 규칙에 따라 `+= 1`을 사용하면 변경량이 명확하다.
 
@@ -1335,7 +1642,7 @@ for (
 ) {
 ```
 
-## 54-2. 느슨한 비교 개선
+### 54-2. 느슨한 비교 개선
 
 기존:
 
@@ -1349,7 +1656,7 @@ if (number % 2 == 0) {
 if (number % 2 === 0) {
 ```
 
-## 54-3. 배열 값 순회 개선
+### 54-3. 배열 값 순회 개선
 
 기존:
 
@@ -1367,7 +1674,7 @@ for (const number of numbers) {
 }
 ```
 
-## 54-4. 문자열 패턴 개선
+### 54-4. 문자열 패턴 개선
 
 기존:
 
@@ -1387,7 +1694,9 @@ const line = "+".repeat(5)
 
 ---
 
-# 55. 실무형 예제: 주문 목록 집계
+<a id="js-04-section-59"></a>
+
+## 55. 실무형 예제: 주문 목록 집계
 
 ```javascript
 const orders = [
@@ -1431,14 +1740,14 @@ console.log(
 )
 ```
 
-## 55-1. 출력 결과
+### 55-1. 출력 결과
 
 ```text
 결제 완료 주문: 2건
 총 결제 금액: 115,000원
 ```
 
-## 55-2. 코드에서 무엇을 사용하는 걸까?
+### 55-2. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1450,9 +1759,11 @@ console.log(
 
 ---
 
-# 56. 대표 오류로 이해하기
+<a id="js-04-section-60"></a>
 
-## 56-1. 종료되지 않는 반복
+## 56. 대표 오류로 이해하기
+
+### 56-1. 종료되지 않는 반복
 
 ```javascript
 for (let number = 1; number <= 5; number -= 1) {
@@ -1462,7 +1773,7 @@ for (let number = 1; number <= 5; number -= 1) {
 
 종료 조건과 증감 방향이 맞지 않는다.
 
-## 56-2. 선언하지 않은 반복 변수
+### 56-2. 선언하지 않은 반복 변수
 
 ```text
 for (k = 1; k <= 5; k += 1) {
@@ -1470,11 +1781,11 @@ for (k = 1; k <= 5; k += 1) {
 
 Strict mode에서 `ReferenceError`가 발생한다.
 
-## 56-3. 배열에 `for...in` 사용 후 숫자 계산
+### 56-3. 배열에 `for...in` 사용 후 숫자 계산
 
 인덱스가 문자열이므로 예상하지 못한 연결이 발생할 수 있다.
 
-## 56-4. `forEach()` 반환값 기대
+### 56-4. `forEach()` 반환값 기대
 
 ```javascript
 const result = numbers.forEach(
@@ -1484,69 +1795,75 @@ const result = numbers.forEach(
 
 `result`는 `undefined`다.
 
-## 56-5. `map()`에서 `return` 누락
+<a id="index-section-101"></a>
+
+### 56-5. `map()`에서 `return` 누락
 
 결과 배열에 `undefined`가 들어간다.
 
-## 56-6. `sort()` 원본 변경
+### 56-6. `sort()` 원본 변경
 
 복사 없이 정렬하면 기존 배열 순서도 바뀐다.
 
 ---
 
-# 57. 자주 하는 실수
+<a id="js-04-section-61"></a>
 
-## 57-1. 조건식의 종료값 포함 여부 혼동
+## 57. 자주 하는 실수
+
+### 57-1. 조건식의 종료값 포함 여부 혼동
 
 `<`와 `<=` 결과가 다르다.
 
-## 57-2. 감소 반복에서 `++` 사용
+### 57-2. 감소 반복에서 `++` 사용
 
 종료 조건에서 멀어질 수 있다.
 
-## 57-3. 누적 변수를 반복문 안에서 초기화
+### 57-3. 누적 변수를 반복문 안에서 초기화
 
 매 반복마다 0으로 돌아간다.
 
-## 57-4. 중첩 반복 횟수를 예상하지 않음
+### 57-4. 중첩 반복 횟수를 예상하지 않음
 
 바깥 횟수 × 안쪽 횟수만큼 실행된다.
 
-## 57-5. 안쪽 `break`가 모든 반복문을 종료한다고 생각
+### 57-5. 안쪽 `break`가 모든 반복문을 종료한다고 생각
 
 가장 가까운 반복문만 종료한다.
 
-## 57-6. `continue` 뒤 코드가 실행된다고 생각
+### 57-6. `continue` 뒤 코드가 실행된다고 생각
 
 현재 반복의 남은 코드는 건너뛴다.
 
-## 57-7. 배열 값 순회에 `for...in` 사용
+### 57-7. 배열 값 순회에 `for...in` 사용
 
 `for...of`를 우선 고려한다.
 
-## 57-8. `forEach()`에서 `break` 사용
+### 57-8. `forEach()`에서 `break` 사용
 
 일반적인 중간 종료를 지원하지 않는다.
 
-## 57-9. `map()`을 출력 전용으로 사용
+### 57-9. `map()`을 출력 전용으로 사용
 
 변환 배열이 필요할 때 사용한다.
 
-## 57-10. `filter()`에서 요소 자체를 반환해야 한다고 생각
+### 57-10. `filter()`에서 요소 자체를 반환해야 한다고 생각
 
 Truthy/Falsy 조건을 반환하면 된다.
 
-## 57-11. 숫자 배열을 비교 함수 없이 `sort()`
+### 57-11. 숫자 배열을 비교 함수 없이 `sort()`
 
 기본 정렬은 문자열 기준이다.
 
-## 57-12. 피라미드 입력값 검증 누락
+### 57-12. 피라미드 입력값 검증 누락
 
 음수·문자·과도한 줄 수를 먼저 차단한다.
 
 ---
 
-# 58. 핵심 요약
+<a id="js-04-section-62"></a>
+
+## 58. 핵심 요약
 
 ```text
 for
@@ -1595,7 +1912,9 @@ row * 2 - 1
 
 ---
 
-# 59. 최종 체크리스트
+<a id="js-04-section-63"></a>
+
+## 59. 최종 체크리스트
 
 - [ ] `for`문의 초기화·조건·증감 순서를 설명할 수 있는가?
 - [ ] 증가·감소 반복문을 작성할 수 있는가?
@@ -1621,7 +1940,9 @@ row * 2 - 1
 
 ---
 
-# 마무리
+<a id="js-04-section-64"></a>
+
+## 마무리
 
 반복문의 핵심은 같은 코드를 여러 번 실행하는 것에서 끝나지 않는다.
 
@@ -1638,7 +1959,9 @@ row * 2 - 1
 ```
 
 이 흐름을 이해하면 이후 배열 메서드와 함수에서 데이터를 더 효율적으로 처리할 수 있다.
-# V3 실행 추적 카드 — 반복 대상 → 현재 값 → 본문 → 다음 값
+<a id="js-04-section-65"></a>
+
+## V3 실행 추적 카드 — 반복 대상 → 현재 값 → 본문 → 다음 값
 
 `for`는 초기화·조건·본문·증감 순으로 반복한다. `for...of`는 값, `for...in`은 키를 제공하므로 배열 값 순회에는 보통 `for...of`를 쓴다.
 

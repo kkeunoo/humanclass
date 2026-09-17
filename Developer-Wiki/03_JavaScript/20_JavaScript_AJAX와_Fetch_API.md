@@ -1,7 +1,7 @@
 ---
 title: JavaScript AJAX와 Fetch API
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,120 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: AJAX는 문서 전체 이동 없이 요청·응답으로 일부 화면을 갱신한다](#js-20-section-4)
+- [81. 내 코드와 강사님 코드 비교](#js-20-section-85)
+- [83. 실무형 예제: 회원 API Viewer](#js-20-section-87)
+- [84. 대표 오류로 이해하기](#js-20-section-88)
+- [85. 자주 하는 실수](#js-20-section-89)
+- [86. 핵심 요약](#js-20-section-90)
+- [87. 최종 체크리스트](#js-20-section-91)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-20-section-1)
+- [핵심 개념](#js-20-section-2)
+- [학습 목표](#js-20-section-3)
+- [개념에서 실제 실행까지: AJAX는 문서 전체 이동 없이 요청·응답으로 일부 화면을 갱신한다](#js-20-section-4)
+- [1. AJAX란?](#js-20-section-5)
+- [2. 일반 이동과 AJAX](#js-20-section-6)
+- [3. AJAX 응답 형식](#js-20-section-7)
+- [4. 원본 초기화](#js-20-section-8)
+- [5. `XMLHttpRequest` 기본 순서](#js-20-section-9)
+- [6. 객체 생성](#js-20-section-10)
+- [7. `open()`](#js-20-section-11)
+- [8. `open()`의 인수](#js-20-section-12)
+- [9. `send()`](#js-20-section-13)
+- [10. `onload`](#js-20-section-14)
+- [11. `onload`와 HTTP 성공](#js-20-section-15)
+- [12. `responseText`](#js-20-section-16)
+- [13. 비동기 직후 응답](#js-20-section-17)
+- [14. 실제 실행 흐름](#js-20-section-18)
+- [15. `readystatechange`](#js-20-section-19)
+- [16. ReadyState](#js-20-section-20)
+- [17. Network Error](#js-20-section-21)
+- [18. Timeout](#js-20-section-22)
+- [19. 안전한 XHR 함수](#js-20-section-23)
+- [20. 상대 URL 기준](#js-20-section-24)
+- [21. JSON Parse](#js-20-section-25)
+- [22. 두 번째 사용자 이름](#js-20-section-26)
+- [23. 중첩 Property](#js-20-section-27)
+- [24. 외부 데이터 변경 가능성](#js-20-section-28)
+- [25. Optional Chaining](#js-20-section-29)
+- [26. 회원 데이터 검증](#js-20-section-30)
+- [27. 기상청 요청 날짜](#js-20-section-31)
+- [28. UTC 날짜 문제](#js-20-section-32)
+- [29. Local 날짜 함수](#js-20-section-33)
+- [30. 원본 Base Time](#js-20-section-34)
+- [31. 자정 오류](#js-20-section-35)
+- [32. 발표 시각 계산](#js-20-section-36)
+- [33. API Key 차이](#js-20-section-37)
+- [34. Frontend API Key 노출](#js-20-section-38)
+- [35. API Endpoint](#js-20-section-39)
+- [36. Query Parameter](#js-20-section-40)
+- [37. `URLSearchParams`](#js-20-section-41)
+- [38. 응답 구조](#js-20-section-42)
+- [39. Weather Category](#js-20-section-43)
+- [40. Category Filter](#js-20-section-44)
+- [41. 원본 문제 1](#js-20-section-45)
+- [42. 안전한 Category Row](#js-20-section-46)
+- [43. Category Table 렌더링](#js-20-section-47)
+- [44. 시간별 그룹화](#js-20-section-48)
+- [45. 그룹화 결과](#js-20-section-49)
+- [46. 내 코드의 Category 오류](#js-20-section-50)
+- [47. 내 코드의 시간 열 오류](#js-20-section-51)
+- [48. 시간별 Table 렌더링](#js-20-section-52)
+- [49. 재조회 누적 문제](#js-20-section-53)
+- [50. 회원정보 문제](#js-20-section-54)
+- [51. 내 회원 Row 구조 오류](#js-20-section-55)
+- [52. 올바른 Table 구조](#js-20-section-56)
+- [53. 회원 Row 생성](#js-20-section-57)
+- [54. 회원 Table 렌더링](#js-20-section-58)
+- [55. `try...catch`](#js-20-section-59)
+- [56. 동기 오류와 비동기 오류](#js-20-section-60)
+- [57. Fetch 기본 구조](#js-20-section-61)
+- [58. Fetch 반환값](#js-20-section-62)
+- [59. `response.json()`](#js-20-section-63)
+- [60. Fetch Option 객체](#js-20-section-64)
+- [61. HTTP 오류 처리](#js-20-section-65)
+- [62. Promise Chain 개선](#js-20-section-66)
+- [63. `async/await`](#js-20-section-67)
+- [64. `try...catch`와 Await](#js-20-section-68)
+- [65. Loading State](#js-20-section-69)
+- [66. `finally`](#js-20-section-70)
+- [67. 빈 상태와 오류 상태](#js-20-section-71)
+- [68. 중복 요청 방지](#js-20-section-72)
+- [69. AbortController](#js-20-section-73)
+- [70. 최신 요청만 유지](#js-20-section-74)
+- [71. Abort 오류 처리](#js-20-section-75)
+- [72. 응답 Content Type 확인](#js-20-section-76)
+- [73. POST JSON 요청](#js-20-section-77)
+- [74. CORS](#js-20-section-78)
+- [75. Debugger](#js-20-section-79)
+- [76. Debugger 확인 항목](#js-20-section-80)
+- [77. 중복 객체 Key](#js-20-section-81)
+- [78. Counting Pattern](#js-20-section-82)
+- [79. HTML 문구 차이](#js-20-section-83)
+- [80. 문서 기본 정보](#js-20-section-84)
+- [81. 내 코드와 강사님 코드 비교](#js-20-section-85)
+- [82. 기존 코드에서 개선한 이유](#js-20-section-86)
+- [83. 실무형 예제: 회원 API Viewer](#js-20-section-87)
+- [84. 대표 오류로 이해하기](#js-20-section-88)
+- [85. 자주 하는 실수](#js-20-section-89)
+- [86. 핵심 요약](#js-20-section-90)
+- [87. 최종 체크리스트](#js-20-section-91)
+- [마무리](#js-20-section-92)
+- [V3 실행 추적 카드 — 요청 생성 → 서버 처리 → Response → 본문 변환 → DOM](#js-20-section-93)
+
+</details>
+
+---
+
+<a id="js-20-section-1"></a>
+
+## 개요
 
 AJAX는 현재 페이지를 유지하면서 JavaScript로 서버에 데이터를 요청하고 응답 결과만 화면에 반영하는 방식이다.
 
@@ -67,7 +180,9 @@ const users = await response.json()
 
 ---
 
-# 핵심 개념
+<a id="js-20-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -88,31 +203,122 @@ const users = await response.json()
 
 ---
 
-# 학습 목표
+<a id="js-20-section-3"></a>
 
-- AJAX의 목적을 설명할 수 있다.
-- 일반 페이지 이동과 AJAX 요청을 구분할 수 있다.
-- `XMLHttpRequest`의 생성·설정·전송·응답 처리 순서를 이해한다.
-- `open()`과 `send()`의 역할을 구분할 수 있다.
-- 요청 직후 `responseText`가 비어 있을 수 있는 이유를 설명할 수 있다.
-- HTTP Status와 Network Error를 구분할 수 있다.
-- JSON 응답을 안전하게 Parse할 수 있다.
-- 상대 URL의 기준이 현재 문서 URL임을 이해한다.
-- 공공데이터 API Query Parameter를 구성할 수 있다.
-- UTC 날짜와 Local 날짜의 차이를 이해한다.
-- 자정 이전 발표 시각을 안전하게 계산할 수 있다.
-- Weather Category를 필터링하고 시간별로 그룹화할 수 있다.
-- Table의 `tbody → tr → td` 구조를 올바르게 생성할 수 있다.
-- `fetch()`와 `response.json()`이 Promise를 반환함을 이해한다.
-- `response.ok`를 검사할 수 있다.
-- Promise Chain과 `async/await`를 사용할 수 있다.
-- 요청 진행·성공·실패 상태를 화면에 표시할 수 있다.
-- 중복 요청을 방지하고 필요하면 요청을 취소할 수 있다.
-- `debugger`와 개발자 도구로 실행 흐름을 추적할 수 있다.
+## 학습 목표
+
+- 요청 전송·HTTP 상태·본문 파싱·출력을 분리한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. AJAX란?
+<a id="js-20-section-4"></a>
+
+## 개념에서 실제 실행까지: AJAX는 문서 전체 이동 없이 요청·응답으로 일부 화면을 갱신한다
+
+XHR open은 요청 설정, send는 전송 시작, onload는 응답 전송이 완료되어 결과를 사용할 시점이다. send 직후 responseText는 아직 빈 문자열일 수 있다. fetch도 Promise를 주고, Response를 얻은 뒤 response.json으로 본문을 비동기 파싱한다.
+
+두 원본의 상대 주소 19_json.html은 외부 JS가 있는 asset/js 폴더가 아니라 문서의 base URL 기준으로 해석된다. 내 사용자 표는 tr을 만든 뒤 tbody에 td 문자열을 직접 더해 행 구조가 틀어질 수 있다. 강사님 날씨 묶음은 fcstTime을 키로 카테고리 값을 모으고, 내 코드는 개별 행의 같은 값을 온도·습도에 넣어 잘못된 표를 만들 수 있다. 💡 여러 날짜이면 fcstDate+fcstTime을 키로 사용한다.
+
+응답이 HTTP400/500이어도 XHR load나 fetch fulfilled가 발생할 수 있다. 상태 검사→파싱→스키마 검사→화면 출력으로 나눠야 한다. JSON 파싱 오류, HTTP 오류, 네트워크/CORS 실패는 원인과 확인 위치가 다르다. 기상청 기준시각은 UTC ISO 날짜와 로컬 시각을 섞지 말고, 자정 이전 날짜 보정·발표시각 규칙까지 확인해야 한다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/asset/js/20_ajax.js`
+
+```javascript
+// 2_보낼 준비 방식(method), 주소(url)
+        xhr.open('GET', 'https://jsonplaceholder.typicode.com/users')
+
+        // 3_보내기
+        xhr.send()
+
+        // 4_결과 받기 및 활용, 갔다 오면~이기 때문에 콜백함수 이용
+        xhr.onload = function() {
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/asset/js/20_ajax.js`
+
+```javascript
+// 방식method, 주소
+        xhr.open('GET', 'https://jsonplaceholder.typicode.com/users')
+
+        // 3. 보내기
+        xhr.send()
+
+        // 4. 결과 활용
+        xhr.onload = function(){
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+const items = [
+  {fcstDate:"20260716", fcstTime:"0900", category:"T1H", fcstValue:"28"},
+  {fcstDate:"20260716", fcstTime:"0900", category:"REH", fcstValue:"80"}
+];
+const grouped = {};
+for (const item of items) {
+  const key = item.fcstDate + item.fcstTime;
+  grouped[key] ??= {};
+  grouped[key][item.category] = item.fcstValue;
+}
+console.log(JSON.stringify(grouped));
+```
+
+예상 출력:
+
+```text
+{"202607160900":{"T1H":"28","REH":"80"}}
+```
+
+### 결과를 역추적하는 방법
+
+고정 데이터 계산이라 실제 날씨 조회가 아니다. CORS는 scheme·host·port로 결정되는 origin에 대한 브라우저 응답 접근 정책이며 서버가 허용해야 한다. no-cors는 JSON을 읽는 해결책이 아니다. [Fetch 표준](https://fetch.spec.whatwg.org/)에 따라 HTTP 상태와 응답 접근을 분리한다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** HTTP500 HTML을받은fetch에서 상태검사없이response.json을한상황을 진단한다.
+
+**응용·디버깅 실습:** 두날짜의같은0900 날씨를묶는키를정한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. fetch는HTTP500만으로reject하지않는다. 먼저response.ok/status검사,본문형식검사를한다. parse오류와HTTP실패를구분한다.
+2. fcstDate+fcstTime을쓴다. 시간만쓰면서로다른날짜가덮어쓸수있다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** JSON.parse에서 Unexpected token '<'가 나오면?
+
+**해설:** 응답이 JSON 대신 HTML 오류·로그인 페이지일 수 있다. Network에서 상태와 Content-Type 및 실제 응답 본문부터 확인한다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-20-section-5"></a>
+
+## 1. AJAX란?
 
 ```text
 Asynchronous JavaScript And XML
@@ -124,7 +330,9 @@ Asynchronous JavaScript And XML
 
 ---
 
-# 2. 일반 이동과 AJAX
+<a id="js-20-section-6"></a>
+
+## 2. 일반 이동과 AJAX
 
 ```text
 일반 Navigation
@@ -139,7 +347,9 @@ AJAX
 
 ---
 
-# 3. AJAX 응답 형식
+<a id="js-20-section-7"></a>
+
+## 3. AJAX 응답 형식
 
 응답은 문자열만 가능한 것이 아니다.
 
@@ -153,7 +363,9 @@ AJAX
 
 ---
 
-# 4. 원본 초기화
+<a id="js-20-section-8"></a>
+
+## 4. 원본 초기화
 
 ```javascript
 window.addEventListener(
@@ -168,7 +380,9 @@ DOM만 필요하면 `defer`와 초기화 함수를 사용할 수 있다.
 
 ---
 
-# 5. `XMLHttpRequest` 기본 순서
+<a id="js-20-section-9"></a>
+
+## 5. `XMLHttpRequest` 기본 순서
 
 ```text
 1. 객체 생성
@@ -179,7 +393,9 @@ DOM만 필요하면 `defer`와 초기화 함수를 사용할 수 있다.
 
 ---
 
-# 6. 객체 생성
+<a id="js-20-section-10"></a>
+
+## 6. 객체 생성
 
 ```javascript
 const xhr = (
@@ -191,7 +407,9 @@ const xhr = (
 
 ---
 
-# 7. `open()`
+<a id="js-20-section-11"></a>
+
+## 7. `open()`
 
 ```javascript
 xhr.open(
@@ -206,7 +424,9 @@ xhr.open(
 
 ---
 
-# 8. `open()`의 인수
+<a id="js-20-section-12"></a>
+
+## 8. `open()`의 인수
 
 ```text
 Method
@@ -223,7 +443,9 @@ Async
 
 ---
 
-# 9. `send()`
+<a id="js-20-section-13"></a>
+
+## 9. `send()`
 
 ```javascript
 xhr.send()
@@ -235,7 +457,9 @@ GET 요청은 일반적으로 Body 없이 호출한다.
 
 ---
 
-# 10. `onload`
+<a id="js-20-section-14"></a>
+
+## 10. `onload`
 
 ```javascript
 xhr.onload = function () {
@@ -249,7 +473,9 @@ xhr.onload = function () {
 
 ---
 
-# 11. `onload`와 HTTP 성공
+<a id="js-20-section-15"></a>
+
+## 11. `onload`와 HTTP 성공
 
 `onload`는 요청·응답 교환이 완료되었다는 의미다.
 
@@ -266,7 +492,9 @@ if (
 
 ---
 
-# 12. `responseText`
+<a id="js-20-section-16"></a>
+
+## 12. `responseText`
 
 ```javascript
 console.log(
@@ -280,7 +508,9 @@ JSON 응답도 처음에는 문자열이다.
 
 ---
 
-# 13. 비동기 직후 응답
+<a id="js-20-section-17"></a>
+
+## 13. 비동기 직후 응답
 
 원본:
 
@@ -302,7 +532,9 @@ console.log(
 
 ---
 
-# 14. 실제 실행 흐름
+<a id="js-20-section-18"></a>
+
+## 14. 실제 실행 흐름
 
 ```text
 send()
@@ -315,7 +547,9 @@ send()
 
 ---
 
-# 15. `readystatechange`
+<a id="js-20-section-19"></a>
+
+## 15. `readystatechange`
 
 ```javascript
 xhr.addEventListener(
@@ -332,7 +566,9 @@ XHR 상태 변화를 확인할 수 있다.
 
 ---
 
-# 16. ReadyState
+<a id="js-20-section-20"></a>
+
+## 16. ReadyState
 
 | 값 | 상태 |
 | ---: | --- |
@@ -346,7 +582,9 @@ XHR 상태 변화를 확인할 수 있다.
 
 ---
 
-# 17. Network Error
+<a id="js-20-section-21"></a>
+
+## 17. Network Error
 
 ```javascript
 xhr.onerror = function () {
@@ -360,7 +598,9 @@ xhr.onerror = function () {
 
 ---
 
-# 18. Timeout
+<a id="js-20-section-22"></a>
+
+## 18. Timeout
 
 ```javascript
 xhr.timeout = 5000
@@ -374,7 +614,9 @@ xhr.ontimeout = function () {
 
 ---
 
-# 19. 안전한 XHR 함수
+<a id="js-20-section-23"></a>
+
+## 19. 안전한 XHR 함수
 
 ```javascript
 function requestJson(
@@ -446,7 +688,9 @@ function requestJson(
 
 ---
 
-# 20. 상대 URL 기준
+<a id="js-20-section-24"></a>
+
+## 20. 상대 URL 기준
 
 원본:
 
@@ -461,7 +705,9 @@ xhr.open(
 
 ---
 
-# 21. JSON Parse
+<a id="js-20-section-25"></a>
+
+## 21. JSON Parse
 
 ```javascript
 const users = JSON.parse(
@@ -473,7 +719,9 @@ JSON 문자열을 JavaScript 배열로 변환한다.
 
 ---
 
-# 22. 두 번째 사용자 이름
+<a id="js-20-section-26"></a>
+
+## 22. 두 번째 사용자 이름
 
 ```javascript
 console.log(
@@ -491,7 +739,9 @@ console.log(
 
 ---
 
-# 23. 중첩 Property
+<a id="js-20-section-27"></a>
+
+## 23. 중첩 Property
 
 ```javascript
 const latitude = (
@@ -506,7 +756,9 @@ const latitude = (
 
 ---
 
-# 24. 외부 데이터 변경 가능성
+<a id="js-20-section-28"></a>
+
+## 24. 외부 데이터 변경 가능성
 
 JSONPlaceholder처럼 학습용 서비스도 응답·가용성이 변경될 수 있다.
 
@@ -520,7 +772,9 @@ JSONPlaceholder처럼 학습용 서비스도 응답·가용성이 변경될 수 
 
 ---
 
-# 25. Optional Chaining
+<a id="js-20-section-29"></a>
+
+## 25. Optional Chaining
 
 ```javascript
 const latitude = (
@@ -536,7 +790,9 @@ const latitude = (
 
 ---
 
-# 26. 회원 데이터 검증
+<a id="js-20-section-30"></a>
+
+## 26. 회원 데이터 검증
 
 ```javascript
 function isUser(
@@ -558,7 +814,9 @@ JSON Parse 성공과 데이터 구조가 올바른 것은 별개다.
 
 ---
 
-# 27. 기상청 요청 날짜
+<a id="js-20-section-31"></a>
+
+## 27. 기상청 요청 날짜
 
 원본:
 
@@ -582,7 +840,9 @@ YYYYMMDD
 
 ---
 
-# 28. UTC 날짜 문제
+<a id="js-20-section-32"></a>
+
+## 28. UTC 날짜 문제
 
 `toISOString()`은 UTC 기준이다.
 
@@ -590,7 +850,9 @@ YYYYMMDD
 
 ---
 
-# 29. Local 날짜 함수
+<a id="js-20-section-33"></a>
+
+## 29. Local 날짜 함수
 
 ```javascript
 function formatLocalDate(
@@ -622,7 +884,9 @@ function formatLocalDate(
 
 ---
 
-# 30. 원본 Base Time
+<a id="js-20-section-34"></a>
+
+## 30. 원본 Base Time
 
 ```javascript
 let hour = (
@@ -634,7 +898,9 @@ let hour = (
 
 ---
 
-# 31. 자정 오류
+<a id="js-20-section-35"></a>
+
+## 31. 자정 오류
 
 현재 시각이 0시라면:
 
@@ -647,7 +913,9 @@ hour
 
 ---
 
-# 32. 발표 시각 계산
+<a id="js-20-section-36"></a>
+
+## 32. 발표 시각 계산
 
 ```javascript
 function getBaseDateTime(
@@ -686,7 +954,9 @@ Date가 날짜 경계를 자동 조정한다.
 
 ---
 
-# 33. API Key 차이
+<a id="js-20-section-37"></a>
+
+## 33. API Key 차이
 
 ```text
 강사님 코드
@@ -700,7 +970,9 @@ Date가 날짜 경계를 자동 조정한다.
 
 ---
 
-# 34. Frontend API Key 노출
+<a id="js-20-section-38"></a>
+
+## 34. Frontend API Key 노출
 
 Browser JavaScript에 Key를 넣으면 Source·Network에서 확인할 수 있다.
 
@@ -708,7 +980,9 @@ Browser JavaScript에 Key를 넣으면 Source·Network에서 확인할 수 있�
 
 ---
 
-# 35. API Endpoint
+<a id="js-20-section-39"></a>
+
+## 35. API Endpoint
 
 원본은 HTTP Endpoint를 사용한다.
 
@@ -722,7 +996,9 @@ HTTPS 페이지에서는 Mixed Content로 차단될 수 있다.
 
 ---
 
-# 36. Query Parameter
+<a id="js-20-section-40"></a>
+
+## 36. Query Parameter
 
 대표 Parameter:
 
@@ -737,7 +1013,9 @@ HTTPS 페이지에서는 Mixed Content로 차단될 수 있다.
 
 ---
 
-# 37. `URLSearchParams`
+<a id="js-20-section-41"></a>
+
+## 37. `URLSearchParams`
 
 ```javascript
 const params = (
@@ -762,7 +1040,9 @@ const url = (
 
 ---
 
-# 38. 응답 구조
+<a id="js-20-section-42"></a>
+
+## 38. 응답 구조
 
 ```javascript
 const items = (
@@ -778,7 +1058,9 @@ const items = (
 
 ---
 
-# 39. Weather Category
+<a id="js-20-section-43"></a>
+
+## 39. Weather Category
 
 ```text
 T1H
@@ -793,7 +1075,9 @@ RN1
 
 ---
 
-# 40. Category Filter
+<a id="js-20-section-44"></a>
+
+## 40. Category Filter
 
 ```javascript
 const targetCategories = [
@@ -813,7 +1097,9 @@ const filtered = items.filter(
 
 ---
 
-# 41. 원본 문제 1
+<a id="js-20-section-45"></a>
+
+## 41. 원본 문제 1
 
 강사님은 Category·예측 시간·값을 Table에 출력한다.
 
@@ -829,7 +1115,9 @@ Forecast Value
 
 ---
 
-# 42. 안전한 Category Row
+<a id="js-20-section-46"></a>
+
+## 42. 안전한 Category Row
 
 ```javascript
 function createRow(
@@ -859,7 +1147,9 @@ function createRow(
 
 ---
 
-# 43. Category Table 렌더링
+<a id="js-20-section-47"></a>
+
+## 43. Category Table 렌더링
 
 ```javascript
 function renderForecastItems(
@@ -888,7 +1178,9 @@ function renderForecastItems(
 
 ---
 
-# 44. 시간별 그룹화
+<a id="js-20-section-48"></a>
+
+## 44. 시간별 그룹화
 
 같은 `fcstTime`의 Category를 하나의 객체로 묶는다.
 
@@ -920,7 +1212,9 @@ function groupForecast(
 
 ---
 
-# 45. 그룹화 결과
+<a id="js-20-section-49"></a>
+
+## 45. 그룹화 결과
 
 ```text
 {
@@ -936,7 +1230,9 @@ function groupForecast(
 
 ---
 
-# 46. 내 코드의 Category 오류
+<a id="js-20-section-50"></a>
+
+## 46. 내 코드의 Category 오류
 
 원본의 온도 열 조건:
 
@@ -961,7 +1257,9 @@ T1H 또는 REH
 
 ---
 
-# 47. 내 코드의 시간 열 오류
+<a id="js-20-section-51"></a>
+
+## 47. 내 코드의 시간 열 오류
 
 T1H 항목에서만 시간을 출력하고 REH·RN1 항목은 별도 Row를 만든다.
 
@@ -978,7 +1276,9 @@ T1H 항목에서만 시간을 출력하고 REH·RN1 항목은 별도 Row를 만�
 
 ---
 
-# 48. 시간별 Table 렌더링
+<a id="js-20-section-52"></a>
+
+## 48. 시간별 Table 렌더링
 
 ```javascript
 function renderGroupedForecast(
@@ -1014,7 +1314,9 @@ function renderGroupedForecast(
 
 ---
 
-# 49. 재조회 누적 문제
+<a id="js-20-section-53"></a>
+
+## 49. 재조회 누적 문제
 
 강사님 원본은 기존 `q2` Row를 지우지 않고 Append한다.
 
@@ -1028,7 +1330,9 @@ tbody.replaceChildren()
 
 ---
 
-# 50. 회원정보 문제
+<a id="js-20-section-54"></a>
+
+## 50. 회원정보 문제
 
 요구사항:
 
@@ -1045,7 +1349,9 @@ Company Name
 
 ---
 
-# 51. 내 회원 Row 구조 오류
+<a id="js-20-section-55"></a>
+
+## 51. 내 회원 Row 구조 오류
 
 원본 흐름:
 
@@ -1067,7 +1373,9 @@ td 문자열
 
 ---
 
-# 52. 올바른 Table 구조
+<a id="js-20-section-56"></a>
+
+## 52. 올바른 Table 구조
 
 ```text
 table
@@ -1081,7 +1389,9 @@ table
 
 ---
 
-# 53. 회원 Row 생성
+<a id="js-20-section-57"></a>
+
+## 53. 회원 Row 생성
 
 ```javascript
 function createUserRow(
@@ -1100,7 +1410,9 @@ function createUserRow(
 
 ---
 
-# 54. 회원 Table 렌더링
+<a id="js-20-section-58"></a>
+
+## 54. 회원 Table 렌더링
 
 ```javascript
 function renderUsers(
@@ -1125,7 +1437,9 @@ function renderUsers(
 
 ---
 
-# 55. `try...catch`
+<a id="js-20-section-59"></a>
+
+## 55. `try...catch`
 
 원본:
 
@@ -1145,7 +1459,9 @@ try {
 
 ---
 
-# 56. 동기 오류와 비동기 오류
+<a id="js-20-section-60"></a>
+
+## 56. 동기 오류와 비동기 오류
 
 ```text
 동기 오류
@@ -1157,7 +1473,9 @@ Promise Rejection
 
 ---
 
-# 57. Fetch 기본 구조
+<a id="js-20-section-61"></a>
+
+## 57. Fetch 기본 구조
 
 ```javascript
 fetch(
@@ -1182,7 +1500,9 @@ fetch(
 
 ---
 
-# 58. Fetch 반환값
+<a id="js-20-section-62"></a>
+
+## 58. Fetch 반환값
 
 `fetch()`는 Promise를 반환한다.
 
@@ -1190,7 +1510,9 @@ fetch(
 
 ---
 
-# 59. `response.json()`
+<a id="js-20-section-63"></a>
+
+## 59. `response.json()`
 
 ```javascript
 const promise = (
@@ -1202,7 +1524,9 @@ const promise = (
 
 ---
 
-# 60. Fetch Option 객체
+<a id="js-20-section-64"></a>
+
+## 60. Fetch Option 객체
 
 ```javascript
 fetch(
@@ -1217,7 +1541,9 @@ fetch(
 
 ---
 
-# 61. HTTP 오류 처리
+<a id="js-20-section-65"></a>
+
+## 61. HTTP 오류 처리
 
 Fetch는 404·500 같은 HTTP 응답을 자동으로 Reject하지 않을 수 있다.
 
@@ -1231,7 +1557,9 @@ if (!response.ok) {
 
 ---
 
-# 62. Promise Chain 개선
+<a id="js-20-section-66"></a>
+
+## 62. Promise Chain 개선
 
 ```javascript
 fetch(url)
@@ -1263,7 +1591,9 @@ fetch(url)
 
 ---
 
-# 63. `async/await`
+<a id="js-20-section-67"></a>
+
+## 63. `async/await`
 
 ```javascript
 async function loadUsers() {
@@ -1283,7 +1613,9 @@ async function loadUsers() {
 
 ---
 
-# 64. `try...catch`와 Await
+<a id="js-20-section-68"></a>
+
+## 64. `try...catch`와 Await
 
 ```javascript
 async function handleLoadUsers() {
@@ -1306,7 +1638,9 @@ async function handleLoadUsers() {
 
 ---
 
-# 65. Loading State
+<a id="js-20-section-69"></a>
+
+## 65. Loading State
 
 ```javascript
 button.disabled = true
@@ -1319,7 +1653,9 @@ message.textContent = (
 
 ---
 
-# 66. `finally`
+<a id="js-20-section-70"></a>
+
+## 66. `finally`
 
 ```javascript
 try {
@@ -1337,7 +1673,9 @@ try {
 
 ---
 
-# 67. 빈 상태와 오류 상태
+<a id="js-20-section-71"></a>
+
+## 67. 빈 상태와 오류 상태
 
 ```text
 Loading
@@ -1357,7 +1695,9 @@ Console만이 아니라 사용자 화면에도 상태를 표시한다.
 
 ---
 
-# 68. 중복 요청 방지
+<a id="js-20-section-72"></a>
+
+## 68. 중복 요청 방지
 
 ```javascript
 if (button.disabled) {
@@ -1371,7 +1711,9 @@ button.disabled = true
 
 ---
 
-# 69. AbortController
+<a id="js-20-section-73"></a>
+
+## 69. AbortController
 
 ```javascript
 const controller = (
@@ -1392,7 +1734,9 @@ controller.abort()
 
 ---
 
-# 70. 최신 요청만 유지
+<a id="js-20-section-74"></a>
+
+## 70. 최신 요청만 유지
 
 ```javascript
 let currentController = null
@@ -1434,7 +1778,9 @@ async function requestLatest(
 
 ---
 
-# 71. Abort 오류 처리
+<a id="js-20-section-75"></a>
+
+## 71. Abort 오류 처리
 
 ```javascript
 async function handleLatestRequest(
@@ -1463,7 +1809,9 @@ async function handleLatestRequest(
 
 ---
 
-# 72. 응답 Content Type 확인
+<a id="js-20-section-76"></a>
+
+## 72. 응답 Content Type 확인
 
 ```javascript
 const contentType = (
@@ -1488,7 +1836,9 @@ if (
 
 ---
 
-# 73. POST JSON 요청
+<a id="js-20-section-77"></a>
+
+## 73. POST JSON 요청
 
 ```javascript
 const response = await fetch(
@@ -1510,7 +1860,9 @@ const response = await fetch(
 
 ---
 
-# 74. CORS
+<a id="js-20-section-78"></a>
+
+## 74. CORS
 
 다른 Origin으로 요청할 때 Server의 CORS 정책 영향을 받는다.
 
@@ -1524,7 +1876,9 @@ Browser에서 CORS 오류가 발생하면 Client JavaScript만으로 해결할 �
 
 ---
 
-# 75. Debugger
+<a id="js-20-section-79"></a>
+
+## 75. Debugger
 
 ```javascript
 button.addEventListener(
@@ -1543,7 +1897,9 @@ button.addEventListener(
 
 ---
 
-# 76. Debugger 확인 항목
+<a id="js-20-section-80"></a>
+
+## 76. Debugger 확인 항목
 
 - Scope 변수
 - Call Stack
@@ -1557,7 +1913,9 @@ button.addEventListener(
 
 ---
 
-# 77. 중복 객체 Key
+<a id="js-20-section-81"></a>
+
+## 77. 중복 객체 Key
 
 강사님 코드:
 
@@ -1582,7 +1940,9 @@ const data = {
 
 ---
 
-# 78. Counting Pattern
+<a id="js-20-section-82"></a>
+
+## 78. Counting Pattern
 
 ```javascript
 counts[key] = (
@@ -1594,7 +1954,9 @@ Key가 없으면 0에서 시작하고 있으면 기존 값에 1을 더한다.
 
 ---
 
-# 79. HTML 문구 차이
+<a id="js-20-section-83"></a>
+
+## 79. HTML 문구 차이
 
 내 Button:
 
@@ -1612,7 +1974,9 @@ Key가 없으면 0에서 시작하고 있으면 기존 값에 1을 더한다.
 
 ---
 
-# 80. 문서 기본 정보
+<a id="js-20-section-84"></a>
+
+## 80. 문서 기본 정보
 
 원본:
 
@@ -1630,7 +1994,9 @@ Key가 없으면 0에서 시작하고 있으면 기존 값에 1을 더한다.
 
 ---
 
-# 81. 내 코드와 강사님 코드 비교
+<a id="js-20-section-85"></a>
+
+## 81. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1647,7 +2013,7 @@ Key가 없으면 0에서 시작하고 있으면 기존 값에 1을 더한다.
 | Fetch | 동일 흐름 | 동일 흐름 |
 | Duplicate Key | 없음 | 예제 존재 |
 
-## 81-1. 내 코드의 장점
+### 81-1. 내 코드의 장점
 
 - AJAX와 Navigation 차이를 자세히 기록했다.
 - XHR의 네 단계를 직접 확인했다.
@@ -1657,7 +2023,7 @@ Key가 없으면 0에서 시작하고 있으면 기존 값에 1을 더한다.
 - Fetch·Promise·`try...catch` 흐름을 설명했다.
 - Debugger 실습을 포함했다.
 
-## 81-2. 내 코드의 개선점
+### 81-2. 내 코드의 개선점
 
 - Button 문구에 `jason` 오타가 있다.
 - Weather API Key가 빈 값이다.
@@ -1670,7 +2036,7 @@ Key가 없으면 0에서 시작하고 있으면 기존 값에 1을 더한다.
 - Fetch에서 `response.ok`를 검사하지 않는다.
 - Fetch Option 객체를 JSON이라고 부른다.
 
-## 81-3. 강사님 코드의 장점
+### 81-3. 강사님 코드의 장점
 
 - XHR 기본 순서가 명확하다.
 - User JSON Parse와 중첩 Property 접근이 간결하다.
@@ -1679,7 +2045,7 @@ Key가 없으면 0에서 시작하고 있으면 기존 값에 1을 더한다.
 - Promise Chain과 Debugger를 연결한다.
 - 중복 Key 동작을 확인한다.
 
-## 81-4. 강사님 코드의 보충점
+### 81-4. 강사님 코드의 보충점
 
 - API Key를 Client 코드에 포함한다.
 - HTTP Endpoint와 UTC·자정 문제가 있다.
@@ -1691,9 +2057,11 @@ Key가 없으면 0에서 시작하고 있으면 기존 값에 1을 더한다.
 
 ---
 
-# 82. 기존 코드에서 개선한 이유
+<a id="js-20-section-86"></a>
 
-## 82-1. XHR 응답 검사
+## 82. 기존 코드에서 개선한 이유
+
+### 82-1. XHR 응답 검사
 
 기존:
 
@@ -1720,7 +2088,7 @@ xhr.onload = () => {
 }
 ```
 
-## 82-2. Weather Grouping
+### 82-2. Weather Grouping
 
 기존:
 
@@ -1735,7 +2103,7 @@ fcstTime 기준 Grouping
 → 한 시간당 한 Row
 ```
 
-## 82-3. 회원 Table
+### 82-3. 회원 Table
 
 기존:
 
@@ -1752,7 +2120,7 @@ row.append(cell)
 tbody.append(row)
 ```
 
-## 82-4. Fetch HTTP 오류
+### 82-4. Fetch HTTP 오류
 
 기존:
 
@@ -1774,7 +2142,9 @@ return response.json()
 
 ---
 
-# 83. 실무형 예제: 회원 API Viewer
+<a id="js-20-section-87"></a>
+
+## 83. 실무형 예제: 회원 API Viewer
 
 ```javascript
 function createUserRow(
@@ -1881,7 +2251,7 @@ async function loadAndRenderUsers({
 }
 ```
 
-## 83-1. 코드에서 무엇을 사용하는 걸까?
+### 83-1. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1897,79 +2267,91 @@ async function loadAndRenderUsers({
 
 ---
 
-# 84. 대표 오류로 이해하기
+<a id="js-20-section-88"></a>
 
-## 84-1. `send()` 직후 응답 사용
+## 84. 대표 오류로 이해하기
+
+### 84-1. `send()` 직후 응답 사용
 
 응답이 아직 도착하지 않아 빈 문자열일 수 있다.
 
-## 84-2. `onload`를 무조건 성공으로 처리
+### 84-2. `onload`를 무조건 성공으로 처리
 
 HTTP 404·500도 들어올 수 있다.
 
-## 84-3. JSON이 아닌 응답 Parse
+### 84-3. JSON이 아닌 응답 Parse
 
 `SyntaxError`가 발생한다.
 
-## 84-4. 자정에 Hour만 1 감소
+### 84-4. 자정에 Hour만 1 감소
 
 Date와 Time이 서로 맞지 않는다.
 
-## 84-5. Weather Category를 잘못된 열에 배치
+### 84-5. Weather Category를 잘못된 열에 배치
 
 의미가 다른 측정값이 섞인다.
 
-## 84-6. `tbody`에 `td` 직접 추가
+<a id="index-section-110"></a>
+
+### 84-6. `tbody`에 `td` 직접 추가
 
 올바른 Table 구조가 아니다.
 
 ---
 
-# 85. 자주 하는 실수
+<a id="js-20-section-89"></a>
 
-## 85-1. `open()`이 요청을 전송한다고 생각
+## 85. 자주 하는 실수
+
+### 85-1. `open()`이 요청을 전송한다고 생각
 
 실제 전송은 `send()`다.
 
-## 85-2. 상대 URL 기준을 JS 파일 위치로 생각
+### 85-2. 상대 URL 기준을 JS 파일 위치로 생각
 
 현재 Document URL 기준이다.
 
-## 85-3. `toISOString()`을 Local 날짜로 생각
+<a id="index-section-114"></a>
+
+### 85-3. `toISOString()`을 Local 날짜로 생각
 
 UTC 기준이다.
 
-## 85-4. API Key를 Public Frontend에 직접 작성
+### 85-4. API Key를 Public Frontend에 직접 작성
 
 사용자에게 노출된다.
 
-## 85-5. HTTP API를 HTTPS 페이지에서 호출
+### 85-5. HTTP API를 HTTPS 페이지에서 호출
 
 Mixed Content로 차단될 수 있다.
 
-## 85-6. 시간별 데이터를 Grouping하지 않음
+### 85-6. 시간별 데이터를 Grouping하지 않음
 
 같은 시간의 값을 한 Row에 맞추기 어렵다.
 
-## 85-7. 반복문에서 `innerHTML +=` 사용
+<a id="index-section-118"></a>
+
+### 85-7. 반복문에서 `innerHTML +=` 사용
 
 하위 DOM 전체가 반복해서 재파싱될 수 있다.
 
-## 85-8. Fetch Catch가 404도 처리한다고 생각
+### 85-8. Fetch Catch가 404도 처리한다고 생각
 
 `response.ok`를 직접 검사한다.
 
-## 85-9. JSON Parse 성공만 확인
+### 85-9. JSON Parse 성공만 확인
 
 응답의 실제 자료형·Property도 검증한다.
 
-## 85-10. 요청 상태 UI를 만들지 않음
+### 85-10. 요청 상태 UI를 만들지 않음
 
 Loading·Empty·Error·Success를 구분한다.
 
 ---
 
-# 86. 핵심 요약
+<a id="js-20-section-90"></a>
+
+## 86. 핵심 요약
 
 ```text
 AJAX
@@ -2015,7 +2397,9 @@ finally
 
 ---
 
-# 87. 최종 체크리스트
+<a id="js-20-section-91"></a>
+
+## 87. 최종 체크리스트
 
 - [ ] AJAX의 의미를 설명할 수 있는가?
 - [ ] 일반 Navigation과 AJAX를 구분할 수 있는가?
@@ -2050,7 +2434,9 @@ finally
 
 ---
 
-# 마무리
+<a id="js-20-section-92"></a>
+
+## 마무리
 
 AJAX와 Fetch의 핵심은 서버에서 JSON을 가져오는 것에서 끝나지 않는다.
 
@@ -2067,7 +2453,9 @@ HTTP·Network·Parse 오류를 각각 처리하고
 ```
 
 이 흐름을 이해하면 실제 프로젝트에서 회원 목록·검색 결과·날씨·상품·게시글 같은 서버 데이터를 안정적으로 화면에 연결할 수 있다.
-# V3 실행 추적 카드 — 요청 생성 → 서버 처리 → Response → 본문 변환 → DOM
+<a id="js-20-section-93"></a>
+
+## V3 실행 추적 카드 — 요청 생성 → 서버 처리 → Response → 본문 변환 → DOM
 
 `fetch`는 Promise를 즉시 반환한다. 응답이 오면 Response를 받고 `json()` 같은 비동기 본문 변환을 거친다. HTTP 404/500은 자동으로 reject되지 않을 수 있어 `response.ok`를 검사한다.
 

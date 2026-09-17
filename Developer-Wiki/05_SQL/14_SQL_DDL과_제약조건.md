@@ -4,6 +4,51 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-14-section-2)
+- [개념에서 실제 실행까지 — DDL과 제약조건이란? — 저장 구조에서 규칙을 지키기](#sql-14-section-3)
+- [12. 내 코드와 강사님 코드 비교](#sql-14-section-15)
+- [17. 종합실습](#sql-14-section-20)
+- [18. 정답과 해설](#sql-14-section-21)
+- [19. 최종 체크리스트](#sql-14-section-22)
+- [20. 핵심 요약](#sql-14-section-23)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-14-section-1)
+- [학습 목표](#sql-14-section-2)
+- [개념에서 실제 실행까지 — DDL과 제약조건이란? — 저장 구조에서 규칙을 지키기](#sql-14-section-3)
+- [1. DDL 기본 개념](#sql-14-section-4)
+- [2. CREATE TABLE](#sql-14-section-5)
+- [3. 자료형 선택](#sql-14-section-6)
+- [4. NOT NULL](#sql-14-section-7)
+- [5. DEFAULT](#sql-14-section-8)
+- [6. PRIMARY KEY](#sql-14-section-9)
+- [7. FOREIGN KEY](#sql-14-section-10)
+- [8. 참조 동작](#sql-14-section-11)
+- [9. ALTER TABLE](#sql-14-section-12)
+- [10. DROP TABLE](#sql-14-section-13)
+- [11. TRUNCATE TABLE](#sql-14-section-14)
+- [12. 내 코드와 강사님 코드 비교](#sql-14-section-15)
+- [13. 개선된 통합 예제](#sql-14-section-16)
+- [14. 실무 변경 절차](#sql-14-section-17)
+- [15. 자주 하는 실수](#sql-14-section-18)
+- [16. 디버깅 방법](#sql-14-section-19)
+- [17. 종합실습](#sql-14-section-20)
+- [18. 정답과 해설](#sql-14-section-21)
+- [19. 최종 체크리스트](#sql-14-section-22)
+- [20. 핵심 요약](#sql-14-section-23)
+- [📎 다음 문서](#sql-14-section-24)
+- [🔬 V3 동작 백과 — Table 구조와 규칙은 어떻게 적용되는가?](#sql-14-section-25)
+
+</details>
+
+---
+
+<a id="sql-14-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -19,17 +64,140 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-14-section-2"></a>
 
-- DDL과 DML의 역할을 구분한다.
-- MariaDB 자료형과 제약조건을 사용해 Table을 설계한다.
-- `ALTER TABLE`로 Column과 제약조건을 안전하게 변경한다.
-- `DROP`, `TRUNCATE`, `DELETE`의 대상과 복구 가능성 차이를 설명한다.
-- Primary Key, Foreign Key, `NOT NULL`, `DEFAULT`의 무결성 규칙을 이해한다.
-- Foreign Key의 부모·자식 관계와 삭제·변경 동작을 설계한다.
-- 구조 변경 전후 Metadata와 기존 Data를 검증한다.
+## 학습 목표
+
+- 열 자료형·PK·FK·NULL·기본값의 역할을 이해한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-14-section-3"></a>
+
+## 개념에서 실제 실행까지 — DDL과 제약조건이란? — 저장 구조에서 규칙을 지키기
+
+### 무엇이며 왜 배워야 할까?
+
+DDL은 테이블 같은 저장 구조를 정의·변경하는 언어다. CREATE가 구조를 만들고 ALTER가 구조를 바꾸며 DROP은 객체를 없앤다. SELECT 별칭은 결과 표시만 바꾸지만 ALTER RENAME COLUMN은 실제 구조 이름을 바꾼다. 그 뒤 예전 이름으로 접근하면 오류가 나는 이유다.
+
+자료형은 저장 가능한 값의 형식을, 제약은 허용 관계를 정의한다. INT(4)의 4는 ‘네 자리 정수만’이라는 제한이 아니다. DECIMAL(7,2)는 총 정밀도와 소수 자릿수다. PK는 행 식별자로 유일하고 NULL 불가하며 FK는 비NULL 참조 값에 대해 부모 키 관계를 검사한다.
+
+CREATE TABLE AS SELECT는 조회 결과로 구조와 데이터를 만들 수 있지만 원래 모든 PK·FK·인덱스·기본값이 그대로 복제된다고 보장하지 않는다. 구조 복사 목적과 데이터 복사 목적을 나누어 확인한다.
+
+아래는 기존 EMP·DEPT 대신 새 이름의 InnoDB 학습 테이블을 만든다. 동일 이름이 이미 있으면 CREATE 오류를 확인하고 멈춘다. 편의를 위해 기존 테이블을 DROP하는 초기화 코드는 넣지 않았다. 일반 DDL은 암묵 커밋을 일으킬 수 있으므로 진행 중인 업무 트랜잭션과 섞지 않는다.
+
+### 입력은 어디에서 오는가?
+
+기존 EMP·DEPT를 변경하지 않는 새 wiki_demo_* 테이블을 사용한다. 이 이름이 이미 있으면 다른 새 이름으로 구분하고 기존 객체를 삭제·덮어쓰지 않는다. 일반 DDL은 진행 중인 트랜잭션과 분리한다. 아래 예제는 새 실습 테이블에서 한 번 실행하는 순서다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+CREATE TABLE wiki_demo_14_dept (
+  deptno INT PRIMARY KEY,
+  dname VARCHAR(30) NOT NULL
+) ENGINE=InnoDB;
+CREATE TABLE wiki_demo_14_emp (
+  empno INT PRIMARY KEY,
+  ename VARCHAR(30) NOT NULL,
+  job VARCHAR(20) NOT NULL DEFAULT 'CLERK',
+  deptno INT,
+  CONSTRAINT wiki_fk_14_dept FOREIGN KEY (deptno)
+    REFERENCES wiki_demo_14_dept(deptno)
+) ENGINE=InnoDB;
+INSERT INTO wiki_demo_14_dept VALUES (10, 'TRAINING');
+INSERT INTO wiki_demo_14_emp (empno, ename, deptno)
+VALUES (1, 'DEMO', 10);
+SELECT e.empno, e.ename, e.job, d.dname
+FROM wiki_demo_14_emp AS e
+JOIN wiki_demo_14_dept AS d ON d.deptno = e.deptno;
+```
+
+Result Grid의 열·행 값:
+
+```text
+empno	ename	job	dname
+1	DEMO	CLERK	TRAINING
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 부모 wiki_demo_14_dept에 유일한 부서 키를 정의한다.
+2. 자식 wiki_demo_14_emp에 사원 PK와 부서 FK·이름 NOT NULL을 정의한다.
+3. 부서 10을 먼저 입력하고 참조 사원을 입력한다.
+4. SELECT가 부모·자식이 연결된 저장 결과를 확인한다. 기본값 job이 CLERK로 들어간다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 683~692행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+as select * from dept where 1 != 1;
+select * from dept3;
+
+create table emp3 (
+	empno int(4),
+	ename varchar(10) not null,
+	job varchar(9),
+	mgr int(4),
+	hiredate date,
+	sal decimal(7,2),
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 637~646행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+as select * from dept where 1 != 1;
+select * from dept3;
+
+create table emp3 (
+	empno int(4),
+	ename varchar(10) not null,
+	job varchar(9),
+	mgr int(4),
+	hiredate date,
+	sal decimal(7, 2), -- 총 7자리, 그 중 2자리 소수점
+```
+
+원본은 gender→gender2→gender3로 이름을 바꾼 뒤 DROP COLUMN gender를 시도한다. 전체를 이어 실행하면 이미 없는 이름 때문에 오류다. emp3→emp4 뒤 SELECT emp3도 마찬가지다. 순서에 따라 달라진 실제 객체 이름을 확인한다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 이해 확인 실습
+
+1. deptno=20인 자식을 바로 입력하거나 empno=1을 다시 입력하면?
+2. gender를 gender2,gender3로 바꾼 뒤 DROP COLUMN gender가 성공하는가?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 부서 20은 부모에 없어 FK 오류다. 사원번호 1 중복은 PK 오류다. 기존 행이 자동 덮어쓰기 되지 않는다.
+2. 이미 존재하지 않는 이름이라 오류다. 실제 현재 구조와 순서를 확인한다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-14-section-4"></a>
 
 ## 1. DDL 기본 개념
 
@@ -48,6 +216,8 @@ DROP
 TRUNCATE
 → Table 구조를 유지하며 전체 Row 제거
 ```
+
+<a id="index-section-17"></a>
 
 ### 2. DML과 역할이 다르다
 
@@ -83,6 +253,8 @@ SHOW CREATE TABLE dept_test;
 
 ---
 
+<a id="sql-14-section-5"></a>
+
 ## 2. CREATE TABLE
 
 ### 6. 기본 문법
@@ -93,6 +265,8 @@ CREATE TABLE table_name (
     table_constraint
 );
 ```
+
+<a id="index-section-23"></a>
 
 ### 7. 부서 Table 생성
 
@@ -147,6 +321,8 @@ CREATE TABLE IF NOT EXISTS dept_test (
 
 ---
 
+<a id="sql-14-section-6"></a>
+
 ## 3. 자료형 선택
 
 ### 12. 숫자는 계산 목적에 맞게 선택한다
@@ -186,6 +362,8 @@ Foreign Key의 자식 Column과 부모 Column은 정수 크기와 `UNSIGNED` 여
 
 ---
 
+<a id="sql-14-section-7"></a>
+
 ## 4. NOT NULL
 
 ### 17. NULL 저장을 금지한다
@@ -221,6 +399,8 @@ WHERE job IS NULL;
 
 ---
 
+<a id="sql-14-section-8"></a>
+
 ## 5. DEFAULT
 
 ### 22. 값을 생략했을 때 사용할 기본값
@@ -254,6 +434,8 @@ SHOW CREATE TABLE emp_test;
 ```
 
 ---
+
+<a id="sql-14-section-9"></a>
 
 ## 6. PRIMARY KEY
 
@@ -305,6 +487,8 @@ HAVING COUNT(*) > 1;
 ```
 
 ---
+
+<a id="sql-14-section-10"></a>
 
 ## 7. FOREIGN KEY
 
@@ -361,6 +545,8 @@ INT UNSIGNED ↔ INT UNSIGNED
 
 ---
 
+<a id="sql-14-section-11"></a>
+
 ## 8. 참조 동작
 
 ### 44. 기본 동작은 보존을 우선한다
@@ -375,6 +561,8 @@ CONSTRAINT fk_emp_test_dept
     REFERENCES dept_test (deptno)
     ON DELETE RESTRICT
 ```
+
+<a id="index-section-68"></a>
 
 ### 46. ON DELETE CASCADE
 
@@ -415,6 +603,8 @@ ON UPDATE CASCADE
 Column의 `DEFAULT` 옵션과 Foreign Key의 `ON DELETE SET DEFAULT` 개념을 혼동하지 않는다.
 
 ---
+
+<a id="sql-14-section-12"></a>
 
 ## 9. ALTER TABLE
 
@@ -489,6 +679,8 @@ Application Query와 Foreign Key Metadata를 포함한 영향 범위를 검토�
 
 ---
 
+<a id="sql-14-section-13"></a>
+
 ## 10. DROP TABLE
 
 ### 59. Table 구조와 Data를 모두 삭제한다
@@ -514,6 +706,8 @@ DROP TABLE IF EXISTS dept_test;
 
 Foreign Key 의존 관계가 있으면 부모보다 자식을 먼저 처리한다.
 
+<a id="index-section-86"></a>
+
 ### 62. DROP은 ROLLBACK을 기대하지 않는다
 
 구조와 Data를 제거하는 파괴적 DDL이므로 Backup과 정확한 대상 확인이 먼저다.
@@ -527,6 +721,8 @@ DROP TABLE IF EXISTS practice_db.emp_test;
 Database 선택 실수의 위험을 줄이되 실행 전 환경을 다시 확인한다.
 
 ---
+
+<a id="sql-14-section-14"></a>
 
 ## 11. TRUNCATE TABLE
 
@@ -548,9 +744,13 @@ TRUNCATE TABLE
 → 전체 Row 제거, DDL처럼 처리, WHERE 사용 불가
 ```
 
+<a id="index-section-91"></a>
+
 ### 66. 암시적 Commit을 발생시킨다
 
 `TRUNCATE` 후 일반적인 `ROLLBACK`으로 Row를 되살릴 수 있다고 가정하지 않는다.
+
+<a id="index-section-92"></a>
 
 ### 67. AUTO_INCREMENT 값이 초기화된다
 
@@ -566,6 +766,8 @@ AUTO_INCREMENT를 사용하는 Table은 다음 번호가 처음부터 다시 시
 
 ---
 
+<a id="sql-14-section-15"></a>
+
 ## 12. 내 코드와 강사님 코드 비교
 
 ### 70. 제약조건 이름을 생략한 형태
@@ -579,6 +781,8 @@ CREATE TABLE emp_test (
 ```
 
 MariaDB가 이름을 생성할 수 있지만 이후 오류 확인과 삭제 시 직접 확인해야 한다.
+
+<a id="index-section-97"></a>
 
 ### 71. 이름과 Engine을 명시한 형태
 
@@ -621,6 +825,8 @@ FROM emp_test;
 - Foreign Key 검사 비활성화를 일반 해결책으로 사용하지 않는다.
 
 ---
+
+<a id="sql-14-section-16"></a>
 
 ## 13. 개선된 통합 예제
 
@@ -675,6 +881,8 @@ ORDER BY table_name, constraint_type;
 
 ---
 
+<a id="sql-14-section-17"></a>
+
 ## 14. 실무 변경 절차
 
 ### 78. 변경 전 확인
@@ -712,6 +920,8 @@ SELECT COUNT(*) AS row_count FROM emp_test;
 
 ---
 
+<a id="sql-14-section-18"></a>
+
 ## 15. 자주 하는 실수
 
 ### 84. 문자열 길이나 숫자 범위를 근거 없이 정한다
@@ -747,6 +957,8 @@ WHERE가 없고 암시적 Commit과 AUTO_INCREMENT 초기화가 있다는 점을
 존재 여부 오류만 줄일 뿐 잘못된 Database의 동명 Table 삭제를 막지 못한다.
 
 ---
+
+<a id="sql-14-section-19"></a>
 
 ## 16. 디버깅 방법
 
@@ -789,6 +1001,8 @@ SELECT MAX(CHAR_LENGTH(ename)) AS max_name_length
 FROM emp_test;
 ```
 
+<a id="index-section-127"></a>
+
 ### 97. Constraint Metadata 확인
 
 ```sql
@@ -807,6 +1021,8 @@ WHERE table_schema = DATABASE()
 부모 Table 생성 → 자식 Column 생성 → PK 확인 → FK 추가 순으로 나누어 어느 단계에서 실패하는지 확인한다.
 
 ---
+
+<a id="sql-14-section-20"></a>
 
 ## 17. 종합실습
 
@@ -831,6 +1047,8 @@ Information Schema에서 두 실습 Table의 PK와 FK를 조회한다.
 Foreign Key 관계를 고려하여 두 실습 Table을 올바른 순서로 삭제한다.
 
 ---
+
+<a id="sql-14-section-21"></a>
 
 ## 18. 정답과 해설
 
@@ -896,6 +1114,8 @@ DROP TABLE IF EXISTS dept_practice;
 
 ---
 
+<a id="sql-14-section-22"></a>
+
 ## 19. 최종 체크리스트
 
 ### 110. 설계 체크
@@ -920,6 +1140,8 @@ DROP TABLE IF EXISTS dept_practice;
 - [ ] 변경 후 구조·Index·Constraint·Row 수를 검증했는가?
 
 ---
+
+<a id="sql-14-section-23"></a>
 
 ## 20. 핵심 요약
 
@@ -954,6 +1176,8 @@ DDL은 문법을 실행하는 순간 Database 구조와 Data 수명주기를 바
 
 ---
 
+<a id="sql-14-section-24"></a>
+
 ## 📎 다음 문서
 
 다음 원본 흐름은 Row Data를 생성·수정·삭제하는 DML이다.
@@ -963,6 +1187,8 @@ DDL은 문법을 실행하는 순간 Database 구조와 Data 수명주기를 바
 ```
 
 ---
+
+<a id="sql-14-section-25"></a>
 
 ## 🔬 V3 동작 백과 — Table 구조와 규칙은 어떻게 적용되는가?
 

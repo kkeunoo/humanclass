@@ -17,18 +17,152 @@
 
 ---
 
-# 학습 목표
+## 이 문서에서 바로 찾기
 
-- 메서드가 어느 자료형에서 사용되는지 구분한다.
-- 메서드 실행 후 반환되는 자료형을 예상한다.
-- 원본 데이터 변경 여부를 확인한다.
-- 사용할 수 없는 메서드는 자료형 변환 후 연결한다.
-- 비슷한 메서드의 차이를 비교한다.
-- 수업에서 자주 사용한 메서드와 알아두면 좋은 메서드를 함께 익힌다.
+- [개념에서 실제 실행까지: 메서드 색인은 소속 자료형·반환값·원본 변경을 함께 찾는 표다](#js-99-section-2)
+- [12. 자주 헷갈리는 메서드 비교](#js-99-section-15)
+- [15. 최종 체크리스트](#js-99-section-18)
+- [핵심 요약](#js-99-section-19)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [학습 목표](#js-99-section-1)
+- [개념에서 실제 실행까지: 메서드 색인은 소속 자료형·반환값·원본 변경을 함께 찾는 표다](#js-99-section-2)
+- [1. 가장 먼저 기억할 원칙](#js-99-section-3)
+- [V3 실행 추적 카드 — 객체.메서드(인수) → 반환값/원본 변경](#js-99-section-4)
+- [2. 표 읽는 방법](#js-99-section-5)
+- [3. 한눈에 보는 소속별 핵심 표](#js-99-section-6)
+- [4. String 메서드](#js-99-section-7)
+- [5. Array 메서드](#js-99-section-8)
+- [6. Object 관련 메서드](#js-99-section-9)
+- [7. Number와 Math](#js-99-section-10)
+- [8. JSON](#js-99-section-11)
+- [9. Set](#js-99-section-12)
+- [10. Map](#js-99-section-13)
+- [11. DOM에서 자주 사용하는 메서드](#js-99-section-14)
+- [12. 자주 헷갈리는 메서드 비교](#js-99-section-15)
+- [13. 자료형 변환 연결 예제](#js-99-section-16)
+- [14. 오류를 만났을 때 확인 순서](#js-99-section-17)
+- [15. 최종 체크리스트](#js-99-section-18)
+- [핵심 요약](#js-99-section-19)
+
+</details>
 
 ---
 
-# 1. 가장 먼저 기억할 원칙
+<a id="js-99-section-1"></a>
+
+## 학습 목표
+
+- 비슷한 메서드의 동작 계약을 예제로 확인한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
+
+---
+
+<a id="js-99-section-2"></a>
+
+## 개념에서 실제 실행까지: 메서드 색인은 소속 자료형·반환값·원본 변경을 함께 찾는 표다
+
+이 참고 문서는 수업 순서를 뜻하는99번 강의가 아니라 💡 복습 부록이다. 메서드는 이름만 비슷하다고 서로 바꿔 사용할 수 없다. split은 String에서 Array를, join은 Array에서 String을 만든다. push 반환값을 배열로 생각하면 다음 메서드 연결에서 오류가 난다.
+
+수업06의 sort/reverse는 같은 원본을 바꾸며,10의 replace/slice는 새 문자열을 돌려준다.19의 Object.keys는 객체 키 배열을 만든다. 이를 표의 '반환 타입'과 '원본 변경' 두 칸으로 대조한다. map/filter의 새 배열도 중첩 객체 요소는 공유될 수 있다.
+
+💡 최신 비변경 정렬 toSorted는 환경 지원을 확인하고 사용한다. 수업의 copy.sort((a,b)=>a-b)도 원본 보존 방향을 이해하기 좋은 방식이다. Set/Map은 배열과 달라 length가 아니라 size, includes가 아니라 has 등 소속 계약부터 확인한다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 이 문서의 개선·통합 예제는 💡 확장 학습이며 강사님 완성 코드로 표시하지 않는다.
+
+내 코드: `workspace_html/javascript/06_array.html`
+
+```javascript
+// 맨 마지막에 하나 추가
+            arr.push(5)
+            console.log(arr)
+
+            // 맨 앞에 하나 추가
+            arr.unshift(0)
+            console.log(arr)
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/06_array.html`
+
+```javascript
+// 맨 마지막에 하나 추가
+        arr.push(5)
+        console.log(arr)
+        
+        // 맨 앞에 추가하기
+        arr.unshift(0)
+        console.log(arr)
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+const numbers = [2, 10, 1];
+const copied = numbers.slice().sort((a, b) => a - b);
+console.log(JSON.stringify(numbers), JSON.stringify(copied));
+console.log("a,b".split(",").join(" / "));
+console.log(numbers.push(7), numbers.length);
+console.log(JSON.stringify(Object.keys({name:"Kim", age:20})));
+```
+
+예상 출력:
+
+```text
+[2,10,1] [1,2,10]
+a / b
+4 4
+["name","age"]
+```
+
+### 결과를 역추적하는 방법
+
+DOM의 NodeList와 HTMLCollection은 Array가 아니라 유사 목록이다. Array.from로 바꾼 뒤 배열 메서드를 사용할 수 있다. 모든 메서드가 존재하는지보다 내가 가진 값의 자료형과 호출 후 반환값을 먼저 기록한다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** 배열push 결과에join을바로체이닝하면왜실패하는지설명한다.
+
+**응용·디버깅 실습:** Object.keys(user).join(',')의자료형흐름을기록한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. push는새길이number를주며number에는join이없다. push한뒤원배열.join을따로호출한다.
+2. Object→키Array→String이다. Object자체에는Array의join이없다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** filter(x=>x*2)는 왜 [2,4,6]을 만들지 않을까?
+
+**해설:** 조건 반환값을 참·거짓으로 평가해 원래 요소를 남기는 기능이다. 변환값을 모으려면 map을 쓴다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-99-section-3"></a>
+
+## 1. 가장 먼저 기억할 원칙
 
 JavaScript의 메서드는 모든 값에 공통으로 존재하지 않습니다.
 
@@ -37,7 +171,9 @@ JavaScript의 메서드는 모든 값에 공통으로 존재하지 않습니다.
 ["HTML", "CSS"].join(" / ")        // Array 메서드
 Object.keys({ name: "Kim" })       // Object 정적 메서드
 ```
-# V3 실행 추적 카드 — 객체.메서드(인수) → 반환값/원본 변경
+<a id="js-99-section-4"></a>
+
+## V3 실행 추적 카드 — 객체.메서드(인수) → 반환값/원본 변경
 
 메서드는 이름만 외우지 않고 호출 객체 자료형, 반환값, 원본 변경, 콜백 인수 순서를 확인한다. 배열의 push/sort/splice는 원본을 바꾸고 map/filter/slice는 새 배열을 만든다.
 
@@ -91,7 +227,9 @@ String
 
 ---
 
-# 2. 표 읽는 방법
+<a id="js-99-section-5"></a>
+
+## 2. 표 읽는 방법
 
 | 표시 | 의미 |
 | --- | --- |
@@ -107,7 +245,9 @@ String
 
 ---
 
-# 3. 한눈에 보는 소속별 핵심 표
+<a id="js-99-section-6"></a>
+
+## 3. 한눈에 보는 소속별 핵심 표
 
 | 메서드 | String | Array | Object | 반환 타입 | 원본 변경 | 분류 |
 | --- | :---: | :---: | :---: | --- | :---: | :---: |
@@ -140,7 +280,9 @@ String
 
 ---
 
-# 4. String 메서드
+<a id="js-99-section-7"></a>
+
+## 4. String 메서드
 
 문자열은 문자의 순서가 있는 데이터입니다.
 
@@ -150,7 +292,7 @@ const language = "JavaScript";
 
 문자열 메서드는 원본 문자열을 바꾸지 않고 새로운 문자열, 배열, 숫자 또는 논리값을 반환하는 경우가 대부분입니다.
 
-## 4.1 String 메서드 표
+### 4.1 String 메서드 표
 
 | 메서드 | 반환 타입 | 원본 변경 | 설명 | 분류 |
 | --- | --- | :---: | --- | :---: |
@@ -174,7 +316,9 @@ const language = "JavaScript";
 | `padStart()` | String | 🟢 유지 | 앞쪽을 지정 문자로 채움 | 💡 |
 | `padEnd()` | String | 🟢 유지 | 뒤쪽을 지정 문자로 채움 | 💡 |
 
-## 4.2 `split()` — String에서 Array로
+<a id="index-section-16"></a>
+
+### 4.2 `split()` — String에서 Array로
 
 ```javascript
 const text = "HTML,CSS,JavaScript";
@@ -214,7 +358,9 @@ console.log(result);
 HTML / CSS / JAVASCRIPT
 ```
 
-## 4.3 `trim()`과 입력값 정리
+<a id="index-section-17"></a>
+
+### 4.3 `trim()`과 입력값 정리
 
 ```javascript
 const input = "   JavaScript   ";
@@ -233,7 +379,7 @@ JavaScript
 
 원본 `input`은 유지되고 새로운 문자열이 반환됩니다.
 
-## 4.4 문자열 메서드 연결
+### 4.4 문자열 메서드 연결
 
 ```javascript
 const input = "  html, css, javascript  ";
@@ -263,7 +409,9 @@ String
 
 ---
 
-# 5. Array 메서드
+<a id="js-99-section-8"></a>
+
+## 5. Array 메서드
 
 Array는 여러 값을 순서대로 저장하는 자료형입니다.
 
@@ -273,7 +421,7 @@ const fruits = ["apple", "banana", "peach"];
 
 Array 메서드는 원본을 직접 변경하는 메서드와 새로운 값을 반환하는 메서드가 섞여 있습니다.
 
-## 5.1 Array 메서드 표
+### 5.1 Array 메서드 표
 
 | 메서드 | 반환 타입 | 원본 변경 | 설명 | 분류 |
 | --- | --- | :---: | --- | :---: |
@@ -303,7 +451,9 @@ Array 메서드는 원본을 직접 변경하는 메서드와 새로운 값을 �
 | `flatMap()` | Array | 🟢 유지 | `map()` 후 한 단계 평탄화 | 💡 |
 | `at()` | 요소 | 🟢 유지 | 양수·음수 인덱스로 요소 조회 | 💡 |
 
-## 5.2 `join()` — Array에서 String으로
+<a id="index-section-21"></a>
+
+### 5.2 `join()` — Array에서 String으로
 
 ```javascript
 const languages = ["HTML", "CSS", "JavaScript"];
@@ -334,7 +484,9 @@ const result = ["html", "css", "javascript"]
 console.log(result);
 ```
 
-## 5.3 `map()`과 `filter()` 연결
+<a id="index-section-22"></a>
+
+### 5.3 `map()`과 `filter()` 연결
 
 ```javascript
 const numbers = [1, 2, 3, 4, 5];
@@ -352,7 +504,7 @@ console.log(result);
 [10, 30, 50]
 ```
 
-## 5.4 원본 변경 확인
+### 5.4 원본 변경 확인
 
 ```javascript
 const numbers = [3, 1, 2];
@@ -390,7 +542,9 @@ console.log(sorted);
 
 ---
 
-# 6. Object 관련 메서드
+<a id="js-99-section-9"></a>
+
+## 6. Object 관련 메서드
 
 일반 객체는 키와 값의 쌍으로 데이터를 저장합니다.
 
@@ -406,7 +560,7 @@ Object에는 Array의 `join()`, `map()`, `filter()`가 없습니다.
 
 따라서 객체를 먼저 배열로 변환해야 합니다.
 
-## 6.1 Object 메서드 표
+### 6.1 Object 메서드 표
 
 | 메서드 | 반환 타입 | 원본 변경 | 설명 | 분류 |
 | --- | --- | :---: | --- | :---: |
@@ -418,7 +572,7 @@ Object에는 Array의 `join()`, `map()`, `filter()`가 없습니다.
 | `Object.hasOwn()` | Boolean | 🟢 유지 | 직접 소유한 속성인지 확인 | 💡 |
 | `Object.freeze()` | Object | 상태 변경 | 객체의 변경을 제한 | 💡 |
 
-## 6.2 Object의 키를 `join()`으로 연결
+### 6.2 Object의 키를 `join()`으로 연결
 
 ```javascript
 const user = {
@@ -438,7 +592,7 @@ console.log(result);
 name, age, job
 ```
 
-## 6.3 Object의 값을 `join()`으로 연결
+### 6.3 Object의 값을 `join()`으로 연결
 
 ```javascript
 const user = {
@@ -458,7 +612,7 @@ console.log(result);
 Kim / 20 / developer
 ```
 
-## 6.4 Object를 문장 배열로 바꾼 뒤 `join()`
+### 6.4 Object를 문장 배열로 바꾼 뒤 `join()`
 
 ```javascript
 const user = {
@@ -492,7 +646,7 @@ Array<String>
 String
 ```
 
-## 6.5 Object 필터링 후 다시 Object로 변환
+### 6.5 Object 필터링 후 다시 Object로 변환
 
 ```javascript
 const scores = {
@@ -532,7 +686,7 @@ Array
 Object
 ```
 
-## 6.6 Object에는 왜 `map()`이 없을까?
+### 6.6 Object에는 왜 `map()`이 없을까?
 
 ```javascript
 const user = {
@@ -561,9 +715,11 @@ console.log(converted);
 
 ---
 
-# 7. Number와 Math
+<a id="js-99-section-10"></a>
 
-## 7.1 Number 메서드
+## 7. Number와 Math
+
+### 7.1 Number 메서드
 
 | 메서드 | 사용 방식 | 반환 타입 | 원본 변경 | 설명 |
 | --- | --- | --- | :---: | --- |
@@ -592,7 +748,7 @@ string
 
 `toFixed()`는 Number가 아니라 String을 반환한다는 점에 주의합니다.
 
-## 7.2 Math 메서드
+### 7.2 Math 메서드
 
 | 메서드 | 반환 타입 | 설명 |
 | --- | --- | --- |
@@ -618,7 +774,9 @@ Array를 `Math.max()`에 전달할 때는 펼침 연산자가 필요합니다.
 
 ---
 
-# 8. JSON
+<a id="js-99-section-11"></a>
+
+## 8. JSON
 
 | 메서드 | 입력 | 반환 타입 | 설명 |
 | --- | --- | --- | --- |
@@ -654,7 +812,9 @@ String → JSON.parse() → Object
 
 ---
 
-# 9. Set
+<a id="js-99-section-12"></a>
+
+## 9. Set
 
 Set은 중복을 허용하지 않는 값의 집합입니다.
 
@@ -694,7 +854,9 @@ Set → 펼침 연산자 → Array → map() → Array → join() → String
 
 ---
 
-# 10. Map
+<a id="js-99-section-13"></a>
+
+## 10. Map
 
 Map은 키와 값의 쌍을 저장하는 컬렉션입니다.
 
@@ -725,7 +887,9 @@ console.log(result);
 
 ---
 
-# 11. DOM에서 자주 사용하는 메서드
+<a id="js-99-section-14"></a>
+
+## 11. DOM에서 자주 사용하는 메서드
 
 DOM 메서드는 일반 String·Array·Object 메서드와 소속이 다릅니다.
 
@@ -774,9 +938,13 @@ console.log(result);
 
 ---
 
-# 12. 자주 헷갈리는 메서드 비교
+<a id="js-99-section-15"></a>
 
-## 12.1 `split()` vs `join()`
+## 12. 자주 헷갈리는 메서드 비교
+
+<a id="index-section-39"></a>
+
+### 12.1 `split()` vs `join()`
 
 | 구분 | `split()` | `join()` |
 | --- | --- | --- |
@@ -789,7 +957,9 @@ const array = "HTML,CSS".split(",");
 const string = ["HTML", "CSS"].join(",");
 ```
 
-## 12.2 `slice()` vs `splice()`
+<a id="index-section-40"></a>
+
+### 12.2 `slice()` vs `splice()`
 
 | 구분 | `slice()` | `splice()` |
 | --- | --- | --- |
@@ -797,7 +967,9 @@ const string = ["HTML", "CSS"].join(",");
 | 반환 | 복사한 배열 | 제거한 요소 배열 |
 | 용도 | 일부 복사 | 삭제·삽입 |
 
-## 12.3 `map()` vs `forEach()`
+<a id="index-section-41"></a>
+
+### 12.3 `map()` vs `forEach()`
 
 | 구분 | `map()` | `forEach()` |
 | --- | --- | --- |
@@ -814,14 +986,18 @@ const result = [1, 2, 3].forEach(number => number * 2);
 console.log(result); // undefined
 ```
 
-## 12.4 `find()` vs `filter()`
+<a id="index-section-42"></a>
+
+### 12.4 `find()` vs `filter()`
 
 | 구분 | `find()` | `filter()` |
 | --- | --- | --- |
 | 반환 | 첫 번째 요소 하나 | 조건을 만족한 새 배열 |
 | 없을 때 | `undefined` | 빈 배열 |
 
-## 12.5 `includes()` vs `indexOf()`
+<a id="index-section-43"></a>
+
+### 12.5 `includes()` vs `indexOf()`
 
 | 구분 | `includes()` | `indexOf()` |
 | --- | --- | --- |
@@ -831,9 +1007,11 @@ console.log(result); // undefined
 
 ---
 
-# 13. 자료형 변환 연결 예제
+<a id="js-99-section-16"></a>
 
-## 13.1 Object → Array → String
+## 13. 자료형 변환 연결 예제
+
+### 13.1 Object → Array → String
 
 ```javascript
 const product = {
@@ -849,7 +1027,7 @@ const summary = Object.entries(product)
 console.log(summary);
 ```
 
-## 13.2 String → Array → 조건 처리 → String
+### 13.2 String → Array → 조건 처리 → String
 
 ```javascript
 const input = "apple, banana, peach, kiwi";
@@ -863,7 +1041,7 @@ const result = input
 console.log(result);
 ```
 
-## 13.3 Set → Array → String
+### 13.3 Set → Array → String
 
 ```javascript
 const tags = new Set(["js", "html", "js", "css"]);
@@ -875,7 +1053,7 @@ const result = Array.from(tags)
 console.log(result);
 ```
 
-## 13.4 JSON String → Object → Array → String
+### 13.4 JSON String → Object → Array → String
 
 ```javascript
 const json = `{
@@ -890,7 +1068,7 @@ const result = JSON.parse(json)
 console.log(result);
 ```
 
-## 13.5 Array → Object
+### 13.5 Array → Object
 
 ```javascript
 const entries = [
@@ -905,7 +1083,9 @@ console.log(user);
 
 ---
 
-# 14. 오류를 만났을 때 확인 순서
+<a id="js-99-section-17"></a>
+
+## 14. 오류를 만났을 때 확인 순서
 
 다음 오류가 나왔다고 가정합니다.
 
@@ -937,7 +1117,9 @@ Object.entries(value).map(...).join(", ");
 
 ---
 
-# 15. 최종 체크리스트
+<a id="js-99-section-18"></a>
+
+## 15. 최종 체크리스트
 
 - [ ] `split()`은 String 메서드임을 설명할 수 있다.
 - [ ] `join()`은 Array 메서드임을 설명할 수 있다.
@@ -952,7 +1134,9 @@ Object.entries(value).map(...).join(", ");
 
 ---
 
-# 핵심 요약
+<a id="js-99-section-19"></a>
+
+## 핵심 요약
 
 ```text
 split()  : String → Array

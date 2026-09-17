@@ -1,5 +1,42 @@
 # Python 자료형별 메서드 치트시트
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#py-99-section-2)
+- [개념에서 실제 실행까지 — 메서드 표 읽기 — 소속·반환형·원본 변경](#py-99-section-3)
+- [11. 자주 헷갈리는 기능 비교](#py-99-section-14)
+- [14. 최종 체크리스트](#py-99-section-17)
+- [핵심 요약](#py-99-section-18)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [문서 정보](#py-99-section-1)
+- [학습 목표](#py-99-section-2)
+- [개념에서 실제 실행까지 — 메서드 표 읽기 — 소속·반환형·원본 변경](#py-99-section-3)
+- [1. 가장 먼저 기억할 원칙](#py-99-section-4)
+- [2. 표 읽는 방법](#py-99-section-5)
+- [3. 한눈에 보는 소속별 핵심 표](#py-99-section-6)
+- [4. str 메서드](#py-99-section-7)
+- [5. list 메서드](#py-99-section-8)
+- [6. tuple 메서드](#py-99-section-9)
+- [7. dict 메서드](#py-99-section-10)
+- [8. set 메서드](#py-99-section-11)
+- [9. 숫자 자료형과 관련 함수](#py-99-section-12)
+- [10. 알아두면 좋은 내장 함수](#py-99-section-13)
+- [11. 자주 헷갈리는 기능 비교](#py-99-section-14)
+- [12. 자료형 변환 연결 예제](#py-99-section-15)
+- [13. 오류를 만났을 때 확인 순서](#py-99-section-16)
+- [14. 최종 체크리스트](#py-99-section-17)
+- [핵심 요약](#py-99-section-18)
+- [V3 동작 백과 보강 — 메서드를 추론하는 법](#py-99-section-19)
+
+</details>
+
+---
+
+<a id="py-99-section-1"></a>
+
 ## 문서 정보
 
 | 항목 | 내용 |
@@ -17,18 +54,123 @@
 
 ---
 
-# 학습 목표
+<a id="py-99-section-2"></a>
 
-- 문자열, 리스트, 튜플, 딕셔너리, 집합의 메서드를 구분한다.
-- 메서드의 반환 타입을 예상한다.
-- 원본 변경 메서드와 새 값을 만드는 함수를 구분한다.
-- 직접 사용할 수 없는 메서드는 자료형 변환 후 사용한다.
-- Python과 JavaScript에서 호출 방향이 다른 메서드를 비교한다.
-- 수업에서 자주 사용한 기능과 알아두면 좋은 기능을 함께 익힌다.
+## 학습 목표
+
+- 자료형·부작용·실패 조건으로 메서드를 선택한다.
+- 예제의 입력·처리·출력과 대표 실패 조건을 직접 확인한다.
 
 ---
 
-# 1. 가장 먼저 기억할 원칙
+<a id="py-99-section-3"></a>
+
+## 개념에서 실제 실행까지 — 메서드 표 읽기 — 소속·반환형·원본 변경
+
+### 무엇이며 왜 배워야 할까?
+
+치트시트는 이름뿐 아니라 호출 왼쪽 객체의 자료형, 인수, 반환형, 원본 변경 여부, 실패 조건까지 읽어야 한다. str.split은 list를 만들고 str.join은 str을 만들지만 list에는 join 메서드가 없다.
+
+list.append는 원본을 변경하고 None을 반환하며 pop은 제거한 값을 반환한다. sorted는 새 목록을 만든다. result=items.append(...)를 쓰면 result를 목록으로 사용할 수 없다. dict.get은 누락 키에 기본값을 주지만 값 None·0·''이 있는 키를 누락으로 바꾸지 않는다.
+
+💡 이 문서는 03·04·05·07번 수업을 연결한 통합 참고이며 99번 소스가 따로 있는 것은 아니다. 아래는 텍스트를 숫자 목록으로 정리하고 정렬한 뒤 표시 문자열로 되돌리는 흐름이다.
+
+### 독립 실행 예제: 입력에서 결과까지
+
+다음 코드는 앞 문서의 변수 없이 새 .py 파일에서 실행할 수 있는 보충 예제다. 직접 적은 입력값을 사용하므로 같은 조건에서 아래 출력과 비교할 수 있다.
+
+```python
+raw = ' 3, 1, 2 '
+parts = raw.strip().split(',')
+numbers = [int(part.strip()) for part in parts]
+ordered = sorted(numbers)
+result = ' / '.join(str(number) for number in ordered)
+print(parts)
+print(numbers, ordered)
+print(result)
+print(numbers.append(4), numbers)
+```
+
+예상 출력:
+
+```text
+['3', ' 1', ' 2']
+[3, 1, 2] [1, 2, 3]
+1 / 2 / 3
+None [3, 1, 2, 4]
+```
+
+### 실행 순서를 한 단계씩 따라가기
+
+1. raw를 정리·분리하여 str 요소의 list parts를 만든다.
+2. 각 필드를 int로 바꾸어 숫자 list numbers를 만든다.
+3. sorted가 numbers를 유지하며 정렬된 새 ordered를 만든다.
+4. 숫자를 str로 표시 변환해 join하고, 별도로 append의 None 반환과 numbers 변경을 확인한다.
+
+### 원본에서 어디에 사용했을까?
+
+
+#### 내 코드: `04_list.py` 51~57행
+
+문맥 확인용 원본 발췌다. 이 조각만 독립 실행할 수 있다는 뜻은 아니다. 주석의 설명은 아래 실제 동작 해설과 대조한다.
+
+```python
+c.sort() # 오름차순 원본이 바뀜, [15, 35, 156, 654, 964]
+print( c ) # JavaScript와 다르게 sort는 15 156이 아닌, 숫자 크기대로 정렬해줌
+c.sort(reverse=True) # sort의 기본값은 reverse=False (오름차순)
+print( c )
+print(':='*30)
+
+c = c[::-1] # -1은 원본을 바꾸지 않음, [964, 654, 156, 35, 15]
+```
+
+<a id="index-section-10"></a>
+
+#### 강사님 코드: `_04_list.py` 48~54행
+
+문맥 확인용 원본 발췌다. 이 조각만 독립 실행할 수 있다는 뜻은 아니다. 주석의 설명은 아래 실제 동작 해설과 대조한다.
+
+```python
+c.sort() # 오름차순
+print(c)
+c.sort(reverse=True)
+print(c)
+
+
+c = c[::-1]
+```
+
+같은 이름의 메서드도 자료형에 따라 계약이 다르다. int와 str이 섞인 목록은 정렬에서 TypeError가 날 수 있다.
+
+### 실무에서 판단할 기준과 디버깅
+
+정상 입력에서 결과가 나오는 것뿐 아니라 아래 본문의 오류·경계 입력도 확인한다. 화면 출력, 반환값, 원본 객체의 변경은 서로 다른 관찰 대상이다. 문제가 생기면 실패 문장에 쓰인 값의 출처와 자료형을 먼저 확인한 뒤 같은 입력으로 다시 실행한다.
+
+### 이해 확인 실습과 해설
+
+1. join에 ordered를 바로 넘기면? sort 반환값을 대입하면?
+2. set.remove와 discard에 없는 값을 전달하면?
+
+<details>
+<summary>정답과 이유 보기 — 먼저 출력·상태를 예측한 뒤 펼치기</summary>
+
+1. 숫자 요소 때문에 TypeError다. sort 반환은 None이어서 대입한 이름으로 목록을 잃을 수 있다.
+2. remove는 KeyError, discard는 없어도 예외 없이 끝난다. 원소가 반드시 있어야 하는 계약인지에 따라 선택한다.
+
+</details>
+
+### 이 주제를 다시 사용할 수 있는지 확인
+
+- [ ] 이 개념이 무엇이며 언제 필요한지 내 말로 설명한다.
+- [ ] 예제의 입력 출처, 자료형, 처리 순서, 결과를 설명한다.
+- [ ] 원본과 보충 예제의 조건이 같은지 구분한다.
+- [ ] 오류 사례와 경계 입력을 바꾸어 직접 확인한다.
+
+---
+
+<a id="py-99-section-4"></a>
+
+## 1. 가장 먼저 기억할 원칙
 
 Python의 메서드는 자료형에 따라 사용할 수 있는 대상이 다릅니다.
 
@@ -55,7 +197,9 @@ Python에서는 **연결 문자로 사용할 문자열**이 `join()`을 호출�
 
 ---
 
-# 2. 표 읽는 방법
+<a id="py-99-section-5"></a>
+
+## 2. 표 읽는 방법
 
 | 표시 | 의미 |
 | --- | --- |
@@ -71,7 +215,9 @@ Python에서는 **연결 문자로 사용할 문자열**이 `join()`을 호출�
 
 ---
 
-# 3. 한눈에 보는 소속별 핵심 표
+<a id="py-99-section-6"></a>
+
+## 3. 한눈에 보는 소속별 핵심 표
 
 | 메서드/함수 | str | list | tuple | set | dict | 반환 타입 | 원본 변경 |
 | --- | :---: | :---: | :---: | :---: | :---: | --- | :---: |
@@ -99,7 +245,9 @@ Python에서는 **연결 문자로 사용할 문자열**이 `join()`을 호출�
 
 ---
 
-# 4. str 메서드
+<a id="py-99-section-7"></a>
+
+## 4. str 메서드
 
 문자열은 순서를 가진 불변 시퀀스입니다.
 
@@ -107,7 +255,7 @@ Python에서는 **연결 문자로 사용할 문자열**이 `join()`을 호출�
 language = "Python"
 ```
 
-## 4.1 str 메서드 표
+### 4.1 str 메서드 표
 
 | 메서드 | 반환 타입 | 원본 변경 | 설명 | 분류 |
 | --- | --- | :---: | --- | :---: |
@@ -130,7 +278,7 @@ language = "Python"
 | `isalpha()` | bool | 🟢 유지 | 문자로만 구성됐는지 | 💡 |
 | `isalnum()` | bool | 🟢 유지 | 문자 또는 숫자로만 구성됐는지 | 💡 |
 
-## 4.2 `split()` — str에서 list로
+### 4.2 `split()` — str에서 list로
 
 ```python
 text = "HTML,CSS,Python"
@@ -162,7 +310,9 @@ languages.append("Java")
 print(languages)
 ```
 
-## 4.3 `join()` — 반복 가능한 문자열 데이터를 str로
+<a id="index-section-20"></a>
+
+### 4.3 `join()` — 반복 가능한 문자열 데이터를 str로
 
 ```python
 languages = ["HTML", "CSS", "Python"]
@@ -205,7 +355,7 @@ print(result)
 apple, 1000, 3
 ```
 
-## 4.4 문자열 처리 연결
+### 4.4 문자열 처리 연결
 
 ```python
 text = "  html, css, python  "
@@ -234,7 +384,9 @@ str
 
 ---
 
-# 5. list 메서드
+<a id="py-99-section-8"></a>
+
+## 5. list 메서드
 
 list는 여러 값을 순서대로 저장하는 가변 자료형입니다.
 
@@ -242,7 +394,7 @@ list는 여러 값을 순서대로 저장하는 가변 자료형입니다.
 fruits = ["apple", "banana", "peach"]
 ```
 
-## 5.1 list 메서드 표
+### 5.1 list 메서드 표
 
 | 메서드 | 반환 타입 | 원본 변경 | 설명 | 분류 |
 | --- | --- | :---: | --- | :---: |
@@ -258,7 +410,9 @@ fruits = ["apple", "banana", "peach"]
 | `count()` | int | 🟢 유지 | 값의 개수 반환 | ⭐ |
 | `index()` | int | 🟢 유지 | 값의 첫 위치 반환 | ⭐ |
 
-## 5.2 반환값이 `None`인 메서드
+<a id="index-section-24"></a>
+
+### 5.2 반환값이 `None`인 메서드
 
 ```python
 numbers = [1, 2, 3]
@@ -290,7 +444,9 @@ print(numbers)
 None
 ```
 
-## 5.3 `append()` vs `extend()`
+<a id="index-section-25"></a>
+
+### 5.3 `append()` vs `extend()`
 
 ```python
 numbers = [1, 2]
@@ -324,7 +480,9 @@ print(numbers)
 | 원본 변경 | 예 | 예 |
 | 반환 | `None` | `None` |
 
-## 5.4 `sort()` vs `sorted()`
+<a id="index-section-26"></a>
+
+### 5.4 `sort()` vs `sorted()`
 
 ```python
 numbers = [3, 1, 2]
@@ -365,7 +523,9 @@ print(result)
 
 ---
 
-# 6. tuple 메서드
+<a id="py-99-section-9"></a>
+
+## 6. tuple 메서드
 
 tuple은 순서를 가진 불변 시퀀스입니다.
 
@@ -400,7 +560,9 @@ tuple → list() → list → append() → tuple() → tuple
 
 ---
 
-# 7. dict 메서드
+<a id="py-99-section-10"></a>
+
+## 7. dict 메서드
 
 dict는 키와 값의 쌍으로 데이터를 저장하는 가변 자료형입니다.
 
@@ -412,7 +574,7 @@ user = {
 }
 ```
 
-## 7.1 dict 메서드 표
+### 7.1 dict 메서드 표
 
 | 메서드 | 반환 타입 | 원본 변경 | 설명 | 분류 |
 | --- | --- | :---: | --- | :---: |
@@ -428,7 +590,7 @@ user = {
 | `copy()` | dict | 🟢 유지 | 얕은 복사 | 💡 |
 | `fromkeys()` | dict | 🟢 유지 | 키들로 새 dict 생성 | 💡 |
 
-## 7.2 dict의 키를 문자열로 연결
+### 7.2 dict의 키를 문자열로 연결
 
 Python의 `dict.keys()`는 반복 가능한 `dict_keys`를 반환합니다.
 
@@ -452,7 +614,7 @@ name, age, job
 
 `join()`은 list만 받는 것이 아니라 문자열로 이루어진 iterable을 받을 수 있습니다.
 
-## 7.3 dict의 값을 문자열로 연결
+### 7.3 dict의 값을 문자열로 연결
 
 값이 모두 문자열이면 바로 연결할 수 있습니다.
 
@@ -487,7 +649,7 @@ print(result)
 Kim / 20 / developer
 ```
 
-## 7.4 dict를 문장으로 변환
+### 7.4 dict를 문장으로 변환
 
 ```python
 user = {
@@ -522,7 +684,7 @@ dict_items
 str
 ```
 
-## 7.5 dict 필터링
+### 7.5 dict 필터링
 
 ```python
 scores = {
@@ -547,7 +709,9 @@ print(passed)
 {'html': 90, 'javascript': 95, 'python': 80}
 ```
 
-## 7.6 `get()`과 대괄호 접근
+<a id="index-section-34"></a>
+
+### 7.6 `get()`과 대괄호 접근
 
 ```python
 user = {"name": "Kim"}
@@ -571,7 +735,9 @@ print(user["age"])  # KeyError
 
 ---
 
-# 8. set 메서드
+<a id="py-99-section-11"></a>
+
+## 8. set 메서드
 
 set은 중복을 허용하지 않는 가변 집합 자료형입니다.
 
@@ -579,7 +745,7 @@ set은 중복을 허용하지 않는 가변 집합 자료형입니다.
 skills = {"HTML", "CSS", "Python"}
 ```
 
-## 8.1 set 메서드 표
+### 8.1 set 메서드 표
 
 | 메서드 | 반환 타입 | 원본 변경 | 설명 | 분류 |
 | --- | --- | :---: | --- | :---: |
@@ -619,7 +785,9 @@ set → sorted() → list → str.join() → str
 
 ---
 
-# 9. 숫자 자료형과 관련 함수
+<a id="py-99-section-12"></a>
+
+## 9. 숫자 자료형과 관련 함수
 
 Python의 `int`와 `float`는 문자열이나 리스트처럼 많은 변경 메서드를 제공하지 않습니다.
 
@@ -643,7 +811,9 @@ print(f"{price:.2f}")
 
 ---
 
-# 10. 알아두면 좋은 내장 함수
+<a id="py-99-section-13"></a>
+
+## 10. 알아두면 좋은 내장 함수
 
 Python에서는 자료형 메서드 외에도 내장 함수를 자주 사용합니다.
 
@@ -669,7 +839,7 @@ Python에서는 자료형 메서드 외에도 내장 함수를 자주 사용합�
 | `any()` | bool | 🟢 유지 | 하나라도 참인지 |
 | `all()` | bool | 🟢 유지 | 모두 참인지 |
 
-## 10.1 `enumerate()`
+### 10.1 `enumerate()`
 
 ```python
 languages = ["HTML", "CSS", "Python"]
@@ -678,7 +848,9 @@ for index, language in enumerate(languages, start=1):
     print(index, language)
 ```
 
-## 10.2 `zip()`
+<a id="index-section-40"></a>
+
+### 10.2 `zip()`
 
 ```python
 subjects = ["HTML", "CSS", "Python"]
@@ -701,7 +873,9 @@ print(result)
 list + list → zip() → zip 객체 → dict() → dict
 ```
 
-## 10.3 `map()`과 `filter()`
+<a id="index-section-41"></a>
+
+### 10.3 `map()`과 `filter()`
 
 ```python
 numbers = [1, 2, 3, 4, 5]
@@ -728,9 +902,11 @@ result = [
 
 ---
 
-# 11. 자주 헷갈리는 기능 비교
+<a id="py-99-section-14"></a>
 
-## 11.1 `split()` vs `join()`
+## 11. 자주 헷갈리는 기능 비교
+
+### 11.1 `split()` vs `join()`
 
 | 구분 | `split()` | `join()` |
 | --- | --- | --- |
@@ -744,7 +920,7 @@ array = "HTML,CSS".split(",")
 string = ",".join(["HTML", "CSS"])
 ```
 
-## 11.2 `append()` vs `extend()`
+### 11.2 `append()` vs `extend()`
 
 | 구분 | `append()` | `extend()` |
 | --- | --- | --- |
@@ -752,7 +928,9 @@ string = ",".join(["HTML", "CSS"])
 | 반환 | `None` | `None` |
 | 원본 변경 | 있음 | 있음 |
 
-## 11.3 `remove()` vs `pop()`
+<a id="index-section-45"></a>
+
+### 11.3 `remove()` vs `pop()`
 
 | 구분 | `remove(value)` | `pop(index)` |
 | --- | --- | --- |
@@ -760,7 +938,9 @@ string = ",".join(["HTML", "CSS"])
 | 반환 | `None` | 제거한 값 |
 | 원본 변경 | 있음 | 있음 |
 
-## 11.4 `find()` vs `index()`
+<a id="index-section-46"></a>
+
+### 11.4 `find()` vs `index()`
 
 | 구분 | `find()` | `index()` |
 | --- | --- | --- |
@@ -768,14 +948,18 @@ string = ",".join(["HTML", "CSS"])
 | 반환 | int | int |
 | 사용 대상 | str | str, list, tuple |
 
-## 11.5 `dict.get()` vs `dict[key]`
+<a id="index-section-47"></a>
+
+### 11.5 `dict.get()` vs `dict[key]`
 
 | 구분 | `get()` | 대괄호 접근 |
 | --- | --- | --- |
 | 키 없음 | `None` 또는 기본값 | `KeyError` |
 | 키 있음 | 값 | 값 |
 
-## 11.6 `set.remove()` vs `set.discard()`
+<a id="index-section-48"></a>
+
+### 11.6 `set.remove()` vs `set.discard()`
 
 | 구분 | `remove()` | `discard()` |
 | --- | --- | --- |
@@ -784,9 +968,11 @@ string = ",".join(["HTML", "CSS"])
 
 ---
 
-# 12. 자료형 변환 연결 예제
+<a id="py-99-section-15"></a>
 
-## 12.1 dict → 문자열
+## 12. 자료형 변환 연결 예제
+
+### 12.1 dict → 문자열
 
 ```python
 product = {
@@ -809,7 +995,7 @@ print(summary)
 name=keyboard | price=50000 | stock=3
 ```
 
-## 12.2 str → list → 필터링 → str
+### 12.2 str → list → 필터링 → str
 
 ```python
 text = "apple, banana, peach, kiwi"
@@ -829,7 +1015,7 @@ print(result)
 APPLE / BANANA / PEACH
 ```
 
-## 12.3 set → list → str
+### 12.3 set → list → str
 
 ```python
 tags = {"python", "html", "python", "css"}
@@ -839,7 +1025,7 @@ result = ", ".join(sorted(tags))
 print(result)
 ```
 
-## 12.4 tuple → list → 수정 → tuple
+### 12.4 tuple → list → 수정 → tuple
 
 ```python
 numbers = (1, 2, 3)
@@ -851,7 +1037,7 @@ result = tuple(converted)
 print(result)
 ```
 
-## 12.5 두 list → dict → 문자열
+### 12.5 두 list → dict → 문자열
 
 ```python
 keys = ["name", "age", "job"]
@@ -867,7 +1053,7 @@ summary = ", ".join(
 print(summary)
 ```
 
-## 12.6 list[dict] → 필터링 → 문자열
+### 12.6 list[dict] → 필터링 → 문자열
 
 ```python
 products = [
@@ -893,7 +1079,9 @@ banana, peach
 
 ---
 
-# 13. 오류를 만났을 때 확인 순서
+<a id="py-99-section-16"></a>
+
+## 13. 오류를 만났을 때 확인 순서
 
 다음 오류가 나왔다고 가정합니다.
 
@@ -941,7 +1129,9 @@ values.append("new value")
 
 ---
 
-# 14. 최종 체크리스트
+<a id="py-99-section-17"></a>
+
+## 14. 최종 체크리스트
 
 - [ ] `split()`이 str을 list로 바꾼다는 것을 안다.
 - [ ] Python의 `join()` 호출 방향을 설명할 수 있다.
@@ -956,7 +1146,9 @@ values.append("new value")
 
 ---
 
-# 핵심 요약
+<a id="py-99-section-18"></a>
+
+## 핵심 요약
 
 ```text
 str.split() : str → list
@@ -990,7 +1182,9 @@ filter()    : 요소 선택
 3. 원본을 변경하는가?
 ```
 
-# V3 동작 백과 보강 — 메서드를 추론하는 법
+<a id="py-99-section-19"></a>
+
+## V3 동작 백과 보강 — 메서드를 추론하는 법
 
 `object.method(arguments)`에서는 객체 자료형, 반환값, 원본 변경 여부를 각각 확인한다.
 

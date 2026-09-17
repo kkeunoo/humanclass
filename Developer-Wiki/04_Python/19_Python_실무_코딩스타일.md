@@ -1,11 +1,100 @@
 ---
 title: Python 실무 코딩 스타일
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-encyclopedia
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # Python 실무 코딩 스타일
+
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#py-19-section-5)
+- [개념에서 실제 실행까지 — 리팩토링이란? — 결과를 유지하며 책임을 분리](#py-19-section-6)
+- [8. `None`은 `is`로 비교](#py-19-section-14)
+- [17. 비교식을 간단하게 작성](#py-19-section-23)
+- [55. 초보자 코드 → 실무형 코드 빠른 비교](#py-19-section-61)
+- [60. 핵심 요약](#py-19-section-66)
+- [61. 최종 체크리스트](#py-19-section-67)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [문서 정보](#py-19-section-1)
+- [개요](#py-19-section-2)
+- [공통 실무 데이터](#py-19-section-3)
+- [핵심 기준](#py-19-section-4)
+- [학습 목표](#py-19-section-5)
+- [개념에서 실제 실행까지 — 리팩토링이란? — 결과를 유지하며 책임을 분리](#py-19-section-6)
+- [1. 좋은 코드는 의도가 보인다](#py-19-section-7)
+- [2. 변수명은 명사, 불리언은 질문처럼 작성](#py-19-section-8)
+- [3. 함수명은 동작을 표현한다](#py-19-section-9)
+- [4. 인덱스가 필요하지 않으면 직접 순회](#py-19-section-10)
+- [5. 인덱스가 필요하면 `enumerate()`](#py-19-section-11)
+- [6. 두 목록을 함께 처리할 때 `zip()`](#py-19-section-12)
+- [7. 빈 컬렉션은 Truthy/Falsy로 확인](#py-19-section-13)
+- [8. `None`은 `is`로 비교](#py-19-section-14)
+- [9. 딕셔너리 키가 없을 수 있으면 `get()`](#py-19-section-15)
+- [10. 딕셔너리는 `items()`로 순회](#py-19-section-16)
+- [11. 하나라도 만족하는지 확인할 때 `any()`](#py-19-section-17)
+- [12. 모두 만족하는지 확인할 때 `all()`](#py-19-section-18)
+- [13. 단순한 변환은 리스트 컴프리헨션](#py-19-section-19)
+- [14. 단순한 필터링도 컴프리헨션](#py-19-section-20)
+- [15. 복잡한 컴프리헨션은 피한다](#py-19-section-21)
+- [16. 중첩 조건은 Guard Clause로 줄인다](#py-19-section-22)
+- [17. 비교식을 간단하게 작성](#py-19-section-23)
+- [18. 여러 값 포함 검사는 `in`](#py-19-section-24)
+- [19. 매직 넘버를 상수로 분리](#py-19-section-25)
+- [20. 매직 문자열도 상수로 분리](#py-19-section-26)
+- [21. 정렬은 `sorted()`와 `key`](#py-19-section-27)
+- [22. `lambda`는 짧은 기준 함수에만 사용](#py-19-section-28)
+- [23. 원본을 유지할지 직접 변경할지 구분](#py-19-section-29)
+- [24. 함수는 하나의 주요 책임만 담당](#py-19-section-30)
+- [25. 함수 분리는 줄 수가 아니라 책임 기준](#py-19-section-31)
+- [26. 반환값은 일관되게 유지](#py-19-section-32)
+- [27. 가변 기본 인자를 사용하지 않는다](#py-19-section-33)
+- [28. 입력 데이터를 함수 안에서 무조건 변경하지 않는다](#py-19-section-34)
+- [29. 언패킹으로 새 딕셔너리 만들기](#py-19-section-35)
+- [30. 반복되는 문자열 조합은 함수로 분리](#py-19-section-36)
+- [31. f-string을 사용해 의도를 명확하게 표현](#py-19-section-37)
+- [32. 타입 힌트로 입력과 결과를 표현](#py-19-section-38)
+- [33. 복잡한 딕셔너리 타입은 `TypedDict`](#py-19-section-39)
+- [34. Docstring은 함수의 계약을 설명](#py-19-section-40)
+- [35. 주석은 이유를 설명](#py-19-section-41)
+- [36. 예외는 구체적으로 처리](#py-19-section-42)
+- [37. 예외 대신 조건 검사가 더 자연스러운 경우](#py-19-section-43)
+- [38. 오류를 숨기지 않는다](#py-19-section-44)
+- [39. 파일 경로는 `pathlib.Path`](#py-19-section-45)
+- [40. 파일은 `with`문으로 연다](#py-19-section-46)
+- [41. import 순서는 역할별로 구분](#py-19-section-47)
+- [42. 클래스가 필요한지 먼저 판단](#py-19-section-48)
+- [43. 클래스는 유효한 상태를 유지](#py-19-section-49)
+- [44. Getter·Setter를 기계적으로 만들지 않는다](#py-19-section-50)
+- [45. 클래스 메서드 선택 기준](#py-19-section-51)
+- [46. 데이터 저장 중심 클래스는 `dataclass`](#py-19-section-52)
+- [47. 같은 의미의 중복 로직을 함수로 모은다](#py-19-section-53)
+- [48. 데이터 가공과 출력 로직을 분리](#py-19-section-54)
+- [49. 로그와 사용자 메시지를 구분](#py-19-section-55)
+- [50. PEP 8 핵심 규칙](#py-19-section-56)
+- [51. 자동화 도구를 활용한다](#py-19-section-57)
+- [52. 실무 리팩토링 예제: 사용자 보고서](#py-19-section-58)
+- [53. 실무 리팩토링 예제: 회원 등록](#py-19-section-59)
+- [54. 실무에서는 이렇게 선택한다](#py-19-section-60)
+- [55. 초보자 코드 → 실무형 코드 빠른 비교](#py-19-section-61)
+- [56. 좋은 코드라고 무조건 짧은 것은 아니다](#py-19-section-62)
+- [57. 리팩토링 순서](#py-19-section-63)
+- [58. 리팩토링 전 확인할 질문](#py-19-section-64)
+- [59. 자주 하는 실수](#py-19-section-65)
+- [60. 핵심 요약](#py-19-section-66)
+- [61. 최종 체크리스트](#py-19-section-67)
+- [마무리](#py-19-section-68)
+- [V3 동작 백과 보강 — 읽히는 코드의 판단 기준](#py-19-section-69)
+
+</details>
+
+---
+
+<a id="py-19-section-1"></a>
 
 ## 문서 정보
 
@@ -19,14 +108,16 @@ status: Completed
 | 핵심 범위 | 이름 작성, 조건문, 반복문, 함수 분리, 자료구조 활용, 예외 처리, 타입 힌트, 클래스 설계, 파일 경로, import, 리팩토링 |
 | 예제 형식 | Before → After → 실행 결과 → 개선 이유 → 실무 선택 기준 |
 | 종합 실습 | 별도 문서 `20_Python_종합실습.md`에서 관리 |
-| 문서 형식 | Python Developer-Wiki V2 확정 형식 |
+| 문서 형식 | 상세 학습 백과 형식 — 기존 학습·실습 본문 유지 |
 
 > 이 문서는 새로운 문법을 배우는 문서가 아니다.  
 > 지금까지 배운 Python 문법을 **실무에서는 왜, 어떻게 선택하고 조합하는지** 설명하는 실무 예제 문서다.
 
 ---
 
-# 개요
+<a id="py-19-section-2"></a>
+
+## 개요
 
 실행되는 코드가 반드시 좋은 코드는 아니다.
 
@@ -74,7 +165,9 @@ for user in users:
 
 ---
 
-# 공통 실무 데이터
+<a id="py-19-section-3"></a>
+
+## 공통 실무 데이터
 
 이 문서에서는 다음 사용자 데이터를 여러 예제에서 함께 사용한다.
 
@@ -124,7 +217,9 @@ users = [
 
 ---
 
-# 핵심 기준
+<a id="py-19-section-4"></a>
+
+## 핵심 기준
 
 | 기준 | 의미 |
 | --- | --- |
@@ -139,35 +234,116 @@ users = [
 
 ---
 
-# 학습 목표
+<a id="py-19-section-5"></a>
 
-이 문서를 학습한 뒤 다음 내용을 판단하고 작성할 수 있어야 한다.
+## 학습 목표
 
-- 실행되는 코드와 유지보수하기 좋은 코드의 차이를 설명할 수 있다.
-- 의미가 분명한 변수명과 함수명을 작성할 수 있다.
-- 인덱스가 필요하지 않을 때 직접 순회할 수 있다.
-- 인덱스가 필요할 때 `enumerate()`를 선택할 수 있다.
-- 두 반복 가능한 객체를 함께 처리할 때 `zip()`을 사용할 수 있다.
-- 비어 있는 컬렉션을 Pythonic하게 검사할 수 있다.
-- `dict.get()`과 직접 키 접근의 차이를 구분할 수 있다.
-- `any()`와 `all()`의 사용 상황을 판단할 수 있다.
-- 컴프리헨션이 적합한 경우와 반복문이 더 좋은 경우를 구분할 수 있다.
-- `sorted()`의 `key`를 이용해 객체 목록을 정렬할 수 있다.
-- 함수 하나의 책임을 작게 분리할 수 있다.
-- Guard Clause로 중첩 조건을 줄일 수 있다.
-- 매직 넘버와 매직 문자열을 상수로 분리할 수 있다.
-- 가변 기본 인자의 문제를 설명할 수 있다.
-- 타입 힌트와 Docstring의 목적을 이해한다.
-- 넓은 예외 처리보다 구체적인 예외 처리를 작성할 수 있다.
-- `pathlib.Path`로 파일 경로를 다룰 수 있다.
-- 클래스가 필요한 상황과 함수·딕셔너리로 충분한 상황을 구분할 수 있다.
-- 큰 코드를 검증·가공·저장·출력 단계로 리팩토링할 수 있다.
+- 이름·반환 계약·가변 데이터와 경계 입력을 검토한다.
+- 예제의 입력·처리·출력과 대표 실패 조건을 직접 확인한다.
 
 ---
 
-# 1. 좋은 코드는 의도가 보인다
+<a id="py-19-section-6"></a>
 
-## 1-1. Before
+## 개념에서 실제 실행까지 — 리팩토링이란? — 결과를 유지하며 책임을 분리
+
+### 무엇이며 왜 배워야 할까?
+
+리팩토링은 외부에서 관찰되는 동작을 유지하면서 내부 구조를 개선하는 작업이다. 코드가 짧아졌다는 사실보다 입력·출력·예외·원본 변경 계약이 유지되었는지 확인한다. 인덱스가 필요 없다면 값 직접 순회가 읽기 쉽지만 위치를 기록해야 한다면 enumerate가 적합하다.
+
+Wiki_test.py의 get_adult_names는 사람 딕셔너리 목록을 받아 age를 int로 변환하고 19 이상인 사람의 name을 str로 바꾸어 반환한다. 누락 키는 KeyError, 숫자가 아닌 나이는 ValueError가 난다. 타입 힌트만으로 자동 검증되지 않는다. 외부 입력이라면 허용 조건을 정하고 검증해야 한다.
+
+💡 19번은 별도 정규 수업 원본이 아니라 기존 문법을 묶은 확장 코딩 기준이다. 아래 예제는 가변 기본 인수를 None으로 바꾸는 이유를 호출별 상태로 보여 준다. [] 기본값은 정의 시점에 만들어져 호출끼리 공유하지만 None으로 받은 뒤 새 목록을 만들면 독립 호출이 된다. 문제를 숨기기 위해 모든 오류를 except: pass로 처리하는 것은 개선이 아니다.
+
+### 독립 실행 예제: 입력에서 결과까지
+
+다음 코드는 앞 문서의 변수 없이 새 .py 파일에서 실행할 수 있는 보충 예제다. 직접 적은 입력값을 사용하므로 같은 조건에서 아래 출력과 비교할 수 있다.
+
+```python
+def bad_add(name, names=[]):
+    names.append(name)
+    return names
+def add_name(name, names=None):
+    if names is None:
+        names = []
+    names.append(name)
+    return names
+print(bad_add('민수'))
+print(bad_add('지영'))
+print(add_name('민수'))
+print(add_name('지영'))
+```
+
+예상 출력:
+
+```text
+['민수']
+['민수', '지영']
+['민수']
+['지영']
+```
+
+### 실행 순서를 한 단계씩 따라가기
+
+1. bad_add 정의 때 기본 목록 하나가 생성된다.
+2. 두 호출이 같은 기본 목록에 추가하므로 두 번째 출력에 첫 이름이 남는다.
+3. add_name은 기본 None을 검사하고 각 호출에서 새 목록을 생성한다.
+4. 명시 목록을 전달하지 않은 두 호출은 독립 목록이므로 이름이 누적되지 않는다.
+
+### 원본에서 어디에 사용했을까?
+
+
+<a id="index-section-12"></a>
+
+#### 내 코드: `Wiki_test.py` 1~7행
+
+문맥 확인용 원본 발췌다. 이 조각만 독립 실행할 수 있다는 뜻은 아니다. 주석의 설명은 아래 실제 동작 해설과 대조한다.
+
+```python
+def get_adult_names(
+    people: list[dict[str, object]],
+) -> list[str]:
+    """성인 사용자 이름 목록을 반환한다."""
+    return [
+        str(person["name"])
+        for person in people
+```
+
+이 주제의 같은 이름 대응 파일은 강사님 원본에 없다. 관련 수업 개념과 아래 확장 예제를 구분하며 존재하지 않는 비교 구현을 만들지 않는다.
+
+add_name도 전달받은 목록은 변경한다. 원본 불변이 요구사항이면 복사하거나 새 결과를 반환한다. 같은 함수 정의를 다시 실행하면 기본값 실험 조건도 달라진다.
+
+### 실무에서 판단할 기준과 디버깅
+
+정상 입력에서 결과가 나오는 것뿐 아니라 아래 본문의 오류·경계 입력도 확인한다. 화면 출력, 반환값, 원본 객체의 변경은 서로 다른 관찰 대상이다. 문제가 생기면 실패 문장에 쓰인 값의 출처와 자료형을 먼저 확인한 뒤 같은 입력으로 다시 실행한다.
+
+### 이해 확인 실습과 해설
+
+1. names or []와 names is None은 언제 다를까?
+2. 타입 힌트가 있으므로 Wiki_test.py에 age='사과'를 넣어도 안전한가?
+
+<details>
+<summary>정답과 이유 보기 — 먼저 출력·상태를 예측한 뒤 펼치기</summary>
+
+1. 호출자가 빈 목록을 보낸 경우다. or []는 새 목록으로 바꾸지만 is None은 전달된 빈 목록을 그대로 사용한다.
+2. 아니다. int 변환에서 ValueError가 난다. 허용 입력 계약과 오류 처리 정책을 추가해야 한다.
+
+</details>
+
+### 이 주제를 다시 사용할 수 있는지 확인
+
+- [ ] 이 개념이 무엇이며 언제 필요한지 내 말로 설명한다.
+- [ ] 예제의 입력 출처, 자료형, 처리 순서, 결과를 설명한다.
+- [ ] 원본과 보충 예제의 조건이 같은지 구분한다.
+- [ ] 오류 사례와 경계 입력을 바꾸어 직접 확인한다.
+
+---
+
+<a id="py-19-section-7"></a>
+
+## 1. 좋은 코드는 의도가 보인다
+
+### 1-1. Before
 
 ```python
 a = 21
@@ -177,7 +353,7 @@ if a >= 19 and b:
     print("가능")
 ```
 
-## 1-2. After
+### 1-2. After
 
 ```python
 user_age = 21
@@ -187,13 +363,13 @@ if user_age >= 19 and is_active:
     print("이용 가능")
 ```
 
-## 1-3. 실행 결과
+### 1-3. 실행 결과
 
 ```text
 이용 가능
 ```
 
-## 1-4. 왜 개선됐을까?
+### 1-4. 왜 개선됐을까?
 
 | Before | After |
 | --- | --- |
@@ -208,7 +384,9 @@ if user_age >= 19 and is_active:
 
 ---
 
-# 2. 변수명은 명사, 불리언은 질문처럼 작성
+<a id="py-19-section-8"></a>
+
+## 2. 변수명은 명사, 불리언은 질문처럼 작성
 
 일반 값은 명사 형태로 작성한다.
 
@@ -226,7 +404,7 @@ has_permission = False
 can_edit = True
 ```
 
-## 2-1. Before
+### 2-1. Before
 
 ```python
 active = True
@@ -235,7 +413,7 @@ if active:
     print("활성 사용자")
 ```
 
-## 2-2. After
+### 2-2. After
 
 ```python
 is_active = True
@@ -244,7 +422,7 @@ if is_active:
     print("활성 사용자")
 ```
 
-## 2-3. 실행 결과
+### 2-3. 실행 결과
 
 ```text
 활성 사용자
@@ -260,7 +438,9 @@ if is_active:
 
 ---
 
-# 3. 함수명은 동작을 표현한다
+<a id="py-19-section-9"></a>
+
+## 3. 함수명은 동작을 표현한다
 
 함수는 무엇을 하는지 동사 형태로 표현한다.
 
@@ -282,7 +462,7 @@ process()
 work()
 ```
 
-## 3-1. Before
+### 3-1. Before
 
 ```python
 def data(users):
@@ -295,7 +475,7 @@ def data(users):
     return result
 ```
 
-## 3-2. After
+### 3-2. After
 
 ```python
 def get_active_users(users):
@@ -308,7 +488,7 @@ def get_active_users(users):
     return active_users
 ```
 
-## 3-3. 실행
+### 3-3. 실행
 
 ```python
 active_users = get_active_users(users)
@@ -317,14 +497,14 @@ for user in active_users:
     print(user["name"])
 ```
 
-## 3-4. 실행 결과
+### 3-4. 실행 결과
 
 ```text
 Kim
 Park
 ```
 
-## 3-5. 왜 개선됐을까?
+### 3-5. 왜 개선됐을까?
 
 - 함수 이름만 보고 반환 결과를 예상할 수 있다.
 - `result`보다 `active_users`가 데이터 의미를 드러낸다.
@@ -332,23 +512,25 @@ Park
 
 ---
 
-# 4. 인덱스가 필요하지 않으면 직접 순회
+<a id="py-19-section-10"></a>
 
-## 4-1. Before
+## 4. 인덱스가 필요하지 않으면 직접 순회
+
+### 4-1. Before
 
 ```python
 for index in range(len(users)):
     print(users[index]["name"])
 ```
 
-## 4-2. After
+### 4-2. After
 
 ```python
 for user in users:
     print(user["name"])
 ```
 
-## 4-3. 실행 결과
+### 4-3. 실행 결과
 
 ```text
 Kim
@@ -356,7 +538,7 @@ Lee
 Park
 ```
 
-## 4-4. 왜 개선됐을까?
+### 4-4. 왜 개선됐을까?
 
 Before는 다음 단계를 거친다.
 
@@ -386,9 +568,11 @@ After는 필요한 객체를 바로 사용한다.
 
 ---
 
-# 5. 인덱스가 필요하면 `enumerate()`
+<a id="py-19-section-11"></a>
 
-## 5-1. Before
+## 5. 인덱스가 필요하면 `enumerate()`
+
+### 5-1. Before
 
 ```python
 for index in range(len(users)):
@@ -397,7 +581,7 @@ for index in range(len(users)):
     print(index + 1, user["name"])
 ```
 
-## 5-2. After
+### 5-2. After
 
 ```python
 for number, user in enumerate(
@@ -407,7 +591,7 @@ for number, user in enumerate(
     print(number, user["name"])
 ```
 
-## 5-3. 실행 결과
+### 5-3. 실행 결과
 
 ```text
 1 Kim
@@ -415,7 +599,7 @@ for number, user in enumerate(
 3 Park
 ```
 
-## 5-4. 코드에서 무엇을 사용하는 걸까?
+### 5-4. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -429,9 +613,11 @@ for number, user in enumerate(
 
 ---
 
-# 6. 두 목록을 함께 처리할 때 `zip()`
+<a id="py-19-section-12"></a>
 
-## 6-1. Before
+## 6. 두 목록을 함께 처리할 때 `zip()`
+
+### 6-1. Before
 
 ```python
 names = ["Kim", "Lee", "Park"]
@@ -441,7 +627,7 @@ for index in range(len(names)):
     print(names[index], scores[index])
 ```
 
-## 6-2. After
+### 6-2. After
 
 ```python
 names = ["Kim", "Lee", "Park"]
@@ -451,7 +637,7 @@ for name, score in zip(names, scores):
     print(name, score)
 ```
 
-## 6-3. 실행 결과
+### 6-3. 실행 결과
 
 ```text
 Kim 85
@@ -459,7 +645,7 @@ Lee 58
 Park 92
 ```
 
-## 6-4. 왜 개선됐을까?
+### 6-4. 왜 개선됐을까?
 
 - 인덱스를 직접 관리하지 않는다.
 - 이름과 점수의 관계가 반복문에 바로 보인다.
@@ -481,23 +667,25 @@ for name, score in zip(
 
 ---
 
-# 7. 빈 컬렉션은 Truthy/Falsy로 확인
+<a id="py-19-section-13"></a>
 
-## 7-1. Before
+## 7. 빈 컬렉션은 Truthy/Falsy로 확인
+
+### 7-1. Before
 
 ```python
 if len(users) > 0:
     print("사용자가 있습니다.")
 ```
 
-## 7-2. After
+### 7-2. After
 
 ```python
 if users:
     print("사용자가 있습니다.")
 ```
 
-## 7-3. 실행 결과
+### 7-3. 실행 결과
 
 ```text
 사용자가 있습니다.
@@ -518,7 +706,7 @@ if not users:
 사용자가 없습니다.
 ```
 
-## 7-4. 왜 개선됐을까?
+### 7-4. 왜 개선됐을까?
 
 Python에서는 다음 값이 거짓으로 평가된다.
 
@@ -541,23 +729,25 @@ Python에서는 다음 값이 거짓으로 평가된다.
 
 ---
 
-# 8. `None`은 `is`로 비교
+<a id="py-19-section-14"></a>
 
-## 8-1. Before
+## 8. `None`은 `is`로 비교
+
+### 8-1. Before
 
 ```python
 if user == None:
     print("사용자 없음")
 ```
 
-## 8-2. After
+### 8-2. After
 
 ```python
 if user is None:
     print("사용자 없음")
 ```
 
-## 8-3. 왜 개선됐을까?
+### 8-3. 왜 개선됐을까?
 
 `None`은 하나의 특별한 객체다.
 
@@ -577,9 +767,11 @@ if user is not None:
 
 ---
 
-# 9. 딕셔너리 키가 없을 수 있으면 `get()`
+<a id="py-19-section-15"></a>
 
-## 9-1. Before
+## 9. 딕셔너리 키가 없을 수 있으면 `get()`
+
+### 9-1. Before
 
 ```python
 user = {
@@ -595,7 +787,7 @@ print(user["email"])
 KeyError
 ```
 
-## 9-2. After
+### 9-2. After
 
 ```python
 user = {
@@ -628,7 +820,7 @@ print(email)
 이메일 없음
 ```
 
-## 9-3. 언제 직접 접근해야 할까?
+### 9-3. 언제 직접 접근해야 할까?
 
 키가 반드시 존재해야 하는 데이터라면 직접 접근이 더 적절할 수 있다.
 
@@ -648,9 +840,11 @@ user_id = user["id"]
 
 ---
 
-# 10. 딕셔너리는 `items()`로 순회
+<a id="py-19-section-16"></a>
 
-## 10-1. Before
+## 10. 딕셔너리는 `items()`로 순회
+
+### 10-1. Before
 
 ```python
 user = {
@@ -662,21 +856,21 @@ for key in user:
     print(key, user[key])
 ```
 
-## 10-2. After
+### 10-2. After
 
 ```python
 for key, value in user.items():
     print(key, value)
 ```
 
-## 10-3. 실행 결과
+### 10-3. 실행 결과
 
 ```text
 name Kim
 age 21
 ```
 
-## 10-4. 선택 기준
+### 10-4. 선택 기준
 
 ```text
 키만 필요
@@ -691,11 +885,13 @@ age 21
 
 ---
 
-# 11. 하나라도 만족하는지 확인할 때 `any()`
+<a id="py-19-section-17"></a>
+
+## 11. 하나라도 만족하는지 확인할 때 `any()`
 
 활성 사용자가 한 명이라도 있는지 확인한다.
 
-## 11-1. Before
+### 11-1. Before
 
 ```python
 has_active_user = False
@@ -708,7 +904,7 @@ for user in users:
 print(has_active_user)
 ```
 
-## 11-2. After
+### 11-2. After
 
 ```python
 has_active_user = any(
@@ -719,13 +915,13 @@ has_active_user = any(
 print(has_active_user)
 ```
 
-## 11-3. 실행 결과
+### 11-3. 실행 결과
 
 ```text
 True
 ```
 
-## 11-4. 코드에서 무엇을 사용하는 걸까?
+### 11-4. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -738,11 +934,13 @@ True
 
 ---
 
-# 12. 모두 만족하는지 확인할 때 `all()`
+<a id="py-19-section-18"></a>
+
+## 12. 모두 만족하는지 확인할 때 `all()`
 
 모든 사용자가 이메일을 가지고 있는지 확인한다.
 
-## 12-1. Before
+### 12-1. Before
 
 ```python
 all_have_email = True
@@ -755,7 +953,7 @@ for user in users:
 print(all_have_email)
 ```
 
-## 12-2. After
+### 12-2. After
 
 ```python
 all_have_email = all(
@@ -766,13 +964,13 @@ all_have_email = all(
 print(all_have_email)
 ```
 
-## 12-3. 실행 결과
+### 12-3. 실행 결과
 
 ```text
 True
 ```
 
-## 12-4. 선택 기준
+### 12-4. 선택 기준
 
 ```text
 하나라도 조건 만족
@@ -784,9 +982,11 @@ True
 
 ---
 
-# 13. 단순한 변환은 리스트 컴프리헨션
+<a id="py-19-section-19"></a>
 
-## 13-1. Before
+## 13. 단순한 변환은 리스트 컴프리헨션
+
+### 13-1. Before
 
 ```python
 user_names = []
@@ -797,7 +997,7 @@ for user in users:
 print(user_names)
 ```
 
-## 13-2. After
+### 13-2. After
 
 ```python
 user_names = [
@@ -808,13 +1008,13 @@ user_names = [
 print(user_names)
 ```
 
-## 13-3. 실행 결과
+### 13-3. 실행 결과
 
 ```text
 ['Kim', 'Lee', 'Park']
 ```
 
-## 13-4. 왜 개선됐을까?
+### 13-4. 왜 개선됐을까?
 
 - 새 리스트를 만든다는 목적이 바로 보인다.
 - 단순 반복과 `append()`를 줄인다.
@@ -827,9 +1027,11 @@ print(user_names)
 
 ---
 
-# 14. 단순한 필터링도 컴프리헨션
+<a id="py-19-section-20"></a>
 
-## 14-1. Before
+## 14. 단순한 필터링도 컴프리헨션
+
+### 14-1. Before
 
 ```python
 adult_users = []
@@ -841,7 +1043,7 @@ for user in users:
 print(adult_users)
 ```
 
-## 14-2. After
+### 14-2. After
 
 ```python
 adult_users = [
@@ -854,7 +1056,7 @@ for user in adult_users:
     print(user["name"])
 ```
 
-## 14-3. 실행 결과
+### 14-3. 실행 결과
 
 ```text
 Kim
@@ -863,9 +1065,11 @@ Park
 
 ---
 
-# 15. 복잡한 컴프리헨션은 피한다
+<a id="py-19-section-21"></a>
 
-## 15-1. 읽기 어려운 코드
+## 15. 복잡한 컴프리헨션은 피한다
+
+### 15-1. 읽기 어려운 코드
 
 ```python
 result = [
@@ -879,7 +1083,7 @@ result = [
 
 실행할 수 있지만 조건이 여러 개 섞여 있다.
 
-## 15-2. 개선
+### 15-2. 개선
 
 ```python
 result = []
@@ -896,7 +1100,7 @@ for user in users:
         result.append(name.lower())
 ```
 
-## 15-3. 실행 결과
+### 15-3. 실행 결과
 
 ```text
 ['KIM', 'PARK']
@@ -912,9 +1116,11 @@ for user in users:
 
 ---
 
-# 16. 중첩 조건은 Guard Clause로 줄인다
+<a id="py-19-section-22"></a>
 
-## 16-1. Before
+## 16. 중첩 조건은 Guard Clause로 줄인다
+
+### 16-1. Before
 
 ```python
 def print_user(user):
@@ -924,7 +1130,7 @@ def print_user(user):
                 print(user["name"])
 ```
 
-## 16-2. After
+### 16-2. After
 
 ```python
 def print_adult_active_user(user):
@@ -940,21 +1146,21 @@ def print_adult_active_user(user):
     print(user["name"])
 ```
 
-## 16-3. 실행
+### 16-3. 실행
 
 ```python
 for user in users:
     print_adult_active_user(user)
 ```
 
-## 16-4. 실행 결과
+### 16-4. 실행 결과
 
 ```text
 Kim
 Park
 ```
 
-## 16-5. 왜 개선됐을까?
+### 16-5. 왜 개선됐을까?
 
 Before:
 
@@ -975,16 +1181,18 @@ After:
 
 ---
 
-# 17. 비교식을 간단하게 작성
+<a id="py-19-section-23"></a>
 
-## 17-1. Before
+## 17. 비교식을 간단하게 작성
+
+### 17-1. Before
 
 ```python
 if user["active"] == True:
     print(user["name"])
 ```
 
-## 17-2. After
+### 17-2. After
 
 ```python
 if user["active"]:
@@ -998,7 +1206,7 @@ if not user["active"]:
     print("비활성 사용자")
 ```
 
-## 17-3. 주의점
+### 17-3. 주의점
 
 값이 반드시 불리언인지 확인해야 하는 상황에서는 명시적 비교가 의미를 가질 수 있다.
 
@@ -1011,9 +1219,11 @@ if response.get("success") is True:
 
 ---
 
-# 18. 여러 값 포함 검사는 `in`
+<a id="py-19-section-24"></a>
 
-## 18-1. Before
+## 18. 여러 값 포함 검사는 `in`
+
+### 18-1. Before
 
 ```python
 role = "admin"
@@ -1026,7 +1236,7 @@ if (
     print("관리 기능 사용 가능")
 ```
 
-## 18-2. After
+### 18-2. After
 
 ```python
 allowed_roles = {
@@ -1039,13 +1249,13 @@ if role in allowed_roles:
     print("관리 기능 사용 가능")
 ```
 
-## 18-3. 실행 결과
+### 18-3. 실행 결과
 
 ```text
 관리 기능 사용 가능
 ```
 
-## 18-4. 왜 집합을 사용할까?
+### 18-4. 왜 집합을 사용할까?
 
 - 값의 포함 여부가 목적임을 표현한다.
 - 중복을 허용하지 않는다.
@@ -1053,9 +1263,11 @@ if role in allowed_roles:
 
 ---
 
-# 19. 매직 넘버를 상수로 분리
+<a id="py-19-section-25"></a>
 
-## 19-1. Before
+## 19. 매직 넘버를 상수로 분리
+
+### 19-1. Before
 
 ```python
 if user["age"] >= 19:
@@ -1064,7 +1276,7 @@ if user["age"] >= 19:
 
 코드가 여러 곳에 있다면 `19`의 의미와 정책 변경 범위를 찾기 어렵다.
 
-## 19-2. After
+### 19-2. After
 
 ```python
 ADULT_AGE = 19
@@ -1073,13 +1285,13 @@ if user["age"] >= ADULT_AGE:
     print("성인")
 ```
 
-## 19-3. 실행 결과
+### 19-3. 실행 결과
 
 ```text
 성인
 ```
 
-## 19-4. 상수 이름
+### 19-4. 상수 이름
 
 상수는 일반적으로 대문자와 밑줄을 사용한다.
 
@@ -1096,9 +1308,11 @@ MAX_LOGIN_ATTEMPTS = 5
 
 ---
 
-# 20. 매직 문자열도 상수로 분리
+<a id="py-19-section-26"></a>
 
-## 20-1. Before
+## 20. 매직 문자열도 상수로 분리
+
+### 20-1. Before
 
 ```python
 if user_role == "admin":
@@ -1107,7 +1321,7 @@ if user_role == "admin":
 
 여러 파일에서 `"admin"`을 반복하면 오타와 정책 변경 위험이 생긴다.
 
-## 20-2. After
+### 20-2. After
 
 ```python
 ROLE_ADMIN = "admin"
@@ -1130,11 +1344,13 @@ class UserRole(str, Enum):
 
 ---
 
-# 21. 정렬은 `sorted()`와 `key`
+<a id="py-19-section-27"></a>
+
+## 21. 정렬은 `sorted()`와 `key`
 
 점수 높은 순으로 사용자를 정렬한다.
 
-## 21-1. Before
+### 21-1. Before
 
 ```python
 for index in range(len(users)):
@@ -1154,7 +1370,7 @@ for index in range(len(users)):
 
 직접 정렬 알고리즘을 작성할 수 있지만 실무에서는 목적에 맞는 내장 기능을 우선 사용한다.
 
-## 21-2. After
+### 21-2. After
 
 ```python
 sorted_users = sorted(
@@ -1164,7 +1380,7 @@ sorted_users = sorted(
 )
 ```
 
-## 21-3. 실행
+### 21-3. 실행
 
 ```python
 for user in sorted_users:
@@ -1174,7 +1390,7 @@ for user in sorted_users:
     )
 ```
 
-## 21-4. 실행 결과
+### 21-4. 실행 결과
 
 ```text
 Park 92
@@ -1182,7 +1398,7 @@ Kim 85
 Lee 58
 ```
 
-## 21-5. 코드에서 무엇을 사용하는 걸까?
+### 21-5. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1193,9 +1409,11 @@ Lee 58
 
 ---
 
-# 22. `lambda`는 짧은 기준 함수에만 사용
+<a id="py-19-section-28"></a>
 
-## 22-1. 적절한 사용
+## 22. `lambda`는 짧은 기준 함수에만 사용
+
+### 22-1. 적절한 사용
 
 ```python
 sorted_users = sorted(
@@ -1204,7 +1422,7 @@ sorted_users = sorted(
 )
 ```
 
-## 22-2. 복잡한 `lambda`
+### 22-2. 복잡한 `lambda`
 
 ```python
 key=lambda user: (
@@ -1240,7 +1458,9 @@ sorted_users = sorted(
 
 ---
 
-# 23. 원본을 유지할지 직접 변경할지 구분
+<a id="py-19-section-29"></a>
+
+## 23. 원본을 유지할지 직접 변경할지 구분
 
 ```python
 numbers = [3, 1, 2]
@@ -1258,14 +1478,14 @@ sorted_numbers = sorted(numbers)
 numbers.sort()
 ```
 
-## 23-1. 비교
+### 23-1. 비교
 
 | 방식 | 결과 |
 | --- | --- |
 | `sorted(numbers)` | 새 리스트 반환 |
 | `numbers.sort()` | 원본 리스트 변경, 반환값 `None` |
 
-## 23-2. 실무 선택 기준
+### 23-2. 실무 선택 기준
 
 - 원본을 유지해야 함 → `sorted()`
 - 현재 리스트를 이후에도 정렬 상태로 사용 → `.sort()`
@@ -1273,9 +1493,11 @@ numbers.sort()
 
 ---
 
-# 24. 함수는 하나의 주요 책임만 담당
+<a id="py-19-section-30"></a>
 
-## 24-1. Before
+## 24. 함수는 하나의 주요 책임만 담당
+
+### 24-1. Before
 
 ```python
 def process_users(users):
@@ -1308,7 +1530,7 @@ def process_users(users):
 
 한 함수가 검증·필터링·정렬·출력을 모두 담당한다.
 
-## 24-2. After
+### 24-2. After
 
 ```python
 ADULT_AGE = 19
@@ -1365,14 +1587,14 @@ sorted_users = sort_users_by_score(
 print_user_scores(sorted_users)
 ```
 
-## 24-3. 실행 결과
+### 24-3. 실행 결과
 
 ```text
 Park 92
 Kim 85
 ```
 
-## 24-4. 개선된 점
+### 24-4. 개선된 점
 
 - 각 함수의 입력과 결과가 명확하다.
 - 개별 함수 테스트가 쉽다.
@@ -1381,7 +1603,9 @@ Kim 85
 
 ---
 
-# 25. 함수 분리는 줄 수가 아니라 책임 기준
+<a id="py-19-section-31"></a>
+
+## 25. 함수 분리는 줄 수가 아니라 책임 기준
 
 함수가 길다고 무조건 나누는 것은 아니다.
 
@@ -1404,9 +1628,11 @@ Kim 85
 
 ---
 
-# 26. 반환값은 일관되게 유지
+<a id="py-19-section-32"></a>
 
-## 26-1. Before
+## 26. 반환값은 일관되게 유지
+
+### 26-1. Before
 
 ```python
 def find_user(users, user_id):
@@ -1419,7 +1645,7 @@ def find_user(users, user_id):
 
 성공 시 딕셔너리, 실패 시 불리언을 반환한다.
 
-## 26-2. After
+### 26-2. After
 
 ```python
 def find_user(users, user_id):
@@ -1430,7 +1656,7 @@ def find_user(users, user_id):
     return None
 ```
 
-## 26-3. 실행
+### 26-3. 실행
 
 ```python
 user = find_user(
@@ -1444,13 +1670,13 @@ else:
     print(user["name"])
 ```
 
-## 26-4. 실행 결과
+### 26-4. 실행 결과
 
 ```text
 Lee
 ```
 
-## 26-5. 왜 `None`일까?
+### 26-5. 왜 `None`일까?
 
 “결과 없음”을 표현하는 일반적인 값으로 이해하기 쉽다.
 
@@ -1462,9 +1688,11 @@ dict | None
 
 ---
 
-# 27. 가변 기본 인자를 사용하지 않는다
+<a id="py-19-section-33"></a>
 
-## 27-1. Before
+## 27. 가변 기본 인자를 사용하지 않는다
+
+### 27-1. Before
 
 ```python
 def add_user(
@@ -1491,7 +1719,7 @@ print(add_user("Lee"))
 
 기본 리스트가 함수 정의 시 한 번 생성되어 호출 간 공유된다.
 
-## 27-2. After
+### 27-2. After
 
 ```python
 def add_user(
@@ -1506,7 +1734,7 @@ def add_user(
     return user_list
 ```
 
-## 27-3. 실행 결과
+### 27-3. 실행 결과
 
 ```text
 ['Kim']
@@ -1518,9 +1746,11 @@ def add_user(
 
 ---
 
-# 28. 입력 데이터를 함수 안에서 무조건 변경하지 않는다
+<a id="py-19-section-34"></a>
 
-## 28-1. Before
+## 28. 입력 데이터를 함수 안에서 무조건 변경하지 않는다
+
+### 28-1. Before
 
 ```python
 def deactivate_users(users):
@@ -1530,7 +1760,7 @@ def deactivate_users(users):
 
 호출한 쪽의 원본 데이터가 직접 변경된다.
 
-## 28-2. 원본 변경을 명확히 표현
+### 28-2. 원본 변경을 명확히 표현
 
 원본 변경이 목적이라면 함수명에 드러낸다.
 
@@ -1540,7 +1770,7 @@ def deactivate_users_in_place(users):
         user["active"] = False
 ```
 
-## 28-3. 새 데이터 반환
+### 28-3. 새 데이터 반환
 
 원본 유지가 필요하다면 새 딕셔너리를 만든다.
 
@@ -1565,16 +1795,18 @@ def get_deactivated_users(users):
 
 ---
 
-# 29. 언패킹으로 새 딕셔너리 만들기
+<a id="py-19-section-35"></a>
 
-## 29-1. Before
+## 29. 언패킹으로 새 딕셔너리 만들기
+
+### 29-1. Before
 
 ```python
 updated_user = user.copy()
 updated_user["active"] = False
 ```
 
-## 29-2. After
+### 29-2. After
 
 ```python
 updated_user = {
@@ -1583,7 +1815,7 @@ updated_user = {
 }
 ```
 
-## 29-3. 실행 결과
+### 29-3. 실행 결과
 
 ```python
 user = {
@@ -1610,9 +1842,11 @@ False
 
 ---
 
-# 30. 반복되는 문자열 조합은 함수로 분리
+<a id="py-19-section-36"></a>
 
-## 30-1. Before
+## 30. 반복되는 문자열 조합은 함수로 분리
+
+### 30-1. Before
 
 ```python
 for user in users:
@@ -1626,7 +1860,7 @@ for user in users:
     )
 ```
 
-## 30-2. After
+### 30-2. After
 
 ```python
 def format_user_summary(user):
@@ -1642,7 +1876,7 @@ for user in users:
     print(format_user_summary(user))
 ```
 
-## 30-3. 실행 결과
+### 30-3. 실행 결과
 
 ```text
 Kim / 21세 / 85점
@@ -1650,7 +1884,7 @@ Lee / 17세 / 58점
 Park / 28세 / 92점
 ```
 
-## 30-4. 개선된 점
+### 30-4. 개선된 점
 
 - 문자열 형식을 한곳에서 관리한다.
 - f-string으로 값의 위치가 명확하다.
@@ -1658,9 +1892,11 @@ Park / 28세 / 92점
 
 ---
 
-# 31. f-string을 사용해 의도를 명확하게 표현
+<a id="py-19-section-37"></a>
 
-## 31-1. Before
+## 31. f-string을 사용해 의도를 명확하게 표현
+
+### 31-1. Before
 
 ```python
 message = (
@@ -1671,7 +1907,7 @@ message = (
 )
 ```
 
-## 31-2. After
+### 31-2. After
 
 ```python
 message = (
@@ -1680,7 +1916,7 @@ message = (
 )
 ```
 
-## 31-3. 결과
+### 31-3. 결과
 
 ```text
 Kim님의 점수는 85점입니다.
@@ -1702,9 +1938,11 @@ print(f"{price:,}원")
 
 ---
 
-# 32. 타입 힌트로 입력과 결과를 표현
+<a id="py-19-section-38"></a>
 
-## 32-1. 타입 힌트 없는 함수
+## 32. 타입 힌트로 입력과 결과를 표현
+
+### 32-1. 타입 힌트 없는 함수
 
 ```python
 def get_adult_names(people):
@@ -1715,7 +1953,9 @@ def get_adult_names(people):
     ]
 ```
 
-## 32-2. 타입 힌트 적용
+<a id="index-section-157"></a>
+
+### 32-2. 타입 힌트 적용
 
 ```python
 def get_adult_names(
@@ -1728,7 +1968,7 @@ def get_adult_names(
     ]
 ```
 
-## 32-3. 입력
+### 32-3. 입력
 
 ```python
 people = [
@@ -1743,7 +1983,7 @@ people = [
 ]
 ```
 
-## 32-4. 실행
+### 32-4. 실행
 
 ```python
 adult_names = get_adult_names(
@@ -1753,13 +1993,13 @@ adult_names = get_adult_names(
 print(adult_names)
 ```
 
-## 32-5. 실행 결과
+### 32-5. 실행 결과
 
 ```text
 ['Kim']
 ```
 
-## 32-6. 타입 힌트의 역할
+### 32-6. 타입 힌트의 역할
 
 - 입력 자료형의 의도를 보여준다.
 - 반환 결과를 예상할 수 있다.
@@ -1773,7 +2013,9 @@ print(adult_names)
 
 ---
 
-# 33. 복잡한 딕셔너리 타입은 `TypedDict`
+<a id="py-19-section-39"></a>
+
+## 33. 복잡한 딕셔너리 타입은 `TypedDict`
 
 `dict[str, object]`는 각 키의 의미와 자료형이 충분히 드러나지 않는다.
 
@@ -1808,9 +2050,11 @@ def get_active_users(
 
 ---
 
-# 34. Docstring은 함수의 계약을 설명
+<a id="py-19-section-40"></a>
 
-## 34-1. 코드만 있는 함수
+## 34. Docstring은 함수의 계약을 설명
+
+### 34-1. 코드만 있는 함수
 
 ```python
 def get_active_users(users):
@@ -1821,7 +2065,9 @@ def get_active_users(users):
     ]
 ```
 
-## 34-2. Docstring 추가
+<a id="index-section-165"></a>
+
+### 34-2. Docstring 추가
 
 ```python
 def get_active_users(
@@ -1835,7 +2081,7 @@ def get_active_users(
     ]
 ```
 
-## 34-3. 언제 자세히 작성할까?
+### 34-3. 언제 자세히 작성할까?
 
 - 입력 규칙이 복잡함
 - 예외가 발생함
@@ -1848,9 +2094,11 @@ def get_active_users(
 
 ---
 
-# 35. 주석은 이유를 설명
+<a id="py-19-section-41"></a>
 
-## 35-1. 좋지 않은 주석
+## 35. 주석은 이유를 설명
+
+### 35-1. 좋지 않은 주석
 
 ```python
 # 나이를 확인한다.
@@ -1860,7 +2108,7 @@ if user["age"] >= 19:
 
 코드가 이미 같은 내용을 보여준다.
 
-## 35-2. 의미 있는 주석
+### 35-2. 의미 있는 주석
 
 ```python
 # 서비스 정책상 국내 성인 기준을 19세로 적용한다.
@@ -1877,9 +2125,11 @@ if user["age"] >= ADULT_AGE:
 
 ---
 
-# 36. 예외는 구체적으로 처리
+<a id="py-19-section-42"></a>
 
-## 36-1. Before
+## 36. 예외는 구체적으로 처리
+
+### 36-1. Before
 
 ```python
 try:
@@ -1888,7 +2138,7 @@ except:
     print("오류")
 ```
 
-## 36-2. After
+### 36-2. After
 
 ```python
 try:
@@ -1897,7 +2147,7 @@ except ValueError:
     print("나이는 숫자로 입력해주세요.")
 ```
 
-## 36-3. 개선된 점
+### 36-3. 개선된 점
 
 - 어떤 오류를 처리하는지 명확하다.
 - 다른 예상하지 못한 오류를 숨기지 않는다.
@@ -1905,9 +2155,11 @@ except ValueError:
 
 ---
 
-# 37. 예외 대신 조건 검사가 더 자연스러운 경우
+<a id="py-19-section-43"></a>
 
-## 37-1. 과도한 예외 사용
+## 37. 예외 대신 조건 검사가 더 자연스러운 경우
+
+### 37-1. 과도한 예외 사용
 
 ```python
 try:
@@ -1916,7 +2168,7 @@ except IndexError:
     first_user = None
 ```
 
-## 37-2. 조건 확인
+### 37-2. 조건 확인
 
 ```python
 first_user = (
@@ -1944,9 +2196,11 @@ else:
 
 ---
 
-# 38. 오류를 숨기지 않는다
+<a id="py-19-section-44"></a>
 
-## 38-1. Before
+## 38. 오류를 숨기지 않는다
+
+### 38-1. Before
 
 ```python
 try:
@@ -1957,7 +2211,7 @@ except Exception:
 
 문제가 발생해도 아무 정보가 없다.
 
-## 38-2. After
+### 38-2. After
 
 ```python
 try:
@@ -1977,9 +2231,11 @@ except ValueError as error:
 
 ---
 
-# 39. 파일 경로는 `pathlib.Path`
+<a id="py-19-section-45"></a>
 
-## 39-1. Before
+## 39. 파일 경로는 `pathlib.Path`
+
+### 39-1. Before
 
 ```python
 file_path = (
@@ -1991,7 +2247,7 @@ file_path = (
 )
 ```
 
-## 39-2. After
+### 39-2. After
 
 ```python
 from pathlib import Path
@@ -2004,7 +2260,7 @@ file_path = (
 )
 ```
 
-## 39-3. 실행
+### 39-3. 실행
 
 ```python
 print(file_path)
@@ -2012,7 +2268,7 @@ print(file_path.name)
 print(file_path.suffix)
 ```
 
-## 39-4. 출력 형태
+### 39-4. 출력 형태
 
 ```text
 data/users/users.json
@@ -2020,7 +2276,7 @@ users.json
 .json
 ```
 
-## 39-5. 왜 사용할까?
+### 39-5. 왜 사용할까?
 
 - 운영체제 경로 차이를 줄인다.
 - `/` 연산자로 경로를 자연스럽게 조합한다.
@@ -2036,9 +2292,11 @@ file_path.parent.mkdir(
 
 ---
 
-# 40. 파일은 `with`문으로 연다
+<a id="py-19-section-46"></a>
 
-## 40-1. Before
+## 40. 파일은 `with`문으로 연다
+
+### 40-1. Before
 
 ```python
 file = open(
@@ -2052,7 +2310,7 @@ content = file.read()
 file.close()
 ```
 
-## 40-2. After
+### 40-2. After
 
 ```python
 with open(
@@ -2070,7 +2328,9 @@ with open(
 
 ---
 
-# 41. import 순서는 역할별로 구분
+<a id="py-19-section-47"></a>
+
+## 41. import 순서는 역할별로 구분
 
 일반적인 순서:
 
@@ -2099,7 +2359,9 @@ from app.services import user_service
 
 ---
 
-# 42. 클래스가 필요한지 먼저 판단
+<a id="py-19-section-48"></a>
+
+## 42. 클래스가 필요한지 먼저 판단
 
 데이터를 한 번 변환하는 단순 기능은 함수로 충분할 수 있다.
 
@@ -2124,7 +2386,7 @@ class User:
         return self.age >= 19
 ```
 
-## 42-1. 선택 기준
+### 42-1. 선택 기준
 
 ```text
 입력 → 결과만 필요한가?
@@ -2142,9 +2404,11 @@ class User:
 
 ---
 
-# 43. 클래스는 유효한 상태를 유지
+<a id="py-19-section-49"></a>
 
-## 43-1. Before
+## 43. 클래스는 유효한 상태를 유지
+
+### 43-1. Before
 
 ```python
 class User:
@@ -2159,7 +2423,7 @@ class User:
 
 빈 이름과 음수 나이도 저장할 수 있다.
 
-## 43-2. After
+### 43-2. After
 
 ```python
 class User:
@@ -2187,7 +2451,7 @@ class User:
         return self.age >= ADULT_AGE
 ```
 
-## 43-3. 실행
+### 43-3. 실행
 
 ```python
 user = User(
@@ -2199,7 +2463,7 @@ print(user.name)
 print(user.is_adult())
 ```
 
-## 43-4. 실행 결과
+### 43-4. 실행 결과
 
 ```text
 Kim
@@ -2213,9 +2477,11 @@ True
 
 ---
 
-# 44. Getter·Setter를 기계적으로 만들지 않는다
+<a id="py-19-section-50"></a>
 
-## 44-1. 과도한 코드
+## 44. Getter·Setter를 기계적으로 만들지 않는다
+
+### 44-1. 과도한 코드
 
 ```python
 class User:
@@ -2262,7 +2528,9 @@ class User:
 
 ---
 
-# 45. 클래스 메서드 선택 기준
+<a id="py-19-section-51"></a>
+
+## 45. 클래스 메서드 선택 기준
 
 ```text
 현재 객체의 상태 사용
@@ -2305,9 +2573,11 @@ class User:
 
 ---
 
-# 46. 데이터 저장 중심 클래스는 `dataclass`
+<a id="py-19-section-52"></a>
 
-## 46-1. 일반 클래스
+## 46. 데이터 저장 중심 클래스는 `dataclass`
+
+### 46-1. 일반 클래스
 
 ```python
 class User:
@@ -2322,7 +2592,7 @@ class User:
         self.age = age
 ```
 
-## 46-2. `dataclass`
+### 46-2. `dataclass`
 
 ```python
 from dataclasses import dataclass
@@ -2335,7 +2605,7 @@ class User:
     age: int
 ```
 
-## 46-3. 실행
+### 46-3. 실행
 
 ```python
 user = User(
@@ -2347,7 +2617,7 @@ user = User(
 print(user)
 ```
 
-## 46-4. 출력 결과
+### 46-4. 출력 결과
 
 ```text
 User(user_id=1, name='Kim', age=21)
@@ -2357,9 +2627,11 @@ User(user_id=1, name='Kim', age=21)
 
 ---
 
-# 47. 같은 의미의 중복 로직을 함수로 모은다
+<a id="py-19-section-53"></a>
 
-## 47-1. Before
+## 47. 같은 의미의 중복 로직을 함수로 모은다
+
+### 47-1. Before
 
 ```python
 if (
@@ -2379,7 +2651,7 @@ if (
     save_user(user)
 ```
 
-## 47-2. After
+### 47-2. After
 
 ```python
 def is_valid_user(user):
@@ -2403,9 +2675,11 @@ if is_valid_user(user):
 
 ---
 
-# 48. 데이터 가공과 출력 로직을 분리
+<a id="py-19-section-54"></a>
 
-## 48-1. Before
+## 48. 데이터 가공과 출력 로직을 분리
+
+### 48-1. Before
 
 ```python
 def print_active_user_names(users):
@@ -2418,7 +2692,7 @@ def print_active_user_names(users):
 
 함수가 필터링·변환·출력을 모두 담당한다.
 
-## 48-2. After
+### 48-2. After
 
 ```python
 def get_active_user_names(users):
@@ -2438,7 +2712,7 @@ for name in active_names:
     print(name)
 ```
 
-## 48-3. 실행 결과
+### 48-3. 실행 결과
 
 ```text
 KIM
@@ -2449,7 +2723,9 @@ PARK
 
 ---
 
-# 49. 로그와 사용자 메시지를 구분
+<a id="py-19-section-55"></a>
+
+## 49. 로그와 사용자 메시지를 구분
 
 사용자에게는 이해하기 쉬운 메시지를 보여준다.
 
@@ -2484,7 +2760,9 @@ except ValueError as error:
 
 ---
 
-# 50. PEP 8 핵심 규칙
+<a id="py-19-section-56"></a>
+
+## 50. PEP 8 핵심 규칙
 
 Python의 대표적인 스타일 가이드가 PEP 8이다.
 
@@ -2500,13 +2778,13 @@ Python의 대표적인 스타일 가이드가 PEP 8이다.
 - import는 파일 상단에서 그룹별 정리
 - 한 줄에 여러 문장을 작성하지 않음
 
-## 50-1. Before
+### 50-1. Before
 
 ```python
 def add(a,b):return a+b
 ```
 
-## 50-2. After
+### 50-2. After
 
 ```python
 def add(a, b):
@@ -2518,7 +2796,9 @@ def add(a, b):
 
 ---
 
-# 51. 자동화 도구를 활용한다
+<a id="py-19-section-57"></a>
+
+## 51. 자동화 도구를 활용한다
 
 실무에서는 스타일을 사람의 기억에만 의존하지 않는다.
 
@@ -2547,9 +2827,11 @@ def add(a, b):
 
 ---
 
-# 52. 실무 리팩토링 예제: 사용자 보고서
+<a id="py-19-section-58"></a>
 
-## 52-1. 요구사항
+## 52. 실무 리팩토링 예제: 사용자 보고서
+
+### 52-1. 요구사항
 
 사용자 목록에서 다음 작업을 수행한다.
 
@@ -2561,7 +2843,7 @@ def add(a, b):
 
 ---
 
-## 52-2. Before
+### 52-2. Before
 
 ```python
 def report(users):
@@ -2596,7 +2878,7 @@ def report(users):
 
 ---
 
-## 52-3. After
+### 52-3. After
 
 ```python
 ADULT_AGE = 19
@@ -2663,20 +2945,20 @@ def print_user_report(users):
         )
 ```
 
-## 52-4. 실행
+### 52-4. 실행
 
 ```python
 print_user_report(users)
 ```
 
-## 52-5. 실행 결과
+### 52-5. 실행 결과
 
 ```text
 1. Park - 92점
 2. Kim - 85점
 ```
 
-## 52-6. 개선 과정
+### 52-6. 개선 과정
 
 ```text
 매직 넘버
@@ -2697,9 +2979,11 @@ range(len())
 
 ---
 
-# 53. 실무 리팩토링 예제: 회원 등록
+<a id="py-19-section-59"></a>
 
-## 53-1. Before
+## 53. 실무 리팩토링 예제: 회원 등록
+
+### 53-1. Before
 
 ```python
 def join(user_data):
@@ -2726,7 +3010,7 @@ def join(user_data):
     print("가입 완료")
 ```
 
-## 53-2. After
+### 53-2. After
 
 ```python
 def normalize_name(name):
@@ -2782,7 +3066,7 @@ def register_user(user_data):
     return user
 ```
 
-## 53-3. 실행
+### 53-3. 실행
 
 ```python
 new_user = register_user(
@@ -2796,14 +3080,14 @@ new_user = register_user(
 )
 ```
 
-## 53-4. 출력 결과
+### 53-4. 출력 결과
 
 ```text
 저장: {'id': 4, 'name': 'Choi', 'email': 'choi@example.com', 'age': 24, 'score': 0, 'active': True}
 가입 완료
 ```
 
-## 53-5. 개선된 점
+### 53-5. 개선된 점
 
 - 이름 정리와 이메일 검증을 각각 분리했다.
 - 오류를 출력 코드가 아니라 예외로 전달한다.
@@ -2812,9 +3096,11 @@ new_user = register_user(
 
 ---
 
-# 54. 실무에서는 이렇게 선택한다
+<a id="py-19-section-60"></a>
 
-## 54-1. 반복문 선택
+## 54. 실무에서는 이렇게 선택한다
+
+### 54-1. 반복문 선택
 
 ```text
 값만 필요
@@ -2833,7 +3119,7 @@ new_user = register_user(
 → all()
 ```
 
-## 54-2. 컬렉션 선택
+### 54-2. 컬렉션 선택
 
 ```text
 순서와 중복 필요
@@ -2849,7 +3135,7 @@ new_user = register_user(
 → set
 ```
 
-## 54-3. 결과 생성 방식
+### 54-3. 결과 생성 방식
 
 ```text
 작은 결과를 여러 번 사용
@@ -2865,7 +3151,7 @@ new_user = register_user(
 → dataclass 검토
 ```
 
-## 54-4. 코드 구조 선택
+### 54-4. 코드 구조 선택
 
 ```text
 단순 입력 → 결과
@@ -2883,9 +3169,11 @@ new_user = register_user(
 
 ---
 
-# 55. 초보자 코드 → 실무형 코드 빠른 비교
+<a id="py-19-section-61"></a>
 
-## 55-1. 빈 리스트 확인
+## 55. 초보자 코드 → 실무형 코드 빠른 비교
+
+### 55-1. 빈 리스트 확인
 
 ```python
 # Before
@@ -2899,7 +3187,7 @@ if not users:
     ...
 ```
 
-## 55-2. 리스트 순회
+### 55-2. 리스트 순회
 
 ```python
 # Before
@@ -2913,7 +3201,7 @@ for user in users:
     ...
 ```
 
-## 55-3. 순번 포함
+### 55-3. 순번 포함
 
 ```python
 # Before
@@ -2930,7 +3218,7 @@ for number, user in enumerate(
     print(number, user)
 ```
 
-## 55-4. 선택 키 조회
+### 55-4. 선택 키 조회
 
 ```python
 # Before
@@ -2948,7 +3236,7 @@ nickname = user.get(
 )
 ```
 
-## 55-5. 불리언 비교
+### 55-5. 불리언 비교
 
 ```python
 # Before
@@ -2962,7 +3250,7 @@ if is_active:
     ...
 ```
 
-## 55-6. 여러 값 비교
+### 55-6. 여러 값 비교
 
 ```python
 # Before
@@ -2979,7 +3267,7 @@ if role in {
     ...
 ```
 
-## 55-7. 리스트 생성
+### 55-7. 리스트 생성
 
 ```python
 # Before
@@ -2997,7 +3285,7 @@ names = [
 ]
 ```
 
-## 55-8. 하나라도 참
+### 55-8. 하나라도 참
 
 ```python
 # Before
@@ -3017,7 +3305,7 @@ found = any(
 )
 ```
 
-## 55-9. 모두 참
+### 55-9. 모두 참
 
 ```python
 # Before
@@ -3037,7 +3325,7 @@ valid = all(
 )
 ```
 
-## 55-10. 파일 경로
+### 55-10. 파일 경로
 
 ```python
 # Before
@@ -3052,7 +3340,7 @@ path = (
 )
 ```
 
-## 55-11. 파일 열기
+### 55-11. 파일 열기
 
 ```python
 # Before
@@ -3070,7 +3358,7 @@ with path.open(
     content = file.read()
 ```
 
-## 55-12. 예외 처리
+### 55-12. 예외 처리
 
 ```python
 # Before
@@ -3091,7 +3379,7 @@ except ValueError as error:
     )
 ```
 
-## 55-13. 문자열 조합
+### 55-13. 문자열 조합
 
 ```python
 # Before
@@ -3103,7 +3391,7 @@ message = name + " " + str(age)
 message = f"{name} {age}"
 ```
 
-## 55-14. 상수
+### 55-14. 상수
 
 ```python
 # Before
@@ -3119,7 +3407,7 @@ if score >= PASS_SCORE:
     ...
 ```
 
-## 55-15. 가변 기본 인자
+### 55-15. 가변 기본 인자
 
 ```python
 # Before
@@ -3142,7 +3430,9 @@ def append_item(
 
 ---
 
-# 56. 좋은 코드라고 무조건 짧은 것은 아니다
+<a id="py-19-section-62"></a>
+
+## 56. 좋은 코드라고 무조건 짧은 것은 아니다
 
 짧지만 이해하기 어려운 코드:
 
@@ -3187,7 +3477,9 @@ user_names = [
 
 ---
 
-# 57. 리팩토링 순서
+<a id="py-19-section-63"></a>
+
+## 57. 리팩토링 순서
 
 기존 코드를 한 번에 완전히 바꾸기보다 다음 순서로 개선한다.
 
@@ -3214,7 +3506,9 @@ user_names = [
 
 ---
 
-# 58. 리팩토링 전 확인할 질문
+<a id="py-19-section-64"></a>
+
+## 58. 리팩토링 전 확인할 질문
 
 - 이 코드의 현재 입력과 출력은 무엇인가?
 - 어떤 값이 반드시 존재해야 하는가?
@@ -3228,59 +3522,65 @@ user_names = [
 
 ---
 
-# 59. 자주 하는 실수
+<a id="py-19-section-65"></a>
 
-## 59-1. Pythonic 코드를 무조건 짧은 코드로 생각
+## 59. 자주 하는 실수
+
+### 59-1. Pythonic 코드를 무조건 짧은 코드로 생각
 
 짧아도 의미가 불분명하면 좋은 코드가 아니다.
 
-## 59-2. 모든 반복문을 컴프리헨션으로 변경
+### 59-2. 모든 반복문을 컴프리헨션으로 변경
 
 조건이 복잡하면 일반 반복문이 더 읽기 쉽다.
 
-## 59-3. 모든 함수를 지나치게 작게 분리
+### 59-3. 모든 함수를 지나치게 작게 분리
 
 한 줄 함수가 너무 많아지면 흐름을 따라가기 어려울 수 있다.
 
-## 59-4. 타입 힌트가 실행 시 검증한다고 생각
+### 59-4. 타입 힌트가 실행 시 검증한다고 생각
 
 타입 힌트는 기본적으로 문서와 정적 분석 정보다.
 
-## 59-5. `dict.get()`을 모든 키에 사용
+<a id="index-section-259"></a>
+
+### 59-5. `dict.get()`을 모든 키에 사용
 
 필수 키가 누락된 버그까지 숨길 수 있다.
 
-## 59-6. 모든 코드를 클래스로 작성
+### 59-6. 모든 코드를 클래스로 작성
 
 상태가 필요 없는 기능은 함수나 모듈이 더 적합할 수 있다.
 
-## 59-7. `lambda`에 복잡한 조건 작성
+### 59-7. `lambda`에 복잡한 조건 작성
 
 이름 있는 함수로 분리하는 편이 읽기 쉽다.
 
-## 59-8. 원본 객체 변경 여부를 고려하지 않음
+### 59-8. 원본 객체 변경 여부를 고려하지 않음
 
 함수 호출 후 외부 데이터가 예상치 않게 바뀔 수 있다.
 
-## 59-9. 예외를 잡고 아무 처리도 하지 않음
+### 59-9. 예외를 잡고 아무 처리도 하지 않음
 
 버그와 데이터 오류를 숨길 수 있다.
 
-## 59-10. 주석으로 나쁜 이름을 보완
+### 59-10. 주석으로 나쁜 이름을 보완
 
 주석보다 변수와 함수 이름을 먼저 개선한다.
 
-## 59-11. 매직 넘버와 문자열 반복
+### 59-11. 매직 넘버와 문자열 반복
 
 정책 변경 시 수정 위치를 찾기 어렵다.
 
-## 59-12. 리팩토링과 기능 추가를 동시에 크게 진행
+### 59-12. 리팩토링과 기능 추가를 동시에 크게 진행
 
 오류가 발생했을 때 원인을 구분하기 어렵다.
 
 ---
 
-# 60. 핵심 요약
+<a id="py-19-section-66"></a>
+
+## 60. 핵심 요약
 
 ```text
 좋은 이름
@@ -3335,7 +3635,9 @@ Guard Clause
 
 ---
 
-# 61. 최종 체크리스트
+<a id="py-19-section-67"></a>
+
+## 61. 최종 체크리스트
 
 - [ ] 변수명과 함수명만 보고 역할을 이해할 수 있는가?
 - [ ] 인덱스가 필요하지 않은데 `range(len())`을 사용하지 않았는가?
@@ -3361,7 +3663,9 @@ Guard Clause
 
 ---
 
-# 마무리
+<a id="py-19-section-68"></a>
+
+## 마무리
 
 실무 코딩 스타일은 특정 문법을 많이 사용하는 것이 아니다.
 
@@ -3379,7 +3683,9 @@ Guard Clause
 
 Pythonic한 코드는 단순히 짧은 코드가 아니라, **Python을 사용하는 개발자가 자연스럽게 읽고 예상할 수 있는 코드**다.
 
-# V3 동작 백과 보강 — 읽히는 코드의 판단 기준
+<a id="py-19-section-69"></a>
+
+## V3 동작 백과 보강 — 읽히는 코드의 판단 기준
 
 좋은 스타일은 값의 흐름과 실패 지점을 예측하게 한다. 이름은 역할과 단위를 드러내고, 함수는 한 책임을 가지며, 외부 입력은 경계에서 검증한다.
 

@@ -1,7 +1,7 @@
 ---
 title: JavaScript 변수와 자료형
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,97 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: 변수는 값에 붙인 이름, 자료형은 그 값의 성질이다](#js-01-section-4)
+- [25. `var`, `let`, `const` 비교](#js-01-section-29)
+- [42. `Number()`와 `parseInt()` 비교](#js-01-section-46)
+- [56. 내 코드와 강사님 코드 비교](#js-01-section-60)
+- [58. 실무형 예제: 주문 금액 계산](#js-01-section-62)
+- [59. 대표 오류로 이해하기](#js-01-section-63)
+- [60. 자주 하는 실수](#js-01-section-64)
+- [61. 핵심 요약](#js-01-section-65)
+- [62. 최종 체크리스트](#js-01-section-66)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-01-section-1)
+- [핵심 개념](#js-01-section-2)
+- [학습 목표](#js-01-section-3)
+- [개념에서 실제 실행까지: 변수는 값에 붙인 이름, 자료형은 그 값의 성질이다](#js-01-section-4)
+- [1. JavaScript 실행 구조](#js-01-section-5)
+- [2. 문서 언어와 제목](#js-01-section-6)
+- [3. 한 줄 주석](#js-01-section-7)
+- [4. 여러 줄 주석](#js-01-section-8)
+- [5. `console.log()`](#js-01-section-9)
+- [6. `console.error()`](#js-01-section-10)
+- [7. `alert()`](#js-01-section-11)
+- [8. `confirm()`](#js-01-section-12)
+- [9. `prompt()`](#js-01-section-13)
+- [10. 변수란?](#js-01-section-14)
+- [11. 선언·할당·초기화](#js-01-section-15)
+- [12. 원본의 첫 번째 `a = 15`](#js-01-section-16)
+- [13. `var`](#js-01-section-17)
+- [14. `var` 재할당](#js-01-section-18)
+- [15. `var` 재선언](#js-01-section-19)
+- [16. 선언 없는 할당](#js-01-section-20)
+- [17. Strict mode](#js-01-section-21)
+- [18. `let`](#js-01-section-22)
+- [19. `let` 재할당](#js-01-section-23)
+- [20. `let` 재선언 오류](#js-01-section-24)
+- [21. `const`](#js-01-section-25)
+- [22. `const` 재할당 오류](#js-01-section-26)
+- [23. `const` 초기값](#js-01-section-27)
+- [24. `const` 객체의 내부 변경](#js-01-section-28)
+- [25. `var`, `let`, `const` 비교](#js-01-section-29)
+- [26. 동적 타입](#js-01-section-30)
+- [27. `typeof`](#js-01-section-31)
+- [28. Number 타입](#js-01-section-32)
+- [29. String 타입](#js-01-section-33)
+- [30. Boolean 타입](#js-01-section-34)
+- [31. `undefined`](#js-01-section-35)
+- [32. `not defined`와 `undefined`](#js-01-section-36)
+- [33. `null`](#js-01-section-37)
+- [34. `Infinity`](#js-01-section-38)
+- [35. `NaN`](#js-01-section-39)
+- [36. `NaN` 검사](#js-01-section-40)
+- [37. 템플릿 리터럴](#js-01-section-41)
+- [38. 문자열 연결과 템플릿 리터럴](#js-01-section-42)
+- [39. 문자열과 숫자의 `+`](#js-01-section-43)
+- [40. `Number()`](#js-01-section-44)
+- [41. `parseInt()`](#js-01-section-45)
+- [42. `Number()`와 `parseInt()` 비교](#js-01-section-46)
+- [43. 진법 지정](#js-01-section-47)
+- [44. `String()`](#js-01-section-48)
+- [45. 암시적 형 변환](#js-01-section-49)
+- [46. 변수 이름 표기법](#js-01-section-50)
+- [47. 식별자 규칙](#js-01-section-51)
+- [48. 한글 변수명](#js-01-section-52)
+- [49. 산술 연산](#js-01-section-53)
+- [50. 몫 구하기](#js-01-section-54)
+- [51. 복합 대입 연산자](#js-01-section-55)
+- [52. 원본의 증가 계산](#js-01-section-56)
+- [53. 단위 계산](#js-01-section-57)
+- [54. 회식비 나누기](#js-01-section-58)
+- [55. 여러 변수 선언](#js-01-section-59)
+- [56. 내 코드와 강사님 코드 비교](#js-01-section-60)
+- [57. 기존 코드에서 개선 코드로 바꾼 이유](#js-01-section-61)
+- [58. 실무형 예제: 주문 금액 계산](#js-01-section-62)
+- [59. 대표 오류로 이해하기](#js-01-section-63)
+- [60. 자주 하는 실수](#js-01-section-64)
+- [61. 핵심 요약](#js-01-section-65)
+- [62. 최종 체크리스트](#js-01-section-66)
+- [마무리](#js-01-section-67)
+- [V3 실행 추적 카드 — 리터럴/입력 → 값과 변수](#js-01-section-68)
+
+</details>
+
+---
+
+<a id="js-01-section-1"></a>
+
+## 개요
 
 JavaScript는 웹 페이지에 동작과 로직을 추가하는 프로그래밍 언어다.
 
@@ -54,7 +144,9 @@ JavaScript
 
 ---
 
-# 핵심 개념
+<a id="js-01-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -76,33 +168,118 @@ JavaScript
 
 ---
 
-# 학습 목표
+<a id="js-01-section-3"></a>
 
-이 문서를 학습한 뒤 다음 내용을 설명하고 작성할 수 있어야 한다.
+## 학습 목표
 
-- HTML 문서에서 JavaScript를 실행할 수 있다.
-- 한 줄 주석과 여러 줄 주석을 작성할 수 있다.
-- `console.log()`와 `console.error()`의 역할을 구분할 수 있다.
-- `alert()`, `confirm()`, `prompt()`의 반환값을 설명할 수 있다.
-- 선언·할당·초기화·재할당·재선언을 구분할 수 있다.
-- `var`, `let`, `const`의 차이를 설명할 수 있다.
-- 실무에서 `const`를 우선 사용하는 이유를 이해한다.
-- 선언 없이 값을 할당하는 코드의 위험을 설명할 수 있다.
-- JavaScript가 동적 타입 언어라는 의미를 이해한다.
-- `undefined`, `null`, `Infinity`, `NaN`을 구분할 수 있다.
-- `typeof`로 값의 자료형을 확인할 수 있다.
-- 문자열 연결과 템플릿 리터럴을 사용할 수 있다.
-- `Number()`, `parseInt()`, `String()`의 차이를 설명할 수 있다.
-- 나눗셈·나머지·몫 계산을 작성할 수 있다.
-- 복합 대입 연산자를 사용할 수 있다.
-- camelCase와 JavaScript 식별자 규칙을 이해한다.
-- 계산 결과를 의미 있는 변수명과 단위로 출력할 수 있다.
+- 문자열을 숫자로 검증한 다음 계산할 수 있다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. JavaScript 실행 구조
+<a id="js-01-section-4"></a>
 
-## 1-1. 내 코드와 강사님 코드
+## 개념에서 실제 실행까지: 변수는 값에 붙인 이름, 자료형은 그 값의 성질이다
+
+입력창에서 받은 "10.1"과 코드에 적은 10.1은 겉모양이 비슷하지만 서로 다른 값이다. 변수에는 값이 저장되고, typeof는 현재 값의 종류를 알려 준다. 변수 자체가 숫자형으로 영구 고정되는 것은 아니다. 선언, 재할당, 같은 이름의 재선언을 구분해야 이후 계산 오류를 설명할 수 있다.
+
+수업의 strA는 문자열이다. strA + 2는 먼저 숫자로 바꾸는 계산이 아니라 문자열 연결이 되어 "10.12"를 만든다. Number(strA)는 10.1을 돌려주므로 그 다음 + 2는 12.1이다. strB의 "10개"는 Number로 NaN이지만 parseInt로 10이다. 따라서 '일부 숫자를 읽기'와 '전체 입력 검증'은 다른 요구사항이다.
+
+내 코드와 강사님 코드 모두 a = 15 뒤에 var a가 같은 script에 있다. 이는 var 바인딩이 먼저 준비되는 경우이고, c = 50처럼 어디에도 선언이 없는 할당과 구분한다. 선언 없는 할당이 '타입 없는 변수 선언 방식'인 것은 아니다. strict mode나 module에서는 ReferenceError가 난다. console.error는 오류처럼 보이는 로그를 남기지만 throw처럼 실행을 중단하지 않는다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/01_var.html`
+
+```javascript
+let strA = "10.1"
+        let strB = "10개"
+        console.log( strA + 2 ) // "10.12"
+        let numA = Number(strA) + 2
+        console.log(numA)
+        console.log( Number(strB) )
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/01_var.html`
+
+```javascript
+let strA = "10.1"
+        let strB = "10개"
+        console.log( strA + 2 ) // "10.12"
+        let numA = Number(strA) + 2
+        console.log(numA)
+        console.log( Number(strB) )
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+const raw = "10.1";
+const value = Number(raw);
+console.log(typeof raw, raw + 2);
+console.log(typeof value, value + 2);
+console.log(Number("10개"), parseInt("10개", 10));
+console.log(Number(null), Number(""));
+```
+
+예상 출력:
+
+```text
+string 10.12
+number 12.1
+NaN 10
+0 0
+```
+
+### 결과를 역추적하는 방법
+
+null과 빈 문자열을 숫자로 먼저 바꾸면 취소·미입력이 0으로 섞인다. prompt의 반환값을 먼저 검사한 뒤 Number.isFinite로 숫자 범위를 검증한다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** 회식비100000원을9명에게 정수 원으로 나누고, 주최자가 나머지까지 낸다. 8명의 금액과 주최자 금액을 구한다.
+
+**응용·디버깅 실습:** 입력 "10개"를 Number와 parseInt로 각각 처리한 뒤 허용 여부를 설명한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. Math.trunc(100000/9)는11111, 나머지는1이다. 8명은11111원, 주최자는11112원이며 합100000원이다.
+2. Number는NaN, parseInt는10이다. 전체가 숫자여야 하는 입력에는 parseInt 성공만으로 허용하지 않는다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** "0", "", null을 입력받았을 때 모두 같은 0원으로 처리해도 될까?
+
+**해설:** 아니다. "0"은 사용자가 입력한 값, ""는 비어 있음, null은 취소다. 변환 전에 구분해야 한다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-01-section-5"></a>
+
+## 1. JavaScript 실행 구조
+
+### 1-1. 내 코드와 강사님 코드
 
 ```html
 <!DOCTYPE html>
@@ -126,7 +303,7 @@ JavaScript
 
 두 원본은 같은 HTML 구조에서 `<head>` 내부의 `<script>`로 JavaScript를 실행한다.
 
-## 1-2. 실행 결과
+### 1-2. 실행 결과
 
 브라우저 화면에는 별도 내용이 나타나지 않고 개발자 도구의 Console에 다음 값이 출력된다.
 
@@ -134,7 +311,7 @@ JavaScript
 hello world
 ```
 
-## 1-3. 실무에서는?
+### 1-3. 실무에서는?
 
 JavaScript 코드가 길어지면 HTML과 분리한다.
 
@@ -146,7 +323,9 @@ JavaScript 코드가 길어지면 HTML과 분리한다.
 
 ---
 
-# 2. 문서 언어와 제목
+<a id="js-01-section-6"></a>
+
+## 2. 문서 언어와 제목
 
 원본:
 
@@ -166,9 +345,11 @@ JavaScript 코드가 길어지면 HTML과 분리한다.
 
 ---
 
-# 3. 한 줄 주석
+<a id="js-01-section-7"></a>
 
-## 3-1. 원본 코드
+## 3. 한 줄 주석
+
+### 3-1. 원본 코드
 
 ```javascript
 // 한줄 주석
@@ -180,7 +361,7 @@ JavaScript 코드가 길어지면 HTML과 분리한다.
 const userCount = 3 // 현재 로그인 사용자 수
 ```
 
-## 3-2. 주석 작성 기준
+### 3-2. 주석 작성 기준
 
 좋지 않은 예:
 
@@ -200,9 +381,11 @@ const userCount = 3
 
 ---
 
-# 4. 여러 줄 주석
+<a id="js-01-section-8"></a>
 
-## 4-1. 원본 코드
+## 4. 여러 줄 주석
+
+### 4-1. 원본 코드
 
 ```javascript
 /*
@@ -213,7 +396,7 @@ const userCount = 3
 
 `/*`와 `*/` 사이를 주석 처리한다.
 
-## 4-2. 주의점
+### 4-2. 주의점
 
 JavaScript 여러 줄 주석은 일반적으로 중첩할 수 없다.
 
@@ -228,9 +411,11 @@ JavaScript 여러 줄 주석은 일반적으로 중첩할 수 없다.
 
 ---
 
-# 5. `console.log()`
+<a id="js-01-section-9"></a>
 
-## 5-1. 원본 코드
+## 5. `console.log()`
+
+### 5-1. 원본 코드
 
 ```javascript
 console.log("hello world")
@@ -240,7 +425,7 @@ console.log(11)
 
 `console.log()`는 개발자 도구 콘솔에 값을 출력한다.
 
-## 5-2. 여러 값 출력
+### 5-2. 여러 값 출력
 
 ```javascript
 const userName = "Kim"
@@ -249,7 +434,7 @@ const userAge = 21
 console.log("이름:", userName, "나이:", userAge)
 ```
 
-## 5-3. 출력 결과
+### 5-3. 출력 결과
 
 ```text
 이름: Kim 나이: 21
@@ -259,9 +444,11 @@ console.log("이름:", userName, "나이:", userAge)
 
 ---
 
-# 6. `console.error()`
+<a id="js-01-section-10"></a>
 
-## 6-1. 원본 코드
+## 6. `console.error()`
+
+### 6-1. 원본 코드
 
 ```javascript
 console.error("아무거나")
@@ -286,9 +473,11 @@ console.error("사용자 정보를 불러오지 못했습니다.")
 
 ---
 
-# 7. `alert()`
+<a id="js-01-section-11"></a>
 
-## 7-1. 원본 코드
+## 7. `alert()`
+
+### 7-1. 원본 코드
 
 ```javascript
 // alert("hello 엔터\n world")
@@ -302,7 +491,7 @@ alert("첫 번째 줄\n두 번째 줄")
 
 `\n`은 줄바꿈 문자다.
 
-## 7-2. 실무에서는?
+### 7-2. 실무에서는?
 
 `alert()`는 사용자가 닫을 때까지 화면 상호작용을 막는다.
 
@@ -315,16 +504,18 @@ alert("첫 번째 줄\n두 번째 줄")
 
 ---
 
-# 8. `confirm()`
+<a id="js-01-section-12"></a>
 
-## 8-1. 원본 코드
+## 8. `confirm()`
+
+### 8-1. 원본 코드
 
 ```javascript
 // const result = confirm("할래말래")
 // console.log("confirm 결과:", result)
 ```
 
-## 8-2. 반환값
+### 8-2. 반환값
 
 ```text
 확인
@@ -334,7 +525,7 @@ alert("첫 번째 줄\n두 번째 줄")
 → false
 ```
 
-## 8-3. 실행 예시
+### 8-3. 실행 예시
 
 ```javascript
 const shouldDelete = confirm("정말 삭제하시겠습니까?")
@@ -346,16 +537,18 @@ console.log(shouldDelete)
 
 ---
 
-# 9. `prompt()`
+<a id="js-01-section-13"></a>
 
-## 9-1. 원본 코드
+## 9. `prompt()`
+
+### 9-1. 원본 코드
 
 ```javascript
 // const password = prompt("비번을 입력하세요")
 // console.log("prompt 결과:", password, "입니다")
 ```
 
-## 9-2. 반환값
+### 9-2. 반환값
 
 ```text
 문자 입력 후 확인
@@ -368,7 +561,7 @@ console.log(shouldDelete)
 → null
 ```
 
-## 9-3. 주의점
+### 9-3. 주의점
 
 `prompt()`로 숫자를 입력해도 결과는 문자열이다.
 
@@ -386,7 +579,9 @@ string
 
 ---
 
-# 10. 변수란?
+<a id="js-01-section-14"></a>
+
+## 10. 변수란?
 
 변수는 값을 저장하고 다시 사용할 수 있도록 이름을 붙인 식별자다.
 
@@ -394,7 +589,7 @@ string
 let count = 10
 ```
 
-## 10-1. 구성
+### 10-1. 구성
 
 | 요소 | 의미 |
 | --- | --- |
@@ -405,7 +600,9 @@ let count = 10
 
 ---
 
-# 11. 선언·할당·초기화
+<a id="js-01-section-15"></a>
+
+## 11. 선언·할당·초기화
 
 선언:
 
@@ -438,9 +635,11 @@ let count = 10
 
 ---
 
-# 12. 원본의 첫 번째 `a = 15`
+<a id="js-01-section-16"></a>
 
-## 12-1. 원본 코드
+## 12. 원본의 첫 번째 `a = 15`
+
+### 12-1. 원본 코드
 
 ```javascript
 a = 15
@@ -462,7 +661,7 @@ console.log(a)
 a = 10
 ```
 
-## 12-2. 주의점
+### 12-2. 주의점
 
 초기화 값 `10`까지 위로 이동하는 것은 아니다.
 
@@ -473,9 +672,11 @@ a = 10
 
 ---
 
-# 13. `var`
+<a id="js-01-section-17"></a>
 
-## 13-1. 원본 코드
+## 13. `var`
+
+### 13-1. 원본 코드
 
 ```javascript
 var a = 10
@@ -493,7 +694,9 @@ var b = 20
 
 ---
 
-# 14. `var` 재할당
+<a id="js-01-section-18"></a>
+
+## 14. `var` 재할당
 
 ```javascript
 var a = 10
@@ -513,9 +716,11 @@ console.log(a)
 
 ---
 
-# 15. `var` 재선언
+<a id="js-01-section-19"></a>
 
-## 15-1. 원본 코드
+## 15. `var` 재선언
+
+### 15-1. 원본 코드
 
 ```javascript
 var a = 10
@@ -524,7 +729,7 @@ var a = 40
 console.log(a)
 ```
 
-## 15-2. 출력 결과
+### 15-2. 출력 결과
 
 ```text
 40
@@ -536,9 +741,11 @@ console.log(a)
 
 ---
 
-# 16. 선언 없는 할당
+<a id="js-01-section-20"></a>
 
-## 16-1. 원본 코드
+## 16. 선언 없는 할당
+
+### 16-1. 원본 코드
 
 ```javascript
 c = 50
@@ -550,7 +757,7 @@ console.log(c)
 
 `50`은 Number 타입이다. 문제는 **선언 키워드 없이 값을 할당했다는 것**이다.
 
-## 16-2. 위험
+### 16-2. 위험
 
 - 의도하지 않은 전역 속성 생성
 - 변수명 충돌
@@ -558,7 +765,7 @@ console.log(c)
 - strict mode에서 오류
 - ES module에서 오류
 
-## 16-3. 개선
+### 16-3. 개선
 
 ```javascript
 const c = 50
@@ -572,7 +779,9 @@ let c = 50
 
 ---
 
-# 17. Strict mode
+<a id="js-01-section-21"></a>
+
+## 17. Strict mode
 
 ```javascript
 "use strict"
@@ -592,9 +801,11 @@ ES module은 기본적으로 Strict mode로 실행된다.
 
 ---
 
-# 18. `let`
+<a id="js-01-section-22"></a>
 
-## 18-1. 원본 코드
+## 18. `let`
+
+### 18-1. 원본 코드
 
 ```javascript
 let d = 60
@@ -613,7 +824,9 @@ console.log(d)
 
 ---
 
-# 19. `let` 재할당
+<a id="js-01-section-23"></a>
+
+## 19. `let` 재할당
 
 ```javascript
 let d = 60
@@ -633,7 +846,9 @@ console.log(d)
 
 ---
 
-# 20. `let` 재선언 오류
+<a id="js-01-section-24"></a>
+
+## 20. `let` 재선언 오류
 
 ```text
 let d = 60
@@ -650,9 +865,11 @@ SyntaxError: Identifier 'd' has already been declared
 
 ---
 
-# 21. `const`
+<a id="js-01-section-25"></a>
 
-## 21-1. 원본 코드
+## 21. `const`
+
+### 21-1. 원본 코드
 
 ```javascript
 const e = 70
@@ -672,7 +889,9 @@ console.log(e)
 
 ---
 
-# 22. `const` 재할당 오류
+<a id="js-01-section-26"></a>
+
+## 22. `const` 재할당 오류
 
 ```text
 const e = 70
@@ -689,9 +908,11 @@ TypeError: Assignment to constant variable.
 
 ---
 
-# 23. `const` 초기값
+<a id="js-01-section-27"></a>
 
-## 23-1. 원본의 오류 예제
+## 23. `const` 초기값
+
+### 23-1. 원본의 오류 예제
 
 ```text
 const f
@@ -712,7 +933,9 @@ const f = 80
 
 ---
 
-# 24. `const` 객체의 내부 변경
+<a id="js-01-section-28"></a>
+
+## 24. `const` 객체의 내부 변경
 
 `const`는 값 전체를 완전히 불변으로 만드는 문법이 아니다.
 
@@ -746,7 +969,9 @@ TypeError
 
 ---
 
-# 25. `var`, `let`, `const` 비교
+<a id="js-01-section-29"></a>
+
+## 25. `var`, `let`, `const` 비교
 
 | 항목 | `var` | `let` | `const` |
 | --- | --- | --- | --- |
@@ -771,9 +996,11 @@ TypeError
 
 ---
 
-# 26. 동적 타입
+<a id="js-01-section-30"></a>
 
-## 26-1. 원본 코드
+## 26. 동적 타입
+
+### 26-1. 원본 코드
 
 ```javascript
 let d = 60
@@ -783,7 +1010,7 @@ d = "문자"
 console.log(d)
 ```
 
-## 26-2. 출력 결과
+### 26-2. 출력 결과
 
 ```text
 문자
@@ -801,7 +1028,9 @@ JavaScript는 타입이 없는 언어가 아니라 **동적 타입 언어**다.
 
 ---
 
-# 27. `typeof`
+<a id="js-01-section-31"></a>
+
+## 27. `typeof`
 
 ```javascript
 console.log(typeof 10)
@@ -823,7 +1052,9 @@ undefined
 
 ---
 
-# 28. Number 타입
+<a id="js-01-section-32"></a>
+
+## 28. Number 타입
 
 JavaScript의 일반 숫자는 정수와 실수를 구분하지 않고 대부분 `number` 타입으로 처리한다.
 
@@ -841,7 +1072,9 @@ number
 
 ---
 
-# 29. String 타입
+<a id="js-01-section-33"></a>
+
+## 29. String 타입
 
 ```javascript
 const userName = "Kim"
@@ -862,9 +1095,11 @@ string
 
 ---
 
-# 30. Boolean 타입
+<a id="js-01-section-34"></a>
 
-## 30-1. 원본 코드
+## 30. Boolean 타입
+
+### 30-1. 원본 코드
 
 ```javascript
 const isActive = true
@@ -884,9 +1119,11 @@ const hasPermission = false
 
 ---
 
-# 31. `undefined`
+<a id="js-01-section-35"></a>
 
-## 31-1. 원본 코드
+## 31. `undefined`
+
+### 31-1. 원본 코드
 
 ```javascript
 let y
@@ -894,7 +1131,7 @@ let y
 console.log(y)
 ```
 
-## 31-2. 출력 결과
+### 31-2. 출력 결과
 
 ```text
 undefined
@@ -914,7 +1151,9 @@ undefined
 
 ---
 
-# 32. `not defined`와 `undefined`
+<a id="js-01-section-36"></a>
+
+## 32. `not defined`와 `undefined`
 
 원본에는 다음 코드가 주석 처리되어 있다.
 
@@ -942,7 +1181,9 @@ z
 
 ---
 
-# 33. `null`
+<a id="js-01-section-37"></a>
+
+## 33. `null`
 
 `null`은 개발자가 의도적으로 값이 없음을 표현할 때 사용한다.
 
@@ -952,7 +1193,7 @@ const selectedUser = null
 
 `prompt()`에서 취소를 눌러도 `null`이 반환된다.
 
-## 33-1. `typeof null`
+### 33-1. `typeof null`
 
 ```javascript
 console.log(typeof null)
@@ -974,15 +1215,17 @@ selectedUser === null
 
 ---
 
-# 34. `Infinity`
+<a id="js-01-section-38"></a>
 
-## 34-1. 원본 코드
+## 34. `Infinity`
+
+### 34-1. 원본 코드
 
 ```javascript
 console.log(7 / 0)
 ```
 
-## 34-2. 출력 결과
+### 34-2. 출력 결과
 
 ```text
 Infinity
@@ -1006,15 +1249,17 @@ false
 
 ---
 
-# 35. `NaN`
+<a id="js-01-section-39"></a>
 
-## 35-1. 원본 코드
+## 35. `NaN`
+
+### 35-1. 원본 코드
 
 ```javascript
 console.log(7 * "문자")
 ```
 
-## 35-2. 출력 결과
+### 35-2. 출력 결과
 
 ```text
 NaN
@@ -1037,7 +1282,9 @@ number
 
 ---
 
-# 36. `NaN` 검사
+<a id="js-01-section-40"></a>
+
+## 36. `NaN` 검사
 
 ```javascript
 const result = Number("10개")
@@ -1067,9 +1314,11 @@ Number.isNaN(result)
 
 ---
 
-# 37. 템플릿 리터럴
+<a id="js-01-section-41"></a>
 
-## 37-1. 원본 코드
+## 37. 템플릿 리터럴
+
+### 37-1. 원본 코드
 
 ```javascript
 console.log(`백틱
@@ -1080,7 +1329,7 @@ ${a}
 
 백틱 `` ` `` 으로 문자열을 만들면 줄바꿈과 표현식 삽입이 가능하다.
 
-## 37-2. 실행
+### 37-2. 실행
 
 ```javascript
 const userName = "Kim"
@@ -1089,7 +1338,7 @@ const age = 21
 console.log(`${userName}님의 나이는 ${age}세입니다.`)
 ```
 
-## 37-3. 출력 결과
+### 37-3. 출력 결과
 
 ```text
 Kim님의 나이는 21세입니다.
@@ -1097,7 +1346,9 @@ Kim님의 나이는 21세입니다.
 
 ---
 
-# 38. 문자열 연결과 템플릿 리터럴
+<a id="js-01-section-42"></a>
+
+## 38. 문자열 연결과 템플릿 리터럴
 
 원본:
 
@@ -1117,9 +1368,11 @@ console.log(`a : ${a}`)
 
 ---
 
-# 39. 문자열과 숫자의 `+`
+<a id="js-01-section-43"></a>
 
-## 39-1. 원본 코드
+## 39. 문자열과 숫자의 `+`
+
+### 39-1. 원본 코드
 
 ```javascript
 const strA = "10.1"
@@ -1127,7 +1380,7 @@ const strA = "10.1"
 console.log(strA + 2)
 ```
 
-## 39-2. 출력 결과
+### 39-2. 출력 결과
 
 ```text
 10.12
@@ -1143,9 +1396,11 @@ console.log(strA + 2)
 
 ---
 
-# 40. `Number()`
+<a id="js-01-section-44"></a>
 
-## 40-1. 원본 코드
+## 40. `Number()`
+
+### 40-1. 원본 코드
 
 ```javascript
 const strA = "10.1"
@@ -1155,7 +1410,7 @@ const numA = Number(strA) + 2
 console.log(numA)
 ```
 
-## 40-2. 출력 결과
+### 40-2. 출력 결과
 
 ```text
 12.1
@@ -1175,16 +1430,18 @@ NaN
 
 ---
 
-# 41. `parseInt()`
+<a id="js-01-section-45"></a>
 
-## 41-1. 원본 코드
+## 41. `parseInt()`
+
+### 41-1. 원본 코드
 
 ```javascript
 console.log(parseInt("10.1"))
 console.log(parseInt("10개"))
 ```
 
-## 41-2. 출력 결과
+### 41-2. 출력 결과
 
 ```text
 10
@@ -1206,7 +1463,9 @@ console.log(parseInt("10개"))
 
 ---
 
-# 42. `Number()`와 `parseInt()` 비교
+<a id="js-01-section-46"></a>
+
+## 42. `Number()`와 `parseInt()` 비교
 
 | 입력 | `Number()` | `parseInt()` |
 | --- | ---: | ---: |
@@ -1231,7 +1490,9 @@ console.log(parseInt("10개"))
 
 ---
 
-# 43. 진법 지정
+<a id="js-01-section-47"></a>
+
+## 43. 진법 지정
 
 `parseInt()`의 두 번째 인자로 진법을 명시할 수 있다.
 
@@ -1255,9 +1516,11 @@ parseInt(value, 10)
 
 ---
 
-# 44. `String()`
+<a id="js-01-section-48"></a>
 
-## 44-1. 원본 코드
+## 44. `String()`
+
+### 44-1. 원본 코드
 
 ```javascript
 console.log(String(numA))
@@ -1266,7 +1529,7 @@ console.log("" + numA)
 
 두 방식 모두 숫자를 문자열로 만들 수 있다.
 
-## 44-2. 권장 방식
+### 44-2. 권장 방식
 
 ```javascript
 const text = String(numA)
@@ -1282,7 +1545,9 @@ const text = `${numA}`
 
 ---
 
-# 45. 암시적 형 변환
+<a id="js-01-section-49"></a>
+
+## 45. 암시적 형 변환
 
 JavaScript는 연산 과정에서 값을 자동 변환하기도 한다.
 
@@ -1309,9 +1574,11 @@ console.log("5" + 2)
 
 ---
 
-# 46. 변수 이름 표기법
+<a id="js-01-section-50"></a>
 
-## 46-1. camelCase
+## 46. 변수 이름 표기법
+
+### 46-1. camelCase
 
 원본:
 
@@ -1327,7 +1594,7 @@ totalPrice
 isLoggedIn
 ```
 
-## 46-2. snake_case
+### 46-2. snake_case
 
 원본:
 
@@ -1337,7 +1604,9 @@ let sales_count = 1
 
 문법적으로 사용할 수 있지만 프로젝트 규칙을 일관되게 따른다.
 
-## 46-3. kebab-case
+<a id="index-section-112"></a>
+
+### 46-3. kebab-case
 
 원본:
 
@@ -1358,7 +1627,9 @@ kebab-case는 주로 다음에 사용한다.
 
 ---
 
-# 47. 식별자 규칙
+<a id="js-01-section-51"></a>
+
+## 47. 식별자 규칙
 
 JavaScript 식별자는 일반적으로 다음 문자를 사용할 수 있다.
 
@@ -1385,7 +1656,9 @@ const 1count = 1
 
 ---
 
-# 48. 한글 변수명
+<a id="js-01-section-52"></a>
+
+## 48. 한글 변수명
 
 원본:
 
@@ -1409,7 +1682,9 @@ const earnedMoney = 100000
 
 ---
 
-# 49. 산술 연산
+<a id="js-01-section-53"></a>
+
+## 49. 산술 연산
 
 ```javascript
 console.log(7 / 3)
@@ -1434,9 +1709,11 @@ console.log(7 % 3)
 
 ---
 
-# 50. 몫 구하기
+<a id="js-01-section-54"></a>
 
-## 50-1. 원본 코드
+## 50. 몫 구하기
+
+### 50-1. 원본 코드
 
 ```javascript
 console.log("몫:", parseInt(7 / 3))
@@ -1462,7 +1739,7 @@ console.log(Math.trunc(7 / 3))
 2
 ```
 
-## 50-2. 음수 주의
+### 50-2. 음수 주의
 
 ```javascript
 console.log(Math.trunc(-7 / 3))
@@ -1480,9 +1757,11 @@ console.log(Math.floor(-7 / 3))
 
 ---
 
-# 51. 복합 대입 연산자
+<a id="js-01-section-55"></a>
 
-## 51-1. 원본 코드
+## 51. 복합 대입 연산자
+
+### 51-1. 원본 코드
 
 ```javascript
 let balance = 15000
@@ -1514,7 +1793,9 @@ total /= 3
 
 ---
 
-# 52. 원본의 증가 계산
+<a id="js-01-section-56"></a>
+
+## 52. 원본의 증가 계산
 
 ```javascript
 a = 10
@@ -1537,9 +1818,11 @@ a++
 
 ---
 
-# 53. 단위 계산
+<a id="js-01-section-57"></a>
 
-## 53-1. 원본 코드
+## 53. 단위 계산
+
+### 53-1. 원본 코드
 
 ```javascript
 const pyeongSquareMeter = 3.3
@@ -1557,14 +1840,14 @@ console.log(
 )
 ```
 
-## 53-2. 출력 결과
+### 53-2. 출력 결과
 
 ```text
 단위가 평일 때: 33
 단위가 에이커일 때: 40468
 ```
 
-## 53-3. 82제곱미터를 평으로 변환
+### 53-3. 82제곱미터를 평으로 변환
 
 ```javascript
 const squareMeters = 82
@@ -1593,9 +1876,11 @@ console.log(pyeong.toFixed(2))
 
 ---
 
-# 54. 회식비 나누기
+<a id="js-01-section-58"></a>
 
-## 54-1. 내 코드
+## 54. 회식비 나누기
+
+### 54-1. 내 코드
 
 ```javascript
 const totalCost = 100000
@@ -1615,7 +1900,7 @@ console.log("인당:", pricePerPerson)
 console.log("주최자:", organizerPrice)
 ```
 
-## 54-2. 출력 결과
+### 54-2. 출력 결과
 
 ```text
 나머지: 1
@@ -1623,7 +1908,7 @@ console.log("주최자:", organizerPrice)
 주최자: 11112
 ```
 
-## 54-3. 강사님 코드
+### 54-3. 강사님 코드
 
 강사님 원본에는 계산 문제의 안내만 있고 결과식은 비어 있다.
 
@@ -1634,7 +1919,7 @@ console.log("주최자가 조금 더 낼 때 얼마?")
 
 내 코드는 나머지를 주최자가 부담하는 방식으로 계산을 완성했다.
 
-## 54-4. 코드에서 무엇을 사용하는 걸까?
+### 54-4. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1646,9 +1931,11 @@ console.log("주최자가 조금 더 낼 때 얼마?")
 
 ---
 
-# 55. 여러 변수 선언
+<a id="js-01-section-59"></a>
 
-## 55-1. 원본 코드
+## 55. 여러 변수 선언
+
+### 55-1. 원본 코드
 
 ```javascript
 let a1 = 10
@@ -1664,7 +1951,7 @@ let b1 = 10,
     b3 = 30
 ```
 
-## 55-2. 실무에서는?
+### 55-2. 실무에서는?
 
 각 변수의 의미가 다르면 한 줄에 하나씩 선언하는 편이 수정과 코드 리뷰에 유리하다.
 
@@ -1676,7 +1963,9 @@ const defaultScore = 30
 
 ---
 
-# 56. 내 코드와 강사님 코드 비교
+<a id="js-01-section-60"></a>
+
+## 56. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1691,14 +1980,14 @@ const defaultScore = 30
 | 다중 선언 | 쉼표 선언 설명 추가 | 선언 코드 중심 |
 | `console.error()` | 오류처럼 표시된다는 설명 추가 | 기본 호출 |
 
-## 56-1. 내 코드의 장점
+### 56-1. 내 코드의 장점
 
 - 회식비 분배 문제를 실제 계산식으로 완성했다.
 - `prompt()` 취소 시 `null` 반환을 기록했다.
 - 나머지 연산과 다중 변수 선언의 의미를 메모했다.
 - `console.error()`가 오류 스타일 메시지를 출력한다는 점을 기록했다.
 
-## 56-2. 내 코드의 개선점
+### 56-2. 내 코드의 개선점
 
 - 선언 없는 `c = 50`은 “타입 없음”이 아니라 선언 누락이다.
 - 몫 계산에는 `parseInt()`보다 `Math.trunc()`가 목적에 맞다.
@@ -1706,13 +1995,13 @@ const defaultScore = 30
 - 같은 변수 `a`를 여러 개념에 반복 사용하면 실행 흐름을 추적하기 어렵다.
 - 기본은 `const`, 재할당이 필요할 때만 `let`을 사용하면 의도가 명확하다.
 
-## 56-3. 강사님 코드의 장점
+### 56-3. 강사님 코드의 장점
 
 - JavaScript 첫 수업에서 변수·자료형·형 변환·계산을 한 흐름으로 확인할 수 있다.
 - 오류 가능성이 있는 코드를 주석 처리해 정상 코드와 비교할 수 있다.
 - 브라우저 대화상자와 콘솔 출력까지 함께 실습한다.
 
-## 56-4. 강사님 코드의 보충점
+### 56-4. 강사님 코드의 보충점
 
 - `var`·`let`·`const`의 스코프와 현대 코드 선택 기준이 필요하다.
 - 선언 없는 할당과 Strict mode의 관계를 설명할 필요가 있다.
@@ -1721,9 +2010,11 @@ const defaultScore = 30
 
 ---
 
-# 57. 기존 코드에서 개선 코드로 바꾼 이유
+<a id="js-01-section-61"></a>
 
-## 57-1. `var`에서 `const`·`let`으로
+## 57. 기존 코드에서 개선 코드로 바꾼 이유
+
+### 57-1. `var`에서 `const`·`let`으로
 
 기존:
 
@@ -1745,7 +2036,7 @@ const limit = 20
 - 값이 변경되는지 코드에서 바로 알 수 있다.
 - 블록 스코프로 변수 범위를 줄일 수 있다.
 
-## 57-2. 선언 없는 할당 제거
+### 57-2. 선언 없는 할당 제거
 
 기존:
 
@@ -1759,7 +2050,7 @@ c = 50
 const c = 50
 ```
 
-## 57-3. 문자열 연결 개선
+### 57-3. 문자열 연결 개선
 
 기존:
 
@@ -1773,7 +2064,7 @@ console.log("a : " + a)
 console.log(`a: ${a}`)
 ```
 
-## 57-4. 몫 계산 개선
+### 57-4. 몫 계산 개선
 
 기존:
 
@@ -1791,7 +2082,9 @@ Math.trunc(
 
 ---
 
-# 58. 실무형 예제: 주문 금액 계산
+<a id="js-01-section-62"></a>
+
+## 58. 실무형 예제: 주문 금액 계산
 
 ```javascript
 const productName = "키보드"
@@ -1822,20 +2115,20 @@ if (
 }
 ```
 
-## 58-1. 입력값
+### 58-1. 입력값
 
 ```text
 quantityText = "2"
 ```
 
-## 58-2. 출력 결과
+### 58-2. 출력 결과
 
 ```text
 키보드 2개
 총 결제 금액: 90,000원
 ```
 
-## 58-3. 코드에서 무엇을 사용하는 걸까?
+### 58-3. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1848,9 +2141,11 @@ quantityText = "2"
 
 ---
 
-# 59. 대표 오류로 이해하기
+<a id="js-01-section-63"></a>
 
-## 59-1. 선언되지 않은 변수
+## 59. 대표 오류로 이해하기
+
+### 59-1. 선언되지 않은 변수
 
 ```text
 console.log(userName)
@@ -1864,7 +2159,7 @@ ReferenceError: userName is not defined
 
 ---
 
-## 59-2. `let` 재선언
+### 59-2. `let` 재선언
 
 ```text
 let count = 1
@@ -1879,7 +2174,7 @@ SyntaxError
 
 ---
 
-## 59-3. `const` 재할당
+### 59-3. `const` 재할당
 
 ```text
 const count = 1
@@ -1894,7 +2189,7 @@ TypeError
 
 ---
 
-## 59-4. `const` 초기값 누락
+### 59-4. `const` 초기값 누락
 
 ```text
 const count
@@ -1908,7 +2203,7 @@ SyntaxError
 
 ---
 
-## 59-5. 숫자 변환 실패
+### 59-5. 숫자 변환 실패
 
 ```javascript
 const result = Number("10개")
@@ -1926,7 +2221,7 @@ NaN
 
 ---
 
-## 59-6. kebab-case 변수명
+### 59-6. kebab-case 변수명
 
 ```text
 const total-price = 1000
@@ -1942,59 +2237,63 @@ JavaScript에서는 `totalPrice`를 사용한다.
 
 ---
 
-# 60. 자주 하는 실수
+<a id="js-01-section-64"></a>
 
-## 60-1. `var`를 기본 변수 선언으로 사용
+## 60. 자주 하는 실수
+
+### 60-1. `var`를 기본 변수 선언으로 사용
 
 현대 코드에서는 `const`와 `let`을 우선 고려한다.
 
-## 60-2. 값이 바뀌지 않는데 `let` 사용
+### 60-2. 값이 바뀌지 않는데 `let` 사용
 
 재할당 의도가 없다면 `const`가 더 명확하다.
 
-## 60-3. 선언 키워드 없이 값 할당
+### 60-3. 선언 키워드 없이 값 할당
 
 전역 오염이나 `ReferenceError`의 원인이 된다.
 
-## 60-4. JavaScript는 타입이 없다고 이해
+### 60-4. JavaScript는 타입이 없다고 이해
 
 값은 각각 자료형을 가진다.
 
-## 60-5. `undefined`와 미선언 변수를 같은 상태로 이해
+### 60-5. `undefined`와 미선언 변수를 같은 상태로 이해
 
 미선언 변수 접근은 `ReferenceError`가 발생한다.
 
-## 60-6. `null`의 `typeof`가 `"null"`이라고 생각
+### 60-6. `null`의 `typeof`가 `"null"`이라고 생각
 
 실제 결과는 역사적 이유로 `"object"`다.
 
-## 60-7. `NaN === NaN`으로 검사
+### 60-7. `NaN === NaN`으로 검사
 
 항상 `false`이므로 `Number.isNaN()`을 사용한다.
 
-## 60-8. `Number()`와 `parseInt()`를 같은 함수로 이해
+### 60-8. `Number()`와 `parseInt()`를 같은 함수로 이해
 
 문자열 전체 변환과 앞부분 정수 해석이라는 차이가 있다.
 
-## 60-9. `prompt()` 결과를 바로 숫자로 계산
+### 60-9. `prompt()` 결과를 바로 숫자로 계산
 
 문자열 또는 `null`이므로 먼저 검사하고 변환한다.
 
-## 60-10. 숫자와 문자열의 `+`를 항상 덧셈으로 생각
+### 60-10. 숫자와 문자열의 `+`를 항상 덧셈으로 생각
 
 문자열 연결이 될 수 있다.
 
-## 60-11. 몫 계산에 `parseInt()` 사용
+### 60-11. 몫 계산에 `parseInt()` 사용
 
 숫자 소수 부분 제거는 `Math.trunc()`가 더 직접적이다.
 
-## 60-12. `const` 객체는 내부 값도 바꿀 수 없다고 생각
+### 60-12. `const` 객체는 내부 값도 바꿀 수 없다고 생각
 
 재할당은 불가능하지만 객체 속성은 변경될 수 있다.
 
 ---
 
-# 61. 핵심 요약
+<a id="js-01-section-65"></a>
+
+## 61. 핵심 요약
 
 ```text
 var
@@ -2054,7 +2353,9 @@ Math.trunc()
 
 ---
 
-# 62. 최종 체크리스트
+<a id="js-01-section-66"></a>
+
+## 62. 최종 체크리스트
 
 - [ ] HTML 문서에서 JavaScript를 실행할 수 있는가?
 - [ ] 한 줄·여러 줄 주석을 작성할 수 있는가?
@@ -2080,7 +2381,9 @@ Math.trunc()
 
 ---
 
-# 마무리
+<a id="js-01-section-67"></a>
+
+## 마무리
 
 변수와 자료형의 핵심은 값을 단순히 저장하는 것에서 끝나지 않는다.
 
@@ -2097,7 +2400,9 @@ const와 let을 올바르게 선택하고
 ```
 
 이 기본 흐름을 이해하면 다음 연산자 문서에서 값의 비교와 논리 판단을 더 안정적으로 작성할 수 있다.
-# V3 실행 추적 카드 — 리터럴/입력 → 값과 변수
+<a id="js-01-section-68"></a>
+
+## V3 실행 추적 카드 — 리터럴/입력 → 값과 변수
 
 `let`은 재할당 가능, `const`는 이름의 재할당을 막는다. `prompt()`와 폼의 `value`는 숫자처럼 보여도 문자열이므로 계산 전 `Number()` 등으로 변환한다.
 

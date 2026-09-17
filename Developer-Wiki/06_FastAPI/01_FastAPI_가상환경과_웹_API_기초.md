@@ -1,11 +1,43 @@
 ---
 title: FastAPI 가상환경과 웹 API 기초
-version: v3.0-final
-last_updated: 2026-08-25
+version: v4.0-detailed
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # FastAPI 가상환경과 웹 API 기초
+
+## 목차
+
+- [문서 정보](#section-1)
+- [학습 목표](#section-2)
+- [개념에서 실제 실행까지 — 서버를 켜는 것과 함수를 만드는 것은 다르다](#section-3)
+- [1. FastAPI란?](#section-4)
+- [2. Library와 Framework의 차이](#section-5)
+- [3. Client와 Server](#section-6)
+- [4. Port](#section-7)
+- [5. Python 가상환경](#section-8)
+- [6. 가상환경 자동 생성 파일](#section-9)
+- [7. Package 설치와 환경 재현](#section-10)
+- [8. 환경변수 PATH 문제](#section-11)
+- [9. FastAPI 기본 Application](#section-12)
+- [10. Uvicorn으로 Server 실행](#section-13)
+- [11. Routing](#section-14)
+- [12. HTTP Method](#section-15)
+- [13. REST, RESTful, REST API](#section-16)
+- [14. 내 코드와 강사님 코드 비교](#section-17)
+- [15. 수정·보완된 통합 예제](#section-18)
+- [16. Docker, VMware, Cloud 기초](#section-19)
+- [17. MVC와 WYSIWYG 메모](#section-20)
+- [18. 자주 하는 실수](#section-21)
+- [19. Debugging 순서](#section-22)
+- [20. 종합실습](#section-23)
+- [21. 정답과 해설](#section-24)
+- [최종 체크리스트](#section-25)
+- [핵심 요약](#section-26)
+
+
+<a id="section-1"></a>
 
 ## 문서 정보
 
@@ -15,31 +47,95 @@ status: Completed
 | 분류 | `06_FastAPI` |
 | 내 코드 | `workspace_python/02_todos/api.py`, `.gitignore`, `pyvenv.cfg`, `requirements.txt` |
 | 강사님 코드 | `workspace_teacher/workspace_python/todos/api.py`, `run.cmd`, `pyvenv.cfg`, `requirements.txt` |
-| 실행 환경 | Windows, Python 3.14.6, FastAPI 0.141.1, Uvicorn 0.52.1 |
+| 원본 환경 기록 | 첨부 requirements.txt 기준; pyvenv.cfg 경로는 과거 수업 기록이며 현재 ZIP에는 없는 위치도 있음. 검증 환경은 검토기록 참조 |
 | 핵심 범위 | Library와 Framework, Client와 Server, Port, 가상환경, Package 관리, FastAPI, Uvicorn, Routing, HTTP Method, REST API |
-| 제외 범위 | 수업 진행 중인 `02_jinja`와 Template Rendering |
+| 제외 범위 | 템플릿 상세는 03번 문서에서 설명 |
 | 문서 형식 | FastAPI Developer-Wiki V2 |
 
 > 이 문서는 완료된 `todos/api.py`와 가상환경 파일을 기준으로 FastAPI 수업의 출발점을 정리한다. `Lib`, `Scripts`, `Include` 내부 파일은 직접 작성한 코드가 아니므로 개별 분석하지 않고, 가상환경에서 맡는 역할만 설명한다.
 
 ---
 
-# 학습 목표
+<a id="section-2"></a>
 
-- Library와 Framework의 차이를 설명할 수 있다.
-- Client, Server, Web Server, Application Server의 역할을 구분할 수 있다.
-- Port와 HTTP 기본 Port를 설명할 수 있다.
-- `venv`로 독립적인 Python 환경을 만들고 활성화할 수 있다.
-- FastAPI와 Uvicorn을 설치하고 서버를 실행할 수 있다.
-- `requirements.txt`로 의존성을 기록하고 복원할 수 있다.
-- Routing과 HTTP Method의 관계를 이해할 수 있다.
-- REST, RESTful, REST API의 차이를 설명할 수 있다.
-- 내 코드와 강사님 코드의 실제 차이를 구분할 수 있다.
-- 가상환경에서 Git에 포함할 파일과 제외할 파일을 판단할 수 있다.
+## 학습 목표
+
+- 입력 위치와 실제 처리 순서를 설명한다.
+- 수업 코드·개선 예제의 상태와 응답을 재현한다.
+- 실패 원인을 찾고 같은 기능을 다시 작성한다.
 
 ---
 
-# 1. FastAPI란?
+<a id="section-3"></a>
+
+## 개념에서 실제 실행까지 — 서버를 켜는 것과 함수를 만드는 것은 다르다
+
+<a id="index-section-5"></a>
+
+### 무엇이고 왜 배우는가?
+
+FastAPI는 요청을 어떤 Python 함수로 연결할지, 입력과 출력을 어떤 규칙으로 처리할지 정하는 Framework다. 내가 직접 welcome()을 호출하는 프로그램과 달리, 서버가 요청을 받아 등록된 함수를 호출한다. Library는 내가 필요한 순간 호출하고, Framework는 정해진 흐름 안에서 내 코드를 호출한다. Uvicorn은 이 Application에 네트워크 요청을 전달하는 ASGI 서버다. app 객체 생성만으로 포트가 열리지 않는다.
+
+### 수업 코드와 실제 요청을 연결하기
+
+내 02_todos/api.py와 강사님 todos/api.py는 GET /, GET·POST /html, GET /no를 실험한다. /no의 반환문 누락을 404로 생각한 내 주석은 교정해야 한다. 경로가 등록되어 함수가 실행되면 반환값 None을 JSON null로 보낼 수 있다. 문자열 '<h1>hello</h1>'도 기본 응답에서는 JSON 문자열이지 제목 HTML이 아니다.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+app = FastAPI()
+
+@app.get("/hello")
+def hello(name: str = "학생"):
+    print("수신:", name)
+    return {"message": f"{name}님 안녕하세요"}
+
+@app.get("/html", response_class=HTMLResponse)
+def html():
+    return "<h1>hello</h1>"
+```
+
+
+별도 api.py에 저장하고 그 파일이 있는 폴더에서 python -m uvicorn api:app --port 8000 --reload를 실행한다. 주소창에 /hello?name=Kim을 열면 GET 요청을 보내고 name 문자열을 추출해 hello(name="Kim")을 호출한다. 터미널에는 '수신: Kim', 응답에는 {"message":"Kim님 안녕하세요"}가 나온다. /hello만 열면 기본값 학생을 쓴다. Query가 없는 endpoint에서는 URL에 임의의 Query를 붙여도 자동으로 함수 인자가 생기지 않는다.
+
+<a id="index-section-7"></a>
+
+### 환경을 다시 만들 때 처리 순서
+
+수업은 venv 자체인 todos 안에 코드를 작성했다. 자동 생성 Scripts·Lib·pyvenv.cfg를 직접 만든 Application과 구분해야 한다. 원본 요구사항 목록에는 Uvicorn·Jinja·Form 처리 패키지가 빠져 있으므로 그대로 설치하면 모든 수업을 재현할 수 없다. 이는 설치 시점을 확정할 증거는 아니며 '중간에 저장했을 가능성'이다.
+
+Windows cmd에서는 Scripts\activate.bat, PowerShell에서는 .\Scripts\Activate.ps1을 쓴다. 활성화는 현재 터미널 PATH를 바꾸는 작업이지 다른 터미널이나 VSCode Interpreter까지 반드시 변경하는 작업이 아니다. 실행 정책 오류가 나면 환경의 Python을 절대 경로로 실행하는 방법도 있다. 시스템 전체 정책을 무조건 완화하지 않는다.
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install fastapi uvicorn jinja2 python-multipart
+.\.venv\Scripts\python.exe -m uvicorn api:app --port 8000 --reload
+```
+
+
+'--reload'는 파일 변경 때 프로세스를 재시작한다. 브라우저 자동 새로고침이나 리스트 저장을 보장하지 않는다. 서버 재시작 시 메모리 목록은 다시 초기화된다. 💡 Docker Desktop의 Linux 컨테이너는 Windows 커널에서 그대로 도는 것이 아니라 Linux VM/WSL2 계층을 사용할 수 있다. venv·컨테이너·VM은 같은 격리 기술이 아니다.
+
+### 확인 문제와 해설
+
+<details>
+<summary>app = FastAPI()만 실행했는데 8000으로 접속이 안 된다. 어디를 확인할까?</summary>
+
+Uvicorn 프로세스가 실행 중인지, 실행 위치에 api.py가 있는지, api:app이 실제 모듈·변수명인지, 해당 가상환경에 패키지가 설치되었는지, 포트 충돌이 있는지 순서대로 본다. 함수가 잘못됐다고 단정하기 전에 요청이 Application에 도달했는지 확인한다.
+
+</details>
+
+<details>
+<summary>GET /unknown, POST /hello, GET /no는 어떻게 다를까?</summary>
+
+unknown이 등록되지 않았다면 404. hello가 GET만 허용한다면 POST는 405. 수업 no()는 실행되고 반환값 None을 보내므로 기본적으로 200 + null. 상태와 본문을 따로 읽는다.
+
+</details>
+
+---
+
+<a id="section-4"></a>
+
+## 1. FastAPI란?
 
 FastAPI는 Python으로 Web API를 만들기 위한 경량 ASGI Web Framework다.
 
@@ -64,7 +160,7 @@ FastAPI Application
 Response
 ```
 
-## 1.1 각 구성요소가 실제로 하는 일
+### 1.1 각 구성요소가 실제로 하는 일
 
 ```text
 Browser
@@ -91,7 +187,7 @@ Starlette/FastAPI Response
 
 `app = FastAPI()`는 Server를 즉시 여는 명령이 아니다. Route와 Middleware 등을 등록할 Application 객체를 만드는 명령이다. 실제 Port를 열고 Request를 받는 Process는 Uvicorn이다.
 
-## 1.2 하나의 요청이 처리되는 전체 순서
+### 1.2 하나의 요청이 처리되는 전체 순서
 
 주소창에 다음을 입력했다고 가정한다.
 
@@ -123,7 +219,9 @@ Accept: text/html,application/json
 
 ---
 
-## 1.3 HTTP Request와 Response의 기본 구성
+<a id="index-section-12"></a>
+
+### 1.3 HTTP Request와 Response의 기본 구성
 
 ```text
 HTTP Request
@@ -141,9 +239,13 @@ FastAPI 학습에서 Path·Query·Form·JSON·Header·Cookie를 구분하는 이
 
 ---
 
-# 2. Library와 Framework의 차이
+<a id="section-5"></a>
 
-## 2.1 Library
+## 2. Library와 Framework의 차이
+
+<a id="index-section-14"></a>
+
+### 2.1 Library
 
 Library는 필요한 기능을 개발자가 호출해서 사용하는 Code 모음이다.
 
@@ -155,7 +257,9 @@ number = random.randint(1, 10)
 
 Application의 전체 실행 흐름은 개발자가 관리하고, 필요한 순간에 Library를 호출한다.
 
-## 2.2 Framework
+<a id="index-section-15"></a>
+
+### 2.2 Framework
 
 Framework는 Application의 기본 구조와 실행 흐름을 제공하고, 개발자가 정해진 위치에 Code를 작성하도록 한다.
 
@@ -181,9 +285,13 @@ FastAPI는 여러 Library를 내부적으로 활용하는 Framework다. 따라�
 
 ---
 
-# 3. Client와 Server
+<a id="section-6"></a>
 
-## 3.1 Client
+## 3. Client와 Server
+
+<a id="index-section-17"></a>
+
+### 3.1 Client
 
 Client는 Server에 Request를 보내고 Response를 사용하는 주체다.
 
@@ -195,7 +303,9 @@ API Test Tool
 다른 Backend Server
 ```
 
-## 3.2 Server
+<a id="index-section-18"></a>
+
+### 3.2 Server
 
 Server는 Client의 Request를 받아 처리하고 Response를 제공하는 Program 또는 Computer를 뜻한다.
 
@@ -208,7 +318,9 @@ Server: 요청을 어떻게 처리하고 무엇을 응답할 것인가?
 
 ---
 
-# 4. Port
+<a id="section-7"></a>
+
+## 4. Port
 
 Port는 한 Computer에서 실행 중인 여러 Network Program을 구분하는 논리적인 번호다.
 
@@ -227,7 +339,7 @@ Port는 한 Computer에서 실행 중인 여러 Network Program을 구분하는 
 
 실습에서 `8000`을 사용하는 이유는 개발 Server용으로 흔히 쓰이며 관리자 권한 없이 사용하기 편하기 때문이다. Port 번호가 다르면 Browser 관점에서 Origin도 달라질 수 있다.
 
-## 4.1 Server Port와 Client Port
+### 4.1 Server Port와 Client Port
 
 ```text
 Browser 127.0.0.1:53124
@@ -240,7 +352,7 @@ FastAPI 127.0.0.1:8000
 
 주소창의 `:8000`은 Server가 받을 Port를 지정한다. `request.client.port`에서 확인되는 값은 보통 Browser 측 임시 Port이므로 서로 다르다.
 
-## 4.2 Port를 생략했을 때
+### 4.2 Port를 생략했을 때
 
 ```text
 http://example.com  → 기본적으로 80
@@ -251,9 +363,11 @@ https://example.com → 기본적으로 443
 
 ---
 
-# 5. Python 가상환경
+<a id="section-8"></a>
 
-## 5.1 필요한 이유
+## 5. Python 가상환경
+
+### 5.1 필요한 이유
 
 Project마다 필요한 Package와 Version이 다를 수 있다.
 
@@ -264,7 +378,7 @@ Project B → 다른 Version 또는 다른 Package
 
 가상환경은 Project별 Python 실행 환경과 Package를 분리한다.
 
-## 5.2 수업에서 사용한 생성 방식
+### 5.2 수업에서 사용한 생성 방식
 
 ```powershell
 cd D:\workspace\workspace_python
@@ -279,7 +393,7 @@ Scripts\activate
 (todos) D:\workspace\workspace_python\todos>
 ```
 
-## 5.3 권장 구조
+### 5.3 권장 구조
 
 수업에서는 `todos` 자체를 가상환경으로 만든 뒤 그 안에 Source를 작성했다. 동작은 가능하지만 Source와 자동 생성 파일이 섞인다.
 
@@ -303,7 +417,9 @@ python -m venv .venv
 
 ---
 
-# 6. 가상환경 자동 생성 파일
+<a id="section-9"></a>
+
+## 6. 가상환경 자동 생성 파일
 
 | 경로 | 역할 | Git 관리 |
 | --- | --- | :---: |
@@ -319,9 +435,11 @@ python -m venv .venv
 
 ---
 
-# 7. Package 설치와 환경 재현
+<a id="section-10"></a>
 
-## 7.1 설치
+## 7. Package 설치와 환경 재현
+
+### 7.1 설치
 
 ```powershell
 python -m pip install fastapi uvicorn python-multipart
@@ -337,7 +455,7 @@ Jinja 수업을 시작한 이후에는 다음 Package도 필요하지만, 이번
 python -m pip install jinja2
 ```
 
-## 7.2 의존성 저장
+### 7.2 의존성 저장
 
 모든 설치가 끝난 뒤 실행한다.
 
@@ -345,9 +463,9 @@ python -m pip install jinja2
 python -m pip freeze > requirements.txt
 ```
 
-현재 첨부된 `requirements.txt`에는 FastAPI와 Pydantic 등은 있지만, 실제 환경에 설치된 `uvicorn`, `python-multipart`, `jinja2`가 빠져 있다. Package 설치 전이나 중간에 생성한 파일로 보이므로 수업 완료 후 다시 생성해야 한다.
+현재 첨부된 `requirements.txt`에는 FastAPI와 Pydantic 등은 있지만, 실제 환경에 설치된 `uvicorn`, `python-multipart`, `jinja2`가 빠져 있다. Package 저장 시점은 확정할 수 없지만 필수 의존성이 누락되어 있으므로 수업 완료 후 다시 생성해야 한다.
 
-## 7.3 환경 복원
+### 7.3 환경 복원
 
 ```powershell
 python -m venv .venv
@@ -357,7 +475,9 @@ python -m pip install -r requirements.txt
 
 ---
 
-# 8. 환경변수 PATH 문제
+<a id="section-11"></a>
+
+## 8. 환경변수 PATH 문제
 
 `python`, `pip`, `uvicorn` 명령을 찾지 못한다면 다음을 먼저 확인한다.
 
@@ -381,9 +501,11 @@ where pip
 
 ---
 
-# 9. FastAPI 기본 Application
+<a id="section-12"></a>
 
-## 9.1 내 코드
+## 9. FastAPI 기본 Application
+
+### 9.1 내 코드
 
 ```python
 from fastapi import FastAPI
@@ -397,7 +519,7 @@ def welcome() -> dict:
     }
 ```
 
-## 9.2 동작 구조
+### 9.2 동작 구조
 
 ```text
 GET /
@@ -409,7 +531,7 @@ GET /
 
 FastAPI가 Python `dict`를 JSON Response로 변환한다.
 
-## 9.3 반환값은 Browser에 어떻게 보이는가?
+### 9.3 반환값은 Browser에 어떻게 보이는가?
 
 ```python
 return {'message': 'Hello World2'}
@@ -437,7 +559,9 @@ Route 실행 후 None 반환       → 200 OK + null
 
 ---
 
-# 10. Uvicorn으로 Server 실행
+<a id="section-13"></a>
+
+## 10. Uvicorn으로 Server 실행
 
 ```powershell
 uvicorn api:app --port 8000 --reload
@@ -462,7 +586,9 @@ uvicorn api:app --port 8000 --reload
 
 ---
 
-# 11. Routing
+<a id="section-14"></a>
+
+## 11. Routing
 
 Routing은 들어온 Request의 URL과 HTTP Method를 분석해 실행할 함수를 연결하는 과정이다.
 
@@ -485,7 +611,7 @@ POST /html → html2()
 
 같은 Method와 Path를 중복 등록하면 의도와 다른 함수가 먼저 선택될 수 있으므로 중복 Route를 만들지 않는다.
 
-## 11.1 Route는 언제 등록되는가?
+### 11.1 Route는 언제 등록되는가?
 
 Python Module이 Import될 때 Decorator가 실행되어 Route 정보가 Application에 등록된다.
 
@@ -505,7 +631,7 @@ Endpoint → html 함수
 
 Request가 올 때마다 Decorator가 다시 Route를 만드는 것이 아니다. Application 시작 과정에서 등록된 Route 목록을 Request마다 조회한다.
 
-## 11.2 Router가 판단하는 값
+### 11.2 Router가 판단하는 값
 
 주소 전체가 아니라 주로 Method와 Path가 Route 선택 기준이다.
 
@@ -523,7 +649,9 @@ Query String은 보통 Route 선택이 아니라 선택된 Endpoint의 입력값
 
 ---
 
-# 12. HTTP Method
+<a id="section-15"></a>
+
+## 12. HTTP Method
 
 | Method | 대표 목적 | CRUD |
 | --- | --- | --- |
@@ -537,7 +665,7 @@ Query String은 보통 Route 선택이 아니라 선택된 Endpoint의 입력값
 
 주소창에서 URL을 직접 여는 동작은 일반적으로 GET Request다. POST·PUT·PATCH·DELETE는 HTML Form, JavaScript, API Client 등을 이용한다.
 
-## 12.1 Method는 어디에서 정하는가?
+### 12.1 Method는 어디에서 정하는가?
 
 ```text
 주소창·Link 클릭
@@ -555,7 +683,7 @@ API Test Tool의 Method 선택
 
 Browser 주소창에는 URL만 입력하므로 POST나 DELETE를 직접 지정할 수 없다.
 
-## 12.2 같은 Path, 다른 Method
+### 12.2 같은 Path, 다른 Method
 
 ```python
 @app.get('/html')
@@ -577,21 +705,29 @@ Path가 같아도 Method가 다르면 서로 다른 Route다.
 
 ---
 
-# 13. REST, RESTful, REST API
+<a id="section-16"></a>
 
-## 13.1 REST
+## 13. REST, RESTful, REST API
+
+<a id="index-section-44"></a>
+
+### 13.1 REST
 
 REST는 Resource를 URI로 표현하고 HTTP의 규칙을 활용하는 Architecture Style이다.
 
-## 13.2 REST API
+<a id="index-section-45"></a>
+
+### 13.2 REST API
 
 REST 원칙을 적용해 설계한 HTTP API를 REST API라고 한다.
 
-## 13.3 RESTful
+### 13.3 RESTful
 
 REST 원칙을 비교적 잘 따르는 설계나 System을 RESTful하다고 표현한다.
 
-## 13.4 CRUD URI 비교
+<a id="index-section-47"></a>
+
+### 13.4 CRUD URI 비교
 
 동작을 URL에 넣는 방식도 실행되지만, REST 관점에서는 Resource 이름과 HTTP Method를 조합하는 편이 일관적이다.
 
@@ -611,7 +747,9 @@ URI는 명사형 Resource
 
 ---
 
-# 14. 내 코드와 강사님 코드 비교
+<a id="section-17"></a>
+
+## 14. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 | 판단 |
 | --- | --- | --- | --- |
@@ -626,7 +764,9 @@ URI는 명사형 Resource
 
 ---
 
-# 15. 수정·보완된 통합 예제
+<a id="section-18"></a>
+
+## 15. 수정·보완된 통합 예제
 
 ```python
 from fastapi import FastAPI, status
@@ -654,9 +794,11 @@ def create_message() -> dict[str, str]:
 
 ---
 
-# 16. Docker, VMware, Cloud 기초
+<a id="section-19"></a>
 
-## 16.1 Docker와 VMware
+## 16. Docker, VMware, Cloud 기초
+
+### 16.1 Docker와 VMware
 
 | 구분 | Docker Container | VMware Virtual Machine |
 | --- | --- | --- |
@@ -674,22 +816,26 @@ Docker → Application과 실행 환경을 Container로 격리
 VM     → Guest OS 전체를 가상화
 ```
 
-## 16.2 AWS와 Azure
+### 16.2 AWS와 Azure
 
 AWS와 Azure는 Server, Database, Storage, Network, Container 등 다양한 자원을 제공하는 Cloud Platform이다. FastAPI Application은 이후 VM, Container Service 또는 Platform Service에 배포할 수 있다.
 
 ---
 
-# 17. MVC와 WYSIWYG 메모
+<a id="section-20"></a>
+
+## 17. MVC와 WYSIWYG 메모
 
 - **MVC**: Application을 Model, View, Controller 역할로 나누는 Architecture Pattern이다. API 중심 FastAPI Project에서는 Router, Service, Repository, Schema 등으로 책임을 분리하는 구조도 많이 사용한다.
 - **WYSIWYG**: “What You See Is What You Get”의 약자로, 편집 화면에서 보이는 모습과 최종 결과가 유사한 편집 방식을 뜻한다. FastAPI 핵심 개념은 아니며 Web Editor나 CMS를 다룰 때 연결되는 용어다.
 
 ---
 
-# 18. 자주 하는 실수
+<a id="section-21"></a>
 
-## 18.1 가상환경 활성화 없이 설치
+## 18. 자주 하는 실수
+
+### 18.1 가상환경 활성화 없이 설치
 
 ```text
 문제: Package가 Global Python에 설치됨
@@ -697,14 +843,16 @@ AWS와 Azure는 Server, Database, Storage, Network, Container 등 다양한 자�
 해결: 가상환경을 활성화한 뒤 설치
 ```
 
-## 18.2 Package 설치 전에 `pip freeze`
+### 18.2 Package 설치 전에 `pip freeze`
 
 ```text
 문제: requirements.txt에 필요한 Package가 누락됨
 해결: 설치 완료 후 다시 생성
 ```
 
-## 18.3 `uvicorn` 명령을 찾지 못함
+<a id="index-section-57"></a>
+
+### 18.3 `uvicorn` 명령을 찾지 못함
 
 ```powershell
 python -m uvicorn api:app --port 8000 --reload
@@ -712,13 +860,15 @@ python -m uvicorn api:app --port 8000 --reload
 
 Module 실행 방식은 PATH 문제를 줄이는 데 도움이 된다.
 
-## 18.4 Source와 가상환경을 함께 Commit
+<a id="index-section-58"></a>
+
+### 18.4 Source와 가상환경을 함께 Commit
 
 `Lib`, `Scripts`, `Include`, `pyvenv.cfg`는 다른 환경에서 재생성할 파일이다. 저장소에는 Source와 `requirements.txt`를 중심으로 관리한다.
 
 ---
 
-## 18.5 수업 원본에서 다시 찾기
+### 18.5 수업 원본에서 다시 찾기
 
 | 배운 개념 | 내 코드 위치 | 강사님 코드 위치 | 무엇을 확인하는가 |
 | --- | --- | --- | --- |
@@ -734,7 +884,7 @@ Module 실행 방식은 PATH 문제를 줄이는 데 도움이 된다.
 
 ---
 
-## 18.6 직접 재현하기
+### 18.6 직접 재현하기
 
 ```powershell
 cd D:\workspace\workspace_python\02_todos
@@ -755,7 +905,9 @@ python -m uvicorn api:app --port 8000 --reload
 
 ---
 
-# 19. Debugging 순서
+<a id="section-22"></a>
+
+## 19. Debugging 순서
 
 ```text
 1. 가상환경 활성화 표시 확인
@@ -770,7 +922,9 @@ python -m uvicorn api:app --port 8000 --reload
 
 ---
 
-# 20. 종합실습
+<a id="section-23"></a>
+
+## 20. 종합실습
 
 다음 요구사항을 만족하는 기본 API를 작성한다.
 
@@ -785,7 +939,9 @@ python -m uvicorn api:app --port 8000 --reload
 
 ---
 
-# 21. 정답과 해설
+<a id="section-24"></a>
+
+## 21. 정답과 해설
 
 ```python
 from fastapi import FastAPI, status
@@ -825,7 +981,9 @@ python -m pip freeze > requirements.txt
 
 ---
 
-# 최종 체크리스트
+<a id="section-25"></a>
+
+## 최종 체크리스트
 
 - [ ] Library와 Framework의 제어 흐름 차이를 설명할 수 있다.
 - [ ] Client와 Server의 역할을 설명할 수 있다.
@@ -841,7 +999,9 @@ python -m pip freeze > requirements.txt
 
 ---
 
-# 핵심 요약
+<a id="section-26"></a>
+
+## 핵심 요약
 
 ```text
 FastAPI = Python Web API Framework

@@ -1,11 +1,110 @@
 ---
 title: CSS 실무 코딩 스타일
-version: v3.0-encyclopedia
-last_updated: 2026-08-07
+version: v4.1-detailed-learning
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # CSS 실무 코딩 스타일
+
+## 문서 내 목차
+
+- [문서 정보](#css-1)
+- [개요](#css-2)
+- [공통 예제 구조](#css-3)
+- [핵심 기준](#css-4)
+- [학습 목표](#css-5)
+- [개념에서 실제 동작까지](#css-6)
+- [1. Class 이름은 역할을 표현한다](#css-7)
+- [2. ID보다 Class를 기본으로 사용한다](#css-8)
+- [3. Tag Selector에 Component Style을 직접 묶지 않는다](#css-9)
+- [4. 긴 후손 Selector를 피한다](#css-10)
+- [5. Selector 깊이를 낮게 유지한다](#css-11)
+- [6. BEM은 목적에 맞게 사용한다](#css-12)
+- [7. Utility Class는 한 가지 책임만 가진다](#css-13)
+- [8. 상태는 `is-`, `has-` 형태로 표현할 수 있다](#css-14)
+- [9. Attribute 상태도 활용한다](#css-15)
+- [10. Cascade를 먼저 이해하고 덮어쓴다](#css-16)
+- [11. 명시도를 높여서 문제를 해결하지 않는다](#css-17)
+- [12. `!important`는 예외적으로 사용한다](#css-18)
+- [13. `:where()`로 명시도를 낮출 수 있다](#css-19)
+- [14. `:is()`는 반복 Selector를 줄인다](#css-20)
+- [15. Cascade Layer로 역할 순서를 관리한다](#css-21)
+- [16. 전역 Reset은 의도적으로 작성한다](#css-22)
+- [17. `border-box`를 전역으로 통일한다](#css-23)
+- [18. 물리 방향보다 논리 속성을 고려한다](#css-24)
+- [19. 간격은 Scale로 관리한다](#css-25)
+- [20. 자식 Margin보다 부모 `gap`을 우선 검토한다](#css-26)
+- [21. 색상은 역할 기반 Token으로 관리한다](#css-27)
+- [22. Component Token으로 의미를 좁힌다](#css-28)
+- [23. Fallback 값을 제공한다](#css-29)
+- [24. `rem`을 기본 크기 단위로 활용한다](#css-30)
+- [25. 유연한 크기는 `clamp()`로 설계한다](#css-31)
+- [26. Container 너비는 `min()`과 `max-width`를 활용한다](#css-32)
+- [27. `100vw`보다 `100%`가 적합한 경우가 많다](#css-33)
+- [28. 높이는 콘텐츠를 우선한다](#css-34)
+- [29. Full Viewport에는 동적 단위를 검토한다](#css-35)
+- [30. Layout은 Flexbox와 Grid를 우선한다](#css-36)
+- [31. Flexbox는 주축과 교차축을 기준으로 작성한다](#css-37)
+- [32. Flex Item에는 `min-width: 0`이 필요할 수 있다](#css-38)
+- [33. Grid는 반복 Column을 간결하게 만든다](#css-39)
+- [34. Position은 기준 요소를 명확히 만든다](#css-40)
+- [35. `z-index` 숫자를 무작정 높이지 않는다](#css-41)
+- [36. Float는 기사 Text 흐름에 제한적으로 사용한다](#css-42)
+- [37. 숨김 방식은 목적에 맞게 선택한다](#css-43)
+- [38. `opacity: 0`만으로 숨기지 않는다](#css-44)
+- [39. Overflow는 문제를 숨기는 용도로 사용하지 않는다](#css-45)
+- [40. 긴 문자열을 안전하게 처리한다](#css-46)
+- [41. Typography는 공통 Scale로 관리한다](#css-47)
+- [42. 본문 줄높이는 단위 없이 작성한다](#css-48)
+- [43. Web Font는 Fallback과 성능을 함께 고려한다](#css-49)
+- [44. 링크는 Hover만으로 상태를 표현하지 않는다](#css-50)
+- [45. Focus Outline을 제거하지 않는다](#css-51)
+- [46. Disabled 상태는 색상만으로 표현하지 않는다](#css-52)
+- [47. 상태 표현은 JavaScript Inline Style보다 Class를 사용한다](#css-53)
+- [48. Inline Style은 동적 수치에 제한적으로 사용한다](#css-54)
+- [49. Background Image는 장식에 사용한다](#css-55)
+- [50. Background 위 Text 대비를 확인한다](#css-56)
+- [51. Shadow는 깊이와 상태를 제한적으로 표현한다](#css-57)
+- [52. Transition은 변경 속성을 명시한다](#css-58)
+- [53. Transition은 기본 상태에 작성한다](#css-59)
+- [54. 움직임에는 Transform과 Opacity를 우선 검토한다](#css-60)
+- [55. `prefers-reduced-motion`을 제공한다](#css-61)
+- [56. Mobile First로 기본 Style을 작성한다](#css-62)
+- [57. Breakpoint는 Device 이름보다 Layout 기준으로 정한다](#css-63)
+- [58. Hover 가능 여부를 조건으로 사용할 수 있다](#css-64)
+- [59. Container Query로 Component를 독립시킨다](#css-65)
+- [60. Dark Mode는 Token을 교체한다](#css-66)
+- [61. CSS 파일은 역할별로 분리한다](#css-67)
+- [62. Import 순서를 고정한다](#css-68)
+- [63. Component와 Page Layout을 분리한다](#css-69)
+- [64. 주석은 이유와 제약을 설명한다](#css-70)
+- [65. Browser 기본 Style을 이해하고 덮어쓴다](#css-71)
+- [66. CSS Validation과 Lint를 자동화한다](#css-72)
+- [67. 실제 개선 사례 1: 구조 의존 Selector](#css-73)
+- [68. 실제 개선 사례 2: `rem` 기준 오해](#css-74)
+- [69. 실제 개선 사례 3: 부모 배경색 상속 오해](#css-75)
+- [70. 실제 개선 사례 4: Margin Collapse 만능 해결](#css-76)
+- [71. 실제 개선 사례 5: 잘못된 HTML 중첩](#css-77)
+- [72. 실제 개선 사례 6: 숨김 방식 혼동](#css-78)
+- [73. 실제 개선 사례 7: Background와 콘텐츠 이미지 혼동](#css-79)
+- [74. 실제 개선 사례 8: Absolute Position 중앙 정렬](#css-80)
+- [75. 실제 개선 사례 9: Float Layout](#css-81)
+- [76. 실제 개선 사례 10: Hover 전용 Transition](#css-82)
+- [77. 실제 개선 사례 11: `transition: all`](#css-83)
+- [78. 실제 개선 사례 12: Transform 함수 덮어쓰기](#css-84)
+- [79. 실제 개선 사례 13: Hover 메뉴 접근성](#css-85)
+- [80. 실제 개선 사례 14: Flex 시각 순서](#css-86)
+- [81. 실무형 예제: 반응형 Product Card](#css-87)
+- [82. 파일 구조 예시](#css-88)
+- [83. 자주 하는 실수](#css-89)
+- [84. 핵심 요약](#css-90)
+- [85. 최종 체크리스트](#css-91)
+- [마무리](#css-92)
+- [렌더링 복습 카드 — 의도·범위·재사용성이 보이는 규칙](#css-93)
+
+
+<a id="css-1"></a>
 
 ## 문서 정보
 
@@ -17,14 +116,16 @@ status: Completed
 | 핵심 범위 | 네이밍, Cascade, 명시도, 변수, Layout, 반응형, 상태, 접근성, 성능, 파일 구조 |
 | 예제 형식 | Before → After → 결과 → 개선 이유 → 실무 선택 기준 |
 | 종합실습 | 별도 문서 `17_CSS_종합실습.md`에서 관리 |
-| 문서 형식 | CSS Developer-Wiki V3 개인 강의 백과사전 형식 |
+| 문서 형식 | CSS Developer-Wiki 상세 동작 학습판 |
 
 > 이 문서는 새로운 CSS 속성을 배우는 문서가 아니다.  
 > CSS 01~15번에서 학습한 선택자·박스 모델·Layout·반응형·시각 효과를 **실무에서는 어떤 기준으로 선택하고 조합하는지** 설명하는 기준 문서다.
 
 ---
 
-# 개요
+<a id="css-2"></a>
+
+## 개요
 
 화면이 원하는 모습으로 보인다고 해서 반드시 좋은 CSS는 아니다.
 
@@ -80,7 +181,9 @@ Layout과 시각 효과의 책임이 분리되어 있는가?
 
 ---
 
-# 공통 예제 구조
+<a id="css-3"></a>
+
+## 공통 예제 구조
 
 이 문서에서는 다음 Card Component를 여러 예제에서 사용한다.
 
@@ -128,7 +231,9 @@ Layout과 시각 효과의 책임이 분리되어 있는가?
 
 ---
 
-# 핵심 기준
+<a id="css-4"></a>
+
+## 핵심 기준
 
 | 기준 | 의미 |
 | --- | --- |
@@ -145,31 +250,91 @@ Layout과 시각 효과의 책임이 분리되어 있는가?
 
 ---
 
-# 학습 목표
+<a id="css-5"></a>
 
-- 역할이 분명한 Class 이름을 작성할 수 있다.
-- ID·Tag·긴 후손 Selector의 남용을 피할 수 있다.
-- Cascade와 명시도를 예측 가능한 구조로 관리할 수 있다.
-- `!important`를 사용하지 않고 상태를 덮어쓸 수 있다.
-- CSS Custom Property로 디자인 토큰을 만들 수 있다.
-- 간격·색상·Radius·Shadow Scale을 통일할 수 있다.
-- Box Model과 `border-box`를 일관되게 적용할 수 있다.
-- Flexbox·Grid·Position·Float의 사용 목적을 구분할 수 있다.
-- 상태를 Inline Style이 아닌 Class와 Attribute로 표현할 수 있다.
-- Hover·Focus·Active·Disabled 상태를 함께 설계할 수 있다.
-- Mobile First Media Query를 작성할 수 있다.
-- `clamp()`, `min()`, `max()`로 유연한 크기를 설계할 수 있다.
-- 콘텐츠 Overflow와 긴 문자열을 안전하게 처리할 수 있다.
-- Transition과 Transform을 성능·접근성 기준으로 사용할 수 있다.
-- `prefers-reduced-motion`, `prefers-color-scheme`을 적용할 수 있다.
-- 파일과 Layer를 역할별로 분리할 수 있다.
-- 개발자 도구로 Cascade·Box Model·Flex·Grid 문제를 추적할 수 있다.
+## 학습 목표
 
----
+- 주요 속성의 의미와 차이를 설명한다.
+- 대상과 계산 기준을 찾고 결과를 예측한다.
+- 원본을 비교하고 적용·배치 오류를 수정한다.
 
-# 1. Class 이름은 역할을 표현한다
+<a id="learning-flow"></a>
 
-## 1-1. Before
+<a id="css-6"></a>
+
+## 개념에서 실제 동작까지
+
+### 코딩 스타일이란? 표현 의도를 유지하며 변경 범위를 통제하는 규칙
+
+좋은 CSS 스타일은 단순 정렬이 아니라 “어느 요소의 어떤 속성이 왜 이겼는지”를 추적 가능하게 만드는 것입니다. 이름 통일·토큰·낮은 명시도는 수정 영향을 예측하기 위한 수단이지 목적 없는 규칙 암기가 아닙니다.
+
+**수업과 보충의 경계:** 01~15의 원본을 비교하고 그 문제를 개선하는 확장 학습입니다. BEM·레이어·토큰·Grid 등 모든 기준이 번호형 수업에서 그대로 사용됐다고 주장하지 않습니다. 💡 보충 설계로 읽습니다.
+
+내 수업 소스는 [human]에 important border를 적용했습니다. 그 예제는 중요도 실험이므로 당시 코드를 틀렸다고 삭제하지 않습니다. 실제 컴포넌트 설계에서는 선택자가 역할과 상태를 드러내도록 다시 구성합니다.
+
+💡 개선 예제:
+
+```css
+.card { border: 1px solid var(--card-border, #ddd); }
+.card.is-selected { border-color: #1765d1; }
+```
+
+card는 공통 표현, is-selected는 상태입니다. 변하는 border-color만 추가해 다른 폭·스타일을 불필요하게 재정의하지 않습니다. 클래스 이름을 새로 썼다고 HTML에 그 클래스가 자동 생기지는 않습니다. HTML·CSS·상태 변경 코드를 함께 맞춥니다.
+
+| 검수 | 먼저 물을 질문 |
+| --- | --- |
+| 적용 | 파일이 로드되고 선택자가 맞는가? |
+| 값 | 속성 충돌·상속·축약 초기화가 있는가? |
+| 크기 | 단위 기준·box-sizing·최소 크기가 맞는가? |
+| 배치 | 정상 흐름·기준 박스·축이 맞는가? |
+| 사용성 | hover 외에 focus·터치·숨김 상태도 확인했는가? |
+
+“전체에 overflow:hidden 추가”나 “z-index:99999 추가”로 문제를 숨기면 다른 오류를 만들 수 있습니다. 원인→수정→영향 범위→회귀 확인을 기록합니다.
+
+**확인:** 기존 클래스의 사용 곳을 찾고 하나의 컴포넌트부터 바꿉니다. 계산값이 바뀌었는지와 화면·키보드 동작을 같이 검토합니다. 포맷터 성공을 기능 검증 성공으로 기록하지 않습니다.
+
+### 내 추가 실습에서 발견한 선언 오타
+
+내 `workspace_html/css/실습_개인/asset/css/연습_01.css`의 발췌입니다. 강사님 동일 파일과의 비교라고 꾸미지 않습니다.
+
+```css
+div.msg {
+    background-color: #ffffff;
+    font-size: 15px;
+    border: 1px sold #ffffff;
+    padding: 5px;
+    border-radius: 10px;
+}
+```
+
+`sold`는 유효한 border-style 값이 아니므로 이 border 선언이 무시됩니다. 규칙 전체가 사라져 배경·크기·padding까지 전부 무효가 되는 것은 아닙니다. `solid`로 고치면 1px 테두리 선언이 유효해집니다. 같은 흰 배경과 흰 테두리이면 눈으로 구분하기 어려울 수도 있으므로 Styles·Computed에서 선언 유효성도 확인합니다. 다른 규칙에 유효한 border가 있으면 그 값이 남을 수 있습니다. 오타 확인을 위해 원본 소스 파일 자체를 수정하지는 않았습니다.
+
+
+### 개발자 도구에서 실제 값을 읽기
+
+이 문서에서 제안한 개선 카드 예제을 브라우저에서 열고 Console에 다음을 입력합니다. 💡 JavaScript를 이용한 CSS 진단 명령이며 CSS 파일에 쓰는 코드가 아닙니다.
+
+```javascript
+getComputedStyle(document.querySelector('.card')).borderTopColor
+```
+
+**예상 결과:** 기본 fallback 적용 시 rgb(221, 221, 221)
+
+HTML에 class card를 넣고 제시한 CSS를 연결한 경우입니다. 선택자가 null이면 먼저 요소 존재를 확인합니다. 요소가 없다는 오류가 나오면 페이지와 선택 대상을 먼저 확인합니다. getComputedStyle은 API에서 계산·해석된 스타일을 읽고 getBoundingClientRect는 변환이 반영된 표시 경계 상자를 읽습니다. margin까지 포함한 전체 점유를 자동 반환하는 값은 아닙니다. CSS에는 Python의 print가 없으므로 화면 결과와 Console 값 확인을 구분합니다.
+
+### 짧은 점검 문제와 해설
+
+**문제:** 포맷터 통과가 CSS 동작 검증인가?
+
+**해설:** 아닙니다. 선택자·계산값·배치·상호작용 검토가 별도로 필요합니다.
+
+먼저 답을 가리고 이유를 말한 뒤 본문의 단계별 예제와 종합실습으로 확인합니다.
+
+<a id="css-7"></a>
+
+## 1. Class 이름은 역할을 표현한다
+
+### 1-1. Before
 
 ```css
 .red-box {
@@ -180,7 +345,7 @@ Layout과 시각 효과의 책임이 분리되어 있는가?
 
 색상이 바뀌면 이름과 실제 모습이 달라진다.
 
-## 1-2. After
+### 1-2. After
 
 ```css
 .alert {
@@ -192,7 +357,7 @@ Layout과 시각 효과의 책임이 분리되어 있는가?
 }
 ```
 
-## 1-3. 개선 이유
+### 1-3. 개선 이유
 
 ```text
 .red-box
@@ -207,9 +372,11 @@ Layout과 시각 효과의 책임이 분리되어 있는가?
 
 ---
 
-# 2. ID보다 Class를 기본으로 사용한다
+<a id="css-8"></a>
 
-## 2-1. Before
+## 2. ID보다 Class를 기본으로 사용한다
+
+### 2-1. Before
 
 ```css
 #login-button {
@@ -217,7 +384,7 @@ Layout과 시각 효과의 책임이 분리되어 있는가?
 }
 ```
 
-## 2-2. After
+### 2-2. After
 
 ```css
 .login-form__submit {
@@ -229,9 +396,11 @@ ID는 Page Anchor·JavaScript 연결 등 명확한 목적이 있을 때 사용�
 
 ---
 
-# 3. Tag Selector에 Component Style을 직접 묶지 않는다
+<a id="css-9"></a>
 
-## 3-1. Before
+## 3. Tag Selector에 Component Style을 직접 묶지 않는다
+
+### 3-1. Before
 
 ```css
 button {
@@ -242,7 +411,7 @@ button {
 
 Page의 모든 Button에 영향을 준다.
 
-## 3-2. After
+### 3-2. After
 
 ```css
 .button {
@@ -261,9 +430,11 @@ Base Component와 특정 Layout 요구사항을 분리한다.
 
 ---
 
-# 4. 긴 후손 Selector를 피한다
+<a id="css-10"></a>
 
-## 4-1. Before
+## 4. 긴 후손 Selector를 피한다
+
+### 4-1. Before
 
 ```css
 main section div ul li a {
@@ -273,7 +444,7 @@ main section div ul li a {
 
 HTML 구조가 한 단계만 바뀌어도 적용되지 않을 수 있다.
 
-## 4-2. After
+### 4-2. After
 
 ```css
 .category-link {
@@ -283,7 +454,9 @@ HTML 구조가 한 단계만 바뀌어도 적용되지 않을 수 있다.
 
 ---
 
-# 5. Selector 깊이를 낮게 유지한다
+<a id="css-11"></a>
+
+## 5. Selector 깊이를 낮게 유지한다
 
 권장 예:
 
@@ -303,7 +476,9 @@ HTML 구조가 한 단계만 바뀌어도 적용되지 않을 수 있다.
 
 ---
 
-# 6. BEM은 목적에 맞게 사용한다
+<a id="css-12"></a>
+
+## 6. BEM은 목적에 맞게 사용한다
 
 ```text
 Block
@@ -327,7 +502,9 @@ BEM 이름을 무조건 길게 만드는 것이 목적은 아니다. Component �
 
 ---
 
-# 7. Utility Class는 한 가지 책임만 가진다
+<a id="css-13"></a>
+
+## 7. Utility Class는 한 가지 책임만 가진다
 
 ```css
 .u-hidden {
@@ -352,7 +529,9 @@ Utility는 작은 예외 처리에 유용하지만 모든 Style을 Utility 조�
 
 ---
 
-# 8. 상태는 `is-`, `has-` 형태로 표현할 수 있다
+<a id="css-14"></a>
+
+## 8. 상태는 `is-`, `has-` 형태로 표현할 수 있다
 
 ```css
 .menu.is-open {
@@ -379,7 +558,9 @@ menu.classList.toggle(
 
 ---
 
-# 9. Attribute 상태도 활용한다
+<a id="css-15"></a>
+
+## 9. Attribute 상태도 활용한다
 
 ```css
 .accordion-button[
@@ -393,7 +574,9 @@ menu.classList.toggle(
 
 ---
 
-# 10. Cascade를 먼저 이해하고 덮어쓴다
+<a id="css-16"></a>
+
+## 10. Cascade를 먼저 이해하고 덮어쓴다
 
 Cascade 판단 요소:
 
@@ -424,9 +607,11 @@ blue
 
 ---
 
-# 11. 명시도를 높여서 문제를 해결하지 않는다
+<a id="css-17"></a>
 
-## 11-1. Before
+## 11. 명시도를 높여서 문제를 해결하지 않는다
+
+### 11-1. Before
 
 ```css
 .page .header .nav .nav-link {
@@ -438,7 +623,7 @@ blue
 }
 ```
 
-## 11-2. After
+### 11-2. After
 
 ```css
 .nav-link {
@@ -452,7 +637,9 @@ blue
 
 ---
 
-# 12. `!important`는 예외적으로 사용한다
+<a id="css-18"></a>
+
+## 12. `!important`는 예외적으로 사용한다
 
 적절할 수 있는 사례:
 
@@ -467,7 +654,9 @@ blue
 
 ---
 
-# 13. `:where()`로 명시도를 낮출 수 있다
+<a id="css-19"></a>
+
+## 13. `:where()`로 명시도를 낮출 수 있다
 
 ```css
 :where(
@@ -483,7 +672,9 @@ blue
 
 ---
 
-# 14. `:is()`는 반복 Selector를 줄인다
+<a id="css-20"></a>
+
+## 14. `:is()`는 반복 Selector를 줄인다
 
 ```css
 :is(
@@ -501,7 +692,9 @@ blue
 
 ---
 
-# 15. Cascade Layer로 역할 순서를 관리한다
+<a id="css-21"></a>
+
+## 15. Cascade Layer로 역할 순서를 관리한다
 
 ```css
 @layer reset, base, components, utilities;
@@ -533,7 +726,9 @@ blue
 
 ---
 
-# 16. 전역 Reset은 의도적으로 작성한다
+<a id="css-22"></a>
+
+## 16. 전역 Reset은 의도적으로 작성한다
 
 ```css
 *,
@@ -565,7 +760,9 @@ svg {
 
 ---
 
-# 17. `border-box`를 전역으로 통일한다
+<a id="css-23"></a>
+
+## 17. `border-box`를 전역으로 통일한다
 
 ```css
 *,
@@ -584,9 +781,11 @@ Component 크기 계산을 예측하기 쉬워진다.
 
 ---
 
-# 18. 물리 방향보다 논리 속성을 고려한다
+<a id="css-24"></a>
 
-## 18-1. Before
+## 18. 물리 방향보다 논리 속성을 고려한다
+
+### 18-1. Before
 
 ```css
 .card {
@@ -595,7 +794,7 @@ Component 크기 계산을 예측하기 쉬워진다.
 }
 ```
 
-## 18-2. After
+### 18-2. After
 
 ```css
 .card {
@@ -608,7 +807,9 @@ Component 크기 계산을 예측하기 쉬워진다.
 
 ---
 
-# 19. 간격은 Scale로 관리한다
+<a id="css-25"></a>
+
+## 19. 간격은 Scale로 관리한다
 
 ```css
 :root {
@@ -621,7 +822,7 @@ Component 크기 계산을 예측하기 쉬워진다.
 }
 ```
 
-## 19-1. Before
+### 19-1. Before
 
 ```css
 .card {
@@ -630,7 +831,7 @@ Component 크기 계산을 예측하기 쉬워진다.
 }
 ```
 
-## 19-2. After
+### 19-2. After
 
 ```css
 .card {
@@ -641,9 +842,11 @@ Component 크기 계산을 예측하기 쉬워진다.
 
 ---
 
-# 20. 자식 Margin보다 부모 `gap`을 우선 검토한다
+<a id="css-26"></a>
 
-## 20-1. Before
+## 20. 자식 Margin보다 부모 `gap`을 우선 검토한다
+
+### 20-1. Before
 
 ```css
 .menu-item {
@@ -655,7 +858,7 @@ Component 크기 계산을 예측하기 쉬워진다.
 }
 ```
 
-## 20-2. After
+### 20-2. After
 
 ```css
 .menu {
@@ -668,7 +871,9 @@ Component 크기 계산을 예측하기 쉬워진다.
 
 ---
 
-# 21. 색상은 역할 기반 Token으로 관리한다
+<a id="css-27"></a>
+
+## 21. 색상은 역할 기반 Token으로 관리한다
 
 ```css
 :root {
@@ -697,7 +902,9 @@ Component 크기 계산을 예측하기 쉬워진다.
 
 ---
 
-# 22. Component Token으로 의미를 좁힌다
+<a id="css-28"></a>
+
+## 22. Component Token으로 의미를 좁힌다
 
 ```css
 .product-card {
@@ -722,7 +929,9 @@ Modifier에서 Token만 변경할 수 있다.
 
 ---
 
-# 23. Fallback 값을 제공한다
+<a id="css-29"></a>
+
+## 23. Fallback 값을 제공한다
 
 ```css
 .button {
@@ -737,7 +946,9 @@ Custom Property가 없을 때 사용할 값을 지정한다.
 
 ---
 
-# 24. `rem`을 기본 크기 단위로 활용한다
+<a id="css-30"></a>
+
+## 24. `rem`을 기본 크기 단위로 활용한다
 
 ```css
 .card {
@@ -756,7 +967,9 @@ Custom Property가 없을 때 사용할 값을 지정한다.
 
 ---
 
-# 25. 유연한 크기는 `clamp()`로 설계한다
+<a id="css-31"></a>
+
+## 25. 유연한 크기는 `clamp()`로 설계한다
 
 ```css
 .hero-title {
@@ -781,7 +994,9 @@ Custom Property가 없을 때 사용할 값을 지정한다.
 
 ---
 
-# 26. Container 너비는 `min()`과 `max-width`를 활용한다
+<a id="css-32"></a>
+
+## 26. Container 너비는 `min()`과 `max-width`를 활용한다
 
 ```css
 .container {
@@ -798,9 +1013,11 @@ Custom Property가 없을 때 사용할 값을 지정한다.
 
 ---
 
-# 27. `100vw`보다 `100%`가 적합한 경우가 많다
+<a id="css-33"></a>
 
-## 27-1. Before
+## 27. `100vw`보다 `100%`가 적합한 경우가 많다
+
+### 27-1. Before
 
 ```css
 .section {
@@ -810,7 +1027,7 @@ Custom Property가 없을 때 사용할 값을 지정한다.
 
 Scrollbar 너비까지 포함해 가로 Overflow가 생길 수 있다.
 
-## 27-2. After
+### 27-2. After
 
 ```css
 .section {
@@ -822,9 +1039,11 @@ Viewport 전체를 의도한 특수한 상황에서만 `vw`를 사용한다.
 
 ---
 
-# 28. 높이는 콘텐츠를 우선한다
+<a id="css-34"></a>
 
-## 28-1. Before
+## 28. 높이는 콘텐츠를 우선한다
+
+### 28-1. Before
 
 ```css
 .card {
@@ -834,7 +1053,7 @@ Viewport 전체를 의도한 특수한 상황에서만 `vw`를 사용한다.
 
 Text가 늘면 Overflow가 발생할 수 있다.
 
-## 28-2. After
+### 28-2. After
 
 ```css
 .card {
@@ -846,7 +1065,9 @@ Text가 늘면 Overflow가 발생할 수 있다.
 
 ---
 
-# 29. Full Viewport에는 동적 단위를 검토한다
+<a id="css-35"></a>
+
+## 29. Full Viewport에는 동적 단위를 검토한다
 
 ```css
 .hero {
@@ -867,7 +1088,9 @@ Fallback이 필요하면 다음 순서로 작성할 수 있다.
 
 ---
 
-# 30. Layout은 Flexbox와 Grid를 우선한다
+<a id="css-36"></a>
+
+## 30. Layout은 Flexbox와 Grid를 우선한다
 
 ```text
 한 축 중심
@@ -887,7 +1110,9 @@ Position과 Float를 일반 Page Layout에 남용하지 않는다.
 
 ---
 
-# 31. Flexbox는 주축과 교차축을 기준으로 작성한다
+<a id="css-37"></a>
+
+## 31. Flexbox는 주축과 교차축을 기준으로 작성한다
 
 ```css
 .toolbar {
@@ -902,7 +1127,9 @@ Position과 Float를 일반 Page Layout에 남용하지 않는다.
 
 ---
 
-# 32. Flex Item에는 `min-width: 0`이 필요할 수 있다
+<a id="css-38"></a>
+
+## 32. Flex Item에는 `min-width: 0`이 필요할 수 있다
 
 ```css
 .media__content {
@@ -914,7 +1141,9 @@ Position과 Float를 일반 Page Layout에 남용하지 않는다.
 
 ---
 
-# 33. Grid는 반복 Column을 간결하게 만든다
+<a id="css-39"></a>
+
+## 33. Grid는 반복 Column을 간결하게 만든다
 
 ```css
 .product-grid {
@@ -936,7 +1165,9 @@ Media Query를 과도하게 늘리지 않고 Card 수를 조정할 수 있다.
 
 ---
 
-# 34. Position은 기준 요소를 명확히 만든다
+<a id="css-40"></a>
+
+## 34. Position은 기준 요소를 명확히 만든다
 
 ```css
 .product-card {
@@ -954,7 +1185,9 @@ Absolute 요소의 기준 부모에 `position: relative`를 명확히 작성한�
 
 ---
 
-# 35. `z-index` 숫자를 무작정 높이지 않는다
+<a id="css-41"></a>
+
+## 35. `z-index` 숫자를 무작정 높이지 않는다
 
 ```css
 :root {
@@ -970,7 +1203,9 @@ Stacking Context 내부에서 비교된다는 점을 함께 이해한다.
 
 ---
 
-# 36. Float는 기사 Text 흐름에 제한적으로 사용한다
+<a id="css-42"></a>
+
+## 36. Float는 기사 Text 흐름에 제한적으로 사용한다
 
 ```css
 .article-image {
@@ -985,7 +1220,9 @@ Header와 Card Layout에는 Flexbox·Grid를 우선한다.
 
 ---
 
-# 37. 숨김 방식은 목적에 맞게 선택한다
+<a id="css-43"></a>
+
+## 37. 숨김 방식은 목적에 맞게 선택한다
 
 | 목적 | 방식 |
 | --- | --- |
@@ -997,9 +1234,11 @@ Header와 Card Layout에는 Flexbox·Grid를 우선한다.
 
 ---
 
-# 38. `opacity: 0`만으로 숨기지 않는다
+<a id="css-44"></a>
 
-## 38-1. Before
+## 38. `opacity: 0`만으로 숨기지 않는다
+
+### 38-1. Before
 
 ```css
 .menu {
@@ -1009,7 +1248,7 @@ Header와 Card Layout에는 Flexbox·Grid를 우선한다.
 
 보이지 않아도 Pointer·Focus 대상이 될 수 있다.
 
-## 38-2. After
+### 38-2. After
 
 ```css
 .menu {
@@ -1027,9 +1266,11 @@ Header와 Card Layout에는 Flexbox·Grid를 우선한다.
 
 ---
 
-# 39. Overflow는 문제를 숨기는 용도로 사용하지 않는다
+<a id="css-45"></a>
 
-## 39-1. Before
+## 39. Overflow는 문제를 숨기는 용도로 사용하지 않는다
+
+### 39-1. Before
 
 ```css
 body {
@@ -1039,7 +1280,7 @@ body {
 
 가로 Overflow 원인을 가릴 수 있다.
 
-## 39-2. After
+### 39-2. After
 
 다음 원인을 먼저 찾는다.
 
@@ -1057,7 +1298,9 @@ Grid 최소 크기
 
 ---
 
-# 40. 긴 문자열을 안전하게 처리한다
+<a id="css-46"></a>
+
+## 40. 긴 문자열을 안전하게 처리한다
 
 ```css
 .code,
@@ -1079,7 +1322,9 @@ Grid 최소 크기
 
 ---
 
-# 41. Typography는 공통 Scale로 관리한다
+<a id="css-47"></a>
+
+## 41. Typography는 공통 Scale로 관리한다
 
 ```css
 :root {
@@ -1096,7 +1341,9 @@ Grid 최소 크기
 
 ---
 
-# 42. 본문 줄높이는 단위 없이 작성한다
+<a id="css-48"></a>
+
+## 42. 본문 줄높이는 단위 없이 작성한다
 
 ```css
 body {
@@ -1108,7 +1355,9 @@ body {
 
 ---
 
-# 43. Web Font는 Fallback과 성능을 함께 고려한다
+<a id="css-49"></a>
+
+## 43. Web Font는 Fallback과 성능을 함께 고려한다
 
 ```css
 @font-face {
@@ -1131,7 +1380,9 @@ body {
 
 ---
 
-# 44. 링크는 Hover만으로 상태를 표현하지 않는다
+<a id="css-50"></a>
+
+## 44. 링크는 Hover만으로 상태를 표현하지 않는다
 
 ```css
 .link:hover,
@@ -1145,9 +1396,11 @@ Keyboard 사용자에게도 같은 상태를 제공한다.
 
 ---
 
-# 45. Focus Outline을 제거하지 않는다
+<a id="css-51"></a>
 
-## 45-1. Before
+## 45. Focus Outline을 제거하지 않는다
+
+### 45-1. Before
 
 ```css
 button:focus {
@@ -1155,7 +1408,7 @@ button:focus {
 }
 ```
 
-## 45-2. After
+### 45-2. After
 
 ```css
 .button:focus-visible {
@@ -1167,7 +1420,9 @@ button:focus {
 
 ---
 
-# 46. Disabled 상태는 색상만으로 표현하지 않는다
+<a id="css-52"></a>
+
+## 46. Disabled 상태는 색상만으로 표현하지 않는다
 
 ```css
 .button:disabled {
@@ -1180,16 +1435,18 @@ HTML `disabled` Attribute와 함께 사용한다.
 
 ---
 
-# 47. 상태 표현은 JavaScript Inline Style보다 Class를 사용한다
+<a id="css-53"></a>
 
-## 47-1. Before
+## 47. 상태 표현은 JavaScript Inline Style보다 Class를 사용한다
+
+### 47-1. Before
 
 ```javascript
 button.style.backgroundColor = "red"
 button.style.display = "none"
 ```
 
-## 47-2. After
+### 47-2. After
 
 ```javascript
 button.classList.add(
@@ -1210,7 +1467,9 @@ CSS:
 
 ---
 
-# 48. Inline Style은 동적 수치에 제한적으로 사용한다
+<a id="css-54"></a>
+
+## 48. Inline Style은 동적 수치에 제한적으로 사용한다
 
 Progress처럼 값이 계속 달라지는 경우:
 
@@ -1231,7 +1490,9 @@ progress.style.setProperty(
 
 ---
 
-# 49. Background Image는 장식에 사용한다
+<a id="css-55"></a>
+
+## 49. Background Image는 장식에 사용한다
 
 ```css
 .hero {
@@ -1250,7 +1511,9 @@ progress.style.setProperty(
 
 ---
 
-# 50. Background 위 Text 대비를 확인한다
+<a id="css-56"></a>
+
+## 50. Background 위 Text 대비를 확인한다
 
 ```css
 .hero {
@@ -1262,7 +1525,9 @@ progress.style.setProperty(
 
 ---
 
-# 51. Shadow는 깊이와 상태를 제한적으로 표현한다
+<a id="css-57"></a>
+
+## 51. Shadow는 깊이와 상태를 제한적으로 표현한다
 
 ```css
 :root {
@@ -1286,9 +1551,11 @@ progress.style.setProperty(
 
 ---
 
-# 52. Transition은 변경 속성을 명시한다
+<a id="css-58"></a>
 
-## 52-1. Before
+## 52. Transition은 변경 속성을 명시한다
+
+### 52-1. Before
 
 ```css
 .card {
@@ -1296,7 +1563,7 @@ progress.style.setProperty(
 }
 ```
 
-## 52-2. After
+### 52-2. After
 
 ```css
 .card {
@@ -1308,7 +1575,9 @@ progress.style.setProperty(
 
 ---
 
-# 53. Transition은 기본 상태에 작성한다
+<a id="css-59"></a>
+
+## 53. Transition은 기본 상태에 작성한다
 
 ```css
 .button {
@@ -1326,9 +1595,11 @@ Hover 상태에만 작성하면 해제 시 전환이 다르게 동작할 수 있
 
 ---
 
-# 54. 움직임에는 Transform과 Opacity를 우선 검토한다
+<a id="css-60"></a>
 
-## 54-1. Before
+## 54. 움직임에는 Transform과 Opacity를 우선 검토한다
+
+### 54-1. Before
 
 ```css
 .card:hover {
@@ -1336,7 +1607,7 @@ Hover 상태에만 작성하면 해제 시 전환이 다르게 동작할 수 있
 }
 ```
 
-## 54-2. After
+### 54-2. After
 
 ```css
 .card:hover {
@@ -1349,7 +1620,9 @@ Layout 재계산을 줄이고 원래 공간을 유지한다.
 
 ---
 
-# 55. `prefers-reduced-motion`을 제공한다
+<a id="css-61"></a>
+
+## 55. `prefers-reduced-motion`을 제공한다
 
 ```css
 @media (
@@ -1374,7 +1647,9 @@ Layout 재계산을 줄이고 원래 공간을 유지한다.
 
 ---
 
-# 56. Mobile First로 기본 Style을 작성한다
+<a id="css-62"></a>
+
+## 56. Mobile First로 기본 Style을 작성한다
 
 ```css
 .product-grid {
@@ -1397,7 +1672,9 @@ Layout 재계산을 줄이고 원래 공간을 유지한다.
 
 ---
 
-# 57. Breakpoint는 Device 이름보다 Layout 기준으로 정한다
+<a id="css-63"></a>
+
+## 57. Breakpoint는 Device 이름보다 Layout 기준으로 정한다
 
 좋지 않은 기준:
 
@@ -1417,7 +1694,9 @@ Text 줄 길이가 과도해지는 지점
 
 ---
 
-# 58. Hover 가능 여부를 조건으로 사용할 수 있다
+<a id="css-64"></a>
+
+## 58. Hover 가능 여부를 조건으로 사용할 수 있다
 
 ```css
 @media (
@@ -1436,7 +1715,9 @@ Touch 장치에 Hover 효과를 전제로 하지 않는다.
 
 ---
 
-# 59. Container Query로 Component를 독립시킨다
+<a id="css-65"></a>
+
+## 59. Container Query로 Component를 독립시킨다
 
 ```css
 .card-list {
@@ -1459,7 +1740,9 @@ Page Viewport가 아니라 Component가 놓인 공간을 기준으로 반응한�
 
 ---
 
-# 60. Dark Mode는 Token을 교체한다
+<a id="css-66"></a>
+
+## 60. Dark Mode는 Token을 교체한다
 
 ```css
 :root {
@@ -1482,7 +1765,9 @@ Component마다 색상을 다시 작성하지 않는다.
 
 ---
 
-# 61. CSS 파일은 역할별로 분리한다
+<a id="css-67"></a>
+
+## 61. CSS 파일은 역할별로 분리한다
 
 ```text
 styles/
@@ -1502,7 +1787,9 @@ styles/
 
 ---
 
-# 62. Import 순서를 고정한다
+<a id="css-68"></a>
+
+## 62. Import 순서를 고정한다
 
 ```css
 @import url("./reset.css");
@@ -1517,7 +1804,9 @@ styles/
 
 ---
 
-# 63. Component와 Page Layout을 분리한다
+<a id="css-69"></a>
+
+## 63. Component와 Page Layout을 분리한다
 
 ```css
 .card {
@@ -1535,7 +1824,9 @@ Card 자체 Style과 Dashboard 안에서의 배치 책임을 분리한다.
 
 ---
 
-# 64. 주석은 이유와 제약을 설명한다
+<a id="css-70"></a>
+
+## 64. 주석은 이유와 제약을 설명한다
 
 좋지 않은 주석:
 
@@ -1565,7 +1856,9 @@ Card 자체 Style과 Dashboard 안에서의 배치 책임을 분리한다.
 
 ---
 
-# 65. Browser 기본 Style을 이해하고 덮어쓴다
+<a id="css-71"></a>
+
+## 65. Browser 기본 Style을 이해하고 덮어쓴다
 
 ```css
 button,
@@ -1580,7 +1873,9 @@ Form Control의 모든 기본 Style을 제거하면 Focus·Disabled·Platform �
 
 ---
 
-# 66. CSS Validation과 Lint를 자동화한다
+<a id="css-72"></a>
+
+## 66. CSS Validation과 Lint를 자동화한다
 
 대표 도구:
 
@@ -1602,9 +1897,11 @@ Browser 검사
 
 ---
 
-# 67. 실제 개선 사례 1: 구조 의존 Selector
+<a id="css-73"></a>
 
-## 67-1. Before
+## 67. 실제 개선 사례 1: 구조 의존 Selector
+
+### 67-1. Before
 
 ```css
 div#header ul li a {
@@ -1612,7 +1909,7 @@ div#header ul li a {
 }
 ```
 
-## 67-2. After
+### 67-2. After
 
 ```css
 .nav-link {
@@ -1622,7 +1919,9 @@ div#header ul li a {
 
 ---
 
-# 68. 실제 개선 사례 2: `rem` 기준 오해
+<a id="css-74"></a>
+
+## 68. 실제 개선 사례 2: `rem` 기준 오해
 
 잘못된 설명:
 
@@ -1645,7 +1944,9 @@ html {
 
 ---
 
-# 69. 실제 개선 사례 3: 부모 배경색 상속 오해
+<a id="css-75"></a>
+
+## 69. 실제 개선 사례 3: 부모 배경색 상속 오해
 
 ```text
 자식 배경색이 부모로부터 상속됨
@@ -1662,9 +1963,11 @@ html {
 
 ---
 
-# 70. 실제 개선 사례 4: Margin Collapse 만능 해결
+<a id="css-76"></a>
 
-## 70-1. Before
+## 70. 실제 개선 사례 4: Margin Collapse 만능 해결
+
+### 70-1. Before
 
 ```css
 .parent {
@@ -1674,7 +1977,7 @@ html {
 
 콘텐츠가 잘릴 수 있다.
 
-## 70-2. After
+### 70-2. After
 
 목적에 따라 선택한다.
 
@@ -1697,7 +2000,9 @@ Flex·Grid Layout에서는 `gap`을 활용할 수 있다.
 
 ---
 
-# 71. 실제 개선 사례 5: 잘못된 HTML 중첩
+<a id="css-77"></a>
+
+## 71. 실제 개선 사례 5: 잘못된 HTML 중첩
 
 ```html
 <span>
@@ -1719,7 +2024,9 @@ CSS 문제처럼 보여도 HTML 구조를 먼저 검수한다.
 
 ---
 
-# 72. 실제 개선 사례 6: 숨김 방식 혼동
+<a id="css-78"></a>
+
+## 72. 실제 개선 사례 6: 숨김 방식 혼동
 
 ```css
 .item {
@@ -1741,7 +2048,9 @@ CSS 문제처럼 보여도 HTML 구조를 먼저 검수한다.
 
 ---
 
-# 73. 실제 개선 사례 7: Background와 콘텐츠 이미지 혼동
+<a id="css-79"></a>
+
+## 73. 실제 개선 사례 7: Background와 콘텐츠 이미지 혼동
 
 상품 사진처럼 의미가 있는 이미지:
 
@@ -1763,9 +2072,11 @@ CSS 문제처럼 보여도 HTML 구조를 먼저 검수한다.
 
 ---
 
-# 74. 실제 개선 사례 8: Absolute Position 중앙 정렬
+<a id="css-80"></a>
 
-## 74-1. Before
+## 74. 실제 개선 사례 8: Absolute Position 중앙 정렬
+
+### 74-1. Before
 
 ```css
 .modal {
@@ -1774,7 +2085,7 @@ CSS 문제처럼 보여도 HTML 구조를 먼저 검수한다.
 }
 ```
 
-## 74-2. After
+### 74-2. After
 
 ```css
 .modal {
@@ -1796,9 +2107,11 @@ CSS 문제처럼 보여도 HTML 구조를 먼저 검수한다.
 
 ---
 
-# 75. 실제 개선 사례 9: Float Layout
+<a id="css-81"></a>
 
-## 75-1. Before
+## 75. 실제 개선 사례 9: Float Layout
+
+### 75-1. Before
 
 ```css
 .header-left {
@@ -1810,7 +2123,7 @@ CSS 문제처럼 보여도 HTML 구조를 먼저 검수한다.
 }
 ```
 
-## 75-2. After
+### 75-2. After
 
 ```css
 .header {
@@ -1825,9 +2138,11 @@ Float는 기사 Text 흐름에 남겨 둔다.
 
 ---
 
-# 76. 실제 개선 사례 10: Hover 전용 Transition
+<a id="css-82"></a>
 
-## 76-1. Before
+## 76. 실제 개선 사례 10: Hover 전용 Transition
+
+### 76-1. Before
 
 ```css
 .button:hover {
@@ -1836,7 +2151,7 @@ Float는 기사 Text 흐름에 남겨 둔다.
 }
 ```
 
-## 76-2. After
+### 76-2. After
 
 ```css
 .button {
@@ -1847,9 +2162,11 @@ Float는 기사 Text 흐름에 남겨 둔다.
 
 ---
 
-# 77. 실제 개선 사례 11: `transition: all`
+<a id="css-83"></a>
 
-## 77-1. Before
+## 77. 실제 개선 사례 11: `transition: all`
+
+### 77-1. Before
 
 ```css
 .card {
@@ -1857,7 +2174,7 @@ Float는 기사 Text 흐름에 남겨 둔다.
 }
 ```
 
-## 77-2. After
+### 77-2. After
 
 ```css
 .card {
@@ -1869,9 +2186,11 @@ Float는 기사 Text 흐름에 남겨 둔다.
 
 ---
 
-# 78. 실제 개선 사례 12: Transform 함수 덮어쓰기
+<a id="css-84"></a>
 
-## 78-1. Before
+## 78. 실제 개선 사례 12: Transform 함수 덮어쓰기
+
+### 78-1. Before
 
 ```css
 .box {
@@ -1884,7 +2203,7 @@ Float는 기사 Text 흐름에 남겨 둔다.
 
 첫 Transform은 덮어써진다.
 
-## 78-2. After
+### 78-2. After
 
 ```css
 .box {
@@ -1896,9 +2215,11 @@ Float는 기사 Text 흐름에 남겨 둔다.
 
 ---
 
-# 79. 실제 개선 사례 13: Hover 메뉴 접근성
+<a id="css-85"></a>
 
-## 79-1. Before
+## 79. 실제 개선 사례 13: Hover 메뉴 접근성
+
+### 79-1. Before
 
 ```css
 .menu-label:hover + .menu-list {
@@ -1908,7 +2229,7 @@ Float는 기사 Text 흐름에 남겨 둔다.
 
 Touch·Keyboard 환경에서 동작이 불안정하다.
 
-## 79-2. After
+### 79-2. After
 
 ```css
 .menu-list {
@@ -1924,7 +2245,9 @@ Touch·Keyboard 환경에서 동작이 불안정하다.
 
 ---
 
-# 80. 실제 개선 사례 14: Flex 시각 순서
+<a id="css-86"></a>
+
+## 80. 실제 개선 사례 14: Flex 시각 순서
 
 ```css
 .item {
@@ -1938,7 +2261,9 @@ DOM 순서와 Keyboard 순서는 바뀌지 않는다.
 
 ---
 
-# 81. 실무형 예제: 반응형 Product Card
+<a id="css-87"></a>
+
+## 81. 실무형 예제: 반응형 Product Card
 
 ```css
 :root {
@@ -2120,7 +2445,7 @@ DOM 순서와 Keyboard 순서는 바뀌지 않는다.
 }
 ```
 
-## 81-1. 코드에서 무엇을 사용하는 걸까?
+### 81-1. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -2138,7 +2463,9 @@ DOM 순서와 Keyboard 순서는 바뀌지 않는다.
 
 ---
 
-# 82. 파일 구조 예시
+<a id="css-88"></a>
+
+## 82. 파일 구조 예시
 
 ```text
 styles/
@@ -2159,51 +2486,57 @@ styles/
 
 ---
 
-# 83. 자주 하는 실수
+<a id="css-89"></a>
 
-## 83-1. 모든 요소를 ID로 Style
+## 83. 자주 하는 실수
+
+### 83-1. 모든 요소를 ID로 Style
 
 명시도가 높고 재사용하기 어렵다.
 
-## 83-2. HTML 구조를 Selector에 그대로 복사
+### 83-2. HTML 구조를 Selector에 그대로 복사
 
 Markup 변경에 취약하다.
 
-## 83-3. 충돌할 때마다 `!important` 추가
+### 83-3. 충돌할 때마다 `!important` 추가
 
 Cascade 문제를 더 크게 만든다.
 
-## 83-4. 임의의 간격값을 계속 추가
+### 83-4. 임의의 간격값을 계속 추가
 
 Spacing Scale이 무너진다.
 
-## 83-5. Layout에 Position·Float 남용
+### 83-5. Layout에 Position·Float 남용
 
 반응형 변경이 어려워진다.
 
-## 83-6. `opacity: 0`만으로 숨김
+### 83-6. `opacity: 0`만으로 숨김
 
 상호작용과 Focus가 남을 수 있다.
 
-## 83-7. 모든 Transition에 `all`
+<a id="index-section-151"></a>
+
+### 83-7. 모든 Transition에 `all`
 
 의도하지 않은 속성까지 전환된다.
 
-## 83-8. Hover 상태만 작성
+### 83-8. Hover 상태만 작성
 
 Keyboard와 Touch 사용자를 놓친다.
 
-## 83-9. Focus Outline을 제거
+### 83-9. Focus Outline을 제거
 
 현재 위치를 알기 어렵다.
 
-## 83-10. 가로 Overflow를 Body에서 숨김
+### 83-10. 가로 Overflow를 Body에서 숨김
 
 실제 Layout 오류를 발견하지 못한다.
 
 ---
 
-# 84. 핵심 요약
+<a id="css-90"></a>
+
+## 84. 핵심 요약
 
 ```text
 Selector
@@ -2252,7 +2585,9 @@ Layout
 
 ---
 
-# 85. 최종 체크리스트
+<a id="css-91"></a>
+
+## 85. 최종 체크리스트
 
 - [ ] Class 이름이 역할을 표현하는가?
 - [ ] Style에 ID Selector를 불필요하게 사용하지 않는가?
@@ -2296,7 +2631,9 @@ Layout
 
 ---
 
-# 마무리
+<a id="css-92"></a>
+
+## 마무리
 
 CSS 실무 코딩 스타일의 핵심은 화려한 효과를 많이 사용하는 것에서 끝나지 않는다.
 
@@ -2315,10 +2652,15 @@ Layout 도구가 목적에 맞게 선택되고
 좋은 CSS는 단순히 화면을 꾸미는 코드가 아니다.
 
 **HTML의 의미를 해치지 않고, 다양한 화면과 입력 환경에서 안정적으로 동작하며, 다른 개발자가 안전하게 확장할 수 있는 UI 규칙**이다.
-# V3 렌더링 추적 카드 — 의도·범위·재사용성이 보이는 규칙
+<a id="css-93"></a>
+
+## 렌더링 복습 카드 — 의도·범위·재사용성이 보이는 규칙
 
 실무 CSS는 선택자 범위를 예측 가능하게 하고, 반복 값을 변수·공통 클래스로 관리하며, 상태와 반응형 규칙을 가까운 책임 단위로 묶는다. 무작정 `!important`를 늘리면 원인 추적이 어려워진다.
 
 01~15번 내 코드와 강사님 코드를 Styles의 승리 선언, Computed 값, Box Model 결과로 비교한다. 이름은 모양보다 역할과 컴포넌트 관계를 드러낸다.
 
 **원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/01~15 전체 원본`에서 실제 선택자·계산값·화면 차이를 확인한다.
+
+
+[CSS 파트 목차로 돌아가기](./README.md)

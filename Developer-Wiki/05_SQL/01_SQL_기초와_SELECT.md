@@ -1,11 +1,89 @@
 ---
 title: SQL 기초와 SELECT
-version: v3.0-final
-last_updated: 2026-08-12
+version: v4.0-detailed-encyclopedia
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # SQL 기초와 SELECT
+
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-01-section-2)
+- [개념에서 실제 실행까지 — SQL와 SELECT란? — 서버가 표 형태의 결과를 만드는 과정](#sql-01-section-3)
+- [41. 내 코드와 강사님 코드 비교](#sql-01-section-44)
+- [48. Debugging](#sql-01-section-51)
+- [49. 종합실습](#sql-01-section-52)
+- [50. 정답과 해설](#sql-01-section-53)
+- [51. 최종 체크리스트](#sql-01-section-54)
+- [52. 핵심 요약](#sql-01-section-55)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [문서 정보](#sql-01-section-1)
+- [학습 목표](#sql-01-section-2)
+- [개념에서 실제 실행까지 — SQL와 SELECT란? — 서버가 표 형태의 결과를 만드는 과정](#sql-01-section-3)
+- [1. SQL이란?](#sql-01-section-4)
+- [2. Query란?](#sql-01-section-5)
+- [3. SQL Comment](#sql-01-section-6)
+- [4. 실습 Database 구조](#sql-01-section-7)
+- [5. `DEPT` Table](#sql-01-section-8)
+- [6. `EMP` Table](#sql-01-section-9)
+- [7. `SALGRADE` Table](#sql-01-section-10)
+- [8. `BONUS` Table](#sql-01-section-11)
+- [9. 가장 기본적인 `SELECT`](#sql-01-section-12)
+- [10. `SELECT *`](#sql-01-section-13)
+- [11. `SELECT *`는 언제 사용할까?](#sql-01-section-14)
+- [12. 여러 Table 확인](#sql-01-section-15)
+- [13. 특정 Column 조회](#sql-01-section-16)
+- [14. 여러 Column 조회](#sql-01-section-17)
+- [15. SQL 줄바꿈과 들여쓰기](#sql-01-section-18)
+- [16. Keyword 대소문자](#sql-01-section-19)
+- [17. `WHERE 1 != 1`로 Column 구조 확인](#sql-01-section-20)
+- [18. IDE의 Table 이동 기능은 SQL 문법이 아니다](#sql-01-section-21)
+- [19. `DISTINCT`](#sql-01-section-22)
+- [20. `SELECT DISTINCT`](#sql-01-section-23)
+- [21. `DISTINCT`는 Row 조합에 적용된다](#sql-01-section-24)
+- [22. `ALL`](#sql-01-section-25)
+- [23. 원본의 SELECT 문법 설명 교정](#sql-01-section-26)
+- [24. Alias란?](#sql-01-section-27)
+- [25. `AS`](#sql-01-section-28)
+- [26. `AS` 생략](#sql-01-section-29)
+- [27. 공백이 포함된 Alias](#sql-01-section-30)
+- [28. Alias는 Result에만 적용된다](#sql-01-section-31)
+- [29. Alias를 사용하는 이유](#sql-01-section-32)
+- [30. SELECT List에서 산술식 사용](#sql-01-section-33)
+- [31. 계산 결과에는 Alias를 붙인다](#sql-01-section-34)
+- [32. Table 없이 계산](#sql-01-section-35)
+- [33. 문자열 상수 조회](#sql-01-section-36)
+- [34. 여러 표현식 조회](#sql-01-section-37)
+- [35. `NULL`](#sql-01-section-38)
+- [36. `NULL`이 포함된 산술](#sql-01-section-39)
+- [37. 왜 `NULL + 숫자 = NULL`인가?](#sql-01-section-40)
+- [38. `COMM = 0`과 `COMM IS NULL`은 다르다](#sql-01-section-41)
+- [39. `NULL`을 0처럼 계산하려면](#sql-01-section-42)
+- [40. SQL 문장 끝의 Semicolon](#sql-01-section-43)
+- [41. 내 코드와 강사님 코드 비교](#sql-01-section-44)
+- [42. 개선된 기본 예제](#sql-01-section-45)
+- [43. 실무 Query Formatting](#sql-01-section-46)
+- [44. `SELECT *` 리팩토링](#sql-01-section-47)
+- [45. Alias 리팩토링](#sql-01-section-48)
+- [46. `NULL` 산술 리팩토링](#sql-01-section-49)
+- [47. 자주 하는 실수](#sql-01-section-50)
+- [48. Debugging](#sql-01-section-51)
+- [49. 종합실습](#sql-01-section-52)
+- [50. 정답과 해설](#sql-01-section-53)
+- [51. 최종 체크리스트](#sql-01-section-54)
+- [52. 핵심 요약](#sql-01-section-55)
+- [마무리](#sql-01-section-56)
+- [V3 동작 백과 — SELECT는 Data를 어떻게 가져오는가?](#sql-01-section-57)
+
+</details>
+
+---
+
+<a id="sql-01-section-1"></a>
 
 ## 문서 정보
 
@@ -25,23 +103,129 @@ status: Completed
 
 ---
 
-# 학습 목표
+<a id="sql-01-section-2"></a>
 
-- SQL과 Query의 기본 역할을 설명할 수 있다.
-- MariaDB에서 한 줄·여러 줄 Comment를 작성할 수 있다.
-- `SELECT ... FROM ...`의 기본 구조를 이해할 수 있다.
-- `SELECT *`와 필요한 Column만 선택하는 방식의 차이를 설명할 수 있다.
-- `DISTINCT`로 중복 Row를 제거할 수 있다.
-- Alias를 이용해 결과 Column 이름을 읽기 쉽게 만들 수 있다.
-- `SELECT` List에서 산술식을 계산할 수 있다.
-- Table 없이 상수와 표현식을 조회할 수 있다.
-- `NULL`이 포함된 산술 결과를 설명할 수 있다.
-- 실습용 `EMP`, `DEPT`, `SALGRADE`, `BONUS` Table의 역할을 구분할 수 있다.
-- 내 코드와 강사님 코드의 실제 차이와 잘못된 설명을 구분할 수 있다.
+## 학습 목표
+
+- 테이블의 저장 데이터와 조회 결과를 구분한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
 
-# 1. SQL이란?
+<a id="sql-01-section-3"></a>
+
+## 개념에서 실제 실행까지 — SQL와 SELECT란? — 서버가 표 형태의 결과를 만드는 과정
+
+### 무엇이며 왜 배워야 할까?
+
+SQL은 관계형 DBMS에 데이터 조회·변경·구조 정의를 요청하는 언어다. SELECT는 원하는 결과의 모양을 선언한다. Python의 반복문처럼 매 행을 어떻게 읽을지 모두 지시하는 것이 아니라 어떤 열과 조건을 원하는지 적고 실제 접근 방식은 MariaDB의 옵티마이저가 결정한다.
+
+클라이언트인 SQL 편집기에서 SQL을 실행하면 연결된 MariaDB 서버가 구문과 이름·권한 등을 확인하고 실행 계획에 따라 데이터를 읽어 결과 집합을 돌려준다. 화면의 Result Grid는 그 반환을 보여 주는 도구다. SELECT의 별칭·계산 열은 저장 테이블의 이름이나 급여를 바꾸지 않는다. 변경은 UPDATE 같은 별도 SQL의 일이다.
+
+입력은 초기화 SQL의 EMP다. SAL 컬럼은 숫자, COMM은 보너스이며 NULL인 행이 있다. 자료형과 단위를 먼저 읽어야 의미 없는 계산을 피한다. 초기화 파일은 SAL을 DECIMAL로 정의할 뿐 월급·연봉 업무 단위를 강제하지 않는다. 수업에는 월급·연봉 표현이 섞여 있으므로 아래 sal*12는 SAL을 월 금액이라고 가정한 환산이다.
+
+### 입력은 어디에서 오는가?
+
+EMP·DEPT·SALGRADE는 초기화 자료 그대로 준비된 상태다. EMP 14행, DEPT 4행, SALGRADE 5행이다. 다른 DML로 데이터를 바꿨다면 아래 결과와 달라질 수 있다. 상수 SELECT 예제는 테이블 없이도 실행할 수 있다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+SELECT empno, ename, sal, comm,
+       sal + comm AS total_with_comm,
+       sal * 12 AS assumed_annual
+FROM emp
+WHERE empno IN (7369, 7499)
+ORDER BY empno;
+```
+
+Result Grid의 열·행 값:
+
+```text
+empno	ename	sal	comm	total_with_comm	assumed_annual
+7369	SMITH	800.00	NULL	NULL	9600.00
+7499	ALLEN	1600.00	300.00	1900.00	19200.00
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. FROM emp로 사원 데이터의 조회 범위를 정한다.
+2. WHERE가 SMITH와 ALLEN만 선택한다. 이 과정의 논리 설명은 실제 디스크 접근 순서 보장이 아니다.
+3. SELECT의 표현식을 각 선택 행에 적용한다. NULL과의 덧셈은 NULL이다.
+4. ORDER BY empno로 순서를 정하고 열 이름과 결과 행을 클라이언트에 보낸다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 62~71행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+select 100*12;
+
+-- 기존 NULL에는 더하거나 빼도 NULL로 유지됨
+select sal, comm , sal + comm from emp;
+-- select ename+sal from emp;
+
+select * from emp;
+
+-- where로 조건을 걸어 볼 수 있음
+select *
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 31~40행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+
+
+select sal, sal*12 from emp;
+select sal, comm, sal + comm from emp;
+
+
+select * from emp;
+
+select * 
+from emp
+```
+
+두 원본 모두 sal+comm을 조회한다. 결과 NULL은 SQL이 덧셈을 실행하지 않은 오류가 아니라 NULL 전파 규칙이다. 업무에서 NULL을 0으로 보아도 되는지는 별도 결정한다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### 이해 확인 실습
+
+1. 조회 별칭을 변경하거나 sal*12를 계산하면 EMP의 값도 바뀔까?
+2. 초기화 파일의 EMP·DEPT·SALGRADE 행 수는? SAL의 업무 단위가 DDL에 강제되어 있는가?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 아니다. 결과 표현만 바뀐다. 원본 변경에는 DML이 필요하다.
+2. 14·4·5행이다. DECIMAL은 수치 형식만 정하며 월급·연봉 업무 단위를 강제하지 않는다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-01-section-4"></a>
+
+## 1. SQL이란?
 
 SQL은 관계형 Database에서 Data를 조회하고 정의하고 변경하기 위한 언어다.
 
@@ -79,7 +263,9 @@ DROP
 
 ---
 
-# 2. Query란?
+<a id="sql-01-section-5"></a>
+
+## 2. Query란?
 
 Database에 전달하는 SQL 명령을 일반적으로 Query라고 부른다.
 
@@ -92,9 +278,11 @@ FROM emp;
 
 ---
 
-# 3. SQL Comment
+<a id="sql-01-section-6"></a>
 
-## 3.1 한 줄 Comment
+## 3. SQL Comment
+
+### 3.1 한 줄 Comment
 
 ```sql
 -- 전체 사원 조회
@@ -112,7 +300,7 @@ MariaDB에서는 일반적으로 `--` 뒤에 공백을 두는 형태를 사용�
 
 ---
 
-## 3.2 여러 줄 Comment
+### 3.2 여러 줄 Comment
 
 ```sql
 /*
@@ -127,7 +315,9 @@ FROM emp;
 
 ---
 
-# 4. 실습 Database 구조
+<a id="sql-01-section-7"></a>
+
+## 4. 실습 Database 구조
 
 이번 SQL 수업은 `[DB]학습용_emp 신규-mariadb.sql`에서 준비한 Sample Table을 사용한다.
 
@@ -141,7 +331,9 @@ human Database
 
 ---
 
-# 5. `DEPT` Table
+<a id="sql-01-section-8"></a>
+
+## 5. `DEPT` Table
 
 부서 정보를 저장한다.
 
@@ -164,7 +356,9 @@ Sample Data:
 
 ---
 
-# 6. `EMP` Table
+<a id="sql-01-section-9"></a>
+
+## 6. `EMP` Table
 
 사원 정보를 저장한다.
 
@@ -193,7 +387,9 @@ DEPT.DEPTNO
 
 ---
 
-# 7. `SALGRADE` Table
+<a id="sql-01-section-10"></a>
+
+## 7. `SALGRADE` Table
 
 급여 범위에 따른 Grade를 저장한다.
 
@@ -223,7 +419,9 @@ e.sal BETWEEN s.losal AND s.hisal
 
 ---
 
-# 8. `BONUS` Table
+<a id="sql-01-section-11"></a>
+
+## 8. `BONUS` Table
 
 Bonus 관련 실습을 위한 Table이다.
 
@@ -239,7 +437,9 @@ BONUS
 
 ---
 
-# 9. 가장 기본적인 `SELECT`
+<a id="sql-01-section-12"></a>
+
+## 9. 가장 기본적인 `SELECT`
 
 ```sql
 SELECT *
@@ -258,7 +458,9 @@ FROM
 
 ---
 
-# 10. `SELECT *`
+<a id="sql-01-section-13"></a>
+
+## 10. `SELECT *`
 
 `*`는 해당 Table의 모든 Column을 의미한다.
 
@@ -282,7 +484,9 @@ DEPTNO
 
 ---
 
-# 11. `SELECT *`는 언제 사용할까?
+<a id="sql-01-section-14"></a>
+
+## 11. `SELECT *`는 언제 사용할까?
 
 학습·탐색 단계에서는 편리하다.
 
@@ -310,7 +514,9 @@ FROM emp;
 
 ---
 
-# 12. 여러 Table 확인
+<a id="sql-01-section-15"></a>
+
+## 12. 여러 Table 확인
 
 원본에서는 다음 Query로 Sample Table을 먼저 확인한다.
 
@@ -329,7 +535,9 @@ FROM salgrade;
 
 ---
 
-# 13. 특정 Column 조회
+<a id="sql-01-section-16"></a>
+
+## 13. 특정 Column 조회
 
 모든 Column이 아니라 필요한 Column만 지정할 수 있다.
 
@@ -342,7 +550,9 @@ FROM emp;
 
 ---
 
-# 14. 여러 Column 조회
+<a id="sql-01-section-17"></a>
+
+## 14. 여러 Column 조회
 
 `,`로 여러 Column을 나열한다.
 
@@ -361,7 +571,9 @@ EMPNO | ENAME
 
 ---
 
-# 15. SQL 줄바꿈과 들여쓰기
+<a id="sql-01-section-18"></a>
+
+## 15. SQL 줄바꿈과 들여쓰기
 
 다음 두 Query는 의미가 같다.
 
@@ -382,7 +594,9 @@ SQL은 일반적인 공백과 줄바꿈 자체보다 Token 구조를 기준으�
 
 ---
 
-# 16. Keyword 대소문자
+<a id="sql-01-section-19"></a>
+
+## 16. Keyword 대소문자
 
 MariaDB SQL Keyword는 일반적으로 대소문자를 구분하지 않는다.
 
@@ -409,7 +623,9 @@ FROM emp;
 
 ---
 
-# 17. `WHERE 1 != 1`로 Column 구조 확인
+<a id="sql-01-section-20"></a>
+
+## 17. `WHERE 1 != 1`로 Column 구조 확인
 
 내 코드에는 다음 실험이 있다.
 
@@ -448,7 +664,9 @@ FROM emp;
 
 ---
 
-# 18. IDE의 Table 이동 기능은 SQL 문법이 아니다
+<a id="sql-01-section-21"></a>
+
+## 18. IDE의 Table 이동 기능은 SQL 문법이 아니다
 
 내 코드에는 다음 Comment가 있다.
 
@@ -468,7 +686,9 @@ Database Client 기능
 
 ---
 
-# 19. `DISTINCT`
+<a id="sql-01-section-22"></a>
+
+## 19. `DISTINCT`
 
 중복된 결과를 제거하고 싶을 때 사용한다.
 
@@ -491,7 +711,9 @@ MANAGER
 
 ---
 
-# 20. `SELECT DISTINCT`
+<a id="sql-01-section-23"></a>
+
+## 20. `SELECT DISTINCT`
 
 ```sql
 SELECT DISTINCT job
@@ -512,7 +734,9 @@ PRESIDENT
 
 ---
 
-# 21. `DISTINCT`는 Row 조합에 적용된다
+<a id="sql-01-section-24"></a>
+
+## 21. `DISTINCT`는 Row 조합에 적용된다
 
 다음 Query를 보자.
 
@@ -533,7 +757,9 @@ FROM emp;
 
 ---
 
-# 22. `ALL`
+<a id="sql-01-section-25"></a>
+
+## 22. `ALL`
 
 `SELECT`의 기본 동작은 중복을 허용한다.
 
@@ -553,7 +779,9 @@ FROM emp;
 
 ---
 
-# 23. 원본의 SELECT 문법 설명 교정
+<a id="sql-01-section-26"></a>
+
+## 23. 원본의 SELECT 문법 설명 교정
 
 내 코드 원본에는 다음 설명이 있다.
 
@@ -602,7 +830,9 @@ FROM emp;
 
 ---
 
-# 24. Alias란?
+<a id="sql-01-section-27"></a>
+
+## 24. Alias란?
 
 Alias는 Result Set의 Column 이름을 임시로 바꾸는 기능이다.
 
@@ -617,7 +847,9 @@ Database의 실제 Column Name이 변경되는 것은 아니다.
 
 ---
 
-# 25. `AS`
+<a id="sql-01-section-28"></a>
+
+## 25. `AS`
 
 ```sql
 SELECT job AS 직업
@@ -628,7 +860,9 @@ FROM emp;
 
 ---
 
-# 26. `AS` 생략
+<a id="sql-01-section-29"></a>
+
+## 26. `AS` 생략
 
 MariaDB에서는 Column Alias의 `AS`를 생략할 수도 있다.
 
@@ -641,7 +875,9 @@ FROM emp;
 
 ---
 
-# 27. 공백이 포함된 Alias
+<a id="sql-01-section-30"></a>
+
+## 27. 공백이 포함된 Alias
 
 원본에는 다음 Query가 있다.
 
@@ -671,7 +907,9 @@ FROM emp;
 
 ---
 
-# 28. Alias는 Result에만 적용된다
+<a id="sql-01-section-31"></a>
+
+## 28. Alias는 Result에만 적용된다
 
 ```sql
 SELECT
@@ -691,7 +929,9 @@ Result Header
 
 ---
 
-# 29. Alias를 사용하는 이유
+<a id="sql-01-section-32"></a>
+
+## 29. Alias를 사용하는 이유
 
 - 긴 표현식을 읽기 쉽게 만든다.
 - Report Header를 의미 있게 만든다.
@@ -709,7 +949,9 @@ FROM emp;
 
 ---
 
-# 30. SELECT List에서 산술식 사용
+<a id="sql-01-section-33"></a>
+
+## 30. SELECT List에서 산술식 사용
 
 Column 값을 이용해 계산할 수 있다.
 
@@ -724,9 +966,11 @@ FROM emp;
 
 ---
 
-# 31. 계산 결과에는 Alias를 붙인다
+<a id="sql-01-section-34"></a>
 
-## Before
+## 31. 계산 결과에는 Alias를 붙인다
+
+### Before
 
 ```sql
 SELECT
@@ -735,7 +979,7 @@ SELECT
 FROM emp;
 ```
 
-## After
+### After
 
 ```sql
 SELECT
@@ -751,7 +995,9 @@ FROM emp;
 
 ---
 
-# 32. Table 없이 계산
+<a id="sql-01-section-35"></a>
+
+## 32. Table 없이 계산
 
 MariaDB에서는 단순 표현식을 Table 없이 조회할 수 있다.
 
@@ -767,7 +1013,9 @@ Result:
 
 ---
 
-# 33. 문자열 상수 조회
+<a id="sql-01-section-36"></a>
+
+## 33. 문자열 상수 조회
 
 ```sql
 SELECT 'HUMAN';
@@ -783,7 +1031,9 @@ HUMAN
 
 ---
 
-# 34. 여러 표현식 조회
+<a id="sql-01-section-37"></a>
+
+## 34. 여러 표현식 조회
 
 ```sql
 SELECT
@@ -795,7 +1045,9 @@ Table 없이도 여러 Expression을 Result Set으로 만들 수 있다.
 
 ---
 
-# 35. `NULL`
+<a id="sql-01-section-38"></a>
+
+## 35. `NULL`
 
 `NULL`은 숫자 `0`이나 빈 문자열이 아니다.
 
@@ -808,7 +1060,9 @@ NULL
 
 ---
 
-# 36. `NULL`이 포함된 산술
+<a id="sql-01-section-39"></a>
+
+## 36. `NULL`이 포함된 산술
 
 원본:
 
@@ -832,7 +1086,9 @@ SAL + COMM
 
 ---
 
-# 37. 왜 `NULL + 숫자 = NULL`인가?
+<a id="sql-01-section-40"></a>
+
+## 37. 왜 `NULL + 숫자 = NULL`인가?
 
 `NULL`은 “0”이 아니라 **알 수 없는 값**이다.
 
@@ -851,7 +1107,9 @@ SELECT 10 + NULL;
 
 ---
 
-# 38. `COMM = 0`과 `COMM IS NULL`은 다르다
+<a id="sql-01-section-41"></a>
+
+## 38. `COMM = 0`과 `COMM IS NULL`은 다르다
 
 Sample Data의 `TURNER`는 `COMM = 0`이다.
 
@@ -867,7 +1125,9 @@ NULL
 
 ---
 
-# 39. `NULL`을 0처럼 계산하려면
+<a id="sql-01-section-42"></a>
+
+## 39. `NULL`을 0처럼 계산하려면
 
 추후 NULL Function 단원에서 자세히 다루지만 예를 들면 다음처럼 처리할 수 있다.
 
@@ -883,7 +1143,9 @@ FROM emp;
 
 ---
 
-# 40. SQL 문장 끝의 Semicolon
+<a id="sql-01-section-43"></a>
+
+## 40. SQL 문장 끝의 Semicolon
 
 ```sql
 SELECT *
@@ -896,7 +1158,9 @@ Database Client에서는 한 Statement만 선택 실행할 때 없어도 실행�
 
 ---
 
-# 41. 내 코드와 강사님 코드 비교
+<a id="sql-01-section-44"></a>
+
+## 41. 내 코드와 강사님 코드 비교
 
 두 `Script.sql`의 초반 학습 순서는 거의 같다.
 
@@ -916,7 +1180,7 @@ Comment
 
 ---
 
-## 41.1 Comment 설명
+### 41.1 Comment 설명
 
 ### 내 코드
 
@@ -940,7 +1204,7 @@ Comment
 
 ---
 
-## 41.2 Column 설명
+### 41.2 Column 설명
 
 내 코드에는 `EMP` Column 의미를 미리 기록해 두었다.
 
@@ -967,7 +1231,7 @@ COMM
 
 ---
 
-## 41.3 SELECT 전체 Clause 설명
+### 41.3 SELECT 전체 Clause 설명
 
 내 코드에는 다음 전체 구조가 미리 작성되어 있다.
 
@@ -986,7 +1250,7 @@ ORDER BY
 
 ---
 
-## 41.4 `SELECT 100 * 12` 위치
+### 41.4 `SELECT 100 * 12` 위치
 
 강사님 코드는 Table 조회 직후 다음 계산을 먼저 실행한다.
 
@@ -1000,7 +1264,9 @@ SELECT 100 * 12;
 
 ---
 
-## 41.5 `WHERE 1 != 1`
+<a id="index-section-66"></a>
+
+### 41.5 `WHERE 1 != 1`
 
 내 코드에는 다음 실험이 추가되어 있다.
 
@@ -1020,7 +1286,7 @@ DESCRIBE emp;
 
 ---
 
-## 41.6 여러 Column Formatting
+### 41.6 여러 Column Formatting
 
 강사님 코드는 한 줄 방식과 여러 줄 방식을 모두 보여 준다.
 
@@ -1042,7 +1308,7 @@ FROM emp;
 
 ---
 
-## 41.7 `DISTINCT`
+### 41.7 `DISTINCT`
 
 두 코드 모두 같은 개념을 실습한다.
 
@@ -1058,7 +1324,7 @@ FROM emp;
 
 ---
 
-## 41.8 Alias 차이
+### 41.8 Alias 차이
 
 내 코드:
 
@@ -1097,7 +1363,7 @@ FROM emp;
 
 ---
 
-## 41.9 산술식
+### 41.9 산술식
 
 두 코드 모두 다음 Query를 사용한다.
 
@@ -1112,7 +1378,7 @@ FROM emp;
 
 ---
 
-## 41.10 `NULL` 산술
+### 41.10 `NULL` 산술
 
 두 코드 모두 다음 Query를 사용한다.
 
@@ -1128,7 +1394,7 @@ FROM emp;
 
 ---
 
-## 41.11 원본 비교 요약
+### 41.11 원본 비교 요약
 
 | 항목 | 내 코드 | 강사님 코드 | V2 정리 |
 | --- | --- | --- | --- |
@@ -1147,7 +1413,9 @@ FROM emp;
 
 ---
 
-# 42. 개선된 기본 예제
+<a id="sql-01-section-45"></a>
+
+## 42. 개선된 기본 예제
 
 ```sql
 -- 사원 Table 전체 구조를 확인
@@ -1191,15 +1459,17 @@ FROM emp;
 
 ---
 
-# 43. 실무 Query Formatting
+<a id="sql-01-section-46"></a>
 
-## Before
+## 43. 실무 Query Formatting
+
+### Before
 
 ```sql
 select empno,ename,job,sal from emp;
 ```
 
-## After
+### After
 
 ```sql
 SELECT
@@ -1231,16 +1501,18 @@ Statement
 
 ---
 
-# 44. `SELECT *` 리팩토링
+<a id="sql-01-section-47"></a>
 
-## Before
+## 44. `SELECT *` 리팩토링
+
+### Before
 
 ```sql
 SELECT *
 FROM emp;
 ```
 
-## After
+### After
 
 ```sql
 SELECT
@@ -1256,9 +1528,11 @@ FROM emp;
 
 ---
 
-# 45. Alias 리팩토링
+<a id="sql-01-section-48"></a>
 
-## Before
+## 45. Alias 리팩토링
+
+### Before
 
 ```sql
 SELECT
@@ -1266,7 +1540,7 @@ SELECT
 FROM emp;
 ```
 
-## After
+### After
 
 ```sql
 SELECT
@@ -1278,9 +1552,11 @@ Expression에는 의미 있는 Alias를 붙인다.
 
 ---
 
-# 46. `NULL` 산술 리팩토링
+<a id="sql-01-section-49"></a>
 
-## Before
+## 46. `NULL` 산술 리팩토링
+
+### Before
 
 ```sql
 SELECT
@@ -1290,7 +1566,7 @@ FROM emp;
 
 `COMM`이 `NULL`이면 Result도 `NULL`이다.
 
-## After
+### After
 
 Business Rule상 `NULL Commission`을 계산에서 0으로 봐야 한다면:
 
@@ -1304,41 +1580,47 @@ FROM emp;
 
 ---
 
-# 47. 자주 하는 실수
+<a id="sql-01-section-50"></a>
 
-## 47.1 `SELECT *`만 계속 사용
+## 47. 자주 하는 실수
+
+### 47.1 `SELECT *`만 계속 사용
 
 필요한 Column을 명시하는 습관을 들인다.
 
-## 47.2 `DISTINCT`를 성능 문제 해결용으로 무조건 사용
+### 47.2 `DISTINCT`를 성능 문제 해결용으로 무조건 사용
 
 Join이나 Data Model 문제 때문에 중복이 생긴 경우 원인을 먼저 확인한다.
 
-## 47.3 Alias가 실제 Column을 Rename한다고 생각
+### 47.3 Alias가 실제 Column을 Rename한다고 생각
 
 Alias는 Query Result의 임시 이름이다.
 
-## 47.4 `'직업 이름'`을 모든 DBMS의 Identifier Quote라고 생각
+<a id="index-section-90"></a>
+
+### 47.4 `'직업 이름'`을 모든 DBMS의 Identifier Quote라고 생각
 
 DBMS별 Quote 규칙이 다를 수 있다.
 
 MariaDB의 Identifier는 Backtick을 사용할 수 있다.
 
-## 47.5 `NULL = 0`이라고 생각
+### 47.5 `NULL = 0`이라고 생각
 
 `NULL`은 값이 없거나 알 수 없는 상태다.
 
-## 47.6 `SAL * 12`를 Schema 확인 없이 연봉이라고 단정
+### 47.6 `SAL * 12`를 Schema 확인 없이 연봉이라고 단정
 
 Sample Schema에 지급 주기 의미가 명확히 정의되어 있는지 확인한다.
 
-## 47.7 Syntax Diagram의 `[]`를 실제 SQL 문자로 작성
+### 47.7 Syntax Diagram의 `[]`를 실제 SQL 문자로 작성
 
 문법 문서에서 `[]`는 선택 사항을 나타내는 Meta Notation일 수 있다.
 
 ---
 
-# 48. Debugging
+<a id="sql-01-section-51"></a>
+
+## 48. Debugging
 
 Query가 실행되지 않을 때 먼저 확인한다.
 
@@ -1372,11 +1654,13 @@ DESCRIBE emp;
 
 ---
 
-# 49. 종합실습
+<a id="sql-01-section-52"></a>
+
+## 49. 종합실습
 
 다음 문제를 직접 작성한다.
 
-## 문제 1
+### 문제 1
 
 `EMP` Table의 사원 번호, 이름, 직무만 조회하시오.
 
@@ -1390,13 +1674,13 @@ JOB
 
 ---
 
-## 문제 2
+### 문제 2
 
 `EMP` Table에서 중복되지 않는 부서 번호만 조회하시오.
 
 ---
 
-## 문제 3
+### 문제 3
 
 사원 이름과 급여를 조회하되 Result Header를 다음처럼 표시하시오.
 
@@ -1407,7 +1691,7 @@ JOB
 
 ---
 
-## 문제 4
+### 문제 4
 
 사원 이름, 급여, 급여의 12배 값을 조회하시오.
 
@@ -1415,13 +1699,13 @@ JOB
 
 ---
 
-## 문제 5
+### 문제 5
 
 `COMM`이 `NULL`인 사원에서 `SAL + COMM`이 어떤 결과가 되는지 직접 확인하고 이유를 설명하시오.
 
 ---
 
-## 문제 6
+### 문제 6
 
 Table 없이 다음 계산 결과를 조회하시오.
 
@@ -1433,15 +1717,17 @@ Alias는 `result`로 작성한다.
 
 ---
 
-## 문제 7
+### 문제 7
 
 `JOB`과 `DEPTNO`의 중복되지 않는 조합을 조회하시오.
 
 ---
 
-# 50. 정답과 해설
+<a id="sql-01-section-53"></a>
 
-## 문제 1
+## 50. 정답과 해설
+
+### 문제 1
 
 ```sql
 SELECT
@@ -1455,7 +1741,7 @@ FROM emp;
 
 ---
 
-## 문제 2
+### 문제 2
 
 ```sql
 SELECT DISTINCT
@@ -1467,7 +1753,7 @@ FROM emp;
 
 ---
 
-## 문제 3
+### 문제 3
 
 ```sql
 SELECT
@@ -1480,7 +1766,7 @@ Alias는 Result Header만 변경한다.
 
 ---
 
-## 문제 4
+### 문제 4
 
 ```sql
 SELECT
@@ -1494,7 +1780,7 @@ FROM emp;
 
 ---
 
-## 문제 5
+### 문제 5
 
 ```sql
 SELECT
@@ -1514,7 +1800,7 @@ FROM emp;
 
 ---
 
-## 문제 6
+### 문제 6
 
 ```sql
 SELECT
@@ -1525,7 +1811,7 @@ Table 없이 Expression을 계산할 수 있다.
 
 ---
 
-## 문제 7
+### 문제 7
 
 ```sql
 SELECT DISTINCT
@@ -1538,7 +1824,9 @@ FROM emp;
 
 ---
 
-# 51. 최종 체크리스트
+<a id="sql-01-section-54"></a>
+
+## 51. 최종 체크리스트
 
 - [ ] SQL과 Query의 기본 역할을 설명할 수 있는가?
 - [ ] `--` 한 줄 Comment를 작성할 수 있는가?
@@ -1569,7 +1857,9 @@ FROM emp;
 
 ---
 
-# 52. 핵심 요약
+<a id="sql-01-section-55"></a>
+
+## 52. 핵심 요약
 
 ```text
 SELECT
@@ -1631,7 +1921,9 @@ BONUS
 
 ---
 
-# 마무리
+<a id="sql-01-section-56"></a>
+
+## 마무리
 
 SQL의 첫 단계에서 가장 중요한 것은 복잡한 문법을 외우는 것이 아니다.
 
@@ -1649,13 +1941,17 @@ SQL의 첫 단계에서 가장 중요한 것은 복잡한 문법을 외우는 �
 
 ---
 
-# V3 동작 백과 — SELECT는 Data를 어떻게 가져오는가?
+<a id="sql-01-section-57"></a>
 
-## 왜 배워야 하는가?
+## V3 동작 백과 — SELECT는 Data를 어떻게 가져오는가?
+
+> 입력 범위 확인: 이 복습 부분의 작은 표는 처리 원리를 위한 가정·발췌이며 전체 초기화 EMP의 입력 전체가 아니다. FROM emp를 그대로 실행하면 모든 대상 사원을 처리한다. 수치는 작은 가정 입력의 결과인지 전체 14행 결과인지 구분한다. 실행·시간순 설명은 논리적 설명이며 물리적 평가 순서를 보장하지 않는다.
+
+### 왜 배워야 하는가?
 
 모든 조회 Query는 `SELECT`에서 시작한다. 단순히 문법을 외우는 것이 아니라 “어느 Table의 어느 Row에서 어떤 값을 Result Column으로 만들 것인가”를 이해해야 이후 조건, 집계와 JOIN을 해석할 수 있다.
 
-## Data가 들어오고 결과가 나오는 과정
+### Data가 들어오고 결과가 나오는 과정
 
 ```sql
 SELECT empno, ename, sal * 12 AS annual_sal
@@ -1690,7 +1986,7 @@ EMPNO | ENAME | ANNUAL_SAL
 
 Alias는 원본 Table Column명을 바꾸지 않고 Result Grid의 이름만 바꾼다.
 
-## NULL을 실제로 계산하면
+### NULL을 실제로 계산하면
 
 ```sql
 SELECT empno, sal, comm, sal + comm AS total_pay
@@ -1704,7 +2000,7 @@ SAL=800,  COMM=NULL → TOTAL_PAY=NULL
 
 `NULL`은 0이 아니라 “값을 알 수 없음”이므로 합계도 알 수 없다는 결과가 된다.
 
-## 수업 원본에서 다시 찾기
+### 수업 원본에서 다시 찾기
 
 | 개념 | 내 `Script.sql` 검색 기준 | 강사님 `Script.sql` 검색 기준 |
 | --- | --- | --- |

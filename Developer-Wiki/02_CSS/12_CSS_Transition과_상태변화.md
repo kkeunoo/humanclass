@@ -1,11 +1,77 @@
 ---
 title: CSS Transition과 상태 변화
-version: v3.0-encyclopedia
-last_updated: 2026-08-07
+version: v4.1-detailed-learning
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # CSS Transition과 상태 변화
+
+## 문서 내 목차
+
+- [문서 정보](#css-1)
+- [학습 목표](#css-2)
+- [개념에서 실제 동작까지](#css-3)
+- [1. CSS Transition이란?](#css-4)
+- [2. 원본 HTML 구조](#css-5)
+- [3. 원본 공통 `.box`](#css-6)
+- [4. 내 코드와 강사님 코드의 속성 차이](#css-7)
+- [5. Transition이 없는 `.box1`](#css-8)
+- [6. Transition이 hover에 있는 `.box2`](#css-9)
+- [7. Hover 해제 시 차이](#css-10)
+- [8. 원본 주석 정확하게 표현하기](#css-11)
+- [9. 양방향 전환 만들기](#css-12)
+- [10. Transition 기본 문법](#css-13)
+- [11. `transition-property`](#css-14)
+- [12. 원본 `transition: width 1s`](#css-15)
+- [13. `transition-duration`](#css-16)
+- [14. 소수점 시간값](#css-17)
+- [15. `transition-timing-function`](#css-18)
+- [16. Timing function 비교](#css-19)
+- [17. `cubic-bezier()`](#css-20)
+- [18. `transition-delay`](#css-21)
+- [19. 여러 transition](#css-22)
+- [20. `transition: all`](#css-23)
+- [21. 원본에서 전환되는 속성](#css-24)
+- [22. Transition 가능한 값](#css-25)
+- [23. 시작값과 종료값](#css-26)
+- [24. Width와 Height 전환의 레이아웃 영향](#css-27)
+- [25. `transform: scale()` 대안](#css-28)
+- [26. Transform과 Transition](#css-29)
+- [27. Border-radius 전환](#css-30)
+- [28. Background 전환](#css-31)
+- [29. Hover 영역이 움직이는 문제](#css-32)
+- [30. Box-sizing과 크기](#css-33)
+- [31. 원본 박스 텍스트 정렬](#css-34)
+- [32. Hover뿐 아니라 Focus](#css-35)
+- [33. 실제 역할에 맞는 HTML](#css-36)
+- [34. Focus outline](#css-37)
+- [35. 움직임 감소 환경](#css-38)
+- [36. Transition과 접근성](#css-39)
+- [37. 색상만으로 상태 전달하지 않기](#css-40)
+- [38. Transition 성능](#css-41)
+- [39. `will-change` 주의](#css-42)
+- [40. Transition 이벤트 확장 학습](#css-43)
+- [41. 문서 언어와 제목](#css-44)
+- [42. 인라인 Style](#css-45)
+- [43. 내 코드 분석](#css-46)
+- [44. 강사님 코드 분석](#css-47)
+- [45. 내 코드와 강사님 코드 비교](#css-48)
+- [46. 원본 통합 개선 예제](#css-49)
+- [47. 버튼 Hover 패턴](#css-50)
+- [48. 카드 Hover 패턴](#css-51)
+- [49. 메뉴 링크 패턴](#css-52)
+- [50. Transition이 작동하지 않을 때 점검](#css-53)
+- [51. Hover 해제가 즉시 되는 경우 점검](#css-54)
+- [52. 자주 하는 실수](#css-55)
+- [종합실습](#css-56)
+- [정답과 해설](#css-57)
+- [최종 체크리스트](#css-58)
+- [핵심 요약](#css-59)
+- [렌더링 복습 카드 — 상태 전후 계산값 사이 보간](#css-60)
+
+
+<a id="css-1"></a>
 
 ## 문서 정보
 
@@ -21,26 +87,82 @@ status: Completed
 
 ---
 
-# 학습 목표
+<a id="css-2"></a>
 
-- CSS transition이 두 상태 사이의 값 변화를 시간에 따라 이어 주는 기능임을 설명한다.
-- transition이 동작하려면 시작값과 종료값이 필요하다는 점을 이해한다.
-- `transition` 단축 속성의 구성 순서를 설명한다.
-- `transition-property`로 어떤 속성을 전환할지 지정한다.
-- `transition-duration`에 초와 밀리초를 사용할 수 있다.
-- 소수점 시간값을 사용할 수 있다는 원본 주석을 정확히 설명한다.
-- 공통 상태에 transition을 둘 때 hover 진입과 해제 모두 부드럽게 동작하는 이유를 이해한다.
-- hover 상태에만 transition을 둘 때 진입과 해제의 동작이 달라질 수 있음을 설명한다.
-- `transition: all`의 편리함과 유지보수·성능 문제를 함께 이해한다.
-- width와 height 애니메이션이 주변 레이아웃을 움직일 수 있다는 점을 설명한다.
-- 색상, 그림자, transform 중심으로 더 안정적인 인터랙션을 작성한다.
-- 키보드 사용자를 위해 `:focus-visible` 상태를 함께 제공한다.
-- 움직임 감소 환경을 고려한다.
-- 내 코드와 강사님 코드의 차이와 원본 주석을 비교한다.
+## 학습 목표
 
----
+- 주요 속성의 의미와 차이를 설명한다.
+- 대상과 계산 기준을 찾고 결과를 예측한다.
+- 원본을 비교하고 적용·배치 오류를 수정한다.
 
-# 1. CSS Transition이란?
+<a id="learning-flow"></a>
+
+<a id="css-3"></a>
+
+## 개념에서 실제 동작까지
+
+### Transition이란? 전후 상태의 값을 시간에 따라 바꾸는 과정
+
+transition은 hover 상태를 만드는 기능이 아닙니다. 상태 변화로 속성의 목표값이 바뀌었을 때 중간값을 계산해 표시하는 기능입니다. 시작·목표값과 전환 가능한 속성·시간이 있어야 관찰할 수 있습니다.
+
+두 원본의 공통 위치를 줄인 재현 코드:
+
+```css
+.box { width: 100px; height: 100px; }
+.box2:hover {
+    width: 200px;
+    height: 200px;
+    transition: all 0.5s;
+}
+```
+
+원본에는 배경과 radius 변화도 있습니다. 공통 .box의 transition 선언은 주석 처리되어 있으므로 현재 살아 있는 전환은 box2:hover에만 있습니다.
+
+| 시점 | box1 | box2 |
+| --- | --- | --- |
+| 올리기 전 | 100×100 | 100×100 |
+| hover 진입 | 목표 200×200으로 즉시 변경 | 전환 시작, 0.5초에 걸쳐 변화 |
+| 전환 완료 | 200×200 | 200×200 |
+| hover 해제 | 100×100으로 즉시 변경 | 해제 뒤 transition이 없어 즉시 복귀 |
+
+중간 0.25초가 반드시 150px이라고 계산하지 않습니다. 기본 ease는 시간과 값이 선형 관계가 아닙니다. 중간 결과는 timing function과 경과 시간에 따라 다릅니다.
+
+💡 양방향 개선:
+
+```css
+.box2 { transition: width 0.5s, height 0.5s; }
+```
+
+전환 설정을 기본 상태로 옮기면 진입·해제 모두 조건에 맞춰 전환합니다. 예제는 크기만 대상으로 하므로 다른 속성은 원본처럼 그대로 바뀔 수 있습니다. 기본에 width/height 시작값도 있어야 합니다.
+
+내 background 축약과 강사님 background-color의 차이가 있지만 이 실습의 단색 변화는 같습니다. 축약은 다른 배경 하위 속성을 초기화할 수 있다는 추가 차이도 이해합니다.
+
+**확인:** 마우스를 올릴 때뿐 아니라 뗄 때도 관찰합니다. width/height 전환은 주변 배치를 다시 계산하게 할 수 있으므로 transform을 이용한 시각적 확대와 결과를 비교합니다.
+
+
+### 개발자 도구에서 실제 값을 읽기
+
+12_transition.html을 브라우저에서 열고 Console에 다음을 입력합니다. 💡 JavaScript를 이용한 CSS 진단 명령이며 CSS 파일에 쓰는 코드가 아닙니다.
+
+```javascript
+getComputedStyle(document.querySelector('.box2')).transitionDuration
+```
+
+**예상 결과:** hover 전 0s / hover 중 0.5s
+
+hover 안에만 transition이 있으므로 복귀 조건과 전환 시점을 따로 관찰합니다. 요소가 없다는 오류가 나오면 페이지와 선택 대상을 먼저 확인합니다. getComputedStyle은 API에서 계산·해석된 스타일을 읽고 getBoundingClientRect는 변환이 반영된 표시 경계 상자를 읽습니다. margin까지 포함한 전체 점유를 자동 반환하는 값은 아닙니다. CSS에는 Python의 print가 없으므로 화면 결과와 Console 값 확인을 구분합니다.
+
+### 짧은 점검 문제와 해설
+
+**문제:** 0.5초 ease 전환의 절반 시각에 width는 반드시 150인가?
+
+**해설:** 아닙니다. ease의 보간은 선형이 아니므로 시간 비율과 값 비율이 같지 않습니다.
+
+먼저 답을 가리고 이유를 말한 뒤 본문의 단계별 예제와 종합실습으로 확인합니다.
+
+<a id="css-4"></a>
+
+## 1. CSS Transition이란?
 
 Transition은 CSS 속성값이 한 상태에서 다른 상태로 바뀔 때 중간 과정을 자동으로 만들어 주는 기능입니다.
 
@@ -70,7 +192,9 @@ transition 있음:
 
 ---
 
-# 2. 원본 HTML 구조
+<a id="css-5"></a>
+
+## 2. 원본 HTML 구조
 
 내 코드:
 
@@ -97,7 +221,9 @@ transition 있음:
 
 ---
 
-# 3. 원본 공통 `.box`
+<a id="css-6"></a>
+
+## 3. 원본 공통 `.box`
 
 내 코드:
 
@@ -136,7 +262,9 @@ transition 있음:
 
 ---
 
-# 4. 내 코드와 강사님 코드의 속성 차이
+<a id="css-7"></a>
+
+## 4. 내 코드와 강사님 코드의 속성 차이
 
 내 코드:
 
@@ -163,7 +291,9 @@ background-color: green;
 
 ---
 
-# 5. Transition이 없는 `.box1`
+<a id="css-8"></a>
+
+## 5. Transition이 없는 `.box1`
 
 원본:
 
@@ -200,7 +330,9 @@ hover 시 다음 값이 즉시 변경됩니다.
 
 ---
 
-# 6. Transition이 hover에 있는 `.box2`
+<a id="css-9"></a>
+
+## 6. Transition이 hover에 있는 `.box2`
 
 내 코드:
 
@@ -235,7 +367,9 @@ hover 시 다음 값이 즉시 변경됩니다.
 
 ---
 
-# 7. Hover 해제 시 차이
+<a id="css-10"></a>
+
+## 7. Hover 해제 시 차이
 
 마우스를 `.box2` 밖으로 이동하면 `:hover` 규칙 자체가 사라집니다.
 
@@ -256,7 +390,9 @@ transition: all 0.5s;
 
 ---
 
-# 8. 원본 주석 정확하게 표현하기
+<a id="css-11"></a>
+
+## 8. 원본 주석 정확하게 표현하기
 
 내 코드:
 
@@ -277,7 +413,9 @@ hover가 해제되는 순간 해당 transition 선언도 사라지므로
 
 ---
 
-# 9. 양방향 전환 만들기
+<a id="css-12"></a>
+
+## 9. 양방향 전환 만들기
 
 transition을 기본 상태에 작성합니다.
 
@@ -305,7 +443,9 @@ hover 해제 → 0.5초
 
 ---
 
-# 10. Transition 기본 문법
+<a id="css-13"></a>
+
+## 10. Transition 기본 문법
 
 단축 속성:
 
@@ -341,7 +481,9 @@ transition:
 
 ---
 
-# 11. `transition-property`
+<a id="css-14"></a>
+
+## 11. `transition-property`
 
 어떤 CSS 속성을 전환할지 지정합니다.
 
@@ -377,7 +519,9 @@ transition:
 
 ---
 
-# 12. 원본 `transition: width 1s`
+<a id="css-15"></a>
+
+## 12. 원본 `transition: width 1s`
 
 원본 주석:
 
@@ -401,7 +545,9 @@ width만 1초 동안 전환됩니다.
 
 ---
 
-# 13. `transition-duration`
+<a id="css-16"></a>
+
+## 13. `transition-duration`
 
 전환에 걸리는 시간입니다.
 
@@ -435,7 +581,9 @@ transition-duration: 0s;
 
 ---
 
-# 14. 소수점 시간값
+<a id="css-17"></a>
+
+## 14. 소수점 시간값
 
 내 코드 주석:
 
@@ -459,7 +607,9 @@ transition: all 0.075s;
 
 ---
 
-# 15. `transition-timing-function`
+<a id="css-18"></a>
+
+## 15. `transition-timing-function`
 
 시간에 따라 변화하는 속도를 결정합니다.
 
@@ -481,9 +631,13 @@ ease
 
 ---
 
-# 16. Timing function 비교
+<a id="css-19"></a>
 
-## `linear`
+## 16. Timing function 비교
+
+<a id="index-section-24"></a>
+
+### `linear`
 
 ```css
 transition-timing-function: linear;
@@ -491,7 +645,9 @@ transition-timing-function: linear;
 
 처음부터 끝까지 일정한 속도입니다.
 
-## `ease-in`
+<a id="index-section-25"></a>
+
+### `ease-in`
 
 ```css
 transition-timing-function: ease-in;
@@ -499,7 +655,7 @@ transition-timing-function: ease-in;
 
 천천히 시작해 빨라집니다.
 
-## `ease-out`
+### `ease-out`
 
 ```css
 transition-timing-function: ease-out;
@@ -507,7 +663,7 @@ transition-timing-function: ease-out;
 
 빠르게 시작해 천천히 끝납니다.
 
-## `ease-in-out`
+### `ease-in-out`
 
 ```css
 transition-timing-function: ease-in-out;
@@ -519,7 +675,9 @@ UI hover에는 `ease`, `ease-out`, `ease-in-out`을 자주 검토합니다.
 
 ---
 
-# 17. `cubic-bezier()`
+<a id="css-20"></a>
+
+## 17. `cubic-bezier()`
 
 속도 곡선을 직접 지정할 수 있습니다.
 
@@ -545,7 +703,9 @@ UI hover에는 `ease`, `ease-out`, `ease-in-out`을 자주 검토합니다.
 
 ---
 
-# 18. `transition-delay`
+<a id="css-21"></a>
+
+## 18. `transition-delay`
 
 전환이 시작되기 전 대기 시간입니다.
 
@@ -572,7 +732,9 @@ UI hover에는 `ease`, `ease-out`, `ease-in-out`을 자주 검토합니다.
 
 ---
 
-# 19. 여러 transition
+<a id="css-22"></a>
+
+## 19. 여러 transition
 
 ```css
 .box {
@@ -589,7 +751,9 @@ UI hover에는 `ease`, `ease-out`, `ease-in-out`을 자주 검토합니다.
 
 ---
 
-# 20. `transition: all`
+<a id="css-23"></a>
+
+## 20. `transition: all`
 
 원본 주석:
 
@@ -614,7 +778,9 @@ UI hover에는 `ease`, `ease-out`, `ease-in-out`을 자주 검토합니다.
 
 ---
 
-# 21. 원본에서 전환되는 속성
+<a id="css-24"></a>
+
+## 21. 원본에서 전환되는 속성
 
 `all`을 사용하면 다음 변화가 모두 transition 대상이 됩니다.
 
@@ -641,7 +807,9 @@ height
 
 ---
 
-# 22. Transition 가능한 값
+<a id="css-25"></a>
+
+## 22. Transition 가능한 값
 
 Transition은 중간값을 계산할 수 있는 속성에서 자연스럽게 동작합니다.
 
@@ -670,7 +838,9 @@ display: none;
 
 ---
 
-# 23. 시작값과 종료값
+<a id="css-26"></a>
+
+## 23. 시작값과 종료값
 
 transition에는 비교할 두 상태가 필요합니다.
 
@@ -710,7 +880,9 @@ hover:
 
 ---
 
-# 24. Width와 Height 전환의 레이아웃 영향
+<a id="css-27"></a>
+
+## 24. Width와 Height 전환의 레이아웃 영향
 
 원본은 다음 속성을 변경합니다.
 
@@ -727,7 +899,9 @@ height: 100px → 200px
 
 ---
 
-# 25. `transform: scale()` 대안
+<a id="css-28"></a>
+
+## 25. `transform: scale()` 대안
 
 ```css
 .box {
@@ -757,7 +931,9 @@ height: 100px → 200px
 
 ---
 
-# 26. Transform과 Transition
+<a id="css-29"></a>
+
+## 26. Transform과 Transition
 
 Transition은 변화 과정을 담당하고 transform은 변형값을 담당합니다.
 
@@ -782,7 +958,9 @@ transition → 그 변형을 얼마나 부드럽게 진행할지
 
 ---
 
-# 27. Border-radius 전환
+<a id="css-30"></a>
+
+## 27. Border-radius 전환
 
 원본:
 
@@ -803,7 +981,9 @@ border-radius: 50%;
 
 ---
 
-# 28. Background 전환
+<a id="css-31"></a>
+
+## 28. Background 전환
 
 색상끼리는 중간 색상을 계산할 수 있습니다.
 
@@ -830,7 +1010,9 @@ background-color:
 
 ---
 
-# 29. Hover 영역이 움직이는 문제
+<a id="css-32"></a>
+
+## 29. Hover 영역이 움직이는 문제
 
 원본 `.box2`가 100px에서 200px로 커지면 hover 가능한 영역도 함께 커집니다.
 
@@ -850,7 +1032,9 @@ hover로 커짐
 
 ---
 
-# 30. Box-sizing과 크기
+<a id="css-33"></a>
+
+## 30. Box-sizing과 크기
 
 원본:
 
@@ -884,7 +1068,9 @@ content 200px
 
 ---
 
-# 31. 원본 박스 텍스트 정렬
+<a id="css-34"></a>
+
+## 31. 원본 박스 텍스트 정렬
 
 원본에는 텍스트 중앙 정렬이 없습니다.
 
@@ -907,7 +1093,9 @@ content 200px
 
 ---
 
-# 32. Hover뿐 아니라 Focus
+<a id="css-35"></a>
+
+## 32. Hover뿐 아니라 Focus
 
 원본 요소는 `div`이므로 기본적으로 키보드 포커스를 받지 않습니다.
 
@@ -932,7 +1120,9 @@ content 200px
 
 ---
 
-# 33. 실제 역할에 맞는 HTML
+<a id="css-36"></a>
+
+## 33. 실제 역할에 맞는 HTML
 
 단순 시각 실습:
 
@@ -960,7 +1150,9 @@ CSS hover 효과 때문에 의미 없는 `div`를 클릭 요소로 만들지 않
 
 ---
 
-# 34. Focus outline
+<a id="css-37"></a>
+
+## 34. Focus outline
 
 ```css
 .box:focus-visible {
@@ -977,7 +1169,9 @@ outline까지 느리게 transition하면 현재 위치를 빠르게 확인하기
 
 ---
 
-# 35. 움직임 감소 환경
+<a id="css-38"></a>
+
+## 35. 움직임 감소 환경
 
 ```css
 @media (prefers-reduced-motion: reduce) {
@@ -1006,7 +1200,9 @@ outline까지 느리게 transition하면 현재 위치를 빠르게 확인하기
 
 ---
 
-# 36. Transition과 접근성
+<a id="css-39"></a>
+
+## 36. Transition과 접근성
 
 확인 사항:
 
@@ -1021,7 +1217,9 @@ Transition은 장식이어야 하며 핵심 기능을 지연시키면 안 됩니
 
 ---
 
-# 37. 색상만으로 상태 전달하지 않기
+<a id="css-40"></a>
+
+## 37. 색상만으로 상태 전달하지 않기
 
 ```css
 .button:hover {
@@ -1055,7 +1253,9 @@ Transition은 장식이어야 하며 핵심 기능을 지연시키면 안 됩니
 
 ---
 
-# 38. Transition 성능
+<a id="css-41"></a>
+
+## 38. Transition 성능
 
 일반적으로 다음 속성은 레이아웃과 페인트 비용이 커질 수 있습니다.
 
@@ -1080,7 +1280,9 @@ opacity
 
 ---
 
-# 39. `will-change` 주의
+<a id="css-42"></a>
+
+## 39. `will-change` 주의
 
 ```css
 .card {
@@ -1096,7 +1298,9 @@ opacity
 
 ---
 
-# 40. Transition 이벤트 확장 학습
+<a id="css-43"></a>
+
+## 40. Transition 이벤트 확장 학습
 
 JavaScript에서 transition 종료를 감지할 수 있습니다.
 
@@ -1116,7 +1320,9 @@ box.addEventListener("transitionend", (event) => {
 
 ---
 
-# 41. 문서 언어와 제목
+<a id="css-44"></a>
+
+## 41. 문서 언어와 제목
 
 내 코드와 강사님 코드:
 
@@ -1136,7 +1342,9 @@ box.addEventListener("transitionend", (event) => {
 
 ---
 
-# 42. 인라인 Style
+<a id="css-45"></a>
+
+## 42. 인라인 Style
 
 원본은 `<style>` 안에서 실습합니다.
 
@@ -1159,9 +1367,11 @@ box.addEventListener("transitionend", (event) => {
 
 ---
 
-# 43. 내 코드 분석
+<a id="css-46"></a>
 
-## 43.1 장점
+## 43. 내 코드 분석
+
+### 43.1 장점
 
 - 개별 속성 `width`만 transition할 수 있음을 주석으로 기록했다.
 - `all`을 사용할 수 있다는 점을 설명했다.
@@ -1169,7 +1379,7 @@ box.addEventListener("transitionend", (event) => {
 - hover 상태에 transition을 둘 때의 차이를 설명했다.
 - 강사님 코드보다 실습 의도를 복습하기 쉽다.
 
-## 43.2 개선점
+### 43.2 개선점
 
 - `all`을 “보통 사용한다”고 일반화하면 실무에서 불필요한 속성까지 전환될 수 있다.
 - hover 상태에만 적용된 transition의 진입·해제 차이를 더 정확히 설명해야 한다.
@@ -1181,9 +1391,11 @@ box.addEventListener("transitionend", (event) => {
 
 ---
 
-# 44. 강사님 코드 분석
+<a id="css-47"></a>
 
-## 44.1 장점
+## 44. 강사님 코드 분석
+
+### 44.1 장점
 
 - `background-color`를 사용해 배경색 변경 의도가 명확하다.
 - `.box1`과 `.box2` 비교가 간결하다.
@@ -1191,7 +1403,7 @@ box.addEventListener("transitionend", (event) => {
 - 두 번째 박스의 텍스트를 `박스2`로 지정해 비교 대상을 구분했다.
 - 핵심 실습에 불필요한 설명이 적다.
 
-## 44.2 개선점
+### 44.2 개선점
 
 - hover에만 transition을 작성했을 때 해제 시 즉시 돌아갈 수 있다는 설명이 없다.
 - `all`의 주의점이 없다.
@@ -1202,7 +1414,9 @@ box.addEventListener("transitionend", (event) => {
 
 ---
 
-# 45. 내 코드와 강사님 코드 비교
+<a id="css-48"></a>
+
+## 45. 내 코드와 강사님 코드 비교
 
 | 비교 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1217,9 +1431,11 @@ box.addEventListener("transitionend", (event) => {
 
 ---
 
-# 46. 원본 통합 개선 예제
+<a id="css-49"></a>
 
-## HTML
+## 46. 원본 통합 개선 예제
+
+### HTML
 
 ```html
 <!DOCTYPE html>
@@ -1261,7 +1477,7 @@ box.addEventListener("transitionend", (event) => {
 </html>
 ```
 
-## CSS
+### CSS
 
 ```css
 *,
@@ -1334,7 +1550,9 @@ body {
 
 ---
 
-# 47. 버튼 Hover 패턴
+<a id="css-50"></a>
+
+## 47. 버튼 Hover 패턴
 
 ```css
 .button {
@@ -1357,7 +1575,9 @@ body {
 
 ---
 
-# 48. 카드 Hover 패턴
+<a id="css-51"></a>
+
+## 48. 카드 Hover 패턴
 
 ```css
 .card {
@@ -1379,7 +1599,9 @@ body {
 
 ---
 
-# 49. 메뉴 링크 패턴
+<a id="css-52"></a>
+
+## 49. 메뉴 링크 패턴
 
 ```css
 .nav-link {
@@ -1401,7 +1623,9 @@ body {
 
 ---
 
-# 50. Transition이 작동하지 않을 때 점검
+<a id="css-53"></a>
+
+## 50. Transition이 작동하지 않을 때 점검
 
 1. 시작값과 종료값이 실제로 다른가?
 2. transition이 변화 전 상태에 적용되어 있는가?
@@ -1416,7 +1640,9 @@ body {
 
 ---
 
-# 51. Hover 해제가 즉시 되는 경우 점검
+<a id="css-54"></a>
+
+## 51. Hover 해제가 즉시 되는 경우 점검
 
 1. transition이 `:hover` 안에만 있는가?
 2. 기본 상태에 transition이 있는가?
@@ -1431,17 +1657,21 @@ body {
 
 ---
 
-# 52. 자주 하는 실수
+<a id="css-55"></a>
 
-## 52.1 Transition을 hover에만 작성
+## 52. 자주 하는 실수
+
+### 52.1 Transition을 hover에만 작성
 
 진입은 부드럽고 해제는 즉시 될 수 있습니다.
 
-## 52.2 모든 요소에 `all`
+<a id="index-section-71"></a>
+
+### 52.2 모든 요소에 `all`
 
 예상하지 못한 속성까지 애니메이션될 수 있습니다.
 
-## 52.3 Duration 단위 누락
+### 52.3 Duration 단위 누락
 
 ```css
 transition: width 0.5;
@@ -1453,64 +1683,70 @@ transition: width 0.5;
 transition: width 0.5s;
 ```
 
-## 52.4 Width·height 확대 남용
+### 52.4 Width·height 확대 남용
 
 주변 요소가 밀리고 레이아웃 계산 비용이 커질 수 있습니다.
 
-## 52.5 Hover만 제공
+### 52.5 Hover만 제공
 
 키보드와 터치 사용자가 같은 상태를 확인하지 못할 수 있습니다.
 
-## 52.6 너무 긴 Transition
+### 52.6 너무 긴 Transition
 
 버튼이 느리게 반응하는 것처럼 느껴질 수 있습니다.
 
-## 52.7 `display: none`을 바로 Transition
+### 52.7 `display: none`을 바로 Transition
 
 일반적인 방식으로 중간 상태를 만들기 어렵습니다.
 
-## 52.8 시작값이 `auto`
+<a id="index-section-77"></a>
+
+### 52.8 시작값이 `auto`
 
 고정 길이와 자연스럽게 보간되지 않을 수 있습니다.
 
-## 52.9 색상만으로 상태 전달
+### 52.9 색상만으로 상태 전달
 
 아이콘, 텍스트, ARIA 상태를 함께 검토합니다.
 
-## 52.10 Reduced motion 미고려
+### 52.10 Reduced motion 미고려
 
 움직임에 민감한 사용자에게 불편할 수 있습니다.
 
 ---
 
 
-# 종합실습
+<a id="css-56"></a>
 
-## 문제 1. Width Transition
+## 종합실습
+
+### 문제 1. Width Transition
 
 `.box`의 너비 변화만 1초 동안 전환하세요.
 
-## 문제 2. All Transition
+### 문제 2. All Transition
 
 모든 전환 가능한 속성을 0.5초 동안 전환하세요.
 
-## 문제 3. 개별 속성
+### 문제 3. 개별 속성
 
 배경색은 0.2초, border-radius는 0.4초 동안 전환하세요.
 
-## 문제 4. Timing Function
+<a id="index-section-84"></a>
+
+### 문제 4. Timing Function
 
 transform을 0.3초 동안 `ease-out`으로 전환하세요.
 
-## 문제 5. Delay
+### 문제 5. Delay
 
 opacity를 0.5초 동안 전환하되 0.2초 뒤 시작하세요.
 
-## 문제 6. 소수점 시간
+### 문제 6. 소수점 시간
 
 75밀리초를 초 단위 소수점으로 작성하세요.
 
-## 문제 7. Hover 위치 오류
+### 문제 7. Hover 위치 오류
 
 다음 코드의 문제를 설명하세요.
 
@@ -1521,63 +1757,65 @@ opacity를 0.5초 동안 전환하되 0.2초 뒤 시작하세요.
 }
 ```
 
-## 문제 8. 양방향 전환
+### 문제 8. 양방향 전환
 
 문제 7을 hover 진입과 해제 모두 0.5초가 되도록 수정하세요.
 
-## 문제 9. 원본 Box1
+### 문제 9. 원본 Box1
 
 기본 100px 초록 사각형이 hover 시 200px 빨간 원으로 즉시 변하도록 작성하세요.
 
-## 문제 10. 원본 Box2 개선
+### 문제 10. 원본 Box2 개선
 
 문제 9와 같은 변화가 양방향 0.5초로 동작하도록 작성하세요.
 
-## 문제 11. `all` 개선
+### 문제 11. `all` 개선
 
 원본에서 실제로 바뀌는 네 속성만 명시하세요.
 
-## 문제 12. Background 속성
+### 문제 12. Background 속성
 
 단색 배경만 변경할 때 `background`보다 `background-color`가 더 명확한 이유를 설명하세요.
 
-## 문제 13. Transform 대안
+<a id="index-section-93"></a>
+
+### 문제 13. Transform 대안
 
 width와 height를 200px로 바꾸는 대신 `scale(2)`를 사용하세요.
 
-## 문제 14. Focus
+### 문제 14. Focus
 
 hover와 키보드 focus에서 같은 상태가 되도록 작성하세요.
 
-## 문제 15. Outline
+### 문제 15. Outline
 
 focus 시 파란색 3px outline과 3px offset을 제공하세요.
 
-## 문제 16. Reduced Motion
+### 문제 16. Reduced Motion
 
 움직임 감소 환경에서 transition과 transform을 제거하세요.
 
-## 문제 17. 레이아웃 변화
+### 문제 17. 레이아웃 변화
 
 width와 height transition이 주변 요소에 미칠 수 있는 영향을 설명하세요.
 
-## 문제 18. Display
+### 문제 18. Display
 
 `display: none`에서 `display: block`으로 일반 transition이 어려운 이유를 설명하세요.
 
-## 문제 19. Auto 값
+### 문제 19. Auto 값
 
 `height: auto`와 `height: 300px` 사이 transition이 원하는 대로 동작하지 않을 수 있는 이유를 설명하세요.
 
-## 문제 20. Transition Token
+### 문제 20. Transition Token
 
 기본 duration과 easing을 CSS 변수로 선언하세요.
 
-## 문제 21. 접근성
+### 문제 21. 접근성
 
 색상 변화만으로 버튼 선택 상태를 전달하지 않도록 HTML과 CSS를 개선하세요.
 
-## 문제 22. 종합 카드
+### 문제 22. 종합 카드
 
 다음 요구사항을 만족하는 카드 링크를 작성하세요.
 
@@ -1595,9 +1833,11 @@ width와 height transition이 주변 요소에 미칠 수 있는 영향을 설�
 
 ---
 
-# 정답과 해설
+<a id="css-57"></a>
 
-## 정답 1
+## 정답과 해설
+
+### 정답 1
 
 ```css
 .box {
@@ -1605,7 +1845,7 @@ width와 height transition이 주변 요소에 미칠 수 있는 영향을 설�
 }
 ```
 
-## 정답 2
+### 정답 2
 
 ```css
 .box {
@@ -1615,7 +1855,7 @@ width와 height transition이 주변 요소에 미칠 수 있는 영향을 설�
 
 학습 실험에는 간단하지만 실무에서는 필요한 속성 명시를 검토합니다.
 
-## 정답 3
+### 정답 3
 
 ```css
 .box {
@@ -1625,7 +1865,7 @@ width와 height transition이 주변 요소에 미칠 수 있는 영향을 설�
 }
 ```
 
-## 정답 4
+### 정답 4
 
 ```css
 .box {
@@ -1634,7 +1874,7 @@ width와 height transition이 주변 요소에 미칠 수 있는 영향을 설�
 }
 ```
 
-## 정답 5
+### 정답 5
 
 ```css
 .box {
@@ -1643,17 +1883,17 @@ width와 height transition이 주변 요소에 미칠 수 있는 영향을 설�
 }
 ```
 
-## 정답 6
+### 정답 6
 
 ```text
 0.075s
 ```
 
-## 정답 7
+### 정답 7
 
 transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용될 수 있지만 hover가 해제되면 transition 선언도 사라져 즉시 원래 너비로 돌아갈 수 있습니다.
 
-## 정답 8
+### 정답 8
 
 ```css
 .box {
@@ -1666,7 +1906,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 }
 ```
 
-## 정답 9
+### 정답 9
 
 ```css
 .box {
@@ -1683,7 +1923,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 }
 ```
 
-## 정답 10
+### 정답 10
 
 ```css
 .box {
@@ -1705,7 +1945,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 }
 ```
 
-## 정답 11
+### 정답 11
 
 ```css
 .box {
@@ -1717,11 +1957,11 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 }
 ```
 
-## 정답 12
+### 정답 12
 
 `background`는 이미지, 반복, 위치 등 여러 배경 관련 속성을 초기화할 수 있는 단축 속성입니다. 배경색만 변경한다면 `background-color`가 의도를 명확하게 표현하고 기존 배경 설정을 유지하기 쉽습니다.
 
-## 정답 13
+### 정답 13
 
 ```css
 .box {
@@ -1740,7 +1980,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 }
 ```
 
-## 정답 14
+### 정답 14
 
 ```css
 .box:hover,
@@ -1751,7 +1991,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 }
 ```
 
-## 정답 15
+### 정답 15
 
 ```css
 .box:focus-visible {
@@ -1760,7 +2000,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 }
 ```
 
-## 정답 16
+### 정답 16
 
 ```css
 @media (prefers-reduced-motion: reduce) {
@@ -1775,19 +2015,19 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 }
 ```
 
-## 정답 17
+### 정답 17
 
 실제 박스 크기가 프레임마다 바뀌어 주변 요소가 밀리거나 위치가 변경될 수 있습니다. 브라우저가 반복해서 레이아웃을 계산해야 하므로 많은 요소에서 사용하면 성능 부담이 커질 수 있습니다.
 
-## 정답 18
+### 정답 18
 
 `display`는 일반적으로 중간값을 계산하는 연속적인 속성이 아니라 상태가 즉시 바뀌는 discrete 속성이기 때문입니다.
 
-## 정답 19
+### 정답 19
 
 브라우저가 `auto`의 수치값을 일반적인 길이값처럼 직접 보간하기 어렵기 때문입니다. `max-height`, Grid 행, transform, JavaScript 측정 등 다른 방식을 검토합니다.
 
-## 정답 20
+### 정답 20
 
 ```css
 :root {
@@ -1808,7 +2048,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 }
 ```
 
-## 정답 21
+### 정답 21
 
 ### HTML
 
@@ -1835,7 +2075,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 
 색상뿐 아니라 체크 아이콘, 텍스트, 굵기, ARIA 상태를 제공합니다.
 
-## 정답 22
+### 정답 22
 
 ### HTML
 
@@ -1915,9 +2155,13 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 
 ---
 
-# 최종 체크리스트
+<a id="css-58"></a>
 
-## Transition 기본
+## 최종 체크리스트
+
+<a id="index-section-131"></a>
+
+### Transition 기본
 
 - [ ] 시작 상태와 종료 상태가 실제로 다르다.
 - [ ] transition을 변화 전 기본 상태에 작성했다.
@@ -1926,7 +2170,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 - [ ] 소수점 시간값을 올바르게 사용했다.
 - [ ] timing function과 delay를 구분했다.
 
-## 속성 선택
+### 속성 선택
 
 - [ ] 무조건 `all`을 사용하지 않았다.
 - [ ] 실제로 바뀌는 속성만 명시했다.
@@ -1935,7 +2179,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 - [ ] transform과 opacity로 대체할 수 있는지 검토했다.
 - [ ] `auto` 값과 discrete 속성의 한계를 이해했다.
 
-## 상호작용
+### 상호작용
 
 - [ ] hover 진입과 해제 모두 의도대로 동작한다.
 - [ ] 키보드 focus 상태가 있다.
@@ -1944,7 +2188,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 - [ ] 터치 환경에서 핵심 기능을 사용할 수 있다.
 - [ ] 색상 변화만으로 상태를 전달하지 않았다.
 
-## 접근성과 움직임
+### 접근성과 움직임
 
 - [ ] `prefers-reduced-motion`을 고려했다.
 - [ ] 확대와 이동이 과도하지 않다.
@@ -1952,7 +2196,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 - [ ] 시각 효과 없이도 콘텐츠와 기능을 이해할 수 있다.
 - [ ] 레이아웃 이동이 포인터와 포커스를 방해하지 않는다.
 
-## 성능과 유지보수
+### 성능과 유지보수
 
 - [ ] width·height 전환의 레이아웃 비용을 확인했다.
 - [ ] 많은 요소에 큰 그림자 transition을 남용하지 않았다.
@@ -1961,7 +2205,7 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 - [ ] 실제 저사양 모바일에서 테스트했다.
 - [ ] 개발자 도구에서 transition property를 확인했다.
 
-## 원본 코드 검수
+### 원본 코드 검수
 
 - [ ] `lang="en"`을 `lang="ko"`로 개선했다.
 - [ ] `Document` 제목을 학습 주제로 변경했다.
@@ -1974,7 +2218,9 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 
 ---
 
-# 핵심 요약
+<a id="css-59"></a>
+
+## 핵심 요약
 
 - CSS transition은 두 상태 사이의 속성값 변화를 시간에 따라 부드럽게 연결한다.
 - transition이 동작하려면 시작값과 종료값이 필요하다.
@@ -1997,10 +2243,15 @@ transition이 hover 상태 안에만 있으므로 hover 진입 시에는 적용�
 - 색상 변화만으로 선택이나 상태를 전달하지 않는다.
 - 움직임에 민감한 사용자를 위해 `prefers-reduced-motion`을 고려한다.
 - transition은 장식적 개선이며 핵심 기능의 실행을 지연시키지 않아야 한다.
-# V3 렌더링 추적 카드 — 상태 전후 계산값 사이 보간
+<a id="css-60"></a>
+
+## 렌더링 복습 카드 — 상태 전후 계산값 사이 보간
 
 transition은 이벤트 자체가 아니라 CSS 속성의 이전 계산값과 새 계산값 사이를 시간에 따라 보간한다. hover나 class 변경으로 값이 달라져야 시작된다.
 
 `display:none`처럼 중간값을 만들 수 없는 속성은 일반 transition 대상이 아니다. 지속시간, 대상 속성, 시작·종료값과 prefers-reduced-motion을 확인한다.
 
 **원본 연결:** 내 코드와 강사님 코드의 `workspace_html/css/12_transition.html`에서 실제 선택자·계산값·화면 차이를 확인한다.
+
+
+[CSS 파트 목차로 돌아가기](./README.md)

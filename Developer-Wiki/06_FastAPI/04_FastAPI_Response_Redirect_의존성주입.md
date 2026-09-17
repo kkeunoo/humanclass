@@ -1,11 +1,38 @@
 ---
 title: FastAPI Response, Redirect와 의존성 주입
-version: v3.0-final
-last_updated: 2026-08-25
+version: v4.0-detailed
+last_updated: 2026-09-17
 status: Completed
 ---
 
 # FastAPI Response, Redirect와 의존성 주입
+
+## 목차
+
+- [문서 정보](#section-1)
+- [학습 목표](#section-2)
+- [개념에서 실제 실행까지 — 반환 검증과 Redirect는 서로 다른 단계다](#section-3)
+- [1. Response 처리 흐름](#section-4)
+- [2. Python 반환 Type Hint](#section-5)
+- [3. response_model](#section-6)
+- [4. Pydantic Response Model](#section-7)
+- [5. 수업의 step1](#section-8)
+- [6. 함수 직접 호출과 Forward](#section-9)
+- [7. Redirect](#section-10)
+- [8. 303과 307](#section-11)
+- [9. 내 코드와 강사님 코드 비교](#section-12)
+- [10. 의존성 주입](#section-13)
+- [11. yield Dependency](#section-14)
+- [12. FastAPI와 Package 의존성](#section-15)
+- [13. 개선된 통합 예제](#section-16)
+- [14. 자주 하는 실수와 Debugging](#section-17)
+- [15. 종합실습](#section-18)
+- [16. 정답 핵심](#section-19)
+- [최종 체크리스트](#section-20)
+- [핵심 요약](#section-21)
+
+
+<a id="section-1"></a>
 
 ## 문서 정보
 
@@ -17,27 +44,118 @@ status: Completed
 | 강사님 코드 | `workspace_teacher/workspace_python/todos/03_response/api.py` |
 | 추가 메모 | 반환 Type Hint, `response_model`, 의존성 주입, Package 의존성 |
 | 핵심 범위 | Response 검증, 함수 호출과 Forward, Redirect, 303·307, PRG, `Depends` |
-| 참고 전용 | 학습 중인 `03_database`의 `Depends(get_session)` 흐름 |
+| 참고 전용 | DB 연동 상세는 07번 문서에서 설명의 `Depends(get_session)` 흐름 |
 | 문서 형식 | FastAPI Developer-Wiki V2 |
 
-> 이 문서는 완료된 `03_response`와 2026-08-20 추가 메모를 정리한다. `03_database`는 의존성 주입이 다음 수업에서 DB Session으로 연결된다는 점만 확인했으며, 해당 코드 자체는 학습 문서 범위에 포함하지 않는다.
+> 이 문서는 완료된 `03_response`와 2026-08-20 추가 메모를 정리한다. `03_database`는 의존성 주입이 다음 수업에서 DB Session으로 연결된다는 점만 확인했으며, 해당 코드는 07번 문서에서 별도로 설명한다.
 
 ---
 
-# 학습 목표
+<a id="section-2"></a>
 
-- Python 반환 Type Hint와 FastAPI Response 검증의 차이를 설명할 수 있다.
-- `response_model`의 역할과 우선순위를 설명할 수 있다.
-- 직접 함수 호출과 HTTP Forward를 구분할 수 있다.
-- Redirect가 새로운 Client Request를 만드는 흐름을 설명할 수 있다.
-- `303 See Other`와 `307 Temporary Redirect`를 구분할 수 있다.
-- POST-Redirect-GET Pattern을 적용할 수 있다.
-- FastAPI의 `Depends`를 이용한 의존성 주입을 설명할 수 있다.
-- Package와 의존 Package의 설치 관계를 설명할 수 있다.
+## 학습 목표
+
+- 입력 위치와 실제 처리 순서를 설명한다.
+- 수업 코드·개선 예제의 상태와 응답을 재현한다.
+- 실패 원인을 찾고 같은 기능을 다시 작성한다.
 
 ---
 
-# 1. Response 처리 흐름
+<a id="section-3"></a>
+
+## 개념에서 실제 실행까지 — 반환 검증과 Redirect는 서로 다른 단계다
+
+<a id="index-section-5"></a>
+
+### Python 힌트와 FastAPI의 응답 검증
+
+def test() -> int: return "ac"를 일반 Python에서 호출하면 문자열을 반환한다. 주석이 자동으로 강제하는 것은 아니다. FastAPI는 등록된 endpoint의 반환 annotation으로 응답 규칙을 만들 수 있고, response_model을 명시하면 그것을 우선한다. [공식 응답 모델 설명](https://fastapi.tiangolo.com/tutorial/response-model/)
+
+```python
+from fastapi import FastAPI
+app = FastAPI()
+
+@app.get("/bad", response_model=int)
+def bad() -> str:
+    return "ac"
+```
+
+
+함수까지 실행되어 "ac"를 반환한 뒤 서버의 응답 규칙 int를 만족하지 못하므로 응답 검증 오류가 난다. 기본적으로 클라이언트에는 500이며 422 입력 오류가 아니다. 테스트 클라이언트는 서버 예외를 다시 발생시키는 기본 설정이 있으므로 500 응답 관찰 시 raise_server_exceptions=False를 쓴다. "12"처럼 변환 가능한 문자열은 일반 비엄격 int 규칙에서 12로 변환될 수 있다.
+
+직접 HTMLResponse·RedirectResponse 같은 Response 객체를 반환하면 일반 데이터 반환 경로의 response_model 자동 변환과 같게 처리되지 않는다. 비밀번호 필드 제거를 Response 객체에서도 자동 보장한다고 생각하면 안 된다.
+
+### 내 step2는 주소 이동이 아니라 함수 호출이다
+
+양쪽 step2()는 step1(request)를 직접 호출한다. 기존 요청을 가진 채 같은 Python 프로세스에서 함수를 실행할 뿐, 새로운 GET /step1 요청이 생기지 않는다. step2를 처리하는 request.url.path도 /step2 그대로다. 내 주석의 forward는 흐름 이해를 위한 비유이며 별도의 서버 라우팅 기능을 사용한 것은 아니다. step2에 return이 없으면 응답은 null이다.
+
+### 실제 Redirect 비교
+
+| 항목 | 내 03_response/api.py | 강사님 같은 파일 |
+| --- | --- | --- |
+| 원래 method | GET /step3 | POST /step3 |
+| status | 307 | 303 |
+| Location | /step1?item=입력값 | /step1 |
+| 후속 method | 원래 GET 유지 | GET으로 전환 |
+| item | Query 재전달 | Location에 없으므로 전달되지 않음 |
+
+307 자체가 오류는 아니다. 내 원본은 GET→GET이므로 step1에 정상 연결된다. 강사님 POST에서 기본 307을 썼다면 POST /step1이 되고 GET만 등록되어 405가 날 수 있어 303을 쓴다. 리다이렉트 응답은 endpoint를 즉시 실행하는 명령이 아니라 브라우저에 Location으로 다시 요청하라고 알려주는 응답이다. 새 요청에서는 기존 request 객체와 Query가 자동 복제되지 않는다.
+
+```python
+from urllib.parse import urlencode
+from fastapi.responses import RedirectResponse
+# step3 내부, item을 추출한 뒤 적용하는 개선 부분
+return RedirectResponse(
+    "/step1?" + urlencode({"item": item or ""}),
+    status_code=303
+)
+```
+
+
+문자열로 '?item='+item을 붙이면 &·+·# 등이 입력값이 아니라 URL 문법처럼 해석될 수 있다. URL encoding은 문자열 데이터를 주소 구성 요소에 안전하게 담는 처리다.
+
+<a id="index-section-8"></a>
+
+### Depends는 왜 classmethod와 다를까?
+
+Depends는 FastAPI가 요청 처리 과정에서 필요한 함수를 실행하고 그 결과를 endpoint 인자로 공급하는 선언이다. classmethod는 클래스에 묶인 메서드 호출 방식이다. 두 개념은 같지 않다. 패키지 설치의 dependency도 '다른 패키지가 필요하다'는 의미이며 요청마다 값을 주입하는 DI와 구분한다.
+
+```python
+from fastapi import Depends
+def get_label(label: str = "기본"):
+    print("의존성:", label)
+    return label.upper()
+
+@app.get("/di")
+def use_label(label: str = Depends(get_label)):
+    print("본문:", label)
+    return {"label": label}
+```
+
+
+GET /di?label=wiki → Query 추출 → get_label(label="wiki") → "WIKI" 반환 → endpoint 인자로 주입 → {"label":"WIKI"}. 출력 순서는 '의존성: wiki', '본문: WIKI'. 이 예제는 DI 보강용이며 step 원본의 기능은 아니다.
+
+yield 의존성은 자원을 먼저 제공하고 이후 정리 코드를 실행한다. 정리 시점은 FastAPI 버전과 dependency scope, 스트리밍 응답 여부에 영향을 받으므로 '무조건 응답 전에'라고 외우지 않는다. DB 변경의 성공 응답은 commit 성공을 확인한 뒤 만들도록 07번 문서에서 보강한다.
+
+### 확인 문제와 해설
+
+<details><summary>303을 받았지만 목록에 값이 없다. Redirect가 저장하는 기능일까?</summary>
+
+아니다. 값 추가·commit은 먼저 수행해야 하고 Redirect는 다음 요청의 위치·방식만 정한다. 변경 전 상태, 변경 함수, Redirect Location, 후속 GET 순서로 확인한다.
+
+</details>
+
+<details><summary>response_model=int와 -> str가 함께 있으면 어떤 규칙으로 검증할까?</summary>
+
+FastAPI에서는 response_model의 int 규칙이 우선한다. Python 직접 호출에서는 두 선언을 같은 런타임 검증 장치로 볼 수 없다.
+
+</details>
+
+---
+
+<a id="section-4"></a>
+
+## 1. Response 처리 흐름
 
 ```text
 Endpoint 반환값
@@ -48,7 +166,9 @@ Endpoint 반환값
 
 FastAPI는 Python 반환값을 그대로 전송하는 데 그치지 않고 Route 설정에 따라 검증하고 직렬화한다.
 
-## 1.1 HTTP Response는 무엇으로 구성되는가?
+<a id="index-section-11"></a>
+
+### 1.1 HTTP Response는 무엇으로 구성되는가?
 
 ```http
 HTTP/1.1 200 OK
@@ -81,7 +201,9 @@ Python Dict
 
 ---
 
-# 2. Python 반환 Type Hint
+<a id="section-5"></a>
+
+## 2. Python 반환 Type Hint
 
 ```python
 def test() -> int:
@@ -100,7 +222,7 @@ def test() -> int:
 
 `'ac'`는 정수로 변환할 수 없어 Response Validation Error가 발생한다. 단, `'1'`처럼 변환 가능한 값은 설정과 Type에 따라 정수로 직렬화될 수 있으므로 “문자열은 언제나 불가능”으로 외우지 않는다.
 
-## 2.1 직접 실행과 FastAPI 요청의 차이
+### 2.1 직접 실행과 FastAPI 요청의 차이
 
 일반 Python 직접 호출:
 
@@ -142,7 +264,9 @@ GET /test
 
 ---
 
-# 3. response_model
+<a id="section-6"></a>
+
+## 3. response_model
 
 ```python
 @app.get('/', response_model=int)
@@ -166,7 +290,7 @@ response_model 없음   → 반환 Type Annotation 활용
 둘 다 없음            → 반환값을 기본 방식으로 직렬화
 ```
 
-## 3.1 실제 Field 제거 예제
+### 3.1 실제 Field 제거 예제
 
 ```python
 class UserResponse(BaseModel):
@@ -202,7 +326,9 @@ def get_user():
 
 ---
 
-# 4. Pydantic Response Model
+<a id="section-7"></a>
+
+## 4. Pydantic Response Model
 
 ```python
 from fastapi import FastAPI
@@ -234,7 +360,9 @@ Response Model은 다음 역할을 한다.
 
 ---
 
-# 5. 수업의 step1
+<a id="section-8"></a>
+
+## 5. 수업의 step1
 
 ```python
 @app.get('/step1')
@@ -254,7 +382,9 @@ def step1(item: str | None = None):
 
 ---
 
-# 6. 함수 직접 호출과 Forward
+<a id="section-9"></a>
+
+## 6. 함수 직접 호출과 Forward
 
 수업의 `step2()`는 `step1(request)`를 직접 호출한다.
 
@@ -277,7 +407,9 @@ return step1(request)
 
 ---
 
-# 7. Redirect
+<a id="section-10"></a>
+
+## 7. Redirect
 
 Redirect Response는 Client에게 다른 URL로 다시 요청하라고 알린다.
 
@@ -301,7 +433,7 @@ GET /step1?item=...
 
 Redirect는 Browser가 새로운 Request를 보내므로 URL과 Request 흐름이 실제로 바뀐다.
 
-## 7.1 실제 HTTP 왕복
+### 7.1 실제 HTTP 왕복
 
 첫 번째 Request:
 
@@ -341,7 +473,9 @@ Redirect 한 번은 Server 내부 함수 이동이 아니라 HTTP Request가 두
 
 ---
 
-# 8. 303과 307
+<a id="section-11"></a>
+
+## 8. 303과 307
 
 | Status | 이름 | Redirect 후 Method |
 | ---: | --- | --- |
@@ -360,7 +494,9 @@ POST 저장
 
 ---
 
-# 9. 내 코드와 강사님 코드 비교
+<a id="section-12"></a>
+
+## 9. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 | 영향 |
 | --- | --- | --- | --- |
@@ -380,7 +516,9 @@ return RedirectResponse(url=f'/step1?{query}', status_code=303)
 
 ---
 
-# 10. 의존성 주입
+<a id="section-13"></a>
+
+## 10. 의존성 주입
 
 의존성 주입, Dependency Injection은 함수가 필요한 객체를 내부에서 직접 만들기보다 외부에서 제공받도록 하는 설계 방식이다.
 
@@ -410,7 +548,7 @@ Endpoint가 필요한 것 선언
 
 `classmethod`는 Class에 묶인 Method 호출 방식이고 의존성 주입은 객체 생성과 제공 책임을 분리하는 Pattern이므로 같은 개념이 아니다.
 
-## 10.1 Dependency는 언제 실행되는가?
+### 10.1 Dependency는 언제 실행되는가?
 
 ```python
 def get_settings():
@@ -445,7 +583,7 @@ Route 일치
 
 Dependency가 실패해 `HTTPException`을 발생시키면 Endpoint는 실행되지 않는다. 인증, 권한, DB Session 준비 등에 사용하는 이유다.
 
-## 10.2 Request 값도 Dependency에 들어올 수 있다
+### 10.2 Request 값도 Dependency에 들어올 수 있다
 
 ```python
 from fastapi import Header, HTTPException
@@ -472,7 +610,9 @@ Client의 X-Token Header
 
 ---
 
-# 11. yield Dependency
+<a id="section-14"></a>
+
+## 11. yield Dependency
 
 DB Session처럼 사용 후 정리가 필요한 Resource는 `yield`를 사용할 수 있다.
 
@@ -491,11 +631,13 @@ Endpoint    → Resource 사용
 yield 이후  → Commit/Rollback/Close 같은 정리
 ```
 
-학습 중인 `03_database`에서 `Depends(get_session)`으로 이어지는 이유가 바로 이 구조다. 해당 DB 구현은 이번 문서에 포함하지 않는다.
+DB 연동 상세는 07번 문서에서 설명에서 `Depends(get_session)`으로 이어지는 이유가 바로 이 구조다. 해당 DB 구현은 이번 문서에 포함하지 않는다.
 
 ---
 
-# 12. FastAPI와 Package 의존성
+<a id="section-15"></a>
+
+## 12. FastAPI와 Package 의존성
 
 ```powershell
 python -m pip install fastapi
@@ -520,7 +662,9 @@ python -m pip freeze > requirements.txt
 
 ---
 
-# 13. 개선된 통합 예제
+<a id="section-16"></a>
+
+## 13. 개선된 통합 예제
 
 ```python
 from urllib.parse import urlencode
@@ -552,7 +696,9 @@ def step3(item: str = Depends(normalize_item)):
 
 ---
 
-# 14. 자주 하는 실수와 Debugging
+<a id="section-17"></a>
+
+## 14. 자주 하는 실수와 Debugging
 
 | 문제 | 원인 | 해결 |
 | --- | --- | --- |
@@ -565,7 +711,7 @@ def step3(item: str = Depends(normalize_item)):
 
 ---
 
-## 14.1 수업 원본에서 다시 찾기
+### 14.1 수업 원본에서 다시 찾기
 
 | 배운 개념 | 내 코드 파일·함수 | 강사님 코드 파일·함수 | 다시 확인할 내용 |
 | --- | --- | --- | --- |
@@ -577,7 +723,7 @@ def step3(item: str = Depends(normalize_item)):
 | `response_model` | 2026-08-20 개인 메모 | 수업 Source에는 별도 예제 없음 | 반환 Annotation과 우선순위 |
 | 의존성 주입 | 2026-08-20 개인 메모 | 다음 `03_database`에서 `Depends`로 연결 | 현재는 개념과 실행 순서만 학습 |
 
-## 14.2 실제 호출 결과 비교
+### 14.2 실제 호출 결과 비교
 
 ```text
 내 코드
@@ -597,7 +743,9 @@ Browser Network에서 첫 Request와 Redirect 후 두 번째 Request를 각각 �
 
 ---
 
-# 15. 종합실습
+<a id="section-18"></a>
+
+## 15. 종합실습
 
 1. `TodoResponse` Pydantic Model을 작성한다.
 2. `response_model=TodoResponse`를 지정한다.
@@ -610,7 +758,9 @@ Browser Network에서 첫 Request와 Redirect 후 두 번째 Request를 각각 �
 
 ---
 
-# 16. 정답 핵심
+<a id="section-19"></a>
+
+## 16. 정답 핵심
 
 ```python
 from urllib.parse import urlencode
@@ -644,7 +794,9 @@ def result(item: str):
 
 ---
 
-# 최종 체크리스트
+<a id="section-20"></a>
+
+## 최종 체크리스트
 
 - [ ] Python Type Hint 자체는 Runtime 강제가 아님을 설명할 수 있다.
 - [ ] FastAPI 반환 Annotation의 Response 검증 역할을 설명할 수 있다.
@@ -658,7 +810,9 @@ def result(item: str):
 
 ---
 
-# 핵심 요약
+<a id="section-21"></a>
+
+## 핵심 요약
 
 ```text
 Type Hint = Python Metadata

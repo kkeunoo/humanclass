@@ -1,7 +1,7 @@
 ---
 title: JavaScript DOM 콘텐츠 생성과 스타일 조작
-version: v3.0-encyclopedia
-last_updated: 2026-08-06
+version: v4.0-detailed-source
+last_updated: 2026-09-17
 status: Completed
 ---
 
@@ -23,7 +23,102 @@ status: Completed
 
 ---
 
-# 개요
+## 이 문서에서 바로 찾기
+
+- [개념에서 실제 실행까지: 콘텐츠 변경은 문자열을 표시하거나 새로운 노드를 연결하는 일이다](#js-12-section-4)
+- [5. 세 속성 비교](#js-12-section-9)
+- [34. 삽입 위치 비교](#js-12-section-38)
+- [61. 내 코드와 강사님 코드 비교](#js-12-section-65)
+- [63. 실무형 예제: 안전한 게시판 렌더링](#js-12-section-67)
+- [64. 대표 오류로 이해하기](#js-12-section-68)
+- [65. 자주 하는 실수](#js-12-section-69)
+- [66. 핵심 요약](#js-12-section-70)
+- [67. 최종 체크리스트](#js-12-section-71)
+
+<details>
+<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+
+- [개요](#js-12-section-1)
+- [핵심 개념](#js-12-section-2)
+- [학습 목표](#js-12-section-3)
+- [개념에서 실제 실행까지: 콘텐츠 변경은 문자열을 표시하거나 새로운 노드를 연결하는 일이다](#js-12-section-4)
+- [1. 원본 HTML 구조](#js-12-section-5)
+- [2. `textContent`](#js-12-section-6)
+- [3. `innerText`](#js-12-section-7)
+- [4. `innerHTML`](#js-12-section-8)
+- [5. 세 속성 비교](#js-12-section-9)
+- [6. 텍스트 변경](#js-12-section-10)
+- [7. `innerText` 변경](#js-12-section-11)
+- [8. `innerHTML` 변경](#js-12-section-12)
+- [9. `innerHTML +=`](#js-12-section-13)
+- [10. `innerHTML`과 XSS](#js-12-section-14)
+- [11. 안전한 링크 생성](#js-12-section-15)
+- [12. `replaceChildren()`](#js-12-section-16)
+- [13. 카운터 기본 구조](#js-12-section-17)
+- [14. 카운터 갱신](#js-12-section-18)
+- [15. 숫자 변환 검증](#js-12-section-19)
+- [16. 상태를 DOM에만 저장하지 않기](#js-12-section-20)
+- [17. 타이머 해제](#js-12-section-21)
+- [18. 실시간 시계](#js-12-section-22)
+- [19. Date를 반복문 밖에 두면?](#js-12-section-23)
+- [20. 시계 두 자리 형식](#js-12-section-24)
+- [21. 갱신 간격과 정확도](#js-12-section-25)
+- [22. DOM 요소 생성](#js-12-section-26)
+- [23. 생성한 요소 설정](#js-12-section-27)
+- [24. DOM 삽입 전과 후](#js-12-section-28)
+- [25. `append()`](#js-12-section-29)
+- [26. 문자열 `append()`](#js-12-section-30)
+- [27. 같은 Node를 두 번 Append](#js-12-section-31)
+- [28. Node 복제](#js-12-section-32)
+- [29. `appendChild()`](#js-12-section-33)
+- [30. `append()`와 `appendChild()`](#js-12-section-34)
+- [31. `prepend()`](#js-12-section-35)
+- [32. `before()`](#js-12-section-36)
+- [33. `after()`](#js-12-section-37)
+- [34. 삽입 위치 비교](#js-12-section-38)
+- [35. Table 행 생성](#js-12-section-39)
+- [36. 데이터 배열](#js-12-section-40)
+- [37. 반복문으로 게시판 생성](#js-12-section-41)
+- [38. 단계별 조립 원리](#js-12-section-42)
+- [39. `innerHTML`로 표 생성](#js-12-section-43)
+- [40. `innerHTML` 표 생성의 위험](#js-12-section-44)
+- [41. 반복마다 `innerHTML` 갱신](#js-12-section-45)
+- [42. 역순 데이터 출력](#js-12-section-46)
+- [43. `DocumentFragment`](#js-12-section-47)
+- [44. 문자열 역순 누적](#js-12-section-48)
+- [45. Style 요소 생성](#js-12-section-49)
+- [46. Script 동적 삽입 주의](#js-12-section-50)
+- [47. 인라인 스타일](#js-12-section-51)
+- [48. CSS 속성 이름 변환](#js-12-section-52)
+- [49. `element.style`](#js-12-section-53)
+- [50. 계산된 스타일](#js-12-section-54)
+- [51. `getPropertyValue()`](#js-12-section-55)
+- [52. 높이 숫자 계산](#js-12-section-56)
+- [53. Style 직접 조작과 클래스](#js-12-section-57)
+- [54. 문제 1: 텍스트 뒤에 문자열 추가](#js-12-section-58)
+- [55. 문제 2: `q2` 클래스 개수](#js-12-section-59)
+- [56. NodeList와 `classList`](#js-12-section-60)
+- [57. 문제 3: `q2` 텍스트 출력](#js-12-section-61)
+- [58. 문제 4: 빈 요소 채우기](#js-12-section-62)
+- [59. `innerText === ""`의 한계](#js-12-section-63)
+- [60. 스타일 직접 변경 개선](#js-12-section-64)
+- [61. 내 코드와 강사님 코드 비교](#js-12-section-65)
+- [62. 기존 코드에서 개선 코드로 바꾼 이유](#js-12-section-66)
+- [63. 실무형 예제: 안전한 게시판 렌더링](#js-12-section-67)
+- [64. 대표 오류로 이해하기](#js-12-section-68)
+- [65. 자주 하는 실수](#js-12-section-69)
+- [66. 핵심 요약](#js-12-section-70)
+- [67. 최종 체크리스트](#js-12-section-71)
+- [마무리](#js-12-section-72)
+- [V3 실행 추적 카드 — 데이터 → 노드 생성 → DOM 연결 → 렌더링](#js-12-section-73)
+
+</details>
+
+---
+
+<a id="js-12-section-1"></a>
+
+## 개요
 
 11번에서는 이미 존재하는 DOM 요소를 선택하고 속성·클래스를 조작했다.
 
@@ -54,7 +149,9 @@ message.textContent = "변경된 내용"
 
 ---
 
-# 핵심 개념
+<a id="js-12-section-2"></a>
+
+## 핵심 개념
 
 | 개념 | 핵심 역할 |
 | --- | --- |
@@ -74,28 +171,121 @@ message.textContent = "변경된 내용"
 
 ---
 
-# 학습 목표
+<a id="js-12-section-3"></a>
 
-- `textContent`, `innerText`, `innerHTML`의 차이를 설명할 수 있다.
-- 일반 문자열을 안전하게 DOM에 출력할 수 있다.
-- 사용자 입력을 `innerHTML`에 직접 넣으면 위험한 이유를 설명할 수 있다.
-- `setInterval()`로 콘텐츠를 주기적으로 갱신할 수 있다.
-- 타이머 ID를 저장하고 해제할 수 있다.
-- `createElement()`로 DOM 요소를 만들 수 있다.
-- 생성한 요소가 삽입 전에는 화면에 나타나지 않음을 이해한다.
-- `append()`와 `appendChild()`의 차이를 설명할 수 있다.
-- 같은 Node를 여러 번 삽입하면 복제되지 않고 이동함을 이해한다.
-- `prepend()`, `before()`, `after()`를 사용할 수 있다.
-- 반복문으로 표의 행과 셀을 생성할 수 있다.
-- `innerHTML` 누적 방식과 Node 생성 방식의 차이를 설명할 수 있다.
-- `DocumentFragment`로 여러 요소를 효율적으로 삽입할 수 있다.
-- 인라인 스타일과 계산된 스타일을 구분할 수 있다.
-- CSS의 kebab-case 속성을 JavaScript camelCase로 작성할 수 있다.
-- 클래스 개수와 빈 콘텐츠를 안전하게 판정할 수 있다.
+## 학습 목표
+
+- textContent·innerHTML·노드 이동을 구분한다.
+- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
 
 ---
 
-# 1. 원본 HTML 구조
+<a id="js-12-section-4"></a>
+
+## 개념에서 실제 실행까지: 콘텐츠 변경은 문자열을 표시하거나 새로운 노드를 연결하는 일이다
+
+textContent는 텍스트를 다루고 innerHTML은 문자열을 HTML로 파싱하여 자식 노드를 바꾼다. 같은 "<b>안녕</b>"도 textContent는 태그 문자까지 보이고 innerHTML은 b 요소를 만든다. innerText는 렌더링 상태와 연결되어 숨김·공백·줄바꿈 처리에서 차이가 있다. 쓰기에서도 줄바꿈이 br로 변환될 수 있어 완전히 동일하지 않다.
+
+두 원본은 createElement로 div를 만든 뒤 log.append(div)를 두 번 호출한다. 같은 노드를 복제한 것이 아니라 위치를 이동한 것이다. 다른 위치에도 같은 모양이 필요하면 새 노드를 만들거나 cloneNode를 사용한다. cloneNode는 addEventListener로 붙인 이벤트를 자동 복사하지 않는다.
+
+내 시계는 시·분·초·밀리초를, 강사님 시계는 분·초·밀리초를 표시하며 갱신 간격도 다르다. 타이머가 1초라고 실제 화면이 정확히 매1초 갱신되는 것은 아니다. createElement 시점에는 아직 화면에 붙지 않으며 append한 뒤 연결 상태가 바뀐다.
+
+### 수업 원본에서 사용한 부분
+
+아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
+
+내 코드: `workspace_html/javascript/12_dom_content.html`
+
+```javascript
+<script>
+            const msg = document.querySelector('#msg')
+            console.log(msg)
+
+            // 태그 안쪽의 글씨들(content)을 가져오는 3가지 방법들
+
+            // textContent , div안에 있는 공백 및 엔터까지 같이 출력됨
+            // content영역의 소스 중에서 'text(글씨)'만 '그대로' 가져옴,
+```
+
+강사님 코드: `workspace_teacher/workspace_html/javascript/12_dom_content.html`
+
+```javascript
+<script>
+        const msg = document.querySelector('#msg')
+        console.log(msg)
+
+        // 태그 안쪽의 글씨들(컨텐츠) 가져오는 방법들
+
+        // textContent
+        // 컨텐츠 영역의 소스 중에서 text(글씨)만 "그대로" 가져온다
+```
+
+### 직접 재현하는 최소 예제와 결과
+
+이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 브라우저 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+
+```javascript
+const box = document.createElement("div");
+const p = document.createElement("p");
+p.textContent = "<b>안녕</b>";
+box.append(p);
+box.append(p);
+console.log(box.children.length, p.textContent);
+const copy = p.cloneNode(true);
+box.append(copy);
+console.log(box.children.length, p === copy);
+```
+
+예상 출력:
+
+```text
+1 <b>안녕</b>
+2 false
+```
+
+### 결과를 역추적하는 방법
+
+이 예제는 메모리에서만 노드를 만들므로 화면에는 나타나지 않는다. document.body.append(box)를 추가하면 문자 그대로의 두 줄을 확인할 수 있다. 사용자 입력은 textContent로 넣고 innerHTML +=가 기존 자식과 이벤트 참조를 교체할 수 있음을 주의한다.
+
+출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
+
+| 확인할 단계 | 이 예제에서 볼 것 |
+| --- | --- |
+| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
+| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
+| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
+| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
+
+### 단계별 복습 실습과 정답
+
+**기본 실습:** 한 p노드를 A부모와B부모에 차례로append한 뒤 개수를 확인한다.
+
+**응용·디버깅 실습:** 사용자가 <b>복습</b>을 입력했을 때 HTML 해석 없이 표시한다.
+
+**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+
+<details>
+<summary>정답과 처리 순서 해설</summary>
+
+1. A에는0개, B에는1개다. 동일 노드를 옮겼다.
+2. textContent에 넣는다. 실제화면에 태그 문자열이 보이고 자식b요소는 생성되지 않는다.
+3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+
+</details>
+
+### 복습 질문과 해설
+
+**질문:** innerHTML로 삽입한 script가 항상 실행되는가?
+
+**해설:** 아니다. 그 사실이 안전함을 뜻하지도 않는다. 이벤트 핸들러 속성이나 위험한 URL 등으로 XSS가 가능하므로 사용자 입력의 HTML 삽입을 피한다.
+
+**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
+
+---
+
+<a id="js-12-section-5"></a>
+
+## 1. 원본 HTML 구조
 
 ```html
 <div id="msg">
@@ -113,7 +303,9 @@ message.textContent = "변경된 내용"
 
 ---
 
-# 2. `textContent`
+<a id="js-12-section-6"></a>
+
+## 2. `textContent`
 
 ```javascript
 const message = document.querySelector(
@@ -131,7 +323,9 @@ console.log(
 
 ---
 
-# 3. `innerText`
+<a id="js-12-section-7"></a>
+
+## 3. `innerText`
 
 ```javascript
 console.log(
@@ -145,7 +339,9 @@ console.log(
 
 ---
 
-# 4. `innerHTML`
+<a id="js-12-section-8"></a>
+
+## 4. `innerHTML`
 
 ```javascript
 console.log(
@@ -163,7 +359,9 @@ console.log(
 
 ---
 
-# 5. 세 속성 비교
+<a id="js-12-section-9"></a>
+
+## 5. 세 속성 비교
 
 | 속성 | 태그 포함 | 숨겨진 텍스트 | 공백·줄바꿈 | 주요 목적 |
 | --- | --- | --- | --- | --- |
@@ -173,7 +371,9 @@ console.log(
 
 ---
 
-# 6. 텍스트 변경
+<a id="js-12-section-10"></a>
+
+## 6. 텍스트 변경
 
 ```javascript
 message.textContent = (
@@ -191,7 +391,9 @@ message.textContent = (
 
 ---
 
-# 7. `innerText` 변경
+<a id="js-12-section-11"></a>
+
+## 7. `innerText` 변경
 
 ```javascript
 message.innerText = (
@@ -203,7 +405,9 @@ message.innerText = (
 
 ---
 
-# 8. `innerHTML` 변경
+<a id="js-12-section-12"></a>
+
+## 8. `innerHTML` 변경
 
 ```javascript
 message.innerHTML = (
@@ -215,7 +419,9 @@ message.innerHTML = (
 
 ---
 
-# 9. `innerHTML +=`
+<a id="js-12-section-13"></a>
+
+## 9. `innerHTML +=`
 
 ```javascript
 message.innerHTML += "d"
@@ -238,7 +444,9 @@ message.append("d")
 
 ---
 
-# 10. `innerHTML`과 XSS
+<a id="js-12-section-14"></a>
+
+## 10. `innerHTML`과 XSS
 
 원본:
 
@@ -255,7 +463,9 @@ message.innerHTML = (
 
 ---
 
-# 11. 안전한 링크 생성
+<a id="js-12-section-15"></a>
+
+## 11. 안전한 링크 생성
 
 ```javascript
 const link = document.createElement(
@@ -273,7 +483,9 @@ HTML 문자열 조립 대신 DOM API로 요소와 속성을 분리한다.
 
 ---
 
-# 12. `replaceChildren()`
+<a id="js-12-section-16"></a>
+
+## 12. `replaceChildren()`
 
 ```javascript
 message.replaceChildren(
@@ -287,7 +499,9 @@ message.replaceChildren(
 
 ---
 
-# 13. 카운터 기본 구조
+<a id="js-12-section-17"></a>
+
+## 13. 카운터 기본 구조
 
 ```html
 <div id="count">0</div>
@@ -303,7 +517,9 @@ const countElement = (
 
 ---
 
-# 14. 카운터 갱신
+<a id="js-12-section-18"></a>
+
+## 14. 카운터 갱신
 
 ```javascript
 const countIntervalId = setInterval(
@@ -324,7 +540,9 @@ const countIntervalId = setInterval(
 
 ---
 
-# 15. 숫자 변환 검증
+<a id="js-12-section-19"></a>
+
+## 15. 숫자 변환 검증
 
 ```javascript
 const current = Number(
@@ -340,7 +558,9 @@ DOM 텍스트가 항상 숫자라는 가정이 깨질 수 있으므로 검증할
 
 ---
 
-# 16. 상태를 DOM에만 저장하지 않기
+<a id="js-12-section-20"></a>
+
+## 16. 상태를 DOM에만 저장하지 않기
 
 개선:
 
@@ -363,7 +583,9 @@ const countIntervalId = setInterval(
 
 ---
 
-# 17. 타이머 해제
+<a id="js-12-section-21"></a>
+
+## 17. 타이머 해제
 
 ```javascript
 clearInterval(
@@ -375,7 +597,9 @@ clearInterval(
 
 ---
 
-# 18. 실시간 시계
+<a id="js-12-section-22"></a>
+
+## 18. 실시간 시계
 
 ```javascript
 const clockElement = (
@@ -402,7 +626,9 @@ const clockIntervalId = setInterval(
 
 ---
 
-# 19. Date를 반복문 밖에 두면?
+<a id="js-12-section-23"></a>
+
+## 19. Date를 반복문 밖에 두면?
 
 ```javascript
 const now = new Date()
@@ -419,7 +645,9 @@ setInterval(
 
 ---
 
-# 20. 시계 두 자리 형식
+<a id="js-12-section-24"></a>
+
+## 20. 시계 두 자리 형식
 
 ```javascript
 function padTwo(
@@ -442,7 +670,9 @@ const time = (
 
 ---
 
-# 21. 갱신 간격과 정확도
+<a id="js-12-section-25"></a>
+
+## 21. 갱신 간격과 정확도
 
 `setInterval(callback, 1000)`은 정확히 매 1000ms 실행을 보장하지 않는다.
 
@@ -452,7 +682,9 @@ const time = (
 
 ---
 
-# 22. DOM 요소 생성
+<a id="js-12-section-26"></a>
+
+## 22. DOM 요소 생성
 
 ```javascript
 const div = document.createElement(
@@ -464,7 +696,9 @@ const div = document.createElement(
 
 ---
 
-# 23. 생성한 요소 설정
+<a id="js-12-section-27"></a>
+
+## 23. 생성한 요소 설정
 
 ```javascript
 div.id = "lol"
@@ -474,7 +708,9 @@ div.style.color = "red"
 
 ---
 
-# 24. DOM 삽입 전과 후
+<a id="js-12-section-28"></a>
+
+## 24. DOM 삽입 전과 후
 
 ```text
 createElement()
@@ -491,7 +727,9 @@ append()
 
 ---
 
-# 25. `append()`
+<a id="js-12-section-29"></a>
+
+## 25. `append()`
 
 ```javascript
 const log = document.querySelector(
@@ -505,7 +743,9 @@ log.append(div)
 
 ---
 
-# 26. 문자열 `append()`
+<a id="js-12-section-30"></a>
+
+## 26. 문자열 `append()`
 
 ```javascript
 log.append(
@@ -517,7 +757,9 @@ log.append(
 
 ---
 
-# 27. 같은 Node를 두 번 Append
+<a id="js-12-section-31"></a>
+
+## 27. 같은 Node를 두 번 Append
 
 ```javascript
 log.append(div)
@@ -530,7 +772,9 @@ log.append(div)
 
 ---
 
-# 28. Node 복제
+<a id="js-12-section-32"></a>
+
+## 28. Node 복제
 
 ```javascript
 const clonedDiv = div.cloneNode(
@@ -549,7 +793,9 @@ log.append(
 
 ---
 
-# 29. `appendChild()`
+<a id="js-12-section-33"></a>
+
+## 29. `appendChild()`
 
 ```javascript
 const paragraph = (
@@ -569,7 +815,9 @@ Node 하나만 마지막 자식으로 추가한다.
 
 ---
 
-# 30. `append()`와 `appendChild()`
+<a id="js-12-section-34"></a>
+
+## 30. `append()`와 `appendChild()`
 
 | 항목 | `append()` | `appendChild()` |
 | --- | --- | --- |
@@ -580,7 +828,9 @@ Node 하나만 마지막 자식으로 추가한다.
 
 ---
 
-# 31. `prepend()`
+<a id="js-12-section-35"></a>
+
+## 31. `prepend()`
 
 ```javascript
 const firstParagraph = (
@@ -602,7 +852,9 @@ log.prepend(
 
 ---
 
-# 32. `before()`
+<a id="js-12-section-36"></a>
+
+## 32. `before()`
 
 ```javascript
 const previous = (
@@ -620,7 +872,9 @@ log.before(previous)
 
 ---
 
-# 33. `after()`
+<a id="js-12-section-37"></a>
+
+## 33. `after()`
 
 ```javascript
 const next = document.createElement(
@@ -634,7 +888,9 @@ log.after(next)
 
 ---
 
-# 34. 삽입 위치 비교
+<a id="js-12-section-38"></a>
+
+## 34. 삽입 위치 비교
 
 ```text
 before()
@@ -649,7 +905,9 @@ append()
 
 ---
 
-# 35. Table 행 생성
+<a id="js-12-section-39"></a>
+
+## 35. Table 행 생성
 
 ```javascript
 const tableBody = (
@@ -673,7 +931,9 @@ tableBody.append(row)
 
 ---
 
-# 36. 데이터 배열
+<a id="js-12-section-40"></a>
+
+## 36. 데이터 배열
 
 ```javascript
 const rows = [
@@ -687,7 +947,9 @@ const rows = [
 
 ---
 
-# 37. 반복문으로 게시판 생성
+<a id="js-12-section-41"></a>
+
+## 37. 반복문으로 게시판 생성
 
 ```javascript
 const board = document.querySelector(
@@ -728,7 +990,9 @@ for (const [
 
 ---
 
-# 38. 단계별 조립 원리
+<a id="js-12-section-42"></a>
+
+## 38. 단계별 조립 원리
 
 ```text
 데이터 확인
@@ -743,7 +1007,9 @@ for (const [
 
 ---
 
-# 39. `innerHTML`로 표 생성
+<a id="js-12-section-43"></a>
+
+## 39. `innerHTML`로 표 생성
 
 ```javascript
 let html = ""
@@ -767,7 +1033,9 @@ board.innerHTML = html
 
 ---
 
-# 40. `innerHTML` 표 생성의 위험
+<a id="js-12-section-44"></a>
+
+## 40. `innerHTML` 표 생성의 위험
 
 `title`이나 `author`가 사용자 입력이면 HTML이나 Script가 삽입될 수 있다.
 
@@ -782,7 +1050,9 @@ board.innerHTML = html
 
 ---
 
-# 41. 반복마다 `innerHTML` 갱신
+<a id="js-12-section-45"></a>
+
+## 41. 반복마다 `innerHTML` 갱신
 
 원본:
 
@@ -800,7 +1070,9 @@ for (...) {
 
 ---
 
-# 42. 역순 데이터 출력
+<a id="js-12-section-46"></a>
+
+## 42. 역순 데이터 출력
 
 데이터 자체를 역순으로 순회한다.
 
@@ -820,7 +1092,9 @@ for (
 
 ---
 
-# 43. `DocumentFragment`
+<a id="js-12-section-47"></a>
+
+## 43. `DocumentFragment`
 
 ```javascript
 const fragment = (
@@ -865,7 +1139,9 @@ board.append(fragment)
 
 ---
 
-# 44. 문자열 역순 누적
+<a id="js-12-section-48"></a>
+
+## 44. 문자열 역순 누적
 
 원본:
 
@@ -891,7 +1167,9 @@ for (
 
 ---
 
-# 45. Style 요소 생성
+<a id="js-12-section-49"></a>
+
+## 45. Style 요소 생성
 
 ```javascript
 const style = document.createElement(
@@ -911,7 +1189,9 @@ document.head.append(style)
 
 ---
 
-# 46. Script 동적 삽입 주의
+<a id="js-12-section-50"></a>
+
+## 46. Script 동적 삽입 주의
 
 ```javascript
 const script = document.createElement(
@@ -929,7 +1209,9 @@ script.textContent = (
 
 ---
 
-# 47. 인라인 스타일
+<a id="js-12-section-51"></a>
+
+## 47. 인라인 스타일
 
 ```javascript
 const clock = document.getElementById(
@@ -944,7 +1226,9 @@ CSS의 `font-size`는 JavaScript에서 `fontSize`로 작성한다.
 
 ---
 
-# 48. CSS 속성 이름 변환
+<a id="js-12-section-52"></a>
+
+## 48. CSS 속성 이름 변환
 
 | CSS | JavaScript style |
 | --- | --- |
@@ -954,7 +1238,9 @@ CSS의 `font-size`는 JavaScript에서 `fontSize`로 작성한다.
 
 ---
 
-# 49. `element.style`
+<a id="js-12-section-53"></a>
+
+## 49. `element.style`
 
 ```javascript
 console.log(
@@ -968,7 +1254,9 @@ console.log(
 
 ---
 
-# 50. 계산된 스타일
+<a id="js-12-section-54"></a>
+
+## 50. 계산된 스타일
 
 ```javascript
 const computedStyle = (
@@ -986,7 +1274,9 @@ console.log(
 
 ---
 
-# 51. `getPropertyValue()`
+<a id="js-12-section-55"></a>
+
+## 51. `getPropertyValue()`
 
 ```javascript
 const width = (
@@ -1004,7 +1294,9 @@ CSS 속성 이름 그대로 kebab-case를 사용할 수 있다.
 
 ---
 
-# 52. 높이 숫자 계산
+<a id="js-12-section-56"></a>
+
+## 52. 높이 숫자 계산
 
 ```javascript
 clock.style.height = "66px"
@@ -1022,7 +1314,9 @@ clock.style.height = (
 
 ---
 
-# 53. Style 직접 조작과 클래스
+<a id="js-12-section-57"></a>
+
+## 53. Style 직접 조작과 클래스
 
 직접 조작:
 
@@ -1049,7 +1343,9 @@ clock.classList.add(
 
 ---
 
-# 54. 문제 1: 텍스트 뒤에 문자열 추가
+<a id="js-12-section-58"></a>
+
+## 54. 문제 1: 텍스트 뒤에 문자열 추가
 
 ```javascript
 const quiz1 = document.querySelector(
@@ -1065,7 +1361,9 @@ quiz1.textContent += (
 
 ---
 
-# 55. 문제 2: `q2` 클래스 개수
+<a id="js-12-section-59"></a>
+
+## 55. 문제 2: `q2` 클래스 개수
 
 ```javascript
 const quiz2Items = (
@@ -1089,7 +1387,9 @@ console.log(
 
 ---
 
-# 56. NodeList와 `classList`
+<a id="js-12-section-60"></a>
+
+## 56. NodeList와 `classList`
 
 잘못된 코드:
 
@@ -1117,7 +1417,9 @@ for (const item of quizItems) {
 
 ---
 
-# 57. 문제 3: `q2` 텍스트 출력
+<a id="js-12-section-61"></a>
+
+## 57. 문제 3: `q2` 텍스트 출력
 
 ```javascript
 const quiz2Items = (
@@ -1137,7 +1439,9 @@ for (const item of quiz2Items) {
 
 ---
 
-# 58. 문제 4: 빈 요소 채우기
+<a id="js-12-section-62"></a>
+
+## 58. 문제 4: 빈 요소 채우기
 
 ```javascript
 const quizItems = (
@@ -1162,7 +1466,9 @@ for (const item of quizItems) {
 
 ---
 
-# 59. `innerText === ""`의 한계
+<a id="js-12-section-63"></a>
+
+## 59. `innerText === ""`의 한계
 
 원본은 `innerText == ""`로 검사한다.
 
@@ -1177,7 +1483,9 @@ item.textContent.trim()
 
 ---
 
-# 60. 스타일 직접 변경 개선
+<a id="js-12-section-64"></a>
+
+## 60. 스타일 직접 변경 개선
 
 원본:
 
@@ -1209,7 +1517,9 @@ item.classList.add(
 
 ---
 
-# 61. 내 코드와 강사님 코드 비교
+<a id="js-12-section-65"></a>
+
+## 61. 내 코드와 강사님 코드 비교
 
 | 항목 | 내 코드 | 강사님 코드 |
 | --- | --- | --- |
@@ -1221,7 +1531,7 @@ item.classList.add(
 | 보안 | `javascript:` 링크를 기능 예제로 설명 | 동일 코드 사용 |
 | Quiz 위치 | Script보다 앞 | Script 뒤에 일부 요소 배치 |
 
-## 61-1. 내 코드의 장점
+### 61-1. 내 코드의 장점
 
 - `textContent`, `innerText`, `innerHTML`의 차이를 상세히 설명했다.
 - 카운터·시계·표 생성 문제를 직접 구현했다.
@@ -1229,7 +1539,7 @@ item.classList.add(
 - 인라인 스타일과 `getComputedStyle()` 차이를 기록했다.
 - DOM 조립 과정을 단계적으로 설명했다.
 
-## 61-2. 내 코드의 개선점
+### 61-2. 내 코드의 개선점
 
 - `innerHTML`에 `javascript:` URL을 넣는 코드는 보안상 위험하다.
 - 같은 요소를 타이머마다 다시 선택할 필요가 없다.
@@ -1239,14 +1549,14 @@ item.classList.add(
 - 스타일 상태는 직접 property보다 클래스로 관리하는 편이 좋다.
 - `==`보다 `===`를 사용해야 한다.
 
-## 61-3. 강사님 코드의 장점
+### 61-3. 강사님 코드의 장점
 
 - 콘텐츠 조회·변경부터 DOM 생성까지 흐름이 단계적이다.
 - `append()`와 `appendChild()` 차이를 직접 확인할 수 있다.
 - 게시판 데이터를 표 행으로 만드는 과정을 자세히 보여 준다.
 - 인라인 스타일과 계산된 스타일을 함께 다룬다.
 
-## 61-4. 강사님 코드의 보충점
+### 61-4. 강사님 코드의 보충점
 
 - Quiz 요소가 Script 뒤에 있어 Script 실행 시 선택할 수 없는 구조다.
 - `innerHTML`과 `javascript:` URL의 XSS 위험 설명이 필요하다.
@@ -1256,9 +1566,11 @@ item.classList.add(
 
 ---
 
-# 62. 기존 코드에서 개선 코드로 바꾼 이유
+<a id="js-12-section-66"></a>
 
-## 62-1. 안전한 텍스트 출력
+## 62. 기존 코드에서 개선 코드로 바꾼 이유
+
+### 62-1. 안전한 텍스트 출력
 
 기존:
 
@@ -1272,7 +1584,7 @@ element.innerHTML = userInput
 element.textContent = userInput
 ```
 
-## 62-2. 반복 선택 제거
+### 62-2. 반복 선택 제거
 
 기존:
 
@@ -1304,7 +1616,7 @@ setInterval(
 )
 ```
 
-## 62-3. 반복 `innerHTML` 제거
+### 62-3. 반복 `innerHTML` 제거
 
 기존:
 
@@ -1321,7 +1633,7 @@ fragment.append(row)
 board.append(fragment)
 ```
 
-## 62-4. Style 상태 클래스화
+### 62-4. Style 상태 클래스화
 
 기존:
 
@@ -1339,7 +1651,9 @@ item.classList.add(
 
 ---
 
-# 63. 실무형 예제: 안전한 게시판 렌더링
+<a id="js-12-section-67"></a>
+
+## 63. 실무형 예제: 안전한 게시판 렌더링
 
 ```javascript
 function createBoardRow(
@@ -1414,7 +1728,7 @@ if (board !== null) {
 }
 ```
 
-## 63-1. 실행 결과
+### 63-1. 실행 결과
 
 첫 번째 제목의 Script는 실행되지 않고 일반 텍스트로 표시된다.
 
@@ -1422,7 +1736,7 @@ if (board !== null) {
 <script>alert(1)</script>
 ```
 
-## 63-2. 코드에서 무엇을 사용하는 걸까?
+### 63-2. 코드에서 무엇을 사용하는 걸까?
 
 | 코드 | 사용하는 이유 |
 | --- | --- |
@@ -1435,9 +1749,13 @@ if (board !== null) {
 
 ---
 
-# 64. 대표 오류로 이해하기
+<a id="js-12-section-68"></a>
 
-## 64-1. `null` 요소에 콘텐츠 설정
+## 64. 대표 오류로 이해하기
+
+<a id="index-section-86"></a>
+
+### 64-1. `null` 요소에 콘텐츠 설정
 
 ```text
 TypeError: Cannot set properties of null
@@ -1445,7 +1763,7 @@ TypeError: Cannot set properties of null
 
 선택 결과와 Script 실행 시점을 확인한다.
 
-## 64-2. 문자열을 `appendChild()`에 전달
+### 64-2. 문자열을 `appendChild()`에 전달
 
 ```text
 TypeError: parameter 1 is not of type Node
@@ -1453,69 +1771,75 @@ TypeError: parameter 1 is not of type Node
 
 문자열은 `append()`를 사용한다.
 
-## 64-3. NodeList에 `classList` 사용
+### 64-3. NodeList에 `classList` 사용
 
 `classList`는 각 Element에 존재한다.
 
-## 64-4. `Number("66px")`
+### 64-4. `Number("66px")`
 
 결과는 `NaN`이다.
 
-## 64-5. 타이머 중복 생성
+### 64-5. 타이머 중복 생성
 
 같은 기능이 여러 번 실행되고 해제하기 어려워진다.
 
-## 64-6. 신뢰하지 못한 `innerHTML`
+### 64-6. 신뢰하지 못한 `innerHTML`
 
 XSS가 발생할 수 있다.
 
 ---
 
-# 65. 자주 하는 실수
+<a id="js-12-section-69"></a>
 
-## 65-1. `textContent`와 `innerHTML`을 같은 기능으로 이해
+## 65. 자주 하는 실수
+
+### 65-1. `textContent`와 `innerHTML`을 같은 기능으로 이해
 
 텍스트 처리와 HTML 파싱은 다르다.
 
-## 65-2. `innerText`가 항상 `textContent`와 같다고 생각
+### 65-2. `innerText`가 항상 `textContent`와 같다고 생각
 
 CSS 표시 상태와 레이아웃 계산의 영향을 받는다.
 
-## 65-3. 생성한 요소가 자동으로 화면에 나온다고 생각
+### 65-3. 생성한 요소가 자동으로 화면에 나온다고 생각
 
 DOM 트리에 삽입해야 한다.
 
-## 65-4. 같은 Node를 두 번 Append하면 복제된다고 생각
+### 65-4. 같은 Node를 두 번 Append하면 복제된다고 생각
 
 기존 Node가 이동한다.
 
-## 65-5. `appendChild()`에 문자열 전달
+### 65-5. `appendChild()`에 문자열 전달
 
 Node만 받을 수 있다.
 
-## 65-6. 반복마다 `innerHTML +=` 사용
+### 65-6. 반복마다 `innerHTML +=` 사용
 
 전체 하위 DOM이 재파싱될 수 있다.
 
-## 65-7. `element.style`로 외부 CSS 값을 읽으려 함
+### 65-7. `element.style`로 외부 CSS 값을 읽으려 함
 
 `getComputedStyle()`을 사용한다.
 
-## 65-8. `"66px"`를 `Number()`로 변환
+<a id="index-section-100"></a>
+
+### 65-8. `"66px"`를 `Number()`로 변환
 
 `parseFloat()` 또는 CSS Typed OM을 검토한다.
 
-## 65-9. 공백만 있는 요소를 비어 있지 않다고 판단
+### 65-9. 공백만 있는 요소를 비어 있지 않다고 판단
 
 `trim()` 후 비교한다.
 
-## 65-10. 타이머를 생성하고 해제하지 않음
+### 65-10. 타이머를 생성하고 해제하지 않음
 
 기능 종료 시 `clearInterval()`을 사용한다.
 
 ---
 
-# 66. 핵심 요약
+<a id="js-12-section-70"></a>
+
+## 66. 핵심 요약
 
 ```text
 textContent
@@ -1560,7 +1884,9 @@ classList
 
 ---
 
-# 67. 최종 체크리스트
+<a id="js-12-section-71"></a>
+
+## 67. 최종 체크리스트
 
 - [ ] `textContent`, `innerText`, `innerHTML`을 구분할 수 있는가?
 - [ ] 사용자 입력에는 `textContent`를 사용할 수 있는가?
@@ -1585,7 +1911,9 @@ classList
 
 ---
 
-# 마무리
+<a id="js-12-section-72"></a>
+
+## 마무리
 
 DOM 콘텐츠 조작의 핵심은 화면에 문자열을 넣는 것에서 끝나지 않는다.
 
@@ -1602,7 +1930,9 @@ Node를 작은 단위로 생성해 조립하고
 ```
 
 이 흐름을 이해하면 이후 이벤트 문서에서 사용자 동작에 따라 안전하게 화면을 갱신할 수 있다.
-# V3 실행 추적 카드 — 데이터 → 노드 생성 → DOM 연결 → 렌더링
+<a id="js-12-section-73"></a>
+
+## V3 실행 추적 카드 — 데이터 → 노드 생성 → DOM 연결 → 렌더링
 
 `createElement`만으로는 화면에 나타나지 않으며 `append` 등으로 문서 트리에 연결해야 한다. `textContent`는 텍스트, `innerHTML`은 HTML을 파싱한다.
 

@@ -4,6 +4,54 @@
 
 ---
 
+## 이 문서에서 바로 찾기
+
+- [학습 목표](#sql-16-section-2)
+- [개념에서 실제 실행까지 — 트랜잭션이란? — 한 업무의 경계와 되돌릴 수 있는 범위](#sql-16-section-3)
+- [15. 내 코드와 강사님 코드 비교](#sql-16-section-18)
+- [20. 종합실습](#sql-16-section-23)
+- [21. 정답과 해설](#sql-16-section-24)
+- [22. 최종 체크리스트](#sql-16-section-25)
+- [23. 핵심 요약](#sql-16-section-26)
+
+<details>
+<summary>상세 목차 전체 펼치기</summary>
+
+- [📌 문서 정보](#sql-16-section-1)
+- [학습 목표](#sql-16-section-2)
+- [개념에서 실제 실행까지 — 트랜잭션이란? — 한 업무의 경계와 되돌릴 수 있는 범위](#sql-16-section-3)
+- [1. Transaction 기본 개념](#sql-16-section-4)
+- [2. ACID](#sql-16-section-5)
+- [3. autocommit](#sql-16-section-6)
+- [4. START TRANSACTION](#sql-16-section-7)
+- [5. COMMIT](#sql-16-section-8)
+- [6. ROLLBACK](#sql-16-section-9)
+- [7. 계좌 이체 통합 예제](#sql-16-section-10)
+- [8. SAVEPOINT](#sql-16-section-11)
+- [9. DDL과 암시적 COMMIT](#sql-16-section-12)
+- [10. 두 Session과 변경 가시성](#sql-16-section-13)
+- [11. Isolation Level](#sql-16-section-14)
+- [12. Lock 기본](#sql-16-section-15)
+- [13. Lock Wait와 Deadlock](#sql-16-section-16)
+- [14. 실패 처리 Pattern](#sql-16-section-17)
+- [15. 내 코드와 강사님 코드 비교](#sql-16-section-18)
+- [16. 개선된 통합 예제](#sql-16-section-19)
+- [17. 실무 Transaction 지침](#sql-16-section-20)
+- [18. 자주 하는 실수](#sql-16-section-21)
+- [19. 디버깅 방법](#sql-16-section-22)
+- [20. 종합실습](#sql-16-section-23)
+- [21. 정답과 해설](#sql-16-section-24)
+- [22. 최종 체크리스트](#sql-16-section-25)
+- [23. 핵심 요약](#sql-16-section-26)
+- [📎 다음 문서](#sql-16-section-27)
+- [🔬 V3 동작 백과 — 변경은 언제 보이고 언제 확정되는가?](#sql-16-section-28)
+
+</details>
+
+---
+
+<a id="sql-16-section-1"></a>
+
 ## 📌 문서 정보
 
 | 항목 | 내용 |
@@ -19,17 +67,158 @@
 
 ---
 
-## 🎯 학습 목표
+<a id="sql-16-section-2"></a>
 
-- Transaction과 업무 단위의 관계를 설명한다.
-- MariaDB의 기본 `autocommit` 상태를 확인하고 명시적 Transaction을 시작한다.
-- `COMMIT`과 `ROLLBACK`으로 변경을 확정하거나 취소한다.
-- `SAVEPOINT`로 Transaction의 일부만 되돌린다.
-- DDL의 암시적 Commit 때문에 생기는 위험을 예방한다.
-- 두 Session에서 변경 가시성과 Lock 대기를 관찰한다.
-- Deadlock과 Lock Wait를 오류가 아닌 동시성 제어 관점에서 이해한다.
+## 학습 목표
+
+- 변경·확정·취소 및 autocommit·DDL 경계를 설명한다.
+- 실제 입력·중간 상태·결과와 실패 조건을 직접 확인한다.
 
 ---
+
+<a id="sql-16-section-3"></a>
+
+## 개념에서 실제 실행까지 — 트랜잭션이란? — 한 업무의 경계와 되돌릴 수 있는 범위
+
+### 무엇이며 왜 배워야 할까?
+
+트랜잭션은 여러 변경을 하나의 업무 단위로 다루는 경계다. 계좌 이체는 출금과 입금 둘 다 성공해야 하나의 업무가 완성된다. START TRANSACTION으로 경계를 열고 COMMIT으로 확정하거나 ROLLBACK으로 아직 확정되지 않은 변경을 취소한다. 기본 InnoDB의 트랜잭션 기능을 전제로 설명한다.
+
+내 연결에서 UPDATE 뒤 SELECT는 내가 변경한 값을 볼 수 있다. 다른 연결이 언제 보는지는 격리 수준·트랜잭션 시점·잠금 등에 따라 달라진다. COMMIT 전이라는 이유로 같은 연결에서도 변경이 안 보이는 것은 아니다. ACID의 격리는 모든 SQL이 물리적으로 동시에 못 돌아간다는 뜻도 아니다.
+
+autocommit=1이면 명시 트랜잭션 밖의 성공한 DML은 문장마다 확정된다. 이때 나중에 ROLLBACK한다고 마지막 DDL 이후의 모든 업무를 복원하지 않는다. 또한 일반 CREATE·ALTER·DROP 등의 암묵 커밋은 앞선 미확정 변경을 확정할 수 있다. 실패한 DDL조차 앞선 변경의 확정을 유발할 수 있어 ‘오류면 아무 영향 없음’이라고 단정하지 않는다.
+
+아래 예제는 전체 취소 대신 SAVEPOINT로 일부 구간만 취소한다. 💡 이는 원본 COMMIT·ROLLBACK을 업무 경계로 확장한 학습이며 실무 이체의 충분한 동시성·오류 처리 구현 자체는 아니다.
+
+### 입력은 어디에서 오는가?
+
+기존 EMP·DEPT를 변경하지 않는 새 wiki_demo_* 테이블을 사용한다. 이 이름이 이미 있으면 다른 새 이름으로 구분하고 기존 객체를 삭제·덮어쓰지 않는다. 일반 DDL은 진행 중인 트랜잭션과 분리한다. 아래 예제는 새 실습 테이블에서 한 번 실행하는 순서다.
+
+### 실행 가능한 보충 SQL과 결과
+
+아래는 원본의 개념을 작은 검증 범위로 정리한 보충 예제다. MariaDB 12.3.2, 일반 SQL 모드·InnoDB 기준에서 결과를 확인했다. 조회 SQL은 SQL 편집기의 Result Grid, 변경 SQL은 영향 행 표시와 사후 SELECT로 관찰한다. DBMS·모드·데이터 상태가 다르면 차이를 확인해야 한다.
+
+```sql
+CREATE TABLE wiki_demo_16_account (
+  id INT PRIMARY KEY, balance DECIMAL(9,2) NOT NULL
+) ENGINE=InnoDB;
+INSERT INTO wiki_demo_16_account VALUES (1,1000),(2,500);
+START TRANSACTION;
+UPDATE wiki_demo_16_account SET balance=balance-100 WHERE id=1;
+UPDATE wiki_demo_16_account SET balance=balance+100 WHERE id=2;
+SAVEPOINT transfer_done;
+UPDATE wiki_demo_16_account SET balance=0 WHERE id=1;
+ROLLBACK TO SAVEPOINT transfer_done;
+SELECT id,balance FROM wiki_demo_16_account ORDER BY id;
+ROLLBACK;
+SELECT id,balance FROM wiki_demo_16_account ORDER BY id;
+```
+
+Result Grid의 열·행 값:
+
+```text
+id	balance
+1	900.00
+2	600.00
+id	balance
+1	1000.00
+2	500.00
+```
+
+여러 SELECT가 있으면 위 출력에 결과 헤더가 다시 나타난다. 숫자의 표시 자릿수와 NULL 표시 모양은 클라이언트별로 달라질 수 있지만 값과 행의 의미를 먼저 비교한다.
+
+### 논리적 처리와 상태 변화 — 단계별로 따라가기
+
+1. 초기 1000·500인 두 계좌를 만든 뒤 트랜잭션을 시작한다.
+2. 1번에서 100을 빼고 2번에 100을 더해 900·600으로 만든다.
+3. SAVEPOINT 이후 1번을 실수로 0으로 변경한다.
+4. ROLLBACK TO로 마지막 실수만 취소해 900·600을 회복한다. 전체 ROLLBACK은 1000·500으로 되돌린다.
+
+### 내 코드·강사님 코드의 어느 부분에 있었을까?
+
+
+#### 내 코드: `workspace_sql/Script.sql` 859~868행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+
+-- DDL은 자동 commit이기 때문에 그 시점 전으로는 되돌릴 수 없음
+-- rollback은 마지막 DDL(CREATE, ALTER, DROP)을 실행하기 전으로 롤백해줌
+rollback;
+select * from emp2;
+select * from dept2;
+
+commit;
+rollback;
+```
+
+#### 강사님 코드: `workspace_teacher/workspace_sql/Script.sql` 790~799행
+
+아래는 문맥을 확인하기 위한 발췌다. 주석에 적힌 설명이나 일부 SQL의 앞 상태까지 자동으로 정답이라고 간주하지 않는다. 발췌 조각 전체를 그대로 실행하라는 의미도 아니다.
+
+```sql
+where empno = 1002;
+select * from emp2;
+
+rollback;
+select * from emp2;
+select * from dept2;
+
+commit;
+rollback;
+delete from emp2
+```
+
+원본의 ‘마지막 DDL 전으로 롤백’ 메모는 실제 트랜잭션 경계 설명으로 고쳐야 한다. 두 Script.sql에 autocommit 설정이 명시되어 있지 않으므로 삭제 복원을 무조건 보장하지 않는다. DDL 실행과 세션 설정·현재 트랜잭션을 함께 확인한다.
+
+### 실무에서 사용하거나 디버깅할 때
+
+표현식 결과와 저장 데이터 변경을 구분한다. 결과가 다르면 원본의 앞선 실행 상태, 입력 행 수, NULL·중복·경계값, 조인 후 행 수를 확인한다. 오류 없이 종료한 변경도 0행 대상일 수 있다. 실제 실행 순서·성능은 아래 본문의 논리 설명만으로 단정하지 말고 실행 계획·사후 조회로 검증한다.
+
+### DDL은 앞선 DML을 확정할 수 있다
+
+💡 앞 계좌 예제의 1번 잔액 1000에서 10을 더한다. 일반 CREATE TABLE이 미확정 변경을 암묵 커밋할 수 있어 뒤 ROLLBACK은 1010을 1000으로 되돌리지 못한다. 이 시연은 새로 만든 검증 계좌에서만 수행한다. 실제 업무 데이터에서 따라 하지 않는다.
+
+```sql
+START TRANSACTION;
+UPDATE wiki_demo_16_account SET balance=balance+10 WHERE id=1;
+CREATE TABLE wiki_demo_16_ddl_marker(id INT PRIMARY KEY) ENGINE=InnoDB;
+ROLLBACK;
+SELECT id,balance FROM wiki_demo_16_account ORDER BY id;
+```
+
+검증 결과:
+
+```text
+id	balance
+1	1010.00
+2	500.00
+```
+
+### 이해 확인 실습
+
+1. COMMIT 뒤 ROLLBACK이나 ROLLBACK TO로 이미 확정한 변경을 취소할 수 있을까?
+2. 명시 트랜잭션 없이 autocommit=1에서 DELETE 뒤 ROLLBACK하면 복원되는가?
+
+<details>
+<summary>정답과 판단 근거 펼치기</summary>
+
+1. 없다. COMMIT은 트랜잭션을 끝내며 저장점도 제거한다. 필요하면 새로운 보정 업무를 설계한다.
+2. 이미 문장별 확정되었으면 복원되지 않는다. 트랜잭션 경계와 엔진·설정을 확인한다.
+
+</details>
+
+### 이 개념을 다시 사용할 수 있는지 확인
+
+- [ ] 개념·필요성·입력 컬럼과 자료형을 내 말로 설명한다.
+- [ ] 중간 행·그룹·관계와 최종 결과를 구분한다.
+- [ ] 원본 코드의 앞 상태와 보충 예제의 조건을 구분한다.
+- [ ] NULL·0행·중복·경계값 또는 변경 실패를 재검토한다.
+
+---
+
+<a id="sql-16-section-4"></a>
 
 ## 1. Transaction 기본 개념
 
@@ -71,6 +260,8 @@ ROLLBACK;
 
 ---
 
+<a id="sql-16-section-5"></a>
+
 ## 2. ACID
 
 ### 6. Atomicity — 원자성
@@ -94,6 +285,8 @@ Commit된 변경은 장애가 발생해도 복구 가능한 형태로 유지되�
 Database가 원자성과 무결성을 지원해도 “잔액은 음수가 될 수 없다” 같은 업무 규칙을 올바르게 설계하고 검증해야 한다.
 
 ---
+
+<a id="sql-16-section-6"></a>
 
 ## 3. autocommit
 
@@ -145,6 +338,8 @@ SET autocommit = 0;
 
 ---
 
+<a id="sql-16-section-7"></a>
+
 ## 4. START TRANSACTION
 
 ### 17. 명시적 시작
@@ -179,7 +374,11 @@ SELECT @@in_transaction;
 
 ---
 
+<a id="sql-16-section-8"></a>
+
 ## 5. COMMIT
+
+<a id="index-section-42"></a>
 
 ### 22. 여러 DML을 확정한다
 
@@ -222,6 +421,8 @@ Transaction이 가진 Row Lock과 Metadata Lock은 종료 시 해제된다.
 
 ---
 
+<a id="sql-16-section-9"></a>
+
 ## 6. ROLLBACK
 
 ### 27. 전체 Transaction 취소
@@ -258,6 +459,8 @@ WHERE empno = 9001;
 
 ---
 
+<a id="sql-16-section-10"></a>
+
 ## 7. 계좌 이체 통합 예제
 
 ### 32. 실습 Table
@@ -279,6 +482,8 @@ VALUES
     (1, 'KIM', 10000),
     (2, 'LEE', 5000);
 ```
+
+<a id="index-section-56"></a>
 
 ### 34. 이체 Transaction
 
@@ -321,6 +526,8 @@ WHERE account_id IN (1, 2);
 ```
 
 ---
+
+<a id="sql-16-section-11"></a>
 
 ## 8. SAVEPOINT
 
@@ -378,6 +585,8 @@ MariaDB 문서상 `ROLLBACK TO SAVEPOINT` 후에도 이후 획득한 Lock이 유
 
 ---
 
+<a id="sql-16-section-12"></a>
+
 ## 9. DDL과 암시적 COMMIT
 
 ### 45. 위험한 조합
@@ -420,6 +629,8 @@ Schema Migration과 Data Migration의 실행 순서, 실패 복구 방식을 각
 외부 Library나 Migration Tool이 실행하는 DDL까지 포함해 Transaction 경계를 검토한다.
 
 ---
+
+<a id="sql-16-section-13"></a>
 
 ## 10. 두 Session과 변경 가시성
 
@@ -466,6 +677,8 @@ Session B가 이미 장기 Transaction의 Snapshot을 사용 중이면 A의 Comm
 
 ---
 
+<a id="sql-16-section-14"></a>
+
 ## 11. Isolation Level
 
 ### 55. 현재 격리 수준 확인
@@ -506,6 +719,8 @@ START TRANSACTION;
 운영 표준과 Connection Pool 설정을 먼저 확인한다.
 
 ---
+
+<a id="sql-16-section-15"></a>
 
 ## 12. Lock 기본
 
@@ -556,6 +771,8 @@ COMMIT;
 
 ---
 
+<a id="sql-16-section-16"></a>
+
 ## 13. Lock Wait와 Deadlock
 
 ### 68. Lock Wait
@@ -604,7 +821,11 @@ MariaDB Version에 따라 `sys.innodb_lock_waits` 같은 View로 대기와 차�
 
 ---
 
+<a id="sql-16-section-17"></a>
+
 ## 14. 실패 처리 Pattern
+
+<a id="index-section-105"></a>
 
 ### 76. 기본 Application 흐름
 
@@ -652,6 +873,8 @@ Rollback과 상태 정리 없이 Connection을 재사용하면 다음 요청에 
 Deadlock 재시도 시 중복 이체나 중복 주문이 생기지 않도록 업무 Key와 처리 이력을 설계한다.
 
 ---
+
+<a id="sql-16-section-18"></a>
 
 ## 15. 내 코드와 강사님 코드 비교
 
@@ -713,6 +936,8 @@ catch
 
 ---
 
+<a id="sql-16-section-19"></a>
+
 ## 16. 개선된 통합 예제
 
 ### 86. 이체 전 Lock과 검증
@@ -761,6 +986,8 @@ WHERE account_id IN (1, 2);
 
 ---
 
+<a id="sql-16-section-20"></a>
+
 ## 17. 실무 Transaction 지침
 
 ### 89. Transaction 범위를 업무 단위와 맞춘다
@@ -787,11 +1014,15 @@ Deadlock과 일부 Lock Timeout은 재시도할 수 있지만 제약조건 위�
 
 Transaction ID 또는 업무 요청 ID, 실행 시간, 영향 Row, 오류, 재시도 횟수를 Log로 남긴다.
 
+<a id="index-section-127"></a>
+
 ### 95. Connection 설정을 확인한다
 
 Connection Pool의 autocommit, Isolation Level, Timeout이 Application 기대와 일치하는지 확인한다.
 
 ---
+
+<a id="sql-16-section-21"></a>
 
 ## 18. 자주 하는 실수
 
@@ -829,6 +1060,8 @@ Commit 이후에는 보상 DML이나 Backup 복구가 필요하다.
 
 ---
 
+<a id="sql-16-section-22"></a>
+
 ## 19. 디버깅 방법
 
 ### 104. Session 상태 확인
@@ -838,6 +1071,8 @@ SELECT
     @@autocommit AS autocommit_mode,
     @@in_transaction AS in_transaction;
 ```
+
+<a id="index-section-139"></a>
 
 ### 105. Engine 확인
 
@@ -873,6 +1108,8 @@ Transaction 사이에 DDL, `START TRANSACTION`, `SET autocommit=1`, 관리 문�
 
 ---
 
+<a id="sql-16-section-23"></a>
+
 ## 20. 종합실습
 
 ### 112. 문제 1 — Commit 실습
@@ -896,6 +1133,8 @@ Transaction 사이에 DDL, `START TRANSACTION`, `SET autocommit=1`, 관리 문�
 DML 사이에 `ALTER TABLE`을 넣으면 왜 마지막 ROLLBACK이 첫 DML을 취소하지 못할 수 있는지 설명한다.
 
 ---
+
+<a id="sql-16-section-24"></a>
 
 ## 21. 정답과 해설
 
@@ -997,6 +1236,8 @@ COMMIT;
 
 ---
 
+<a id="sql-16-section-25"></a>
+
 ## 22. 최종 체크리스트
 
 ### 122. 시작 전 체크
@@ -1021,6 +1262,8 @@ COMMIT;
 - [ ] Deadlock 재시도와 Connection 상태 초기화가 준비됐는가?
 
 ---
+
+<a id="sql-16-section-26"></a>
 
 ## 23. 핵심 요약
 
@@ -1052,6 +1295,8 @@ Transaction의 핵심은 `COMMIT`과 `ROLLBACK` 문법이 아니라 **업무상 
 
 ---
 
+<a id="sql-16-section-27"></a>
+
 ## 📎 다음 문서
 
 다음 원본 흐름은 검색 성능과 식별자 생성을 다루는 Index와 AUTO_INCREMENT이다.
@@ -1061,6 +1306,8 @@ Transaction의 핵심은 `COMMIT`과 `ROLLBACK` 문법이 아니라 **업무상 
 ```
 
 ---
+
+<a id="sql-16-section-28"></a>
 
 ## 🔬 V3 동작 백과 — 변경은 언제 보이고 언제 확정되는가?
 
@@ -1080,6 +1327,8 @@ START TRANSACTION
 ```
 
 두 번째 작업이 실패하면 `ROLLBACK`하여 첫 번째 미확정 변경도 함께 취소한다.
+
+<a id="index-section-167"></a>
 
 ### 두 Session에서 보는 결과
 
