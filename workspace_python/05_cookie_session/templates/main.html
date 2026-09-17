@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="{{ url_for('static', path='/css/main.css') }}">
+        <script>
+            document.cookie = 'no=1234'
+            document.cookie = 'yes=abcd; max-age=3600;'
+        </script>
+    </head>
+    <body>
+        <div>
+            {{ request.session.id }}
+        </div>
+    </body>
+</html>

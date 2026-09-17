@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            .hide {
+                display:none;
+            }
+
+            .popup {
+                border: 2px solid black;
+                padding: 20px;
+                position: absolute;
+                top: 20px;
+                left: 30px;
+                background-color: white;
+            }
+        </style>
+        <script>
+            window.onload = ()=>{
+                document.querySelector('#btn1').addEventListener('click', ()=>{
+                    // 만료일이 없는 홈페이지 기본 Session cookie 설정법 
+                    // Session cookie는 브라우저 탭끼리 공유되지만, 브라우저가 꺼지면 사라짐
+                    document.cookie = "key=value"
+                })
+                document.querySelector('#btn2').addEventListener('click', ()=>{
+                    // 'name=value'후에 ';'를 쓰고 'max-age=초'로 만료시간 설정 가능
+                    document.cookie = `mode=attack; max-age=${60*60*2}`
+                    document.cookie = `heal=full; max-age=${60*60*24}`
+                })
+                document.querySelector('#btn3').addEventListener('click', ()=>{
+                    console.log(document.cookie, typeof(document.cookie))
+
+                    cookie = document.cookie.split('; ')
+                    console.log(cookie)
+
+                    for(i=0; i<cookie.length; i++) {
+                        console.log(cookie[i])
+                        console.log('split : ', cookie[i].split('='))
+
+                        key = cookie[i].split('=')
+                        if(key[1] == 'full') {
+                            console.log(key, 'full입니다.')
+                        }
+                    }
+                })
+
+                // 1. 닫기 버튼 클릭 시 무조건 팝업 안 보이게 처리
+                // 2. 닫을 때 체크가 되어있다면 10초짜리 쿠키 설정
+                // 3. 새로고침 시에 쿠키가 있다면 팝업 안 보이게 처리
+                document.querySelector('.close').addEventListener('click', ()=>{
+                    document.querySelector('.popup').classList.add('hide')
+                    chk = document.querySelector('.chk')
+                    
+                    if(chk.checked == true) {
+                        document.cookie = 'popup=close; max-age=10'
+                    }
+                })
+
+                cookies = document.cookie.split('; ')
+                console.log(cookies)
+                for(i=0; i<cookies.length; i++) {
+                    if(cookies[i] != 'popup=close') {
+                        document.querySelector('.popup').classList.remove('hide')
+                    } else {
+                        document.querySelector('.popup').classList.add('hide')
+                        break
+                    }
+                }
+            }
+
+        </script>
+    </head>
+    <body>
+        <button type="button" id="btn1">btn1</button><br>
+        <button type="button" id="btn2">btn2</button><br>
+        <button type="button" id="btn3">btn3</button><br>
+
+        <div class="popup hide">
+            <div>
+                너무 너무 중요한 공지<br><br>
+            </div>
+            <div>
+                <label>
+                    <input type="checkbox" class="chk">10초간 안 보이기
+                </label>
+                <button type="button" class="close">닫기</button>
+            </div>
+        </div>
+    </body>
+</html>
