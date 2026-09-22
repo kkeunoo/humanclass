@@ -1,13 +1,15 @@
 from fastapi import APIRouter
 
-from config import ELASTIC_ENDPOINT, ELASTIC_API_KEY
-
-from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 
-from pathlib import Path # 경로 관련 lib
+from util import es, load_documents, formatter
 
-import json
+# 원래 여기있다가 util로 변경했음
+# from config import ELASTIC_ENDPOINT, ELASTIC_API_KEY
+# from elasticsearch import Elasticsearch
+# from pathlib import Path # 경로 관련 lib
+# import json
+
 
 # 엘라스틱 서치의 특징
 # 모든 요청은 REST API를 사용한다 (즉, 주소 기반으로 CRUD가 동작 됨)
@@ -19,11 +21,6 @@ import json
 #   mapping  :  type (int, varchar 등)
 
 router = APIRouter(tags=['엘라스틱서치 관련 라우터']) # tags 는 스웨거 용 글씨
-
-es = Elasticsearch(
-    ELASTIC_ENDPOINT, # 쉽게 말해 DB 연결 주소
-    api_key=ELASTIC_API_KEY # 쉽게 말해 DB 인증 키(계정)
-)
 
 @router.get('/es/health')
 def health():
@@ -80,7 +77,7 @@ def ingest_documents():
             '_source' : doc
         })
 
-    success, errors = helpers.bulk(es, actions, stats_only=False) # stats_only=False 를 쓰면 성공/실패 값을 돌려줌, 아닐 시 성공만
+    success, errors = helpers.bulk(es, actions, stats_only=False) # stats_only=False 를 쓰면 성공/실패 값과 에러메시지를 돌려줌
     print('success : ', success)
     print('errors : ', len(errors), errors)
 
@@ -91,34 +88,34 @@ def ingest_documents():
         }
     }
 
-def load_documents():
+# def load_documents():
 
-    print('__file__ : ', __file__) # __file__ :  D:\workspace\workspace_python\07_elastic\router\es_router.py
-    # __file__ : 현재 실행한 파일의 전체 경로
+#     print('__file__ : ', __file__) # __file__ :  D:\workspace\workspace_python\07_elastic\router\es_router.py
+#     # __file__ : 현재 실행한 파일의 전체 경로
 
-    # Path(__file__).resolve().parents[2] : 부모 폴더 몇 개 올라가는지
-    print( Path(__file__).resolve() ) # D:\workspace\workspace_python\07_elastic\router\es_router.py
-    print( Path(__file__).resolve().parents[2] ) # D:\workspace\workspace_python
-    print( Path(__file__).resolve().parents[1] ) # D:\workspace\workspace_python\07_elastic
-    print( Path(__file__).resolve().parents[0] ) # D:\workspace\workspace_python\07_elastic\router
+#     # Path(__file__).resolve().parents[2] : 부모 폴더 몇 개 올라가는지
+#     print( Path(__file__).resolve() ) # D:\workspace\workspace_python\07_elastic\router\es_router.py
+#     print( Path(__file__).resolve().parents[2] ) # D:\workspace\workspace_python
+#     print( Path(__file__).resolve().parents[1] ) # D:\workspace\workspace_python\07_elastic
+#     print( Path(__file__).resolve().parents[0] ) # D:\workspace\workspace_python\07_elastic\router
 
-    BASE_DIR = Path(__file__).resolve().parents[1]
-    DOCUMENT_FILE = BASE_DIR / 'data' / 'data.json' # 경로 합치기 Path의 경우 '/'로 +처럼 합침
+#     BASE_DIR = Path(__file__).resolve().parents[1]
+#     DOCUMENT_FILE = BASE_DIR / 'data' / 'data.json' # 경로 합치기 Path의 경우 '/'로 +처럼 합침
 
-    result = {}
-    # with open('asdf', 'r') as file: # FileNotFoundError: [Errno 2] No such file or directory: 'asdf'
-    try : # 혹시 파일이 없을경우 에러 발생 시 구동이 멈추지 않도록 try,except
-        with open(DOCUMENT_FILE, 'r', encoding='UTF-8') as file: 
-            # print(file) 
+#     result = {}
+#     # with open('asdf', 'r') as file: # FileNotFoundError: [Errno 2] No such file or directory: 'asdf'
+#     try : # 혹시 파일이 없을경우 에러 발생 시 구동이 멈추지 않도록 try,except
+#         with open(DOCUMENT_FILE, 'r', encoding='UTF-8') as file: 
+#             # print(file) 
 
-            # json을 dict로 변환해주는 lib
-            result = json.load(file)
-            # 참고로 dict를 json으로 변환 하려면 json.dump() 사용
-            print(result)
-    except Exception as e :
-        print('open 하다 오류 발생 : ', e)
+#             # json을 dict로 변환해주는 lib
+#             result = json.load(file)
+#             # 참고로 dict를 json으로 변환 하려면 json.dump() 사용
+#             print(result)
+#     except Exception as e :
+#         print('open 하다 오류 발생 : ', e)
 
-    return result
+#     return result
 
 @router.get('/es/select/all')
 def select_all():
@@ -215,19 +212,19 @@ def select_all():
         }
     }
 
-def formatter(resp):
-    results = []
-    for hit in resp['hits']['hits'] :
-        # document = hit.get('_source', {})
-        results.append({
-            'document' : hit.get('_source', {}),
-            'score' : hit.get('_score')
-        })
+# def formatter(resp):
+#     results = []
+#     for hit in resp['hits']['hits'] :
+#         # document = hit.get('_source', {})
+#         results.append({
+#             'document' : hit.get('_source', {}),
+#             'score' : hit.get('_score')
+#         })
 
-    return {
-        'results' : results,
-        'total' : resp['hits']['total']['value']
-    }
+#     return {
+#         'results' : results,
+#         'total' : resp['hits']['total']['value']
+#     }
 
 # match는 where와 비슷하며 백터 검색(자연어 검색)
 # 검색어를 분석한 뒤에 토큰 단위로 검색
@@ -236,7 +233,7 @@ def formatter(resp):
 def match(keyword:str):
     response = es.search(
         index='computer',
-        query={'match' : {
+        query={'match' : { # 형태소 검색만 해줌 (토큰/으로,을,의,만)
             'content' : keyword # 'Field명' : 'keyword'
         }} 
     )
@@ -256,7 +253,7 @@ def multi_match(keyword:str):
 
     return {"msg" : formatter(response)}
 
-# select의 like처럼 정확히 일치하는 값을 검ㅅ개
+# select의 like처럼 정확히 일치하는 값을 검색
 @router.get('/es/select/term')
 def term(keyword:str):
     response = es.search(
@@ -285,9 +282,9 @@ def range_(max:int, min:int = 0):
 
 # bool 복합 쿼리
 # filter : 쿼리가 참인 것 검색 (score 계산을 하지 않아 빠르다), 여러 개 쓰면 AND 조건이 됨
+# should : 쿼리가 참인 것의 점수를 높인다 (must랑 같이 사용), 여러 개 쓰면 OR 조건이 됨
 # must : 쿼리가 참인 것 검색 (점수가 좋은 것들 중에서)
 # must_not : 쿼리가 거짓인 것 검색
-# should : 쿼리가 참인 것의 점수를 높인다 (must랑 같이 사용), 여러 개 쓰면 OR 조건이 됨
 @router.get('/es/select/filter')
 def filter_(category, keyword):
     response = es.search(
@@ -323,3 +320,150 @@ def orderby(sort_field, order = 'asc'):
 
     return {"msg" : formatter(response)}
 
+# 전달 인자로 dict 형태를 완성해서 줬을 때 
+@router.post('/es/crud/insert')
+def insert_document(document : dict): # 데이터가 이미 있으면 update가 됨
+    response = es.index(
+        index='computer',
+        id=document.get('id', -1),
+        document=document
+    )
+
+    return {
+        'response' : response,
+        "msg" : 'document 추가 완료'
+    }
+    '''
+    {
+    "response": {
+        "_index": "computer",
+        "_id": "10001",
+        "_version": 1,
+        "result": "created",
+        "_shards": {
+        "total": 1,
+        "successful": 1,
+        "failed": 0
+        },
+        "_seq_no": 117,
+        "_primary_term": 1
+    },
+    "msg": "document 추가 완료"
+    }
+    '''
+
+@router.get('/es/crud/select')
+def select_document(id):
+
+    result = {}
+
+    try:
+        # _id로 검색할 땐 get을 쓰고, 전체 찾는 건 es.search를 사용
+        # 결과론적으로는 둘 다 사용해도 무방하나 구조적 'get', 내용 'search'
+        response = es.get( 
+            index='computer',
+            id=id
+        )
+        print('response : ', response)
+
+        result = response.get('_source')
+
+    except Exception as e:
+        print(e)
+
+    # 없는 걸 찾았을 때 NotFoundError(404, "{'_index': 'computer', '_id': '10001', 'found': False}")
+    return {
+        'result' : result,
+        "msg" : 'document 조회 완료' 
+    }
+
+@router.put('/es/crud/update')
+def update_document(id, document:dict):
+    result = {}
+
+    try:
+        result = es.update(
+            index='computer',
+            id=id,
+            doc=document
+        )
+    except Exception as e:
+        print(e)
+
+    return result
+    '''
+    {
+    "_index": "computer",
+    "_id": "10001",
+    "_version": 2,
+    "result": "updated",
+    "_shards": {
+        "total": 1,
+        "successful": 1,
+        "failed": 0
+    },
+    "_seq_no": 118,
+    "_primary_term": 1
+    }
+    '''
+
+@router.put('/es/crud/update/field')
+def update_field_document(id, price:int, rating:float):
+    result = {}
+
+    try:
+        result = es.update(
+            index='computer',
+            id=id,
+            doc={
+                'price':price,
+                'rating':rating
+            }
+        )
+    except Exception as e:
+        print(e)
+
+    return result
+    '''
+    {
+    "_index": "computer",
+    "_id": "10001",
+    "_version": 3,
+    "result": "updated",
+    "_shards": {
+        "total": 1,
+        "successful": 1,
+        "failed": 0
+    },
+    "_seq_no": 119,
+    "_primary_term": 1
+    }
+    '''
+
+@router.delete('/es/crud/delete')
+def delete_document(id):
+    result = {}
+    try:
+        result = es.delete(
+            index='computer',
+            id=id
+        )
+    except Exception as e:
+        print(e)
+
+    return result
+    '''
+    {
+    "_index": "computer",
+    "_id": "10001",
+    "_version": 4,
+    "result": "deleted",
+    "_shards": {
+        "total": 1,
+        "successful": 1,
+        "failed": 0
+    },
+    "_seq_no": 120,
+    "_primary_term": 1
+    }
+    '''
