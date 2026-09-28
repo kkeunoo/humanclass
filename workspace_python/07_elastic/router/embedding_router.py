@@ -3,7 +3,7 @@ from elasticsearch import helpers
 
 # 정규표현식 (regular expression, regExp) 사용을 위한 모듈
 import re 
-from util import es, load_documents, formatter
+from util import es, load_documents, formatter, gemini
 
 router = APIRouter(tags=['임베딩 관련 라우터']) 
 
@@ -154,6 +154,13 @@ def ingest_embed_documents():
     # json 가져오기
     documents = load_documents()
 
+    # for index, data in enumerate(range(100)):
+    #     # gemini 접속 29번 하고 나서 30번째가 되면 1분 슬립
+    #     print(data)
+    #     if index % 30 == 0 :
+    #         import time
+    #         time.sleep(60) # 초 단위로 쓰레드가 멈춘다
+
     actions = []
 
     for doc in documents :
@@ -162,7 +169,8 @@ def ingest_embed_documents():
 
         for index, chunk in enumerate(chunks) :
             # 백터로 변환
-            embedding = get_embedding(doc['title'], chunk)
+            # embedding = get_embedding(doc['title'], chunk)
+            embedding = get_embedding_with_llm(doc['title'], chunk)
 
             # 살짝 변형
             doc2 = doc
@@ -186,6 +194,7 @@ def ingest_embed_documents():
 
     return {'msg' : {'success' : success, 'errors' : errors}}
 
+# 엘라스틱 모델 사용해서 벡터화
 def get_embedding(title, content):
     text = f'title:{title}\ncontent:{content}'
 
@@ -201,6 +210,32 @@ def get_embedding(title, content):
 
     # 생성한 백터를 반환한다
     return result['text_embedding'][0]['embedding']
+
+# gemini 에서 사용 할 타입들이 들어가있음
+from google.genai import types
+# gemini 모델 사용해서 벡터화
+def get_embedding_with_llm(title, content):
+    prompt = f'''
+        task: retrival document\n
+        title: {title}\n
+        content: {content}
+'''
+
+    result = gemini.models.embed_content(
+        model='gemini-embedding-2',
+        # 텍스트를 임베딩한다
+        contents=[
+            types.Content(parts=[
+                types.Part.from_text(text=prompt)
+            ])
+        ],
+        #옵션
+        config=types.EmbedContentConfig(
+            output_dimensionality=384
+        )
+    )
+
+    return result.embeddings[0].values
 
 def get_keyword_embedding(keyword):
     # 엘라스틱서치의 임베딩 모델 (임베딩을 검색용으로 요청한다)
@@ -223,10 +258,35 @@ def get_keyword_embedding(keyword):
 
 #     return response
 
+# 사용자 검색어를 백터로 변환한다
+def get_keyword_embedding_with_llm(keyword):
+    prompt = f'''
+        task: retrival query\n
+        query: {keyword}
+'''
+
+    result = gemini.models.embed_content(
+        model='gemini-embedding-2',
+        # 텍스트를 임베딩한다
+        contents=[
+            types.Content(parts=[
+                types.Part.from_text(text=prompt)
+            ])
+        ],
+        #옵션
+        config=types.EmbedContentConfig(
+            output_dimensionality=384
+        )
+    )
+
+    return result.embeddings[0].values
+
+
 @router.get('/embed/search/vector')
 def search_vector(keyword):
     # 검색어를 검색용 백터로 변환한다
-    vector_keyword = get_keyword_embedding(keyword)
+    # vector_keyword = get_keyword_embedding(keyword)
+    vector_keyword = get_keyword_embedding_with_llm(keyword)
 
     # Elasticsearch에서 KNN(K-Nearest Neighbors) 백터 검색을 한다
     '''
@@ -270,7 +330,8 @@ def hybrid(keyword):
     # 두 결과를 RRF 방식으로 합쳐서 최종적으로 관련성 높은 문서만 반환한다
     
     # 검색어를 검색용 백터로 변환한다
-    vector_keyword = get_keyword_embedding(keyword)
+    # vector_keyword = get_keyword_embedding(keyword)
+    vector_keyword = get_keyword_embedding_with_llm(keyword)
 
     size=5
     response = es.search(
@@ -319,7 +380,56 @@ def hybrid(keyword):
 
     return formatter(response)
 
+@router.get('/embed/ask')
+# 정해진 범위에서 말하는 것이 'RAG' : Retrieval-Augmented Generation
+# LLM이 답변을 만들기 전에 외부 DB나 문서에서 관련 정보를 먼저 검색 후 이를 바탕으로 정확한 답변 생성
+def ask_rag(question): 
+    # hybrid 검색
+    results = hybrid(question)['results']
 
+    # 검색 결과를 gemini 용으로 가공
+    contexts = []
+    for idx, result in enumerate(results) :
+        print(result['document'])
+        contexts.append(f'''
+            [검색 결과 : {idx}]
+            문서ID : {result['document']['id']}
+            청크번호 : {result['document']['chunk_index']}
+            제목 : {result['document']['title']}
+            카테고리 : {result['document']['category']}
+            내용 : {result['document']['content']}
+        ''')
 
+    # 리스트를 string으로 변환
+    context =  "\n-------\n".join(contexts)
 
+    prompt = f'''
+        너는 문서 기반 지식 검색 도우미야.
 
+        아래의 **context**에 포함된 내용만으로 질문에 답변해야만 해.
+
+        ** 규칙 :    
+        1. 절대 추론이나 다른 내용을 담으면 안 돼.
+        2. 내용에 없는 질문이라면 "제공된 문서에서 확인할 수 없습니다." 라고 답변해줘.
+        3. 한국어로 답변해줘.
+        4. 불필요하게 긴 설명은 하지 말아줘.
+        5. 답변에 대한 근거를 자연스럽게 설명해줘.
+
+        ** 질문 : {question}
+
+        ** context : {context}
+    '''.strip()
+    print('prompt : ', prompt)
+
+    answer = ask_gemini(prompt)
+    print('answer : ', answer)
+
+    return answer
+
+def ask_gemini(prompt):
+    response = gemini.models.generate_content(
+        model='gemini-3.8-flash',
+        contents=prompt
+    )
+    print('ask_gemini : ', response)
+    return response.text

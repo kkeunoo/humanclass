@@ -941,23 +941,86 @@ where mgr = 7839;
 -- 아래처럼 재귀함수로 각 Level을 부여할 수 있다
 with recursive emp_recu as (
 	select 
-		empno, ename, mgr, 
+		empno, ename, mgr, de.dname, job,
 		lpad(ename, length(ename), ' '),
 		1 as level,
 		cast(ename as char(200)) as sort_key
-	from emp
+	from emp as em
+	join dept as de on (em.deptno = de.deptno)
 	where mgr is null
 	union all
 	select
-		e.empno, e.ename, e.mgr, 
+		e.empno, e.ename, e.mgr, d.dname, e.job,
 		lpad(e.ename, er.level*4+length(e.ename), ' '),
 		er.Level+1 as level,
 		concat(er.sort_key, '-', cast(e.ename as char(200))) as sort_key
 	from emp e
 		join emp_recu er on (e.mgr = er.empno)
+		join dept as d on (e.deptno = d.deptno)
 )
 select * from emp_recu
 order by sort_key;
+
+-- 7839 CLARK
+-- 7839 BLAKE
+update emp
+set mgr = 7839
+where ename = 'BLAKE';
+
+select e.empno, e.ename, e.job, e.mgr, e.deptno, d.dname from emp e
+join dept d on (e.deptno = d.deptno)
+order by d.dname;
+
+select * from dept;
+
+select * from emp;
+
+
+select a.ename as 직원, b.ename as 상사
+from emp as a
+left join emp as b on a.mgr = b.empno
+order by b.ename;
+
+
+
+with recursive comment_recu as (
+    select
+        comment_code,
+        member_code,
+        member_id,
+        comment_content,
+        date_format(comment_time, '%Y.%m.%d %H:%i') as comment_time,
+        lpad(member_id, length(member_id), ' '),
+        1 as level,
+        cast(member_id as char(200)) as sort_key
+    from
+        comment c join member m using(member_code)
+    where
+        parent_comment_code is null
+        and board_code = :board_code
+    union all
+    select
+        c.comment_code as comment_code,
+        m.member_id as member_id,
+        c.comment_content as comment_content,
+        c.parent_comment_code as parent_comment_code,
+        date_format(c.comment_time, '%Y.%m.%d %H:%i') as comment_time,
+        lpad(m.member_id, (cr.level * 4)+ length(m.member_id), ' '),
+        cr.level + 1 as level,
+        concat(cr.sort_key, '-', cast(m.member_id as char(200))) as sort_key
+    from
+        comment c join member m using(member_code)
+    join comment_recu cr on
+        c.parent_comment_code = cr.comment_code
+    )
+    select
+        *
+    from
+        comment_recu
+    order by
+        sort_key;
+
+------------------------------------------------------------------------------
 
 select * from emp;
 select * from dept;
