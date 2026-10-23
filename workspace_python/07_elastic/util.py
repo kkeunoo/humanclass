@@ -1,19 +1,27 @@
 from pathlib import Path 
 from elasticsearch import Elasticsearch
-from config import ELASTIC_ENDPOINT, ELASTIC_API_KEY, GEMINI_API_KEY
+from config import ELASTIC_ENDPOINT, ELASTIC_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY
 import json
 from google import genai
+from openai import OpenAI
 
 # 엘라스틱서치를 클라우드에서 연결
+# es = Elasticsearch(
+#     ELASTIC_ENDPOINT, # 쉽게 말해 DB 연결 주소
+#     api_key=ELASTIC_API_KEY # 쉽게 말해 DB 인증 키(계정)
+# )
+
+# 엘라스틱서치를 로컬에 연결
 es = Elasticsearch(
     ELASTIC_ENDPOINT, # 쉽게 말해 DB 연결 주소
-    api_key=ELASTIC_API_KEY # 쉽게 말해 DB 인증 키(계정)
 )
 
 # 제미나이 연결
 gemini = genai.Client(
     api_key=GEMINI_API_KEY
 )
+
+gpt = OpenAI(api_key=OPENAI_API_KEY)
 
 # JSON 파일 읽어오기
 def load_documents():

@@ -961,6 +961,29 @@ with recursive emp_recu as (
 select * from emp_recu
 order by sort_key;
 
+
+with recursive emp_recu as (
+	select 
+		empno, ename, mgr, job,
+		lpad(ename, length(ename), ' '),
+		1 as level,
+		cast(ename as char(200)) as sort_key
+	from emp as em
+	where mgr is null
+	union all
+	select
+		e.empno, e.ename, e.mgr, e.job,
+		lpad(e.ename, er.level*4+length(e.ename), ' '),
+		er.Level+1 as level,
+		concat(er.sort_key, '-', cast(e.ename as char(200))) as sort_key
+	from emp e
+		join emp_recu er on (e.mgr = er.empno)
+)
+select * from emp_recu
+order by sort_key;
+
+
+
 -- 7839 CLARK
 -- 7839 BLAKE
 update emp
@@ -1334,3 +1357,7 @@ select * from emp;
 insert into dept3
 select * from dept;
 
+
+CREATE DATABASE javateam
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
