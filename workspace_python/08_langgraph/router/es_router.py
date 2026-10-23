@@ -2,6 +2,7 @@ from fastapi import APIRouter
 import traceback
 import util
 import pandas as pd
+from typing import Any
 
 router = APIRouter(tags=["엘라스틱서치"])
 
@@ -123,6 +124,8 @@ def makeContent():
     # print(movie_tags)
 
     # 람다를 사용해서 df_movies의 movieId를 전부 돌면서 movie_tags에서 해당하는 tag를 result['list_tag'] 에 저장
+    # lambda는 넣게되면 하나하나 돌면서 lambda가 작동되기 때문에 이후 체이닝, 리턴 등 값으로 추가 작업할 수 있음
+    # → 그때그때 처리해야 하는 일들을 풀어 적어놓고, 그때그때 동작하도록 (지금 동작하는 당시의)
     result['list_tag'] = df_movies['movieId'].map(lambda id : movie_tags.get(id, []))
 
     # 파이썬의 리스트는 +를 제공
@@ -140,10 +143,62 @@ def makeContent():
         axis=1
     )
 
-    return result
+    # * : 언팩킹, js의 ...와 같음
+    # 배열을 하나씩 분리해 주는 것
+    # *[1,2,3] = 1,2,3
+    # result['content_text'] = result.apply(
+    #     lambda info : ' '.join([info['title']] , *info['list_genre'] , *info['list_tag']).strip(),
+    #     axis=1
+    # )
+
+    # reset_index : pandas 내부 index를 재정리
+    # drop=True를 안 해주면, 132 라고하면 123이 아니라 1323이 되는것을 막기 위함 (새로 추가됨)
+    # → 엉망인 것은 버려라
+    return result.reset_index(drop=True)
 
 @router.get('/make/content')
 def content():
     # result는 data frame이기 때문에 dict로 변환해서 return
-    result = makeContent()
-    return result.head(10).to_dict(orient='records')
+    dataFrame = makeContent()
+    return dataFrame.head(10).to_dict(orient='records')
+
+def makeChunk():
+    size_chunk = 50
+    overlap:int = 15
+    # 자료형을 미리 지정하기 chunks = []
+    # Any를 import해서 object처럼 아무거나 들어와도 되도록 사용할 수 있음
+    chunks:list[dict[str, Any]] = []
+
+    dataFrame = makeContent()
+    content = dataFrame.to_dict(orient='records')
+
+    step = size_chunk - overlap
+    for info in content :
+        text = info.get('content_text', '').strip()
+        if not text :
+            continue
+
+        # for idx_start in range(0, len(text), step):
+        for idx, idx_start in enumerate(range(0, len(text), step)):
+            chunk = text[idx_start : idx_start+size_chunk]
+            if chunk :
+                chunks.append({
+                    'movieId' : int(info['movieId']),
+                    'title' : str(info['title']),
+                    'genres' : list(info['list_genre']),
+                    'tags' : list(info['list_tag']),
+                    'content' : chunk,
+                    'chunk_index' : idx
+                })
+
+    return chunks
+
+@router.get('/make/chunk')
+def chunk():
+    return makeChunk()[0:10]
+
+def embedding_with_gemini(data):
+    pass
+
+def embedding_with_gpt(data):
+    pass
