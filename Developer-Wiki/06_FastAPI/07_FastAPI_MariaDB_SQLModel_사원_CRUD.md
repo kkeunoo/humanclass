@@ -1,269 +1,640 @@
-# FastAPI와 MariaDB — PyMySQL·SQLModel·사원 CRUD
+# 07. FastAPI와 MariaDB — 조회에서 사원 CRUD까지
 
-<a id="section-1"></a>
+[FastAPI 목차](README.md) · [이전: SQLite](06_Python_SQLite와_Transaction.md)
 
-## 문서 정보
+이 장은 `03_database`의 **PyMySQL 조회 → SQLModel 세션 → 사원 화면 CRUD** 순서로 읽는다. 강사님과 내 파일에는 DB 연결 주소와 암호가 직접 들어 있어 그 줄은 Wiki에 옮기지 않았다. 여기의 원본 발췌는 요청·SQL·결과 처리 부분만 정확히 인용한다. 사용자가 제외한 `03_database/00_CSS` 개인 실험은 근거로 쓰지 않는다.
 
-| 항목 | 내용 |
-| --- | --- |
-| 범위 | workspace_python/03_database, 00_CSS 제외 |
-| 내 코드 | 01_pymysql.py, 02_sqlmodel.py, 03_emp.py, DTO/EmpDTO.py, DTO/DeptDTO.py, templates |
-| 강사님 코드 | 같은 경로의 파일과 add/list/detail/update 템플릿 |
-| DBMS | MariaDB; 연결 드라이버 PyMySQL |
-| 추가 범위 | CryptContext·Argon2 수업 파일 |
-| 주의 | 원본 로그인 정보는 재노출하지 않는다. 실제 수업 DB를 자동 실행·수정하지 않는다. |
+## 1. PyMySQL에서 부서 번호를 매개변수로 조회
 
-<a id="section-2"></a>
+### 강사님 코드
 
-## 학습 목표
-
-- 요청 데이터가 SQL·DB 결과·HTML로 이어지는 순서를 이해한다.
-- Connection·Engine·Session·입력 모델·테이블 모델을 구분한다.
-- 변경 업무의 commit·rollback·실패 응답을 일관되게 처리한다.
-
-<a id="section-3"></a>
-
-## 1. 왜 메모리 Todo 다음에 DB를 배우는가?
-
-todo_list는 서버 재시작 때 사라지고 여러 서버 프로세스 사이에 자동 공유되지 않는다. MariaDB는 별도 서버에 데이터를 저장하고 조회·제약 조건·트랜잭션을 처리한다. FastAPI는 HTTP를 담당하고 DB Driver는 DB 서버와 통신한다. Jinja는 조회된 값을 화면으로 만드는 마지막 단계다. DB 연결에 성공했다고 API 경로나 HTML까지 올바른 것은 아니다.
-
-```text
-GET /emp/deptno?deptno=20
-→ Query 문자열 추출·int 검증
-→ DB 연결 또는 Session 공급
-→ 바인딩된 SELECT 실행
-→ 조회 결과를 이름 기반 행으로 가져옴
-→ context["emp_list"]로 전달
-→ Jinja 반복문이 HTML 행 생성
-→ 200 HTML 응답
-```
-
-<a id="section-4"></a>
-
-## 2. PyMySQL: Connection·Cursor·%s는 각각 무엇인가?
-
-양쪽 01_pymysql.py의 get_connect()는 host·port·database·user·password를 설정해 Connection을 만든다. cursorclass=DictCursor는 조회 행을 컬럼명 Key의 dict로 받게 한다. Connection은 접속과 transaction을 관리하고 Cursor는 SQL 실행·결과를 다룬다.
+출처: `teacher/workspace_python/03_database/01_pymysql.py` 52–76행 · **원본 발췌**
 
 ```python
-# get_connect()로 연결한 뒤 실행하는 수업 핵심 조각
+@app.get('/emp/deptno')
+def emp_list_deptno(deptno:int, request:Request):
+    connect = get_connect()
 
-## 목차
+    emp_list = []
+    try:
+        with connect.cursor() as cursor :
 
-- [문서 정보](#section-1)
-- [학습 목표](#section-2)
-- [1. 왜 메모리 Todo 다음에 DB를 배우는가?](#section-3)
-- [2. PyMySQL: Connection·Cursor·%s는 각각 무엇인가?](#section-4)
-- [3. 안전한 접속 설정과 실행 모듈](#section-5)
-- [4. Engine·Session·text·mappings의 역할](#section-6)
-- [5. table=True·입력 DTO·빈 문자열 검증](#section-7)
-- [6. 원본 사원 CRUD를 요청별로 비교하기](#section-8)
-- [7. Depends·yield·commit의 실제 순서](#section-9)
-- [8. 비밀번호 수업 — 암호화가 아니라 해시 검증](#section-10)
-- [9. 실무 지침·자주 하는 실수·디버깅](#section-11)
-- [10. 종합실습](#section-12)
-- [11. 정답과 해설](#section-13)
-- [최종 체크리스트](#section-14)
-- [핵심 요약](#section-15)
+            sql = '''
+                select * from emp
+                where deptno = %s
+            '''
 
-with connect.cursor() as cursor:
-    sql = "SELECT * FROM emp WHERE deptno = %s"
-    cursor.execute(sql, (deptno,))
-    emp_list = cursor.fetchall()
+            cursor.execute(sql, (deptno,))
+
+            emp_list = cursor.fetchall()
+            print(emp_list)
+    except Exception as e :
+        print(e)
+    finally :
+        connect.close()
+
+    return templates.TemplateResponse(request, 'list.html', {
+        'emp_list': emp_list
+    })
 ```
 
+### 내 코드
 
-SQLite의 ? 대신 PyMySQL의 %s를 사용한다. 문자열·숫자 모두 placeholder는 %s이며 Python의 % 문자열 연산자로 사용자 값을 미리 끼워 넣지 않는다. (20,)은 한 개짜리 tuple이다. cursor context 종료와 Connection.close()는 다른 자원 종료이므로 원본 finally: connect.close()도 필요하다.
-
-예를 들어 SELECT empno, ename, deptno에서 (1001, '학생', 20)인 샘플 행이 있다면 DictCursor 결과는 [{"empno":1001,"ename":"학생","deptno":20}]과 같은 구조다. 이 값은 설명용 샘플이지 사용자의 현재 DB를 조회해 얻은 결과가 아니다. 빈 결과와 연결 실패를 둘 다 []로 숨기면 사용자는 DB 오류를 '사원 없음'으로 오해할 수 있다.
-
-<a id="section-5"></a>
-
-## 3. 안전한 접속 설정과 실행 모듈
-
-💡 다음은 운영 습관 보강이며 원본 설정을 그대로 복사한 코드가 아니다.
+출처: `me/workspace_python/03_database/01_pymysql.py` 46–70행 · **원본 발췌**
 
 ```python
-import os
-import pymysql
+@app.get('/emp/deptno')
+def emp_list_deptno(deptno: int, request: Request):
+    connect = get_connect()
 
-def get_connect():
-    return pymysql.connect(
-        host=os.getenv("DB_HOST", "127.0.0.1"),
-        port=int(os.getenv("DB_PORT", "3306")),
-        database=os.environ["DB_NAME"],
-        user=os.environ["DB_USER"],
-        password=os.environ["DB_PASSWORD"],
-        cursorclass=pymysql.cursors.DictCursor,
-    )
+    emp_list = []
+    try:
+        with connect.cursor() as cursor :
+
+            sql = '''
+                select * from emp
+                where deptno = %s
+            '''
+
+            cursor.execute(sql, (deptno,))
+
+            emp_list = cursor.fetchall()
+            print(emp_list)
+    except Exception as e :
+        print(e)
+    finally :
+        connect.close()
+
+    return templates.TemplateResponse(request, 'list.html', {
+        'emp_list' : emp_list
+    })
 ```
 
+`GET /emp/deptno?deptno=20`에서 받은 `deptno: int`가 SQL의 `%s` 자리에 **별도 매개변수**로 들어간다. SQLite의 `?`와 모양은 다르지만 문자열 이어 붙이기 대신 값을 따로 전달한다는 역할은 같다. `fetchall()`로 결과 행을 받고 `list.html`에 `emp_list`로 전달한다. 두 코드 모두 `finally`에서 연결을 닫는다. DB 연결 실패나 조회 오류가 있으면 빈 목록이 화면에 전달될 수 있으므로 “항상 사원 목록이 나온다”고 단정하지 않는다.
 
-설정 누락 KeyError, 인증 실패, 서버 접속 실패, DB명 오류는 원인이 다르다. 오류를 상세히 터미널에 남기되 응답에 비밀번호·접속 URL을 보내지 않는다. root 대신 필요한 권한의 별도 계정을 사용하는 편이 안전하다. 원본 01_pymysql.py의 __main__에는 uvicorn.run('api:app', ...)이 있지만 해당 파일명과 맞지 않는다. 직접 실행 대신 파일 경로가 있는 폴더에서 python -m uvicorn 01_pymysql:app으로 정확한 모듈을 지정하거나 api.py로 이름을 정리한다.
+## 2. `Depends(get_session)`과 `:deptno`
 
-<a id="section-6"></a>
+### 강사님 코드
 
-## 4. Engine·Session·text·mappings의 역할
-
-Engine은 연결 URL·Driver·연결 풀 등을 관리하는 DB 진입점이다. create_engine()을 했다고 모든 SQL이 이미 실행된 것이 아니다. Session은 작업과 transaction, ORM 객체 상태를 관리하며 Cursor와 완전히 같은 객체는 아니다. text()는 SQL 문자열을 SQLAlchemy의 실행 가능한 SQL 표현으로 만든다. '미리 서버 컴파일하여 무조건 더 빠르고 %s보다 안전'이라는 내 주석은 과장이다. 두 방식 모두 제대로 바인딩해야 안전하다.
-
-```python
-from sqlalchemy import text
-sql = text("SELECT * FROM emp3 WHERE deptno = :deptno")
-result = session.execute(sql, {"deptno": deptno})
-emp_list = result.mappings().fetchall()
-```
-
-
-:deptno는 바인딩 이름이고 dict의 Key가 맞아야 한다. execute의 Result 객체는 결과 데이터 List 자체가 아니다. mappings()는 컬럼명으로 접근하는 RowMapping 결과를 제공한다. fetchall()/all()로 남은 행을 소비하고 Jinja가 emp.ename 같은 표현으로 접근한다.
-
-SQLAlchemy mysql+pymysql:// URL은 MariaDB 서버에 MySQL 호환 Driver로 연결하는 형태다. SQLite의 check_same_thread=False는 같은 연결 사용에 관한 스레드 검사 옵션이지 '여러 연결이 불가능하니 해제'하는 기능이 아니다. 잠금·동시 쓰기 문제와도 별개다.
-
-<a id="section-7"></a>
-
-## 5. table=True·입력 DTO·빈 문자열 검증
-
-내 DTO/EmpDTO.py의 Emp3와 Emp_pr는 table=True이고 Emp_pr_input은 일반 입력 모델이다. 반면 최신 강사님 Emp3 선언에는 table=True가 없다. 이름이 Emp3라도 자동으로 테이블 모델이 된다고 단정하면 안 된다. Field(primary_key=True)만 있다고 create_all이 무조건 테이블을 생성하지 않는다. 테이블 모델을 import해 metadata에 등록한 뒤 create_all을 해야 한다. create_all은 존재하는 테이블의 컬럼을 마음대로 변경하는 migration 도구도 아니다.
-
-Form 입력은 텍스트다. 빈 mgr/comm은 ""이고 DB의 NULL과 다르다. 내 입력 모델과 강사님 모델은 before field validator로 두 필드의 ""를 None으로 바꾼다.
-
-```python
-# 실제 수업 방식의 핵심
-@field_validator("comm", "mgr", mode="before")
-@classmethod
-def empty_to_none(cls, value):
-    return None if value == "" else value
-```
-
-
-"100"은 이후 int/float 검증을 받고 ""는 None으로 허용된다. 내 empty_to_None2 model_validator는 전달받은 전체 값이 ""인지 비교할 뿐 dict 안 각 필드를 순회하지 않는다. '모든 빈 필드를 처리한다'고 해설하면 틀리다. ename·job 같은 필수 텍스트까지 None으로 바꾸는 것도 올바른 업무 검증이 아니다. 입력용 모델에서 공백 제거·길이·급여 범위·날짜 타입을 명확히 정하고 DB 모델은 저장 스키마에 맞춘다.
-
-<a id="section-8"></a>
-
-## 6. 원본 사원 CRUD를 요청별로 비교하기
-
-| 업무 | 내 03_emp.py | 강사님 03_emp.py | 중요한 차이 |
-| --- | --- | --- | --- |
-| 목록 | GET /emp/select, emp_pr | GET /list, emp3 | 테이블·URI가 실제로 다름 |
-| 추가 화면/처리 | GET·POST /emp/insert | GET /add, POST /api/add | 입력 모델과 Form 연결 |
-| 상세 | GET /emp/detail?empno=... | GET /detail/{empno} | Query vs Path |
-| 수정 화면/처리 | GET·POST /emp/update | GET /modify, POST /api/modify | 서버에서 사원번호로 재조회 |
-| 삭제 | POST /emp/delete, 직접 Form 읽기 | POST /api/delete, empno: int = Form() | 내 원본은 문자열·누락 직접 처리 |
-
-내 상세는 fetchall() 후 for 안에서 첫 결과를 반환한다. 없는 사원은 반복이 실행되지 않아 None 응답이 될 수 있다. 내 수정 화면은 emp_list[0]을 바로 읽어 빈 결과이면 IndexError가 날 수 있다. 강사님 fetchone()도 None을 검사하지 않고 템플릿에 넘기므로 404가 자동 보장되지 않는다.
-
-```python
-# 조회 후 처리하는 개선 조각
-emp = session.execute(
-    text("SELECT * FROM emp_pr WHERE empno = :empno"),
-    {"empno": empno},
-).mappings().first()
-if emp is None:
-    raise HTTPException(status_code=404, detail="없는 사원")
-```
-
-
-급여 변경 GET /emp/update/sal?per=10은 수업 실험이지만 조회 method로 DB를 수정한다. 재방문으로 급여가 다시 1.1배가 될 수 있으므로 개선 API에서는 POST/PATCH와 명확한 권한·범위를 사용한다. 한번 1000→1100이면 반복 시 1210이 된다. HTTP method가 SQL 작업 의미를 자동 강제하지는 않는다.
-
-<a id="section-9"></a>
-
-## 7. Depends·yield·commit의 실제 순서
-
-원본 get_session()은 with Session(engine) as session: yield session; session.commit()이다. FastAPI가 generator를 진행해 Session을 얻고 endpoint에 넘긴 후 의존성 정리 단계에서 뒤 코드를 실행한다. endpoint의 'return 직전'과 commit 성공 시점은 반드시 같지 않다. 응답을 만들었다고 변경이 확정되었다고 단정하면 안 된다. 최신 권장 lifecycle 방식은 lifespan이며 수업 on_event 코드는 학습 기록으로 남긴다. [공식 Session 의존성 예제](https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/)
-
-💡 성공 응답 전에 commit을 확인하도록 변경 업무가 transaction을 소유하는 개선 방식:
+출처: `teacher/workspace_python/03_database/02_sqlmodel.py` 29–64행 · **원본 발췌**
 
 ```python
 def get_session():
-    with Session(engine) as session:
+    with Session(engine) as session :
         yield session
-
-def modify_emp(session, empno, ename):
-    try:
-        result = session.execute(
-            text("UPDATE emp_pr SET ename=:ename WHERE empno=:empno"),
-            {"ename": ename, "empno": empno},
-        )
-        # 존재 확인·업무 검증은 이 앞에서 별도로 수행
         session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    return result.rowcount
+
+@app.on_event('startup')
+def on_startup():
+    SQLModel.metadata.create_all(engine)
+
+@app.get('/emp/deptno')
+def emp_list_deptno(
+    request:Request,
+    deptno:int,
+    session:Session = Depends(get_session)
+):
+    emp_list = []
+    try:
+        # text : sql문을 실행하기 전에 미리 컴파일 해둔다
+        sql = text('''
+            select *
+            from emp3
+            where deptno = :deptno
+        ''')
+
+        result = session.execute(sql, {'deptno': deptno})
+        # emp_list = result.fetchall()
+        # emp_list = result.all()
+        emp_list = result.mappings().fetchall()
+        print(emp_list)
+        
+    except Exception as e :
+        print(e)
+
+    return templates.TemplateResponse(request, 'list.html', {
+        'emp_list': emp_list
+    })
 ```
 
+### 내 코드
 
-commit의 실패도 try 내부에서 처리한다. 같은 rowcount가 MariaDB Driver 설정과 '동일값 수정'에서 어떤 의미인지 확인해야 하며 무조건 0=SQL실패로 해석하지 않는다. 사원 존재 여부는 별도로 SELECT해 판단한다. 원본 INSERT는 endpoint와 dependency 양쪽 commit이 있어 소유권이 섞여 있다. 어느 한 위치에서 업무 단위를 정해 관리하는 편이 읽기 쉽다.
-
-강사님 delete()는 except 뒤 count가 설정되지 않은 채 if count를 읽을 수 있다. 실패를 catch했다고 정상 응답을 만들 수 있는 것은 아니다. except에서 rollback 후 raise하거나 count 초기화와 실패 분기를 명시한다. 입력 오류 422, 없는 행 404, 중복 PK 409, 내부 DB 오류 500을 구분한다.
-
-<a id="section-10"></a>
-
-## 8. 비밀번호 수업 — 암호화가 아니라 해시 검증
-
-양쪽 03_database의 번호 04 파일은 CryptContext(schemes=['argon2'])를 만들고 hash·verify를 연습한다. 파일명은 ZIP 해석 과정에서 깨져 있으므로 의미를 임의 원본 파일명으로 확정하지 않는다. 내용은 확인했다.
+출처: `me/workspace_python/03_database/02_sqlmodel.py` 38–76행 · **원본 발췌**
 
 ```python
-from passlib.context import CryptContext
-ctx_pw = CryptContext(schemes=["argon2"], deprecated="auto")
-hashed = ctx_pw.hash("연습용 비밀번호")
-print(ctx_pw.verify("연습용 비밀번호", hashed))
-print(ctx_pw.verify("틀린 입력", hashed))
+def get_session():
+    # SQLite에서 cursor가 session같은 역할
+    with Session(engine) as session :
+        yield session
+        session.commit() # 정상 세션이 실행되었을 떄 commit하면 좋음
+
+# 서버를 실행할 때 실행되게끔 할 수 있음(테이블 생성)
+@app.on_event('startup')
+def on_startup():
+    SQLModel.metadata.create_all(engine)
+
+@app.get('/emp/deptno')
+def emp_list_deptno(
+    request: Request,
+    deptno: int,
+    session: Session = Depends(get_session)
+):
+    emp_list = []
+    try:
+        # '%s'로 인자값을 받았던 것 보다 더 안전한 방식(text)
+        # text는 sql문을 실행하기 전에 미리 컴파일 해둠(실행속도 증가)
+        # :변수명은 DB에서 변수를 사용하는 방식
+        sql = text('''
+            select * 
+            from emp3
+            where deptno = :deptno
+        ''')
+
+        # fetch와 다르게 결과를 돌려주기에 변수에 담아 사용
+        result = session.execute(sql, {'deptno': deptno}) 
+        # emp_list = result.all() # fetchall과 같은 기능
+        # emp_list = result.fetchall()
+        # cursorclass=pymysql.cursors.DictCursor 와 다르게 mappings()로 변환 가능
+        emp_list = result.mappings().fetchall() 
+        print(emp_list)
+
+        return templates.TemplateResponse(request, 'list.html', {
+            'emp_list' : emp_list
+        })
 ```
 
-```text
-True
-False
+`get_session()`은 `Session(engine)`을 열어 `yield`로 요청 함수에 제공한다. `session: Session = Depends(get_session)`가 그 연결을 받는 **의존성 주입**이다. 조회 SQL은 `:deptno`를 사용하고 `session.execute(sql, {'deptno': deptno})`에서 값을 따로 전달한다. `result.mappings().fetchall()`은 열 이름으로 읽을 수 있는 결과를 만든다. 내 주석의 “`text()`가 `%s`보다 더 안전하고 실행 속도가 증가”는 이 두 파일의 측정으로 입증된 비교가 아니다. 핵심은 **매개변수 바인딩과 세션 수명**이다.
+
+### 강사님 모델과 내 모델의 중요한 차이
+
+출처: `teacher/workspace_python/03_database/DTO/EmpDTO.py` 5–13행 · **원본 발췌**
+
+```python
+class Emp3(SQLModel):
+    # 없으면 클래스명이 테이블 명이 된다
+    # __tablename__ = "emp"
+
+    # empno: int = Field(primary_key = True)
+    empno: int | None = Field(
+        default = None,         # auto_increment
+        primary_key = True
+    )
 ```
 
+출처: `me/workspace_python/03_database/DTO/EmpDTO.py` 6–21행 · **원본 발췌**
 
-Argon2 비밀번호 해시는 원문을 복호화하는 암호화와 다르다. Salt 때문에 동일한 원문도 hash 문자열이 달라질 수 있으므로 문자열 equality가 아니라 verify로 확인한다. 해시를 로그에 지속 출력하거나 평문 비밀번호를 DB에 저장하지 않는다. 이 파일만으로 회원가입·로그인 기능이 완성된 것은 아니다.
+```python
+class Emp3(SQLModel, table=True):
+    # tablename이 없다면 클래스명이 테이블명이 됨
+    # __tablename__ = 'emp' 
 
-<a id="section-11"></a>
+    empno: int = Field(primary_key = True)
+    ename: str
+    job: str
+    # mgr: int | None = None # null이 있다면 none으로 처리하는 필터
+    mgr: Optional[int] = None
+    hiredate: str
+    sal: float
+    # comm: float | None = None
+    comm: Optional[float] = None
+    deptno: int = Field(
+        foreign_key='dept3.deptno'
+    )
+```
 
-## 9. 실무 지침·자주 하는 실수·디버깅
+강사님 `Emp3(SQLModel)`에는 `table=True`가 없고, 내 `Emp3(SQLModel, table=True)`에는 있다. 따라서 `SQLModel.metadata.create_all(engine)`이 **강사님 `Emp3`을 자동으로 테이블 등록하는 예제라고 읽으면 안 된다**. 내 모델은 테이블 모델로 지정돼 있다. 실제 DB에 `emp3`가 이미 있는지와 새로 생성되는지는 실행 환경을 따로 확인해야 한다.
 
-| 증상 | 확인 순서 |
-| --- | --- |
-| import 실패 | 올바른 Interpreter, sqlmodel·pymysql 설치, DTO 경로 |
-| Access denied | 계정·권한·설정값, 비밀정보 로그 노출 금지 |
-| table 없음 | human/emp3/emp_pr 구분, table=True·metadata·초기 SQL |
-| 정상처럼 보이는데 저장 안 됨 | execute→commit 성공→새 SELECT 순서 |
-| ""에서 숫자 오류 | 선택 필드의 before validator와 실제 Form Key |
-| 상세 null/수정 500 | 조회 결과 None/빈 List 검사 |
-| HTML 빈 행 | context Key와 템플릿의 필드명 |
+## 3. 화면 목록·상세 조회
 
-async def 안에서 동기 DB Driver를 직접 오래 실행하면 event loop를 막을 수 있다. 💡 동기 endpoint·작업 분리·비동기 DB 설계는 해당 Driver에 맞춰 선택한다. 비동기 함수라는 이름만으로 SQL이 비동기화되지 않는다.
+### 강사님 코드
 
-<a id="section-12"></a>
+출처: `teacher/workspace_python/03_database/03_emp.py` 31–66행 · **원본 발췌**
 
-## 10. 종합실습
+```python
+def get_session():
+    with Session(engine) as session :
+        yield session
+        session.commit()
 
-샘플 emp_pr에 사원번호 1001, 이름 학생, 급여 1000인 한 행을 넣은 별도 연습 DB를 준비한다. 목록→상세→이름 수정→재조회→삭제를 연결한다. 수정 입력 빈 mgr/comm을 NULL로 처리하고 없는 사원·중복 사원·연결 실패를 각각 분기한다. 변경 성공은 commit 뒤 303으로 목록에 연결한다. 실제 수업 human DB의 급여 변경 endpoint를 자동 호출하지 않는다.
+@app.get("/list")
+def list(
+    request:Request,
+    session:Session = Depends(get_session) ) :
 
-<a id="section-13"></a>
+    try:
+        # DB
+        # 1. DB 접속
+        #     전달 인자의 session:Session = Depends(get_session) ) :
 
-## 11. 정답과 해설
+        # 2. sql 준비
+        query = text(f'''
+            select * from emp3
+        ''')
+        print('>> 1 >> ', query)
 
-<details><summary>정상·실패 흐름을 풀어보기</summary>
+        # 3. 실행
+        #   select만 결과가 있다
+        result = session.execute(query)
+        print('>> 2 >> ', result)
 
-GET /emp/detail?empno=1001 → int 검증 → Session → 이름 기반 SELECT → 존재 검사 → HTML. 수정 Form → 입력 모델 검증 → 대상 존재 검사 → 바인딩 UPDATE → commit 성공 → 303 목록 → 새 GET 재조회. 없는 사원은 UPDATE 전에 404. 중복 PK INSERT는 transaction rollback 후 409 등 명확한 응답. DB 오류는 로그를 남기고 rollback 후 숨기지 않는다. 예외를 catch하고 return 없이 끝내면 null이 될 수 있으므로 실패 응답도 설계해야 한다.
+        # 4. 결과 활용
+        # emp_list = result.fetchall()
+        # print('>> 3 >> fetchall >> ', emp_list)
 
-</details>
+        emp_list = result.mappings().fetchall()
+        print('>> 4 >> .mappings().fetchall() >> ', emp_list)
 
-<a id="section-14"></a>
+        return templates.TemplateResponse(request, 'list.html', {
+            'emp_list': emp_list
+        })
+```
 
-## 최종 체크리스트
+출처: `teacher/workspace_python/03_database/03_emp.py` 162–181행 · **원본 발췌**
 
-- [ ] Engine·Session·Cursor의 책임을 구분한다.
-- [ ] %s·:name·?를 Driver에 맞게 사용한다.
-- [ ] table=True와 입력 모델을 구분한다.
-- [ ] 빈 문자열·NULL·필수 값의 차이를 설명한다.
-- [ ] commit 실패 이전에 성공 응답을 확정하지 않는다.
-- [ ] 실제 계정·비밀번호를 문서와 저장소에 복사하지 않는다.
-- [ ] 없는 조회를 404로 처리하고 변경 method를 구분한다.
+```python
+@app.get('/detail/{empno}')
+def detail(
+    request:Request, 
+    empno:int, 
+    session:Session = Depends(get_session)):
 
-<a id="section-15"></a>
+    print('/detail/{empno}', empno)
 
-## 핵심 요약
+    query = text('''
+        select * from emp3
+        where empno = :empno
+    ''')
 
-HTTP 입력 검증 → Session → 바인딩 SQL → 결과 소비 → 업무 상태 확인 → commit/rollback → HTML/Redirect. 해시는 복호화가 아니라 verify로 확인한다.
+    result = session.execute(query, {'empno': empno})
+    emp = result.mappings().fetchone()
+    print(emp)
+
+    return templates.TemplateResponse(request, 'detail.html', {
+        'emp': emp
+    })
+```
+
+### 내 코드
+
+출처: `me/workspace_python/03_database/03_emp.py` 120–143행 · **원본 발췌**
+
+```python
+@app.get('/emp/select')
+def emp_select(    
+    request: Request,
+    # count:int,
+    session: Session = Depends(get_session)
+):
+    print('/emp/select 진입')
+    sql = text('''
+        select * 
+        from emp_pr
+    ''')
+
+    result = session.execute(sql) 
+    emp_list = result.mappings().fetchall() 
+    # print('req : ',request)
+    # print('session : ', session)
+    # print('result : ', result)
+    # print('emp_list : ', emp_list)
+
+    return templates.TemplateResponse(request, 'select.html', {
+        'emp_list' : emp_list,
+        # 'count' : count
+    })
+
+```
+
+출처: `me/workspace_python/03_database/03_emp.py` 144–175행 · **원본 발췌**
+
+```python
+# 수정 페이지 이동 시 화면 불러오기 + 새로 데이터 조회
+@app.get('/emp/detail')
+def emp_detail(
+    request: Request,
+    empno: int,
+    session: Session = Depends(get_session)
+) :
+    print('/emp/detail 진입')
+
+    url = text('''
+        select *
+        from emp_pr
+        where empno = :empno
+    ''')
+
+    # session 실행으로 DB url로 이동하여 가져온 cursor값을 result에 저장
+    result = session.execute(url, {
+        'empno' : empno
+    })
+    emp_list = result.mappings().fetchall()
+
+    for emp in emp_list :
+        return templates.TemplateResponse(request, 'detail.html', {
+            'empno' : emp['empno'],
+            'ename' : emp['ename'],
+            'job' : emp['job'],
+            'mgr' : emp['mgr'],
+            'hiredate' : emp['hiredate'],
+            'sal' : emp['sal'],
+            'comm' : emp['comm'],
+            'deptno' : emp['deptno']
+        })
+```
+
+강사님은 `emp3`, 나는 `emp_pr`를 조회한다. 목록은 여러 행을 템플릿으로 넘기고, 상세는 사원 번호 조건으로 한 사람을 찾는다. 강사님은 `fetchone()`으로 한 행, 나는 `fetchall()` 뒤 첫 행을 반복문에서 반환한다. 내 상세 코드에서 **결과가 0행이면 반복문에 들어가지 않아 응답을 명시적으로 반환하지 않는다**. 사원이 없을 때의 화면은 완성되지 않았다.
+
+## 4. 추가·수정·삭제의 저장 위치
+
+### 강사님 코드 — 추가
+
+출처: `teacher/workspace_python/03_database/03_emp.py` 84–90행 · **원본 발췌**
+
+```python
+@app.post('/api/add')
+def api_add(
+        # empno: int = Form(), # 이거 한번 쓰면 이 다음에 못씀
+        request:Request,
+        empDTO: Emp3 = Form(),
+        session:Session = Depends(get_session),
+) :
+```
+
+출처: `teacher/workspace_python/03_database/03_emp.py` 97–138행 · **원본 발췌**
+
+```python
+    count = 0
+    try:
+        # db에 넣기
+        query = text('''
+            insert into emp3 (empno, ename, job, mgr, hiredate, sal, comm, deptno)
+            values (
+                :empno,
+                :ename,
+                :job,
+                :mgr,
+                :hiredate,
+                :sal,
+                :comm,
+                :deptno
+            )
+        ''')
+        result = session.execute(query, {
+            'empno': empDTO.empno,
+            'ename': empDTO.ename,
+            'job': empDTO.job,
+            'mgr': empDTO.mgr,
+            'hiredate': empDTO.hiredate,
+            'sal': empDTO.sal,
+            'comm': empDTO.comm,
+            'deptno': empDTO.deptno
+        })
+        
+        # rowcount
+        # insert, update, delete등을 통해 
+        # 영향을 받은 줄의 수
+        count = result.rowcount
+        
+        # commit : auto commit이 아닌 경우 직접 확정해야 한다
+        session.commit()
+    except:
+        print('오류! except로 빠짐')
+        # 오류 추적 내용 출력
+        traceback.print_exc()
+        
+        # 제약 조건 등의 오류 발생 시
+        # 모두 되돌리기
+        session.rollback()
+```
+
+출처: `teacher/workspace_python/03_database/03_emp.py` 147–160행 · **원본 발췌**
+
+```python
+    print('count : ', count)
+
+    if count == 0 :
+        # insert 실패
+        return RedirectResponse(
+            url=f'/add?count={count}',
+            status_code=303
+        )
+    else :
+        # insert 성공
+        return RedirectResponse(
+            url='/list',
+            status_code=303
+        )
+```
+
+### 내 코드 — 추가
+
+출처: `me/workspace_python/03_database/03_emp.py` 43–102행 · **원본 발췌**
+
+```python
+# DB에 POST로 데이터 추가
+@app.post('/emp/insert')
+async def emp_insert(
+    request: Request,
+    emp : Annotated[Emp_pr_input, Form()], 
+    session: Session = Depends(get_session)
+):
+    print('/emp/insert 실행')
+    # POST Form으로 받아오기 위해 form() 설정
+    # data = await request.form()
+    # print(data)
+    print('Annotated EMP : ',emp)
+
+    # empno = data.get('empno')
+    # ename = data.get('ename')
+    # job = data.get('job')
+    # mgr = data.get('mgr')
+    # hiredate = data.get('hiredate')
+    # sal = data.get('sal')
+    # comm = data.get('comm')
+    # deptno = data.get('deptno')
+    # print(empno, ename, job, mgr, hiredate, sal, comm, deptno)
+
+    # DB에 insert시 테이블명, 값 작성
+    count = -1
+    try:
+        sql = text('''
+            insert into emp_pr (empno, ename, job, mgr, hiredate, sal, comm, deptno)
+            values (:empno, :ename, :job, :mgr, :hiredate, :sal, :comm, :deptno)
+        ''')
+
+        result = session.execute(sql, {
+            'empno' : emp.empno,
+            'ename' : emp.ename,
+            'job' : emp.job,
+            'mgr' : emp.mgr,
+            'hiredate' : emp.hiredate,
+            'sal' : emp.sal,
+            'comm' : emp.comm,
+            'deptno' : emp.deptno
+        }) 
+        print('실행 결과로 영향을 받은 row 수 : ',result.rowcount)
+        count = result.rowcount
+        session.commit()
+    except :
+        count = 0
+        session.rollback()
+
+    if count == 0 :
+        return RedirectResponse(
+            url = f'/emp/insert?count={count}',
+            status_code = 303, # 기본값은 307
+        )
+
+    else :
+        return RedirectResponse(
+            # url = f'/emp/select?count={count}',
+            url = '/emp/select',
+            status_code = 303, # 기본값은 307
+        )
+```
+
+강사님은 `Emp3 = Form()`으로, 나는 `Annotated[Emp_pr_input, Form()]`으로 입력을 받는다. `INSERT`의 `:empno` 같은 이름에 각 모델의 값을 매핑한다. 내 코드는 성공하면 `session.commit()` 후 `/emp/select`로, 실패하면 `rollback()` 후 입력 화면으로 **303 리다이렉트**한다. 강사님도 입력 값과 SQL 매개변수를 분리해 보이며 결과 행 수를 검사한다.
+
+### 강사님 코드 — 수정·삭제 대상
+
+출처: `teacher/workspace_python/03_database/03_emp.py` 218–247행 · **원본 발췌**
+
+```python
+        query = text('''
+            update 
+                emp3
+            set 
+                ename = :ename,
+                job = :job,
+                mgr = :mgr,
+                hiredate = :hiredate,
+                sal = :sal,
+                comm = :comm,
+                deptno = :deptno
+            where
+                empno = :empno
+        ''')
+        result = session.execute(query, {
+            'empno': empDTO.empno,
+            'ename': empDTO.ename,
+            'job': empDTO.job,
+            'mgr': empDTO.mgr,
+            'hiredate': empDTO.hiredate,
+            'sal': empDTO.sal,
+            'comm': empDTO.comm,
+            'deptno': empDTO.deptno
+        })
+        count = result.rowcount
+        session.commit()
+    except:
+        print('오류! except로 빠짐')
+        traceback.print_exc()
+        session.rollback()
+```
+
+출처: `teacher/workspace_python/03_database/03_emp.py` 270–285행 · **원본 발췌**
+
+```python
+@app.post('/api/delete')
+def delete(empno:int = Form(), session:Session = Depends(get_session)) :
+    print('/api/delete', empno)
+
+    try :
+        query = text('''
+            delete from emp3
+            where empno = :empno
+        ''')
+        result = session.execute(query, {'empno': empno})
+        count = result.rowcount
+        session.commit()
+    except:
+        print('오류! except로 빠짐')
+        traceback.print_exc()
+        session.rollback()
+```
+
+### 내 코드 — 수정·삭제 대상
+
+출처: `me/workspace_python/03_database/03_emp.py` 227–264행 · **원본 발췌**
+
+```python
+    sql = text('''
+        update emp_pr
+        set ename = :ename, 
+            job = :job, 
+            mgr = :mgr, 
+            hiredate = :hiredate, 
+            sal = :sal, 
+            comm = :comm, 
+            deptno = :deptno
+        where empno = :empno
+    ''')
+
+    # result = session.execute(sql, {
+    #     'empno' : empno,
+    #     'ename' : ename,
+    #     'job' : job,
+    #     'mgr' : mgr,
+    #     'hiredate' : hiredate,
+    #     'sal' : sal,
+    #     'comm' : comm,
+    #     'deptno' : deptno
+    # })
+    result = session.execute(sql, {
+        'empno' : emp.empno,
+        'ename' : emp.ename,
+        'job' : emp.job,
+        'mgr' : emp.mgr,
+        'hiredate' : emp.hiredate,
+        'sal' : emp.sal,
+        'comm' : emp.comm,
+        'deptno' : emp.deptno
+    }) 
+    print('실행 결과로 영향을 받은 row 수 : ',result.rowcount)
+
+    return RedirectResponse(
+        url = '/emp/select',
+        status_code = 303, # 기본값은 307
+    )
+```
+
+출처: `me/workspace_python/03_database/03_emp.py` 266–288행 · **원본 발췌**
+
+```python
+@app.post('/emp/delete')
+async def emp_delete(
+    request: Request,
+    session: Session = Depends(get_session)
+):
+    print('/emp/delete 실행')
+    data = await request.form()
+    empno = data.get('empno')
+
+    sql = text('''
+        delete from emp_pr
+        where empno = :empno
+    ''')
+
+    result = session.execute(sql, {
+        'empno' : empno
+    }) 
+    print('실행 결과로 영향을 받은 row 수 : ',result.rowcount)
+
+    return RedirectResponse(
+        url = '/emp/select',
+        status_code = 303, # 기본값은 307
+    )
+```
+
+수정과 삭제 모두 `WHERE empno = :empno`로 **대상 사원**을 지정한다. 강사님은 수정·삭제 함수 안에서 `commit()`을 호출한다. 내 수정·삭제는 함수 안의 명시적 커밋 대신 `get_session()`의 `yield` 뒤 `session.commit()`에 의존한다. 예외를 함수 안에서 잡아 숨기는 방식과 세션 종료 시점이 결과에 영향을 줄 수 있으므로 실제 DB 상태를 확인해야 한다. 이 코드는 학습용 구현이며 “요청을 보내면 항상 안전하게 저장된다”는 보장은 없다.
+
+## 직접 확인할 질문
+
+1. PyMySQL의 `%s`와 SQLModel의 `:deptno`는 값 전달에서 어떤 공통 역할을 하는가?
+2. `Depends(get_session)`이 함수에 제공하는 것은 무엇인가?
+3. 강사님 `Emp3(SQLModel)`과 내 `Emp3(SQLModel, table=True)`는 무엇이 다른가?
+4. 내 상세 조회에서 사원 번호가 없으면 어떤 분기가 실행되는가?
+
+## 추가로 알면 좋은 것
+
+연결 정보를 환경 변수로 분리하기, DB 연결 실패를 사용자 화면에 알리기, 트랜잭션 예외를 세밀하게 처리하기는 유용한 다음 학습이다. 기존 Wiki의 `response_model`·`request.headers` 설명은 사용자 확인상 배우지 않았고, 실제 이 수업 코드에도 없어 [추가편](추가편_기존자료_학습범위_분류.md)에만 둔다.

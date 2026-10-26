@@ -1,1632 +1,411 @@
----
-title: FastAPI Router, Request, Pydantic과 CRUD
-version: v4.0-detailed
-last_updated: 2026-09-17
-status: Completed
----
+# 02. 라우터·입력값·Pydantic·메모리 CRUD
 
-# FastAPI Router, Request, Pydantic과 CRUD
+[FastAPI 목차](README.md) · [이전: 첫 앱](01_FastAPI_가상환경과_웹_API_기초.md) · [다음: Jinja 템플릿](03_FastAPI_Jinja2_템플릿.md)
 
-## 목차
+이번 수업 코드는 한 파일의 경로를 `APIRouter`로 분리하고, **쿼리 문자열·폼·경로값·JSON 본문**을 받는다. 내 별도 Todo CRUD는 리스트에 항목을 넣고 찾고 고치고 삭제한다. 배운 입력 통로를 먼저 구분한다.
 
-- [문서 정보](#section-1)
-- [학습 목표](#section-2)
-- [개념에서 실제 실행까지 — Request 정보의 출처와 검증 경계](#section-3)
-- [1. APIRouter가 필요한 이유](#section-4)
-- [2. Router Prefix와 Tag](#section-5)
-- [3. Middleware](#section-6)
-- [4. CORS](#section-7)
-- [5. Request 객체](#section-8)
-- [6. Parameter가 들어오는 위치](#section-9)
-- [7. Path와 Query 검증](#section-10)
-- [8. Pydantic과 DTO](#section-11)
-- [9. Validation 오류](#section-12)
-- [10. HTTPException](#section-13)
-- [11. CRUD와 HTTP Method](#section-14)
-- [12. 내 코드와 강사님 코드 비교](#section-15)
-- [13. 내 코드의 추가 수정 사항](#section-16)
-- [14. 개선된 통합 CRUD 예제](#section-17)
-- [15. MVC Pattern과 FastAPI 구조](#section-18)
-- [16. AJAX와 API Request](#section-19)
-- [17. 자주 하는 실수](#section-20)
-- [18. Debugging 순서](#section-21)
-- [19. 종합실습](#section-22)
-- [20. 정답과 해설](#section-23)
-- [최종 체크리스트](#section-24)
-- [핵심 요약](#section-25)
+## 1. `APIRouter`를 앱에 포함
 
+### 강사님 코드
 
-<a id="section-1"></a>
-
-## 문서 정보
-
-| 항목 | 내용 |
-| --- | --- |
-| 문서 | `02_FastAPI_Router_Request_Pydantic_CRUD.md` |
-| 분류 | `06_FastAPI` |
-| 내 코드 | `workspace_python/02_todos/01_router/api.py`, `todo.py`, `model.py`, `crud.py`, `ajax.html`, CRUD 연습 파일 |
-| 강사님 코드 | `workspace_teacher/workspace_python/todos/00_quiz`, `01_router/api.py`, `todo.py`, `model.py`, `crud.py`, `ajax.html`, `crud.html` |
-| 원본 환경 기록 | 첨부 requirements.txt의 환경 기록; 이번 검증 환경은 검토기록에 별도 표기 |
-| 핵심 범위 | APIRouter, CORS, Middleware, Request, Form, Path, Query, Pydantic, HTTPException, CRUD, AJAX |
-| 제외 범위 | 템플릿 상세는 03번 문서에서 설명 |
-| 문서 형식 | FastAPI Developer-Wiki V2 |
-
-> 이 문서는 완료된 `01_router` 수업을 기준으로 Router 분리, Request Data 처리, Pydantic 검증과 Memory 기반 Todo CRUD를 정리한다. 내 코드와 강사님 코드는 학습 시점과 실습 구현이 일부 다르므로 단순 우열이 아니라 실제 동작 차이와 수정할 부분을 구분한다.
-
----
-
-<a id="section-2"></a>
-
-## 학습 목표
-
-- 입력 위치와 실제 처리 순서를 설명한다.
-- 수업 코드·개선 예제의 상태와 응답을 재현한다.
-- 실패 원인을 찾고 같은 기능을 다시 작성한다.
-
----
-
-<a id="section-3"></a>
-
-## 개념에서 실제 실행까지 — Request 정보의 출처와 검증 경계
-
-<a id="index-section-5"></a>
-
-### Request란? 내가 만드는 JSON 모델과 무엇이 다른가?
-
-Request는 이번 HTTP 요청을 Python에서 읽게 해주는 Starlette 객체이며 FastAPI가 함수 인자로 전달한다. 브라우저가 Request 객체를 보내는 것이 아니다. 서버가 요청을 수신한 뒤 method·URL·헤더·쿠키·본문을 접근 가능한 형태로 만든다. BaseModel은 그 요청 중 업무 데이터의 모양과 제약을 선언한다. Request 자체를 Todo처럼 DB에 저장하는 것이 아니다. [공식 Request 설명](https://fastapi.tiangolo.com/advanced/using-request-directly/)
-
-| 사용자가 만든 정보 | 전송 위치 | 직접 읽기 | 선언하여 검증 |
-| --- | --- | --- | --- |
-| /todos/12의 12 | Path | request.path_params["todo_id"] | todo_id: int = Path(gt=0) |
-| ?tag=a&tag=b | Query | request.query_params.getlist("tag") | Query 선언 |
-| fetch의 JSON.stringify | Body | await request.json() | Todo: BaseModel |
-| form의 name="item" | Form Body | await request.form() | item: str = Form() |
-| Content-Type | Header | request.headers.get("content-type") | Header 선언 |
-| 브라우저에 저장된 쿠키 | Cookie Header | request.cookies.get("theme") | Cookie 선언 |
-
-URL의 #fragment는 서버로 전송되지 않는다. Query에는 문자열이 들어온다. Path의 12도 직접 path_params로 읽으면 라우터 변환 설정에 따라 문자열일 수 있으며, endpoint의 int 선언은 FastAPI의 변환·검증 단계다. client.port는 브라우저 쪽 연결 포트이고 주소창의 8000은 서버 포트다. 프록시를 거치면 client.host가 실제 사용자의 공인 IP와 항상 같지는 않다.
-
-### 한 요청의 값과 출력으로 따라가기
+출처: `teacher/workspace_python/todos/01_router/api.py` 1–26행 · **원본 발췌**
 
 ```python
-from fastapi import FastAPI, Request, Path, Query
-app = FastAPI()
+from fastapi import FastAPI, Request, HTTPException
 
-@app.get("/inspect/{todo_id}")
-def inspect(request: Request,
-            todo_id: int = Path(gt=0),
-            limit: int = Query(default=10, ge=1, le=20)):
-    print("수신:", request.method, request.url.path)
-    print("변환:", todo_id, type(todo_id).__name__, limit)
-    return {
-        "id": todo_id, "limit": limit,
-        "tags": request.query_params.getlist("tag"),
-        "agent": request.headers.get("x-study"),
-        "theme": request.cookies.get("theme")
-    }
-```
-
-
-GET /inspect/12?limit=2&tag=a&tag=b에 X-Study: wiki와 Cookie: theme=dark를 보낸다. 터미널은 '수신: GET /inspect/12', '변환: 12 int 2'. 응답은 id=12, limit=2, tags=["a","b"], agent="wiki", theme="dark"인 JSON이다. 주소창만으로 X-Study 헤더를 직접 지정하지는 못하므로 헤더·쿠키 예제는 테스트 도구나 fetch를 이용한다.
-
-id=0 또는 limit=21이면 422이고 함수 본문은 실행되지 않는다. 오류 detail의 loc 첫 항목 path/query/body는 실패한 입력 위치다. JSON 구조 오류와 서버 내부 AttributeError를 같은 422로 이해하면 안 된다.
-
-### 내 코드에서 실제로 실패하는 위치
-
-내 01_router/todo.py의 todoParam()은 GET에서만 data를 만든 뒤 밖에서 data.get()을 호출한다. POST·PUT·DELETE에서는 UnboundLocalError가 발생한다. 강사님 같은 함수에는 else: data = await req.form()이 있다. 다만 이 수정은 Form 요청 기준이며 JSON을 보낼 때는 json() 또는 모델 선언이 필요하다.
-
-```python
-# todoParam() 내부 수정 부분: Form 기반 수업 범위
-if req.method == "GET":
-    data = req.query_params
-else:
-    data = await req.form()
-id = data.get("id")
-item = data.get("item")
-```
-
-
-직접 get("id")한 값은 문자열 또는 None이다. int(id) 변환만 해도 누락·범위·길이 검증까지 해결되지는 않는다. Form()과 Path()/Query(), BaseModel을 사용하면 입력 검증 오류를 endpoint 진입 전에 일관되게 처리할 수 있다.
-
-수업 todo_list에는 /todo가 dict를 넣고 /todo43은 BaseModel을 넣는다. 그 뒤 todo.id를 읽는 조회는 dict를 만났을 때 AttributeError가 날 수 있다. 강사님 코드에도 혼합 저장 문제는 남아 있다. 내 Todo는 value1/value2이고 강사님 Todo는 id/item이므로, 내 /todo43에 {"id":1,"item":"공부"}를 보내면 필요한 필드가 없어 422이다. 모델은 이름이 같다고 내용도 같은 것이 아니다.
-
-<a id="index-section-8"></a>
-
-### CORS와 AJAX를 따로 디버깅하기
-
-LiveServer 5500과 API 8000은 포트가 달라 다른 Origin이다. JSON POST는 보통 OPTIONS preflight로 허용 여부를 먼저 검사한다. CORS는 브라우저가 응답을 JS에 공개할지 제어하는 정책이지 로그인 인증이나 모든 접속을 차단하는 방화벽이 아니다. 단순 요청은 서버에 도착했지만 JS에서 응답을 읽지 못할 수도 있다. [공식 CORS 설명](https://fastapi.tiangolo.com/tutorial/cors/)
-
-내 ajax.html은 await Promise 이후 정의되지 않은 data를 출력하고, 같은 id="todoID"를 여러 요소에 사용한다. 서버 문제처럼 보여도 브라우저 Console의 ReferenceError와 선택한 DOM 요소부터 확인한다. fetch는 404나 422에도 보통 resolve되므로 response.ok를 따로 확인한다.
-
-```javascript
-const response = await fetch("/todo");
-const body = await response.json();
-if (!response.ok) {
-    throw new Error(JSON.stringify(body));
-}
-console.log(body);
-```
-
-
-### 확인 문제와 해설
-
-<details><summary>주소창의 ?id=12와 JSON {"id":12}는 같은 인자로 들어올까?</summary>
-
-같은 값처럼 보여도 위치가 다르다. id: int는 Path 이름과 일치하지 않으면 일반적으로 Query에서, BaseModel은 Body에서, Form()은 Form Body에서 찾는다. 서버 선언과 클라이언트 전송 위치를 맞춘다. GET에도 모델을 선언하면 Body를 기대할 수 있지만 주소창은 그 JSON Body를 만들어 주지 않는다.
-
-</details>
-
-<details><summary>직접 request.query_params.get("id")를 쓰면 int 검증도 될까?</summary>
-
-아니다. 직접 읽은 값은 별도로 처리해야 한다. Request 객체가 주입되는 것과 내부 값을 자동 검증하는 것은 다른 단계다.
-
-</details>
-
----
-
-<a id="section-4"></a>
-
-## 1. APIRouter가 필요한 이유
-
-Route가 늘어나면 모든 Endpoint를 `api.py` 하나에 작성하기 어렵다.
-
-```text
-api.py
-├── Application 생성
-├── Middleware 설정
-└── Router 등록
-
-todo.py
-└── Todo 관련 Route
-
-crud.py
-└── CRUD 관련 Route
-```
-
-`APIRouter`는 관련 Endpoint를 별도 Module로 묶는 도구다.
-
-```python
-from fastapi import APIRouter
-
-todo_router = APIRouter()
-
-
-@todo_router.get('/todos')
-def get_todos():
-    return []
-```
-
-Main Application에서 Router를 등록한다.
-
-```python
-from fastapi import FastAPI
 from todo import todo_router
+from crud import crud_router
 
 app = FastAPI()
-app.include_router(todo_router)
-```
 
-`include_router()`는 Router에 등록된 Route를 Main Application의 Route 목록에 포함한다.
-
-### 1.1 Import부터 Request 처리까지
-
-```text
-Uvicorn이 api Module Import
-→ api.py에서 todo.py Import
-→ todo.py의 Decorator가 todo_router에 Route 등록
-→ api.py의 include_router()가 Main app에 Route 복사·포함
-→ Server 시작 완료
-→ Client Request 도착
-→ Main app의 전체 Route 목록에서 일치 항목 검색
-```
-
-따라서 `todo.py` 파일이 존재하기만 해서는 Route가 Main Application에 연결되지 않는다. Import와 `include_router()`가 모두 필요하다.
-
-```text
-404가 발생할 때 확인
-1. Router 파일이 Import되었는가?
-2. Decorator가 APIRouter 객체에 붙었는가?
-3. app.include_router()가 실행되었는가?
-4. Prefix를 포함한 최종 Path가 맞는가?
-```
-
----
-
-<a id="section-5"></a>
-
-## 2. Router Prefix와 Tag
-
-반복되는 Path는 Router 설정으로 통일할 수 있다.
-
-```python
-todo_router = APIRouter(
-    prefix='/todos',
-    tags=['todos'],
+# 크로스 도메인 CORS 해결 코드
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = ["*"],
+    allow_methods = ["*"],
+    allow_headers = ["*"]
 )
 
+@app.get('/')
+def welcome() -> dict :
+    return {
+        "message": "Hello World2"
+    }
 
-@todo_router.get('')
-def get_todos():
-    return []
-
-
-@todo_router.get('/{todo_id}')
-def get_todo(todo_id: int):
-    return {'id': todo_id}
+app.include_router(todo_router)
+# app.include_router(crud_router, prefix='/crud')
+app.include_router(crud_router, prefix='/api/v1')
+app.include_router(crud_router)
 ```
 
-```text
-최종 Path
-GET /todos
-GET /todos/{todo_id}
-```
+### 내 코드
 
-`tags`는 자동 생성 API 문서에서 Endpoint를 묶는 데 사용한다.
-
----
-
-<a id="section-6"></a>
-
-## 3. Middleware
-
-Middleware는 Request가 Endpoint에 도달하기 전과 Response가 Client로 돌아가기 전 사이에서 공통 처리를 수행한다.
-
-```text
-Client
-  ↓
-Middleware 전처리
-  ↓
-Router / Endpoint
-  ↓
-Middleware 후처리
-  ↓
-Client
-```
-
-대표 용도는 다음과 같다.
-
-- CORS Header 처리
-- 인증과 권한 확인
-- 요청·응답 Log
-- 처리 시간 측정
-- 공통 Header 추가
-
-### 3.1 Middleware가 받는 정보
-
-Middleware는 Endpoint가 받는 것과 같은 Request 흐름을 더 바깥에서 감싼다.
-
-```text
-Request Method·Path·Header·Cookie
-→ Middleware에서 확인 또는 변경
-→ Endpoint로 전달
-→ Endpoint Response
-→ Middleware에서 Header 추가·시간 측정
-→ Client 전송
-```
-
-예를 들어 처리 시간을 측정하면:
+출처: `me/workspace_python/02_todos/01_router/api.py` 1–28행 · **원본 발췌**
 
 ```python
-import time
-from fastapi import Request
-
-
-@app.middleware('http')
-async def add_process_time(request: Request, call_next):
-    started = time.perf_counter()
-    response = await call_next(request)
-    elapsed = time.perf_counter() - started
-    response.headers['X-Process-Time'] = str(elapsed)
-    return response
-```
-
-`call_next(request)`가 다음 Middleware 또는 Endpoint로 Request를 넘기는 지점이다.
-
----
-
-<a id="section-7"></a>
-
-## 4. CORS
-
-CORS는 **Cross-Origin Resource Sharing**이다. Browser가 다른 Origin의 Resource를 요청할 때 Server가 허용 범위를 Response Header로 알려주는 방식이다.
-
-Origin은 다음 세 요소의 조합이다.
-
-```text
-Scheme + Host + Port
-```
-
-```text
-http://127.0.0.1:5500
-http://127.0.0.1:8000
-```
-
-Port가 다르므로 두 주소는 서로 다른 Origin이다. Browser에서 실행되는 JavaScript가 `5500`에서 `8000`으로 Request를 보내면 CORS 정책의 영향을 받는다.
-
-> “내부적으로 들어가는 것은 괜찮지만 AJAX는 불가”라기보다, CORS는 주로 **Browser가 Script 기반 Cross-Origin Request를 제한하는 보안 정책**이다. Server 간 Request나 주소창 이동과는 적용 방식이 다르다.
-
-<a id="index-section-16"></a>
-
-### 4.1 Origin은 어디서 오는가?
-
-Frontend가 다음 Page에서 실행된다고 가정한다.
-
-```text
-http://127.0.0.1:5500/index.html
-```
-
-JavaScript가 다음 API를 호출한다.
-
-```text
-http://127.0.0.1:8000/todos
-```
-
-Browser가 Request에 Origin Header를 넣는다.
-
-```http
-Origin: http://127.0.0.1:5500
-```
-
-FastAPI의 CORS Middleware는 이 값이 `allow_origins`에 허용됐는지 확인하고 Response에 허용 Header를 추가한다.
-
-```http
-Access-Control-Allow-Origin: http://127.0.0.1:5500
-```
-
-Browser는 Response Header를 검사한 뒤 JavaScript가 Response를 읽게 할지 차단할지 결정한다. Request가 Server에 전혀 도달하지 않았다는 뜻과는 다를 수 있다.
-
-<a id="index-section-17"></a>
-
-### 4.2 Preflight Request
-
-일부 Cross-Origin Request 전에 Browser가 OPTIONS Request로 허용 여부를 미리 확인한다.
-
-```http
-OPTIONS /todos HTTP/1.1
-Origin: http://127.0.0.1:5500
-Access-Control-Request-Method: PUT
-Access-Control-Request-Headers: content-type
-```
-
-이를 Preflight Request라고 한다. CORS Middleware가 OPTIONS에 적절히 응답하므로 일반적으로 별도 Endpoint를 만들 필요가 없다.
-
-### 4.3 수업 코드
-
-```python
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-app.add_middleware(
+from todo import todo_router
+from crud import crud_router
+
+app = FastAPI()
+
+# CORS error : 크로스 도메인 에러 해결 코드
+app.add_middleware (
     CORSMiddleware,
-    allow_origins=['*'],
-    allow_methods=['*'],
-    allow_headers=['*'],
+    # allow_origins는 어디에서 들어오던지 다 허용, IP를 입력하면 해당 IP만 접근할 수 있도록 가능
+    # methods(방식_POST,GET등), headers(json등)도 모두 허용하겠다
+    allow_origins = ["*"],
+    allow_methods = ["*"],
+    allow_headers = ["*"]
 )
-```
 
-학습 중에는 편리하지만 운영 환경에서는 Origin과 Method를 필요한 범위로 제한한다.
-
-```python
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=['https://example.com'],
-    allow_methods=['GET', 'POST', 'PUT', 'DELETE'],
-    allow_headers=['Content-Type', 'Authorization'],
-)
-```
-
----
-
-<a id="section-8"></a>
-
-## 5. Request 객체
-
-<a id="index-section-20"></a>
-
-### 5.1 Request란?
-
-`Request`는 Browser, JavaScript, Mobile App, API Client 또는 다른 Server가 FastAPI Server로 보낸 **HTTP Request 전체 정보에 접근하는 객체**다.
-
-```text
-사용자가 Browser 주소창에 URL 입력
-또는 HTML Form 제출
-또는 JavaScript fetch() 실행
-        ↓
-Client가 HTTP Request 생성
-        ↓
-Network를 통해 Uvicorn에 도착
-        ↓
-Uvicorn이 ASGI 형식으로 FastAPI에 전달
-        ↓
-FastAPI/Starlette가 Request 객체로 제공
-        ↓
-Router가 Method와 Path를 비교해 Endpoint 실행
-```
-
-FastAPI의 `Request`는 내부적으로 Starlette가 제공하는 Request 객체다. HTTP Method, URL, Header, Cookie, Client 주소와 Body 등에 접근할 수 있다.
-
-```python
-from fastapi import Request
-
-
-@app.get('/request-info')
-def request_info(request: Request):
-    return {'method': request.method}
-```
-
-Parameter 이름은 꼭 `request`일 필요는 없지만 Type을 `Request`로 선언해야 FastAPI가 현재 요청 객체를 전달한다.
-
-```python
-def request_info(req: Request):
-    return {'method': req.method}
-```
-
----
-
-### 5.2 주소창 URL은 어떻게 들어오는가?
-
-Browser 주소창에 다음 URL을 입력했다고 가정한다.
-
-```text
-http://127.0.0.1:8000/todos/10?keyword=python&page=2#result
-```
-
-각 부분은 다음처럼 구분된다.
-
-| URL 부분 | 이름 | Request에서 확인 |
-| --- | --- | --- |
-| `http` | Scheme | `request.url.scheme` |
-| `127.0.0.1` | Host | `request.url.hostname` |
-| `8000` | Port | `request.url.port` |
-| `/todos/10` | Path | `request.url.path` |
-| `10` | Path Parameter | `request.path_params['todo_id']` |
-| `keyword=python&page=2` | Query String | `request.query_params` |
-| `#result` | Fragment | Server로 전송되지 않음 |
-
-주소창에서 URL을 직접 열면 Browser는 일반적으로 GET Request를 보낸다.
-
-```http
-GET /todos/10?keyword=python&page=2 HTTP/1.1
-Host: 127.0.0.1:8000
-```
-
-`#result` 같은 Fragment는 Browser 화면 내부 위치를 나타내며 HTTP Request에 포함되지 않는다. 따라서 FastAPI의 `Request`에서는 읽을 수 없다.
-
----
-
-### 5.3 Path와 Path Parameter
-
-Route가 다음과 같다면:
-
-```python
-@app.get('/todos/{todo_id}')
-def get_todo(todo_id: int, request: Request):
+@app.get("/")
+def welcome() -> dict: # -> dict는 딕셔너리 형태로 리턴하도록
     return {
-        'path': request.url.path,
-        'path_params': request.path_params,
-        'todo_id': todo_id,
+        "message" : "Hello World2"
+    }
+
+# 불러 온 todo의 todo_router를 app에 추가
+# include로 추가하면, 먼저 실행되기 때문에 2 todo가 먼저 프린트 됨
+app.include_router(crud_router)
+app.include_router(todo_router)
+```
+
+`todo_router`, `crud_router`에서 정의한 경로는 `app.include_router(...)`로 앱에 등록된다. 강사님은 같은 `crud_router`를 기본 경로와 `/api/v1` 접두 경로에 모두 포함해 주소가 달라질 수 있음을 보여 준다. 나는 기본 경로 한 번만 포함했다.
+
+양쪽의 `CORSMiddleware`도 실제 수업 코드다. 브라우저 페이지와 API의 출처가 다를 때 응답을 읽을 수 있는 출처·요청 방식을 정하는 설정이다. 두 코드의 `allow_origins=["*"]`와 `allow_methods=["*"]`는 허용 범위를 넓게 둔 실습 값이다. `allow_headers`는 **허용할 요청 헤더 이름 설정**이며, `request.headers`로 헤더 값을 직접 읽는 코드가 아니다. CORS의 배포 정책과 세부 동작은 [추가편](추가편_기존자료_학습범위_분류.md)으로 둔다.
+
+## 2. 쿼리 문자열과 폼
+
+### 강사님 코드
+
+출처: `teacher/workspace_python/todos/01_router/todo.py` 26–40행 · **원본 발췌**
+
+```python
+@todo_router.get('/todo/param')
+async def todoParamGet(id : int, item:str = "") -> dict :
+    print(id, item)
+    return {
+        "id": id,
+        "item": item
+    }
+
+@todo_router.post('/todo/param')
+async def todoParamPost(id : int = Form(), item:str = Form()) -> dict :
+    print(id, item)
+    return {
+        "id": id,
+        "item": item
     }
 ```
 
-다음 주소로 요청했을 때:
+### 내 코드
 
-```text
-http://127.0.0.1:8000/todos/10
-```
-
-FastAPI는 `/todos/{todo_id}`와 `/todos/10`을 비교해 `10`을 Path Parameter로 추출한다.
-
-```text
-request.url.path
-→ /todos/10
-
-request.path_params
-→ {'todo_id': '10'}
-
-함수 인자 todo_id: int
-→ 10
-```
-
-`request.path_params`의 원본 값은 문자열 기반이지만, 함수 인자로 `todo_id: int`를 선언하면 FastAPI가 검증·변환한다. 일반적으로 직접 Dictionary를 읽는 방식보다 함수 인자로 선언하는 방식을 권장한다.
-
----
-
-### 5.4 Query String
-
-주소창에서 `?` 뒤에 붙는 값이 Query String이다.
-
-```text
-http://127.0.0.1:8000/todos?keyword=python&page=2
-```
+출처: `me/workspace_python/02_todos/01_router/todo.py` 23–42행 · **원본 발췌**
 
 ```python
-@app.get('/todos')
-def get_todos(request: Request):
-    keyword = request.query_params.get('keyword')
-    page = request.query_params.get('page')
-    return {'keyword': keyword, 'page': page}
-```
-
-```text
-request.query_params
-→ QueryParams('keyword=python&page=2')
-
-request.query_params.get('keyword')
-→ 'python'
-
-request.query_params.get('page')
-→ '2'
-```
-
-직접 읽은 Query 값은 기본적으로 문자열이다. FastAPI 함수 인자로 선언하면 Type 검증을 받을 수 있다.
-
-```python
-@app.get('/todos')
-def get_todos(keyword: str = '', page: int = 1):
-    return {'keyword': keyword, 'page': page}
-```
-
-```text
-?page=abc
-→ int 변환 실패
-→ 422 Validation Error
-```
-
----
-
-<a id="index-section-24"></a>
-
-### 5.5 HTTP Method
-
-```python
-request.method
-```
-
-Client가 보낸 Method를 문자열로 확인한다.
-
-```text
-GET
-POST
-PUT
-PATCH
-DELETE
-```
-
-```python
-@app.api_route('/method', methods=['GET', 'POST'])
-def method(request: Request):
-    return {'method': request.method}
-```
-
-일반적으로는 하나의 함수에서 Method를 분기하기보다 `@app.get`, `@app.post`처럼 Route를 분리하는 것이 읽기 쉽고 자동 문서에도 명확하다.
-
----
-
-<a id="index-section-25"></a>
-
-### 5.6 Header는 어디서 들어오는가?
-
-Header는 Client와 Server가 Request에 대한 부가 정보를 전달하는 영역이다. Browser가 자동으로 넣는 Header도 있고 JavaScript나 API Client가 직접 추가하는 Header도 있다.
-
-```http
-GET /todos HTTP/1.1
-Host: 127.0.0.1:8000
-User-Agent: Mozilla/5.0 ...
-Accept: text/html
-Cookie: session_id=abc123
-```
-
-```python
-@app.get('/headers')
-def headers(request: Request):
+# 인자값과, form에 name이 같을 경우 값을 쉽게 받을 수 있음
+@todo_router.get('/todo/param')
+# async def todoParamGet(id, item) -> dict :
+async def todoParamGet(id : int, item : str = '') -> dict : # int로 지정하고 문자열을 넣었을 경우 422 Unprocessable Content 발생
+    # item은 있지만 입력하지 않을 경우 ""빈 값이 들어가기 때문에 item자체가 안 들어왔다면 올바른 경로로 접근하지 않았을 수 있음
+    # id는 int이기 때문에 빈 값일 때 ""가 들어가면 형변환이 안되어 에러 발생
+    print(id, item) 
     return {
-        'user_agent': request.headers.get('user-agent'),
-        'accept': request.headers.get('accept'),
-        'content_type': request.headers.get('content-type'),
+        "id" : id,
+        "item" : item # 또는, 인자값이 2개지만 form에서 item을 없앴을 경우 값이 안 맞는다는 에러 발생
+    }
+
+# form에서 받으려면 fastspi Form을 import후 기본값을 Form()으로 지정
+@todo_router.post('/todo/param')
+async def todoParamPost(id : int = Form(), item : str = Form()) -> dict : 
+    print(id, item) 
+    return {
+        "id" : id,
+        "item" : item 
     }
 ```
 
-대표 Header:
+`GET /todo/param?id=3&item=공부`의 `id`, `item`은 주소의 `?` 뒤 **쿼리 문자열**이다. `id: int`는 숫자로 해석하고, 숫자가 아니면 입력 검증 오류가 난다. `item: str = ''`는 생략할 수 있는 기본값이다. `POST`의 `id = Form()`, `item = Form()`은 HTML 폼의 `name`이 같은 값을 받는 방식이다. 강사님은 핵심 코드만, 나는 타입 오류와 기본값을 주석으로 더 풀어 적었다.
 
-| Header | 역할 |
-| --- | --- |
-| `Host` | 요청 대상 Host와 Port |
-| `User-Agent` | Browser·Client 정보 |
-| `Accept` | Client가 받고 싶은 응답 형식 |
-| `Content-Type` | Request Body의 Data 형식 |
-| `Authorization` | 인증 정보 |
-| `Cookie` | Browser가 저장했다가 함께 보내는 Cookie |
-| `Origin` | CORS 판단에 사용하는 요청 Origin |
+### 강사님 코드 — `Request`에서 직접 읽기
 
-Header 이름은 대소문자를 구분하지 않는다. Password나 Token 같은 민감한 Header 전체를 Log에 출력하지 않는다.
-
----
-
-<a id="index-section-26"></a>
-
-### 5.7 Cookie는 어디서 들어오는가?
-
-Server가 이전 Response에서 Cookie를 설정하면 Browser가 저장하고, 조건이 맞는 다음 Request의 `Cookie` Header에 포함한다.
-
-```text
-Server Response
-Set-Cookie: session_id=abc123
-        ↓
-Browser 저장
-        ↓
-다음 Request
-Cookie: session_id=abc123
-```
+출처: `teacher/workspace_python/todos/01_router/todo.py` 42–59행 · **원본 발췌**
 
 ```python
-@app.get('/cookies')
-def cookies(request: Request):
-    session_id = request.cookies.get('session_id')
-    return {'session_id': session_id}
-```
+@todo_router.get('/todo/param2')
+@todo_router.post('/todo/param2')
+@todo_router.put('/todo/param2')
+@todo_router.delete('/todo/param2')
+async def todoParam(req : Request) -> dict :
+    if req.method == 'GET':
+        data = req.query_params
+    else :
+        data = await req.form()
 
-Cookie는 Client가 보내는 값이므로 변조 가능성을 고려해야 한다. 중요한 값은 서명하거나 Server Session과 연결해 검증한다.
+    id = data.get('id')
+    item = data.get('item')
+    print(id, item, req.method)
 
----
-
-<a id="index-section-27"></a>
-
-### 5.8 Request Body는 어디서 들어오는가?
-
-Body는 주소창 URL이 아니라 Form 제출, JavaScript `fetch`, Mobile App 또는 API Client가 보내는 본문 Data다.
-
-### JSON Body
-
-```javascript
-fetch('http://127.0.0.1:8000/todos', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({id: 1, item: 'FastAPI 공부'})
-});
-```
-
-```python
-@app.post('/todos/raw-json')
-async def raw_json(request: Request):
-    data = await request.json()
-    return data
-```
-
-권장 방식은 Pydantic Model을 직접 선언하는 것이다.
-
-```python
-@app.post('/todos')
-def create_todo(todo: Todo):
-    return todo
-```
-
-### HTML Form Body
-
-```html
-<form method="post" action="/todos/form">
-    <input type="text" name="id">
-    <input type="text" name="item">
-    <button type="submit">전송</button>
-</form>
-```
-
-```python
-@app.post('/todos/raw-form')
-async def raw_form(request: Request):
-    data = await request.form()
     return {
-        'id': data.get('id'),
-        'item': data.get('item'),
+        "id": id,
+        "item": item
     }
 ```
 
-함수 Parameter에 `Form()`을 선언하는 방식이 검증과 문서화에 유리하다.
+### 내 코드 — 완성되지 않은 직접 읽기 실습
+
+출처: `me/workspace_python/02_todos/01_router/todo.py` 44–63행 · **원본 발췌**
 
 ```python
-@app.post('/todos/form')
-def create_form(
-    todo_id: int = Form(),
-    item: str = Form(min_length=1),
-):
-    return {'id': todo_id, 'item': item}
-```
+# 아래처럼 Request를 import해서 사용할 수도 있음(POST일 때)
+@todo_router.get('/todo/param2') # 조회
+@todo_router.post('/todo/param2') #행동, 3개를 통틀어 사용하기도 함 form만 get,post지원, AJAX는 4개 모두 지원
+@todo_router.put('/todo/param2')
+@todo_router.delete('/todo/param2')
+# 아래처럼 method를 받으면 get, post 두 가지 방식 모두 사용할 수 있음
+# req: Request = req의 형태가 Request로
+# Request에는 path도 있는데, path를 사용 시 포트 이후 ? 앞까지의 주소를 얻어올 수 있음
+async def todoParam(req: Request) -> dict : 
+    if req.method == 'GET' :
+        data = req.query_params
 
-| 전송 방식 | 일반적인 `Content-Type` | 읽는 방법 |
-| --- | --- | --- |
-| JSON | `application/json` | Pydantic Model, `await request.json()` |
-| HTML Form | `application/x-www-form-urlencoded` | `Form()`, `await request.form()` |
-| 파일 Form | `multipart/form-data` | `UploadFile`, `Form()` |
-
----
-
-### 5.9 Client IP와 Port
-
-```python
-@app.get('/client')
-def client(request: Request):
-    if request.client is None:
-        return {'host': None, 'port': None}
+    id = data.get('id')
+    item = data.get('item')
+    print(id, item, req.method) # POST method를 가져옴
 
     return {
-        'host': request.client.host,
-        'port': request.client.port,
+        "id" : id,
+        "item" : item 
     }
 ```
 
-```text
-request.client.host
-→ Request를 FastAPI에 연결한 상대 Host
+강사님은 GET이면 `req.query_params`, 나머지 방식이면 `await req.form()`으로 분기한다. 내 코드는 GET 부분만 `data`에 넣고 POST·PUT·DELETE 분기에서 값을 넣지 않은 채 `data.get(...)`을 호출한다. 따라서 내 `/todo/param2`는 **GET 외 방식에서 `data`가 정의되지 않아 실패할 수 있다**. 내 코드도 실제 실습이므로 그대로 보여 주고, 이 부분은 강사님 방식이 완성도가 높다고 표시한다.
 
-request.client.port
-→ 해당 연결에서 Client가 사용한 임시 Port
-```
+## 3. 경로값 검증과 Pydantic 모델
 
-Client Port는 사용자가 접속한 Server Port `8000`과 다르다.
+### 강사님 코드
 
-```text
-Client 127.0.0.1:52341
-             ↓
-Server 127.0.0.1:8000
-```
-
-Proxy, Load Balancer 또는 Container 뒤에서는 `request.client.host`가 실제 사용자 IP가 아니라 바로 앞 Proxy의 IP일 수 있다. 전달 Header를 신뢰하려면 신뢰할 Proxy 설정이 함께 필요하다.
-
----
-
-### 5.10 Request에서 자주 확인하는 정보
+출처: `teacher/workspace_python/todos/01_router/model.py` 1–9행 · **원본 발췌**
 
 ```python
-from fastapi import Request
+from pydantic import BaseModel, Field
 
+class Todo(BaseModel) :
+    id:int
+    item:str
 
-@app.get('/request-info')
-def request_info(request: Request):
-    return {
-        'method': request.method,
-        'path': request.url.path,
-        'url': str(request.url),
-        'query': dict(request.query_params),
-        'path_params': request.path_params,
-        'headers': dict(request.headers),
-        'cookies': request.cookies,
-        'client_host': request.client.host if request.client else None,
-        'client_port': request.client.port if request.client else None,
-    }
+class Todo2(BaseModel) :
+    id:int = Field(ge=1, le=100)
+    item:str = Field(min_length=2, max_length=20)
 ```
 
-| 속성 | 내용 |
-| --- | --- |
-| `request.method` | GET, POST 등 Method |
-| `request.url.path` | URL의 Path |
-| `request.url` | 전체 URL 정보 |
-| `request.headers` | Request Header |
-| `request.cookies` | Cookie |
-| `request.query_params` | Query String |
-| `request.path_params` | Router가 추출한 Path Parameter |
-| `request.client` | Client Host와 Port |
-| `request.state` | Middleware와 Endpoint 사이에서 공유할 요청별 값 |
-| `await request.form()` | Form Data |
-| `await request.json()` | JSON Body |
-| `await request.body()` | 가공하지 않은 Raw Body Byte |
+### 내 코드
 
----
-
-### 5.11 Request를 직접 읽을 때와 함수 인자로 받을 때
-
-둘 다 가능하지만 목적이 다르다.
+출처: `me/workspace_python/02_todos/01_router/model.py` 1–15행 · **원본 발췌**
 
 ```python
-# Request를 직접 읽기
-@app.get('/search/raw')
-def search_raw(request: Request):
-    page = request.query_params.get('page')
+from pydantic import BaseModel, Field
+
+# pydantic BaseModel 사용해보기, 미리 자료형 선언
+class Todo(BaseModel) :
+    value1 : int
+    value2 : str
+
+# POST에서 Body영역으로 들어오는것을 잡아주는것들 Field로 쓸 수 있다
+class Todo2(BaseModel) :
+    id : int = Field(ge=1, le=100)
+    item : str = Field(min_length=2, max_length=20)
+
+class TodoItems(BaseModel) :
+    todoID : int
+    todoITEM : str
 ```
+
+`BaseModel`은 JSON 본문 같은 입력의 **필드 이름·자료형**을 정한다. `Field(ge=1, le=100)`은 범위, `Field(min_length=2, max_length=20)`은 문자열 길이를 검사한다. 여기서 놓치기 쉬운 차이는 강사님 `Todo`가 `id`, `item`인데 내 `Todo`는 `value1`, `value2`라는 것이다. 아래 `/todo43`와 `/todo/{todo_id}`에서 내 코드는 `todo.id`를 기대한다. **내 모델 그대로라면 `.id` 접근이 맞지 않는다.** 강사님 모델 이름은 그 경로와 맞지만, 강사님도 같은 리스트에 앞서 딕셔너리를 넣는 `/todo`를 실행했다면 `.id` 접근에서 자료형이 섞이는 문제가 생길 수 있다.
+
+### 강사님 코드 — 경로·쿼리 제한
+
+출처: `teacher/workspace_python/todos/01_router/todo.py` 83–119행 · **원본 발췌**
 
 ```python
-# FastAPI Parameter 선언
-@app.get('/search')
-def search(page: int = 1):
-    return {'page': page}
-```
-
-| 방식 | 장점 | 적합한 경우 |
-| --- | --- | --- |
-| `Request` 직접 접근 | HTTP Request 전체를 자유롭게 확인 | Header, Cookie, Client, Raw Body, Middleware 정보 |
-| 함수 Parameter 선언 | Type 변환, 검증, OpenAPI 문서 자동화 | Path, Query, Form, JSON 입력값 |
-
-업무 Data는 함수 Parameter와 Pydantic Model로 받고, HTTP Request 자체의 상세 정보가 필요할 때 `Request`를 함께 사용하는 것이 좋다.
-
----
-
-### 5.12 한 Request를 전체적으로 읽는 예제
-
-요청 URL:
-
-```text
-POST http://127.0.0.1:8000/todos/10?mode=edit
-```
-
-JSON Body:
-
-```json
-{
-  "item": "FastAPI Request 공부"
-}
-```
-
-Endpoint:
-
-```python
-from fastapi import Request
-
-
-@app.post('/todos/{todo_id}')
-async def inspect_request(todo_id: int, request: Request):
-    body = await request.json()
-
-    return {
-        'method': request.method,
-        'scheme': request.url.scheme,
-        'host': request.url.hostname,
-        'port': request.url.port,
-        'path': request.url.path,
-        'todo_id': todo_id,
-        'query': dict(request.query_params),
-        'content_type': request.headers.get('content-type'),
-        'cookies': request.cookies,
-        'body': body,
-    }
-```
-
-```text
-주소창·요청 URL
-├── /todos/10 → Path와 todo_id
-└── ?mode=edit → Query Parameter
-
-HTTP Header
-└── Content-Type, Cookie, Authorization 등
-
-HTTP Body
-└── JSON의 item
-```
-
----
-
-<a id="section-9"></a>
-
-## 6. Parameter가 들어오는 위치
-
-<a id="index-section-35"></a>
-
-### 6.1 Path Parameter
-
-Resource를 식별하는 값이 URL Path에 포함된다.
-
-```python
-@todo_router.get('/todos/{todo_id}')
-def get_todo(todo_id: int):
-    return {'id': todo_id}
-```
-
-```text
-GET /todos/10
-```
-
-<a id="index-section-36"></a>
-
-### 6.2 Query Parameter
-
-Path에 선언되지 않은 함수 인자는 기본적으로 Query Parameter로 처리된다.
-
-```python
-@todo_router.get('/todos')
-def search_todos(keyword: str = '', page: int = 1):
-    return {'keyword': keyword, 'page': page}
-```
-
-```text
-GET /todos?keyword=python&page=1
-```
-
-### 6.3 Form Data
-
-HTML Form에서 전송한 값을 받을 때 사용한다.
-
-```python
-from fastapi import Form
-
-
-@todo_router.post('/todos/form')
-def create_todo_form(
-    todo_id: int = Form(),
-    item: str = Form(),
-):
-    return {'id': todo_id, 'item': item}
-```
-
-`Form()`을 사용하려면 `python-multipart` Package가 필요하다.
-
-### 6.4 JSON Body
-
-Pydantic Model을 함수 인자로 선언하면 JSON Request Body로 처리한다.
-
-```python
-@todo_router.post('/todos')
-def create_todo(todo: Todo):
-    return todo
-```
-
----
-
-<a id="section-10"></a>
-
-## 7. Path와 Query 검증
-
-### 7.1 비교 연산 조건
-
-| 옵션 | 의미 | 조건 |
-| --- | --- | --- |
-| `gt` | Greater Than | 초과 `>` |
-| `ge` | Greater Than or Equal | 이상 `>=` |
-| `lt` | Less Than | 미만 `<` |
-| `le` | Less Than or Equal | 이하 `<=` |
-
-`lt`의 정확한 표현은 **Less Than**이다. “Little Than”이 아니다.
-
-### 7.2 Path 검증
-
-```python
-from typing import Annotated
+# Valid, Validate 유효성 검증
 from fastapi import Path
+@todo_router.get('/todo2/{todo_id}')
+async def get_single_todo2(todo_id: int = Path(gt=10, le=100)) -> dict :
+    print('todo_id :', todo_id)
 
-TodoId = Annotated[int, Path(ge=1, le=10_000)]
-
-
-@todo_router.get('/todos/{todo_id}')
-def get_todo(todo_id: TodoId):
-    return {'id': todo_id}
-```
-
-### 7.3 Query 검증
-
-```python
-from typing import Annotated
-from fastapi import Query
-
-
-@todo_router.get('/todos')
-def search_todos(
-    keyword: Annotated[str, Query(min_length=2, max_length=30)] = '',
-):
-    return {'keyword': keyword}
-```
-
-경로변수라면 `Path`, Query String이라면 `Query`를 사용한다.
-
----
-
-<a id="section-11"></a>
-
-## 8. Pydantic과 DTO
-
-Pydantic `BaseModel`은 Data의 Field와 Type, Validation Rule을 선언한다.
-
-```python
-from pydantic import BaseModel, Field
-
-
-class Todo(BaseModel):
-    id: int = Field(ge=1, le=10_000)
-    item: str = Field(min_length=2, max_length=100)
-```
-
-메모의 “data transform object”는 수정이 필요하다. DTO는 **Data Transfer Object**의 약자다.
-
-```text
-DTO
-→ Layer 또는 System 사이에서 Data를 전달하기 위한 객체
-```
-
-Pydantic Model을 DTO나 Request Schema처럼 사용할 수 있지만 Pydantic Model 자체와 DTO가 완전히 같은 개념은 아니다.
-
-또한 “항상 DB Column과 일치시킨다”보다는 목적에 따라 Model을 분리하는 것이 좋다.
-
-```python
-class TodoCreate(BaseModel):
-    item: str = Field(min_length=2, max_length=100)
-
-
-class TodoUpdate(BaseModel):
-    item: str = Field(min_length=2, max_length=100)
-
-
-class TodoResponse(BaseModel):
-    id: int
-    item: str
-```
-
-### 8.1 JSON이 Model로 들어오는 과정
-
-Client가 보내는 Body:
-
-```json
-{
-  "id": 10,
-  "item": "FastAPI 공부"
-}
-```
-
-```python
-@app.post('/todos')
-def create_todo(todo: Todo):
-    return todo
-```
-
-```text
-Content-Type: application/json 확인
-→ Request Body Byte 읽기
-→ JSON을 Python Dict로 변환
-→ Todo Model의 Field 이름 비교
-→ id를 int로 검증
-→ item을 str·길이 규칙으로 검증
-→ 성공하면 Todo 객체를 함수에 전달
-→ 실패하면 함수 실행 전 422 응답
-```
-
-Endpoint 안에서 `print(todo)`가 실행되지 않았다면 검증 단계에서 먼저 실패했을 가능성이 있다.
-
-### 8.2 Model과 Request 객체의 차이
-
-```text
-Request
-→ Method, URL, Header, Cookie, Body 등 HTTP 전체 정보
-
-Pydantic Model
-→ Body 중 업무에 필요한 Data의 구조와 검증 결과
-```
-
-둘을 동시에 받을 수도 있다.
-
-```python
-@app.post('/todos')
-def create_todo(todo: Todo, request: Request):
-    return {
-        'client': request.client.host if request.client else None,
-        'todo': todo,
-    }
-```
-
-Request에서 허용할 값과 Database Column, Response로 공개할 값은 서로 다를 수 있다.
-
----
-
-<a id="section-12"></a>
-
-## 9. Validation 오류
-
-Type이나 제한 조건을 만족하지 않으면 FastAPI가 Endpoint 실행 전에 Validation Error Response를 반환한다.
-
-```text
-정수 Parameter에 문자열 전달
-Path(ge=10)에 5 전달
-Field(min_length=2)에 한 글자 전달
-```
-
-일반적으로 이런 입력 검증 실패는 `422 Unprocessable Content` Response로 확인할 수 있다.
-
-<a id="index-section-47"></a>
-
-### 9.1 422 detail 읽기
-
-```json
-{
-  "detail": [
-    {
-      "type": "int_parsing",
-      "loc": ["query", "id"],
-      "msg": "Input should be a valid integer",
-      "input": "abc"
-    }
-  ]
-}
-```
-
-| Field | 의미 |
-| --- | --- |
-| `type` | 검증 실패 종류 |
-| `loc` | 값이 들어온 위치와 이름 |
-| `msg` | 오류 설명 |
-| `input` | 실제 입력값 |
-
-`loc`의 첫 값으로 `path`, `query`, `body` 등을 확인하면 어디에서 잘못 들어왔는지 빠르게 찾을 수 있다.
-
----
-
-<a id="section-13"></a>
-
-## 10. HTTPException
-
-의도적으로 HTTP Error Response를 만들 때 사용한다.
-
-```python
-from fastapi import HTTPException
-
-
-@todo_router.get('/todos/{todo_id}')
-def get_todo(todo_id: int):
-    todo = None
-
-    if todo is None:
-        raise HTTPException(
-            status_code=404,
-            detail='Todo를 찾을 수 없습니다.',
-        )
-
-    return todo
-```
-
-수업 코드의 `/err`는 `403`을 발생시키지만, 단순히 Data를 찾지 못한 경우에는 `404 Not Found`가 의미에 더 적합하다. `403 Forbidden`은 요청 대상은 알지만 권한 때문에 거부할 때 사용한다.
-
----
-
-<a id="section-14"></a>
-
-## 11. CRUD와 HTTP Method
-
-| CRUD | Database | HTTP Method | REST Endpoint 예시 |
-| --- | --- | --- | --- |
-| Create | `INSERT` | POST | `POST /todos` |
-| Read | `SELECT` | GET | `GET /todos`, `GET /todos/{id}` |
-| Update | `UPDATE` | PUT/PATCH | `PUT /todos/{id}` |
-| Delete | `DELETE` | DELETE | `DELETE /todos/{id}` |
-
-수업의 `/crud/c`, `/crud/r`, `/crud/u`, `/crud/d`는 CRUD와 Method를 연결해 이해하기 좋은 학습용 Route다. 개선 예제에서는 URI에 동사 대신 Resource를 사용한다.
-
----
-
-<a id="section-15"></a>
-
-## 12. 내 코드와 강사님 코드 비교
-
-### 12.1 Main Router 등록 순서
-
-```python
-# 내 코드
-app.include_router(crud_router)
-app.include_router(todo_router)
-```
-
-```python
-# 강사님 코드
-app.include_router(todo_router)
-app.include_router(crud_router)
-```
-
-두 Router의 Method와 Path가 겹치지 않으면 등록 순서에 따른 결과 차이는 없다. 겹치는 Route가 있다면 먼저 등록된 Route가 예상치 못하게 선택될 수 있으므로 Path 중복을 피해야 한다.
-
-### 12.2 Request 처리
-
-내 `todoParam()`은 GET일 때만 `data`를 만든다.
-
-```python
-if req.method == 'GET':
-    data = req.query_params
-
-id = data.get('id')
-```
-
-POST·PUT·DELETE에서는 `data`가 정의되지 않아 `UnboundLocalError`가 발생할 수 있다. 강사님 코드처럼 나머지 Method를 처리해야 한다.
-
-```python
-if req.method == 'GET':
-    data = req.query_params
-else:
-    data = await req.form()
-```
-
-### 12.3 Pydantic Model Field
-
-내 코드:
-
-```python
-class Todo(BaseModel):
-    value1: int
-    value2: str
-```
-
-하지만 Router에서는 `todo.id`를 조회한다.
-
-```python
-if todo.id == todo_id:
-```
-
-강사님 코드는 `id`, `item`으로 통일되어 있다.
-
-```python
-class Todo(BaseModel):
-    id: int
-    item: str
-```
-
-내 Model도 실제 사용 Field에 맞춰 수정해야 한다.
-
-<a id="index-section-54"></a>
-
-### 12.4 CRUD 입력 방식
-
-| 항목 | 내 코드 | 강사님 코드 |
-| --- | --- | --- |
-| Create | `Request.form()`에서 직접 추출 | Pydantic Model + `Form()` 또는 JSON |
-| Read | Query Parameter 직접 선언 | `Depends()` Model, Path Parameter 예제 |
-| Update | Query Parameter | JSON Body Model |
-| Delete | Query Parameter, 새 List 구성 | JSON Body Model, `pop()` |
-| 저장 형식 | `dict` | Pydantic 객체 |
-
-내 코드는 기본 CRUD Algorithm을 직접 이해하는 데 유리하고, 강사님 코드는 입력 Data를 Model로 묶는 다양한 방식을 보여준다.
-
----
-
-<a id="section-16"></a>
-
-## 13. 내 코드의 추가 수정 사항
-
-### 13.1 중복 함수 이름
-
-여러 실습 Endpoint에서 `problemGet`을 반복 사용한다. Route 등록 자체는 가능하지만 Debugging과 자동 문서의 Operation ID 관리에 불리하다.
-
-```python
-def multiplication_table(): ...
-def add_numbers(): ...
-def calculate(): ...
-```
-
-의도가 드러나는 고유한 이름을 사용한다.
-
-<a id="index-section-57"></a>
-
-### 13.2 포괄적인 `except`
-
-```python
-except:
-    return '연산자를 정확히 입력하세요.'
-```
-
-모든 예외를 숨기므로 원인 파악이 어렵다.
-
-```python
-except (ValueError, IndexError, ZeroDivisionError) as error:
-    return {'error': str(error)}
-```
-
-### 13.3 Memory 저장소
-
-`todo_list`는 Process Memory에 있으므로 Server 재시작 시 Data가 사라진다. 학습용으로는 적절하지만 실제 Service에서는 Database 또는 영속 저장소가 필요하다.
-
-### 13.4 사용하지 않는 Import
-
-`crud.py`의 `Form`, `TodoItems`처럼 사용하지 않는 Import는 제거한다. Source의 실제 의존성과 가독성이 좋아진다.
-
----
-
-<a id="section-17"></a>
-
-## 14. 개선된 통합 CRUD 예제
-
-```python
-from typing import Annotated
-
-from fastapi import APIRouter, HTTPException, Path, status
-from pydantic import BaseModel, Field
-
-todo_router = APIRouter(prefix='/todos', tags=['todos'])
-
-
-class TodoCreate(BaseModel):
-    item: str = Field(min_length=2, max_length=100)
-
-
-class TodoUpdate(BaseModel):
-    item: str = Field(min_length=2, max_length=100)
-
-
-class TodoResponse(BaseModel):
-    id: int
-    item: str
-
-
-TodoId = Annotated[int, Path(ge=1)]
-todo_list: list[TodoResponse] = []
-next_id = 1
-
-
-@todo_router.post(
-    '',
-    response_model=TodoResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-def create_todo(data: TodoCreate) -> TodoResponse:
-    global next_id
-
-    todo = TodoResponse(id=next_id, item=data.item)
-    todo_list.append(todo)
-    next_id += 1
-    return todo
-
-
-@todo_router.get('', response_model=list[TodoResponse])
-def get_todos() -> list[TodoResponse]:
-    return todo_list
-
-
-@todo_router.get('/{todo_id}', response_model=TodoResponse)
-def get_todo(todo_id: TodoId) -> TodoResponse:
     for todo in todo_list:
         if todo.id == todo_id:
-            return todo
+            return {
+                'todo': todo
+            }
+    return {
+        'message': 'id 없음'
+    }
 
-    raise HTTPException(status_code=404, detail='Todo를 찾을 수 없습니다.')
+from typing import Annotated
 
+ValidTodoId = Annotated[int, Path(ge=10)]
 
-@todo_router.put('/{todo_id}', response_model=TodoResponse)
-def update_todo(todo_id: TodoId, data: TodoUpdate) -> TodoResponse:
-    for index, todo in enumerate(todo_list):
+@todo_router.get('/todo3/{todo_id}')
+# async def get_single_todo3(todo_id: Annotated[int, Path(ge=10)]) -> dict :
+async def get_single_todo3(todo_id: ValidTodoId) -> dict :
+    print('todo_id :', todo_id)
+
+    for todo in todo_list:
         if todo.id == todo_id:
-            updated = TodoResponse(id=todo_id, item=data.item)
-            todo_list[index] = updated
-            return updated
+            return {
+                'todo': todo
+            }
+    return {
+        'message': 'id 없음'
+    }
 
-    raise HTTPException(status_code=404, detail='Todo를 찾을 수 없습니다.')
-
-
-@todo_router.delete('/{todo_id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_todo(todo_id: TodoId) -> None:
-    for index, todo in enumerate(todo_list):
-        if todo.id == todo_id:
-            todo_list.pop(index)
-            return
-
-    raise HTTPException(status_code=404, detail='Todo를 찾을 수 없습니다.')
+# get 방식일 때 즉 ? 뒤에 오는 query string
+from fastapi import Query
+@todo_router.get('/todo4')
+def todo4(id:int = Query(gt=0, lt=10000)):
 ```
 
-Main Application:
+### 내 코드 — 경로·쿼리 제한
+
+출처: `me/workspace_python/02_todos/01_router/todo.py` 188–225행 · **원본 발췌**
 
 ```python
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+# Valid, Validate 유효성 검증
+from fastapi import Path
+@todo_router.get('/todo2/{todo_id}') # Path(gt=10, le=100) : 10초과 100이하
+async def get_single_todo2(todo_id : int = Path(gt=10, le=100)) -> dict : # gt(greater than) = 10으로 10보다 크다로 사용할 수 있음
+    print('todo_id :', todo_id)
+    for todo in todo_list :
+        if todo.id == todo_id:
+            return {
+                "todo" : todo
+            }
+        
+    return {
+        "message" : "없는 ID 입니다"
+    }
 
-from todo import todo_router
+from typing import Annotated # Annotated : 주석이라는 뜻
 
-app = FastAPI(title='Todo API')
+# 변수에 넣어서 가져다 쓸 수 있음
+ValidTodoId = Annotated[int, Path(ge=10)]
+@todo_router.get('/todo3/{todo_id}') 
+# async def get_single_todo3(todo_id : Annotated[int, Path(ge=10)]) -> dict : # Annotated에 자료형, Path를 넣어 검증가능
+async def get_single_todo3(todo_id : ValidTodoId) -> dict : 
+    print('todo_id :', todo_id)
+    for todo in todo_list :
+        if todo.id == todo_id:
+            return {
+                "todo" : todo
+            }
+        
+    return {
+        "message" : "없는 ID 입니다"
+    }
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=['http://127.0.0.1:5500'],
-    allow_methods=['GET', 'POST', 'PUT', 'DELETE'],
-    allow_headers=['Content-Type'],
-)
-
-app.include_router(todo_router)
+# GET방식일 때 Path와 달리 경로변수가 아닌 것들은 Query 사용 (?뒤에 오는 query string)
+from fastapi import Query
+@todo_router.get('/todo4') 
+def todo4(id:int = Query(gt=0, lt=10000)) :
+    print(id)
 ```
 
----
+`/todo2/{todo_id}`의 `todo_id`는 **경로값**, `/todo4?id=...`의 `id`는 **쿼리값**이다. `Path(gt=10, le=100)`은 10 초과·100 이하, `Query(gt=0, lt=10000)`은 0 초과·10000 미만을 검사한다. 양쪽 코드 모두 `Annotated`로 재사용하는 경로값 형태도 실제 작성했다.
 
-<a id="section-18"></a>
+## 4. 내 리스트 CRUD와 강사님 방식
 
-## 15. MVC Pattern과 FastAPI 구조
+### 강사님 코드 — 폼 모델을 저장
 
-MVC는 역할을 다음처럼 분리한다.
+출처: `teacher/workspace_python/todos/01_router/crud.py` 51–67행 · **원본 발췌**
 
-```text
-Model      → Data와 Business 규칙
-View       → 사용자에게 보여 줄 화면
-Controller → Request를 받고 처리 흐름 연결
+```python
+# 성공
+# 위의 것과 같은 내용을 Annotated로 사용한 경우
+async def crud_c(todo3: Annotated[Todo3, Form()]) :
+    id = todo3.id
+    item = todo3.item
+    print(3, id, item, todo3)
+
+    todo_list.append(todo3)
+
+    return id, item
+
+@crud_router.get('/crud')
+async def crud() :
+    print('/crud 실행')
+    print(4, todo_list)
+
+    return todo_list
 ```
 
-API 중심 FastAPI Project는 MVC 이름을 그대로 사용하지 않을 수도 있다.
+### 내 코드 — 생성·조회
 
-```text
-app/
-├── routers/       # HTTP Request와 Response
-├── schemas/       # Pydantic Model
-├── services/      # Business Logic
-├── repositories/  # Database 접근
-└── main.py         # Application 생성과 Router 등록
+출처: `me/workspace_python/02_todos/01_router/crud.py` 40–61행 · **원본 발췌**
+
+```python
+@crud_router.post('/crud/c') # create - insert - post방식 / FORM
+async def todoC(req : Request) :
+    if req.method == 'POST' : # 생략 가능하지만 연습용
+        data = await req.form()
+
+        id = data.get('todoID')
+        item = data.get('todoITEM')
+
+        todo_list.append({
+            'id' : int(id),
+            'item' : item
+        })
+        return todo_list
+
+@crud_router.get('/crud/r') # read - select - get방식 / FORM
+async def todoR(todoID : int) :
+    print(todoID)
+    for todo in todo_list :
+        # print(todo)
+        # print(todo.get('id') == int(todoID))
+        if todo.get('id') == todoID :
+            return todo
 ```
 
-핵심은 Folder 이름보다 **관심사와 책임을 분리하는 것**이다.
+### 내 코드 — 수정·삭제
 
----
+출처: `me/workspace_python/02_todos/01_router/crud.py` 63–79행 · **원본 발췌**
 
-<a id="section-19"></a>
+```python
+@crud_router.put('/crud/u') # update - update - put방식 / AJAX
+async def todoU(todoID : int, todoITEM : str) :
+    for todo in todo_list :
+        if todo.get('id') == todoID :
+            todo['item'] = todoITEM
+            return todo_list
 
-## 16. AJAX와 API Request
+@crud_router.delete('/crud/d') # delete - delete - delete방식 / AJAX
+async def todoD(todoID : int) :
+    result_todo = []
 
-AJAX는 Page 전체를 다시 불러오지 않고 JavaScript로 HTTP Request를 보내는 방식이다.
+    for todo in todo_list :
+        if todo.get('id') != todoID :
+            result_todo.append(todo)
 
-```javascript
-const response = await fetch('http://127.0.0.1:8000/todos', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ item: 'FastAPI 복습' }),
-});
-
-const data = await response.json();
-console.log(data);
+    todo_list[:] = result_todo
+    return todo_list
 ```
 
-Frontend가 `5500`, FastAPI가 `8000`에서 실행된다면 CORS 설정이 필요하다.
+강사님은 `Annotated[Todo3, Form()]`으로 폼을 모델로 받은 뒤 리스트에 넣는다. 내 코드는 `await req.form()`에서 `todoID`, `todoITEM`을 꺼내 딕셔너리로 저장한다. 읽기는 입력 ID와 같은 항목을 찾고, 수정은 `todo['item']`을 바꾸며, 삭제는 다른 항목만 새 리스트에 모아 `todo_list[:]`로 **기존 리스트 내용을 교체**한다. 여기서는 메모리 리스트이므로 서버를 다시 시작하면 저장된 변경이 사라진다. 뒤의 Jinja Todo·DB 장과 구별한다.
 
----
+## 직접 확인할 질문
 
-<a id="section-20"></a>
+1. `include_router`를 하지 않은 라우터의 경로는 앱에서 어떻게 되는가?
+2. `GET /todo/param2`와 POST 요청에서 내 `data` 변수의 상태는 어떻게 다른가?
+3. 내 `Todo(value1, value2)` 모델과 `.id`를 읽는 코드의 필드 이름은 맞는가?
+4. 내 삭제 함수가 `todo_list[:]`를 쓰는 이유는 무엇인가?
 
-## 17. 자주 하는 실수
+## 추가로 알면 좋은 것
 
-| 문제 | 원인 | 해결 |
-| --- | --- | --- |
-| `422` | Type 또는 Validation 실패 | Request 위치와 Schema 확인 |
-| `405` | URL은 있지만 Method 불일치 | Route Decorator와 Client Method 확인 |
-| CORS 오류 | 다른 Origin을 Server가 허용하지 않음 | 허용 Origin·Method·Header 설정 |
-| `python-multipart` 오류 | Form 처리 Package 미설치 | `pip install python-multipart` |
-| `AttributeError` | Model Field와 접근 이름 불일치 | `id`, `item` 등 이름 통일 |
-| `UnboundLocalError: data` | 특정 분기에서 변수 미할당 | 모든 Method 분기에서 값 설정 |
-| 수정·삭제가 안 됨 | 문자열 ID와 정수 ID 비교 | Type Hint 또는 명시적 변환 |
-| 재시작 후 목록 소멸 | Memory List 사용 | 학습용 특성 이해, 이후 DB 연결 |
-
----
-
-<a id="section-21"></a>
-
-## 18. Debugging 순서
-
-```text
-1. Request URL과 HTTP Method 확인
-2. Browser Network에서 Request Payload 확인
-3. Content-Type 확인
-4. Path, Query, Form, JSON 중 Data 위치 확인
-5. 422 Response의 detail 확인
-6. Terminal Traceback 마지막 줄 확인
-7. Router가 include_router()로 등록됐는지 확인
-8. Model Field 이름과 실제 접근 이름 비교
-9. CORS의 Scheme, Host, Port 비교
-10. Memory Data의 현재 상태 출력
-```
-
----
-
-### 18.1 수업 원본에서 다시 찾기
-
-| 배운 개념 | 내 코드 파일·위치 | 강사님 코드 파일·위치 | 다시 확인할 내용 |
-| --- | --- | --- | --- |
-| Main Application | `01_router/api.py` | `01_router/api.py` | `FastAPI()`와 Router 등록 |
-| CORS Middleware | `01_router/api.py`의 `app.add_middleware()` | 같은 위치 | Origin·Method·Header 허용 |
-| Request Client | `01_router/api.py`의 `/ip` | 같은 Route | `request.client.host`, Port |
-| HTTPException | `01_router/api.py`의 `/err` | 강사님 원본에는 없음 | 의도적인 Error Response |
-| APIRouter | `01_router/todo.py` | 같은 파일 | `todo_router = APIRouter()` |
-| Query Parameter | `todoParamGet()` | `todoParamGet()` | 주소창 `?id=...&item=...` |
-| Form Data | `todoParamPost()` | `todoParamPost()` | HTML Form `name`과 `Form()` |
-| Raw Request 분기 | `todoParam()` | `todoParam()` | GET Query와 그 외 Form 처리 차이 |
-| JSON Body | `add_todo()` | `add_todo()` | JSON Dict가 함수 인자로 들어오는 과정 |
-| Pydantic Model | `model.py` | `model.py` | Field 이름과 Type 검증 |
-| Path 검증 | `get_single_todo2()`, `get_single_todo3()` | 같은 함수 | `Path`, `Annotated`, `ge`, `gt`, `le` |
-| Query 검증 | `todo4()` | `todo4()` | `Query(gt=0, lt=10000)` |
-| CRUD | `crud.py`의 `todoC/R/U/D()` | `crud.py`의 Form·AJAX CRUD | Create·Read·Update·Delete 흐름 |
-| Browser AJAX | `ajax.html` | `ajax.html` | JSON·Query Request를 Browser가 만드는 방법 |
-
-### 18.2 Request를 직접 재현하는 주소
-
-```text
-GET 기본
-http://127.0.0.1:8000/
-
-Client 정보
-http://127.0.0.1:8000/ip
-
-Query Parameter
-http://127.0.0.1:8000/todo/param?id=10&item=study
-
-Path Parameter
-http://127.0.0.1:8000/todo/10
-
-Path 검증 실패
-http://127.0.0.1:8000/todo2/5
-
-Query 검증 실패
-http://127.0.0.1:8000/todo4?id=10000
-```
-
-각 Request에서 다음 세 곳을 함께 확인한다.
-
-```text
-Browser 주소창·화면
-→ 어떤 URL을 요청했고 무엇을 받았는가?
-
-Browser 개발자 도구 Network
-→ Method, Status, Header, Query, Response는 무엇인가?
-
-Uvicorn Terminal
-→ 어떤 Endpoint의 print가 실행되고 어떤 Log가 남는가?
-```
-
----
-
-<a id="section-22"></a>
-
-## 19. 종합실습
-
-다음 조건을 만족하는 Todo API를 작성한다.
-
-1. `api.py`, `todo.py`, `model.py`로 파일을 분리한다.
-2. `todo_router`에 `/todos` Prefix를 지정한다.
-3. Todo 생성, 전체 조회, 상세 조회, 수정, 삭제를 구현한다.
-4. `id`는 1 이상만 허용한다.
-5. `item`은 2자 이상 100자 이하만 허용한다.
-6. 없는 ID를 조회·수정·삭제하면 `404`를 반환한다.
-7. 생성 성공 시 `201`, 삭제 성공 시 `204`를 반환한다.
-8. `http://127.0.0.1:5500`만 CORS Origin으로 허용한다.
-9. Server 재시작 시 Data가 사라지는 이유를 설명한다.
-
----
-
-<a id="section-23"></a>
-
-## 20. 정답과 해설
-
-핵심 구현은 14절의 통합 CRUD 예제를 사용한다.
-
-```text
-api.py
-→ FastAPI Application 생성
-→ CORS Middleware 설정
-→ todo_router 등록
-
-model.py
-→ TodoCreate, TodoUpdate, TodoResponse 선언
-
-todo.py
-→ /todos CRUD Endpoint
-→ Path와 Field Validation
-→ HTTPException 처리
-```
-
-Memory List는 학습 범위에서 Database 역할을 임시로 대신한다. 따라서 Process가 종료되면 List도 함께 사라진다. 이후 Database 수업과 연결할 때 Repository Layer와 실제 Table로 교체할 수 있다.
-
----
-
-<a id="section-24"></a>
-
-## 최종 체크리스트
-
-- [ ] `APIRouter`와 `include_router()`의 역할을 설명할 수 있다.
-- [ ] Middleware의 Request·Response 처리 위치를 설명할 수 있다.
-- [ ] Origin이 Scheme, Host, Port로 구성됨을 설명할 수 있다.
-- [ ] CORS가 Browser의 Cross-Origin Request와 관련됨을 설명할 수 있다.
-- [ ] `Request`에서 Method, Path, Header, Cookie, Client 정보를 읽을 수 있다.
-- [ ] Path, Query, Form, JSON Body를 구분할 수 있다.
-- [ ] `gt`, `ge`, `lt`, `le`를 구분할 수 있다.
-- [ ] `min_length`, `max_length`로 문자열을 검증할 수 있다.
-- [ ] DTO가 Data Transfer Object의 약자임을 설명할 수 있다.
-- [ ] Pydantic Model과 Database Model을 목적에 맞게 분리할 수 있다.
-- [ ] REST 방식의 CRUD Endpoint를 구현할 수 있다.
-- [ ] `404`, `405`, `422`의 원인을 구분할 수 있다.
-- [ ] 내 코드의 Model Field 불일치와 Request 분기 오류를 수정할 수 있다.
-
----
-
-<a id="section-25"></a>
-
-## 핵심 요약
-
-```text
-APIRouter = 관련 Endpoint를 Module로 분리
-Middleware = Endpoint 전후의 공통 처리
-CORS = Browser Cross-Origin Request 허용 정책
-Path = Resource 식별값
-Query = 조회·검색 조건
-Form = HTML Form Data
-Pydantic = Type과 Data Validation
-DTO = Data Transfer Object
-CRUD = POST, GET, PUT/PATCH, DELETE
-Memory List = Server 재시작 시 초기화되는 학습용 저장소
-```
+`request.headers`를 읽는 예제와 `response_model` 설정은 두 수업 코드에서 확인되지 않았고, 사용자가 배우지 않았다고 확인했다. [추가편](추가편_기존자료_학습범위_분류.md)에만 둔다. 이 장의 본문은 실제로 작성한 **쿼리·폼·경로·모델·리스트 CRUD**다.

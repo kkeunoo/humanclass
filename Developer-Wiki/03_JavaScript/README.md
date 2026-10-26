@@ -1,69 +1,55 @@
-# JavaScript 개인 강의 백과사전
+# JavaScript — 수업 원본 기반 개편본
 
-JavaScript를 잠깐 잊은 뒤에도 수업 코드의 입력·실행·상태·결과를 다시 이해하고 사용할 수 있도록 만든 상세 학습 문서다. **기존 상세 본문과 예제·풀이를 유지**하며 원본 비교, 실행 재현, 보강 실습을 연결했다. 짧은 요약만 읽고 넘어가기 위한 문서는 아니다.
+강사님 코드와 내 실제 수업 코드를 비교해 원본 번호 **01–22의 학습 내용**을 정리했습니다. 읽기 편하도록 분리한 본문 34개와 기존 자료 분류 추가편이 있습니다. 17장 폼 제출과 메뉴·Todo의 주요 동작은 외부 전송 없이 로컬 화면에서 확인했습니다. 기존 Wiki의 파일 이름 28개는 모두 이 폴더에서 열리며, 옛 문서 **내부의 모든 앵커 주소까지 동일하게 유지한 것은 아닙니다.**
 
-## 읽는 방법
+## 읽는 순서
 
-1. [공통 읽기법](00_JavaScript_V3_동작_백과_읽기법.md)에서 Console·Elements·Network 역할을 확인한다.
-2. 각 문서의 '개념에서 실제 실행까지'에서 정의, 값의 출처, 수업 원본과 예상 출력을 읽는다.
-3. 세부 번호형 본문에서 함수·메서드별 설명과 다양한 예제·기존 풀이를 반복한다. 상단 세부 목차는 펼쳐 볼 수 있다.
-4. 새 기본·응용 실습은 먼저 풀고 접힌 정답을 펼친다. 문서별 비교·개선·오류·체크리스트도 함께 확인한다.
-5. 마지막에는 23의 개선 기준과 24의 통합 프로젝트로 연결하고 99에서 메서드를 다시 찾는다.
+- [01_JavaScript_변수와_자료형](01_JavaScript_변수와_자료형.md)
+- [02_JavaScript_연산자](02_JavaScript_연산자.md)
+- [03_JavaScript_조건문과_Switch](03_JavaScript_조건문과_Switch.md)
+- [04_JavaScript_반복문과_배열순회](04_JavaScript_반복문과_배열순회.md)
+- [05_JavaScript_While과_DoWhile](05_JavaScript_While과_DoWhile.md)
+- [06_JavaScript_배열과_배열메서드](06_JavaScript_배열과_배열메서드.md)
+- [07_JavaScript_Date와_날짜처리](07_JavaScript_Date와_날짜처리.md)
+- [08_JavaScript_함수와_콜백_타이머](08_JavaScript_함수와_콜백_타이머.md)
+- [08-02_JavaScript_함수참조와_콜백](08-02_JavaScript_함수참조와_콜백.md)
+- [08-03_JavaScript_타이머와_취소](08-03_JavaScript_타이머와_취소.md)
+- [09_JavaScript_화살표함수와_TV상태관리](09_JavaScript_화살표함수와_TV상태관리.md)
+- [09-02_JavaScript_TV상태관리](09-02_JavaScript_TV상태관리.md)
+- [10_JavaScript_문자열과_문자열메서드](10_JavaScript_문자열과_문자열메서드.md)
+- [11_JavaScript_DOM_선택과_속성_클래스조작](11_JavaScript_DOM_선택과_속성_클래스조작.md)
+- [11-02_JavaScript_DOM_속성과_클래스](11-02_JavaScript_DOM_속성과_클래스.md)
+- [12_JavaScript_DOM_콘텐츠생성과_스타일조작](12_JavaScript_DOM_콘텐츠생성과_스타일조작.md)
+- [12-02_JavaScript_DOM_요소생성과_삽입](12-02_JavaScript_DOM_요소생성과_삽입.md)
+- [12-03_JavaScript_DOM_스타일과_퀴즈](12-03_JavaScript_DOM_스타일과_퀴즈.md)
+- [13_JavaScript_DOM_폼요소와_입력값처리](13_JavaScript_DOM_폼요소와_입력값처리.md)
+- [14_JavaScript_동기비동기와_이벤트루프](14_JavaScript_동기비동기와_이벤트루프.md)
+- [15_JavaScript_DOM이벤트와_키보드스크롤제어](15_JavaScript_DOM이벤트와_키보드스크롤제어.md)
+- [15-02_JavaScript_키보드와_스크롤](15-02_JavaScript_키보드와_스크롤.md)
+- [16_JavaScript_마우스이벤트와_드래그복사제어](16_JavaScript_마우스이벤트와_드래그복사제어.md)
+- [16-02_JavaScript_선택과_복사이벤트](16-02_JavaScript_선택과_복사이벤트.md)
+- [17_JavaScript_폼이벤트와_이벤트전파_실전문제](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md)
+- [17-02_JavaScript_이벤트전파와_위임](17-02_JavaScript_이벤트전파와_위임.md)
+- [17-03_JavaScript_주문_로그인_피자실습](17-03_JavaScript_주문_로그인_피자실습.md)
+- [17-04_JavaScript_메뉴와_Todo실습](17-04_JavaScript_메뉴와_Todo실습.md)
+- [18_JavaScript_브라우저이동과_지도우편번호](18_JavaScript_브라우저이동과_지도우편번호.md)
+- [19_JavaScript_객체와_JSON](19_JavaScript_객체와_JSON.md)
+- [20_JavaScript_AJAX와_fetch](20_JavaScript_AJAX와_fetch.md)
+- [20-02_JavaScript_날씨응답_필터와_표시](20-02_JavaScript_날씨응답_필터와_표시.md)
+- [21_JavaScript_외부AI_API요청과_대화기록](21_JavaScript_외부AI_API요청과_대화기록.md)
+- [22_JavaScript_웹훅_POST요청](22_JavaScript_웹훅_POST요청.md)
 
-학습 목표는 간단히 두되 설명·상태 추적·실습은 줄이지 않는다. ⚠️는 위험·주의, 💡는 수업에 없는 보충을 표시할 때만 사용한다. 이모지가 설명을 대신하지 않는다.
+## 추가로 알면 좋은 것
 
-## 문서 목차
+- [기존 자료의 학습 범위 분류](추가편_기존자료_학습범위_분류.md)
+- [옛 23장 실무 코딩 스타일 안내](23_JavaScript_실무_코딩스타일.md)
+- [옛 24장 종합실습 안내](24_JavaScript_종합실습.md)
+- [옛 99장 메서드 치트시트 안내](99_JavaScript_자료형별_메서드_치트시트.md)
 
-| 번호 | 문서 | 핵심 학습 |
-| --- | --- | --- |
-| 01 | [변수와 자료형](01_JavaScript_변수와_자료형.md) | 문자열을 숫자로 검증한 다음 계산할 수 있다. |
-| 02 | [연산자](02_JavaScript_연산자.md) | 전위·후위의 사용값과 변경 후 상태를 각각 추적한다. |
-| 03 | [조건문과 Switch](03_JavaScript_조건문과_Switch.md) | 검증·형 변환·조건 분기의 순서를 설명한다. |
-| 04 | [반복문과 배열순회](04_JavaScript_반복문과_배열순회.md) | 조건 검사와 누적 상태를 회차별로 추적한다. |
-| 05 | [While과 DoWhile](05_JavaScript_While과_DoWhile.md) | 입력 갱신과 종료 조건을 빠뜨리지 않는다. |
-| 06 | [배열과 배열메서드](06_JavaScript_배열과_배열메서드.md) | 원본 변경·반환값·얕은 복사를 구분한다. |
-| 07 | [Date와 날짜처리](07_JavaScript_Date와_날짜처리.md) | UTC 날짜와 한국 현지 날짜를 혼동하지 않는다. |
-| 08 | [함수와 콜백 타이머](08_JavaScript_함수와_콜백_타이머.md) | 함수 전달과 즉시 호출, 타이머 예약을 구분한다. |
-| 09 | [화살표함수와 TV상태관리](09_JavaScript_화살표함수와_TV상태관리.md) | 반환값 문법과 상태·출력의 차이를 이해한다. |
-| 10 | [문자열과 문자열메서드](10_JavaScript_문자열과_문자열메서드.md) | 검색 실패와 정규표현식 범위를 확인한다. |
-| 11 | [DOM 선택과 속성 클래스조작](11_JavaScript_DOM_선택과_속성_클래스조작.md) | 선택 결과의 자료형과 null 원인을 추적한다. |
-| 12 | [DOM 콘텐츠생성과 스타일조작](12_JavaScript_DOM_콘텐츠생성과_스타일조작.md) | textContent·innerHTML·노드 이동을 구분한다. |
-| 13 | [DOM 폼요소와 입력값처리](13_JavaScript_DOM_폼요소와_입력값처리.md) | 현재 값·선택 상태·숫자 변환을 구분한다. |
-| 14 | [동기비동기와 이벤트루프](14_JavaScript_동기비동기와_이벤트루프.md) | 동기 코드·Promise·타이머의 출력 순서를 설명한다. |
-| 15 | [DOM이벤트와 키보드스크롤제어](15_JavaScript_DOM이벤트와_키보드스크롤제어.md) | 등록 시점과 클릭·키 입력 시점의 값을 구분한다. |
-| 16 | [마우스이벤트와 드래그복사제어](16_JavaScript_마우스이벤트와_드래그복사제어.md) | 좌표계·드래그 상태·종료 이벤트를 연결한다. |
-| 17 | [폼이벤트와 이벤트전파 실전문제](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md) | target/currentTarget, 기본 동작과 전파 취소를 구분한다. |
-| 18 | [BOM과 지도우편번호API](18_JavaScript_BOM과_지도우편번호API.md) | 외부 스크립트 로드와 완료 콜백을 연결한다. |
-| 19 | [JSON과 객체직렬화](19_JavaScript_JSON과_객체직렬화.md) | 직렬화 때 남는 값과 사라지는 값을 확인한다. |
-| 20 | [AJAX와 Fetch API](20_JavaScript_AJAX와_Fetch_API.md) | 요청 전송·HTTP 상태·본문 파싱·출력을 분리한다. |
-| 21 | [Gemini API와 멀티턴대화](21_JavaScript_Gemini_API와_멀티턴대화.md) | 응답 텍스트·대화 상태·출력 노드를 분리한다. |
-| 22 | [Discord Webhook과 XMLHttpRequest](22_JavaScript_Discord_Webhook과_XMLHttpRequest.md) | JSON POST와 본문 없는 응답을 구분한다. |
-| 23 | [실무 코딩스타일](23_JavaScript_실무_코딩스타일.md) | 변경 전후 정상·실패·경계 동작을 비교한다. |
-| 24 | [종합실습](24_JavaScript_종합실습.md) | 한 작업이 검증·상태·렌더링·저장으로 이어지는지 확인한다. |
-| 99 | [자료형별 메서드 치트시트](99_JavaScript_자료형별_메서드_치트시트.md) | 비슷한 메서드의 동작 계약을 예제로 확인한다. |
+## 학습 범위와 검증
 
-## 수업 원본과 보충의 경계
+양쪽 `workspace_html/javascript`에는 23·24·99 번호의 수업 원본 파일이 없습니다. 기존 Wiki의 해당 파일명은 안내 문서로 남기고 내용은 [추가로 알면 좋은 것](추가편_기존자료_학습범위_분류.md)으로 분류했습니다. `dataset`은 강사님 퀴즈와 사용자 확인에 따라 [17-03 실습](17-03_JavaScript_주문_로그인_피자실습.md)의 본문에 포함했습니다.
 
-내 코드 기준은 `workspace_html/javascript`, 강사님은 `workspace_teacher/workspace_html/javascript`다. 원본 전체가 아니라 각 개념에 대응하는 일부를 발췌한다. 주석 처리된 실습은 파일을 열어도 실행되지 않는다는 점도 구분한다.
+원본 발췌·문서 링크와 로컬 화면 검수 범위는 [최종 검증 기록](../편집기록/03_JavaScript_최종_검증기록.md)에 있습니다. 외부 날씨·AI·웹훅 서비스의 실제 응답은 검증하지 않았으며, 요청 구조와 수업 코드의 실행 흐름을 설명합니다. 다른 과목은 [전체 Wiki 첫 화면](../README.md)에서 이어 읽습니다.
 
-- 01~22: 실제 수업 파일을 중심으로 설명한다.04는for·pyramid·개인 복습,09는arrow·TV,15~17과20은HTML과외부JS를 함께 확인한다.
-- 23~24: 💡 수업에서 배운 기능을 연결한 개선 기준·종합 프로젝트다. 강사님의23·24번 완성 원본이라고 부르지 않는다.
-- 99: 💡 진도와 별개인 메서드 참고 부록이다. 모든 항목이 수업에 나온 것은 아니다.
-- 설명용 최소 예제·고정 응답·mock는 원본 발췌와 별도 표시한다. 현재 날짜·랜덤·외부 서비스 응답을 고정 결과라고 단정하지 않는다.
-
-## 실행 환경과 실패 확인
-
-문법·배열·문자열·JSON 예제는 Node 또는 브라우저 Console에서 실행할 수 있다. DOM·폼 예제는 해당 HTML이 있는 브라우저에서 실행한다. 독립 예제를 한 Console에 계속 붙이면 const/let 재선언 오류나 이전 상태의 영향을 받을 수 있으므로 새 문맥을 사용한다.
-
-Console은 값과 오류, Elements는 현재 DOM, Network는 요청·응답을 확인한다. return은 자동 출력이 아니다. localStorage는 origin별 문자열 저장이다. 외부 JS의 상대 요청 주소는 문서 base URL을 기준으로 해석한다.
-
-**API 안전:** 문서에 실제 인증 키와 메시지 전송용 Webhook 주소를 포함하지 않는다. 수업 당시 model 이름은 원본 기록이며 현재 지원을 보장하지 않는다. API 예제의 서버 프록시는 별도 구현이 필요한 설계 예제다. 실제 외부 호출·과금·Discord 전송은 이번 검증에서 하지 않았다.
-
-## 이번 검증과 설치
-
-[자체 검토 기록](REFACTOR_REVIEW.md)에 보존 수치·발견한 문제·수정·테스트 범위·남은 수동 확인을 정리했다. 브라우저 DOM 렌더링을 실제 검증했다고 주장하지 않는다.
-
-ZIP의 `03_JavaScript` 폴더를 기존 `Developer-Wiki/03_JavaScript`에 적용한다. 원래 문서 이름을 유지하므로 기존 파일 링크가 유지된다. 다른 파트와 최상단 README·통합 용어색인은 최종 전체 검토 단계에서 갱신한다. 이번 압축은 JavaScript 파트만 포함한다.
-전체 Wiki 탐색
-
-[전체 파트 안내](../README.md) · [통합 용어색인](../99_Developer-Wiki_통합_용어색인.md) · [최종 전체 검토기록](../98_Developer-Wiki_전체_검토기록.md)
+[BACKUP 대응표](../편집기록/03_JavaScript_BACKUP_대응표.md) · [진행 기록](../편집기록/03_JavaScript_진행과_재개기록.md)

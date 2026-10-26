@@ -1,842 +1,318 @@
----
-title: FastAPI Jinja2 템플릿
-version: v4.0-detailed
-last_updated: 2026-09-17
-status: Completed
----
+# 03. Jinja 템플릿 — Python 값을 HTML에 넣기
 
-# FastAPI Jinja2 템플릿
+[FastAPI 목차](README.md) · [이전: 라우터와 입력값](02_FastAPI_Router_Request_Pydantic_CRUD.md) · [다음: 응답과 리다이렉트](04_FastAPI_Response_Redirect_의존성주입.md)
 
-## 목차
+앞 장에서 딕셔너리나 문자열을 그대로 반환했다면, 이번 코드는 **템플릿 파일과 Python 데이터**를 합쳐 HTML 화면을 만든다. 두 원본의 `/hello`, `/youtube`와 실제 템플릿을 함께 본다.
 
-- [문서 정보](#section-1)
-- [학습 목표](#section-2)
-- [개념에서 실제 실행까지 — Jinja는 서버에서 HTML을 만든다](#section-3)
-- [1. Template Engine과 Server-side Rendering](#section-4)
-- [2. 설치와 기본 설정](#section-5)
-- [3. TemplateResponse](#section-6)
-- [4. Jinja 표현식과 주석](#section-7)
-- [5. 조건문](#section-8)
-- [6. 반복문과 Loop 변수](#section-9)
-- [7. Template 상속](#section-10)
-- [8. Include와 Import](#section-11)
-- [9. Macro](#section-12)
-- [10. 기본 Filter](#section-13)
-- [11. 사용자 정의 Filter](#section-14)
-- [12. Autoescape와 Markup](#section-15)
-- [13. 내 코드와 강사님 코드 비교](#section-16)
-- [14. 개선된 통합 예제](#section-17)
-- [15. 자주 하는 실수와 Debugging](#section-18)
-- [16. 종합실습](#section-19)
-- [17. 정답 핵심](#section-20)
-- [최종 체크리스트](#section-21)
-- [핵심 요약](#section-22)
+## 1. 템플릿 파일에 값 전달
 
+### 강사님 코드
 
-<a id="section-1"></a>
-
-## 문서 정보
-
-| 항목 | 내용 |
-| --- | --- |
-| 문서 | `03_FastAPI_Jinja2_템플릿.md` |
-| 분류 | `06_FastAPI` |
-| 내 코드 | `workspace_python/02_todos/02_jinja/api.py`, `templates/*.html` |
-| 강사님 코드 | `workspace_teacher/workspace_python/todos/02_jinja/api.py`, `templates/*.html` |
-| 핵심 범위 | `Jinja2Templates`, `TemplateResponse`, 변수, 주석, 조건문, 반복문, 상속, Include, Block, Macro, Filter, Autoescape |
-| 제외 범위 | DB 연동 상세는 07번 문서에서 설명 |
-| 문서 형식 | FastAPI Developer-Wiki V2 |
-
-> 이 문서는 완료된 `02_jinja` 수업만 다룬다. FastAPI가 Data를 준비하고 Jinja2가 HTML을 Rendering하는 흐름을 실제 코드 순서대로 정리한다.
-
----
-
-<a id="section-2"></a>
-
-## 학습 목표
-
-- 입력 위치와 실제 처리 순서를 설명한다.
-- 수업 코드·개선 예제의 상태와 응답을 재현한다.
-- 실패 원인을 찾고 같은 기능을 다시 작성한다.
-
----
-
-<a id="section-3"></a>
-
-## 개념에서 실제 실행까지 — Jinja는 서버에서 HTML을 만든다
-
-### Jinja란? 화면에서 중괄호가 그대로 보이면 왜 문제일까?
-
-Jinja는 문자열 템플릿에 서버 데이터를 적용하는 Template Engine Library다. FastAPI endpoint가 데이터를 준비하고 Jinja가 HTML 문자열을 만들어 보내며, 브라우저는 만들어진 HTML을 파싱한다. HTML을 LiveServer로 직접 열면 Jinja 코드를 Python 서버에서 처리하지 않았으므로 {{ msg }} 같은 문법이 그대로 보일 수 있다.
-
-내·강사님 02_jinja/api.py의 hello()는 request, home.html, ip/msg context를 넘긴다. 템플릿은 context의 Key 이름으로 값을 찾는다. '환경변수에 필터를 등록한다'는 내 주석은 OS PATH가 아니라 templates.env라는 Jinja Environment의 filters 사전이라는 뜻으로 교정한다.
-
-### 조건과 반복문을 작은 입력으로 검증하기
-
-```python
-from jinja2 import Environment
-env = Environment(autoescape=True)
-template = env.from_string(
-    "{% if star is not none and star >= 0 %}별점={{ star }}{% endif %}"
-    "{% for item in items %}|{{ loop.index }}:{{ item }}{% endfor %}"
-)
-print(template.render(star=0, items=["공부", "<b>운동</b>"]))
-```
-
-```text
-별점=0|1:공부|2:&lt;b&gt;운동&lt;/b&gt;
-```
-
-
-수업 youtube.html은 if star로 먼저 검사한다. 내 star=4는 True이고 강사님 star=1.5도 True다. 그러나 0은 False이므로 '값이 없어서'가 아니라 '있는 값이 거짓으로 평가되어' 해당 블록을 건너뛴다. 미전달·None·0을 구분하는 조건을 써야 별점 0도 표시된다. 비교를 위해 입력 0을 사용한 위 예제는 수업 원본 출력이 아니다.
-
-loop.index는 1부터, index0은 0부터 시작한다. for로 목록을 순회하면서 실제 HTML에는 각 반복 결과만 남는다. 브라우저에 Python 리스트 자체나 for 문법을 전달하는 것이 아니다.
-
-### 상속·Include·Macro는 각각 언제 쓰는가?
-
-extends는 부모 layout.html의 구조와 block을 이용한다. 자식의 같은 이름 block이 부모 영역을 바꾸고 super()는 부모 block 내용도 포함한다. 부모가 호출하는 block 밖에 자식 HTML을 임의로 쓰면 원하는 위치에 나타나지 않을 수 있다. include는 조각 템플릿을 렌더링해 삽입하고, import는 macro를 이름 공간으로 가져온다. macro는 제목·내용 같은 매개변수로 재사용 HTML을 만드는 함수와 비슷하다.
-
-강사님 macros.html의 macro는 title/text 외에 like를 읽지만 일반 import는 호출 위치의 전체 context를 자동 전달하지 않는다. like가 필요하면 macro 인자로 명시하거나 with context를 검토한다. 인자 두 개로 호출했다고 세 번째 외부 변수가 언제나 보이는 것은 아니다.
-
-### Autoescape와 Markup — 줄바꿈만 바꾸려다 HTML을 신뢰하지 않기
-
-양쪽 n2br()는 Markup(value.replace("\\n", "<br>"))를 쓴다. Markup은 HTML을 정화하는 함수가 아니라 '이 문자열을 안전하다고 간주'하게 한다. 사용자가 입력한 <script>까지 그대로 신뢰하면 XSS 위험이 생긴다. 💡 다음은 보안 보강 예제이며 수업 원본은 아니다.
-
-```python
-from markupsafe import Markup, escape
-def n2br_safe(value):
-    return Markup("<br>").join(escape(value).split("\n"))
-print(n2br_safe("<b>사용자</b>\n다음 줄"))
-```
-
-```text
-&lt;b&gt;사용자&lt;/b&gt;<br>다음 줄
-```
-
-
-먼저 사용자 태그를 escape하고, 내가 만든 br만 안전한 HTML로 결합한다. 브라우저는 <b>사용자</b> 글자를 표시하고 다음 줄로 이동한다. 파이썬 출력에 있는 &lt;는 브라우저가 태그로 해석하지 않도록 만든 표현이다.
-
-### 실행 위치와 버전 확인
-
-templates/는 현재 작업 폴더 기준이다. 'TemplateNotFound'이면 API 폴더에서 실행했는지, 파일명이 맞는지 먼저 본다. 내 필터는 format_date이고 강사님은 format_data이다. 템플릿의 필터 이름과 등록 키가 서로 맞아야 한다.
-
-TemplateResponse의 인자 순서 변경을 '2026년 3월'이라고 기록한 주석은 정확한 버전 근거 없이 확정하지 않는다. 공식 문서는 FastAPI 0.108.0·Starlette 0.29.0 이전과 이후 사용 방식 차이를 설명한다. 신규 예제는 request=, name=, context= 키워드로 역할을 명확히 할 수 있다. [공식 템플릿 안내](https://fastapi.tiangolo.com/advanced/templates/)
-
-### 확인 문제와 해설
-
-<details><summary>서버 print에는 데이터가 있지만 화면은 빈 값이다. 무엇을 볼까?</summary>
-
-context의 Key와 {{ 변수 }} 이름, 실제 렌더링한 파일, block 이름, 조건에서 0/빈 목록이 False가 된 것은 아닌지 본다. 브라우저 원본 보기로 서버가 만든 HTML을 확인한다.
-
-</details>
-
-<details><summary>Markup을 쓰면 사용자 HTML은 안전해질까?</summary>
-
-아니다. HTML을 신뢰한다고 표시할 뿐이다. 사용자의 텍스트는 escape하고 허용할 태그는 별도로 제한해야 한다.
-
-</details>
-
----
-
-<a id="section-4"></a>
-
-## 1. Template Engine과 Server-side Rendering
-
-Jinja2는 Python Data와 HTML Template을 결합해 최종 HTML을 만드는 Template Engine이다.
-
-```text
-Browser Request
-→ FastAPI Endpoint
-→ Python Data 준비
-→ Jinja2 Template Rendering
-→ 완성된 HTML Response
-```
-
-```html
-MSG: {{ msg }}
-```
-
-`{{ msg }}` 자리에 FastAPI가 전달한 값이 들어간 HTML을 Browser가 받는다.
-
-<a id="index-section-12"></a>
-
-### 1.1 왜 Template Engine이 필요한가?
-
-일반 HTML 파일은 저장된 내용만 보여준다.
-
-```html
-<h1>고정된 제목</h1>
-```
-
-사용자 이름, DB 조회 결과, 현재 날짜처럼 Request마다 달라지는 값을 화면에 넣으려면 Python Data와 HTML을 결합해야 한다.
-
-```jinja2
-<h1>{{ username }}님</h1>
-```
-
-```text
-username='kim'
-→ <h1>kim님</h1>
-
-username='lee'
-→ <h1>lee님</h1>
-```
-
-### 1.2 Jinja 문법은 어디에서 실행되는가?
-
-Jinja 문법은 Browser에서 실행되지 않는다. Server에서 HTML을 만들 때 실행된다.
-
-```text
-Server에 저장된 Template
-<h1>{{ msg }}</h1>
-        ↓ Jinja Rendering
-완성된 HTML
-<h1>안녕하세요</h1>
-        ↓ HTTP Response
-Browser가 받는 내용
-<h1>안녕하세요</h1>
-```
-
-Browser의 Page Source에는 일반적으로 `{{ msg }}`가 아니라 치환이 끝난 결과가 보인다. JavaScript가 Jinja를 해석하는 것이 아니다.
-
----
-
-<a id="section-5"></a>
-
-## 2. 설치와 기본 설정
-
-```powershell
-python -m pip install jinja2
-```
+출처: `teacher/workspace_python/todos/02_jinja/api.py` 1–25행 · **원본 발췌**
 
 ```python
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
-templates = Jinja2Templates(directory='templates')
-```
 
-`directory`는 Template 파일을 찾을 기준 Directory다. 실행 위치가 달라지면 상대 경로가 어긋날 수 있으므로 Uvicorn을 Project Directory에서 실행한다.
+# 템플릿 폴더를 지정하면서 생성
+templates = Jinja2Templates(directory='templates/')
 
----
-
-<a id="section-6"></a>
-
-## 3. TemplateResponse
-
-### 3.1 수업 코드
-
-```python
 @app.get('/hello')
-def hello(request: Request):
-    return templates.TemplateResponse(
-        request,
-        'home.html',
-        {
-            'ip': request.client.host,
-            'msg': '안녕?',
-        },
-    )
-```
-
-| 인자 | 역할 |
-| --- | --- |
-| `request` | 현재 HTTP Request |
-| `'home.html'` | Rendering할 Template 이름 |
-| `dict` | Template에서 사용할 Context |
-
-Context의 Key가 Template 변수명이 된다.
-
-```html
-YOUR IP: {{ ip }}<br>
-MSG: {{ msg }}
-```
-
-### 3.2 값은 어디서 만들어져 어떻게 들어오는가?
-
-주소창:
-
-```text
-http://127.0.0.1:8000/hello
-```
-
-처리 흐름:
-
-```text
-1. Browser가 GET /hello Request 전송
-2. Uvicorn이 Request 수신
-3. FastAPI Router가 hello() 선택
-4. FastAPI가 현재 Request 객체를 request 인자에 주입
-5. request.client.host에서 Client Host 조회
-6. Python Dict로 Context 생성
-7. Jinja2가 templates/home.html 읽기
-8. {{ ip }}, {{ msg }}를 Context 값으로 치환
-9. Content-Type: text/html Response 생성
-10. Browser가 완성된 HTML Rendering
-```
-
-Python에서 확인:
-
-```python
-@app.get('/hello')
-def hello(request: Request):
-    context = {
+def hello(request:Request) :
+    print('/hello 실행')
+    return templates.TemplateResponse(request, 'home.html', {
         'ip': request.client.host,
-        'msg': '안녕?',
-    }
-    print('context:', context)
-    return templates.TemplateResponse(request, 'home.html', context)
+        'msg': '안뇽?'
+    })
+
+@app.get('/youtube')
+def youtube(request:Request) :
+    print('/youtube 실행')
+
+    return templates.TemplateResponse(request, 'youtube.html', {
+        'like': 3,
+        'star': 1.5,
+        'bookmark': ['동영상1', '동영상2', '동영상3', '동영상4', '동영상5' ]
+    })
 ```
 
-Terminal 예시:
+### 내 코드
 
-```text
-context: {'ip': '127.0.0.1', 'msg': '안녕?'}
-INFO: 127.0.0.1:53124 - "GET /hello HTTP/1.1" 200 OK
-```
-
-Browser 결과 예시:
-
-```text
-hello world
-YOUR IP: 127.0.0.1
-MSG: 안녕?
-```
-
-### 3.3 Request가 필요한 이유
-
-`TemplateResponse`는 현재 Request와 연결된 URL 생성, Middleware, Application Context 등을 처리하기 위해 Request 객체를 받는다. 또한 수업처럼 Client IP를 Context에 넣을 때도 사용한다.
-
-```text
-request 인자
-→ Jinja 변수 전체를 담는 객체가 아님
-→ 현재 HTTP Request 자체
-
-세 번째 Context Dict
-→ Template 변수로 사용할 업무 Data
-```
-
-두 역할을 혼동하지 않는다.
-
----
-
-<a id="section-7"></a>
-
-## 4. Jinja 표현식과 주석
-
-### 4.1 값 출력
-
-```jinja2
-{{ msg }}
-{{ like }}
-```
-
-### 4.2 Jinja 주석
-
-```jinja2
-{# Browser에 출력되지 않는 Jinja 주석 #}
-```
-
-HTML 주석은 Rendering 결과에 남을 수 있다.
-
-```html
-<!-- HTML Source에서 확인될 수 있는 주석 -->
-```
-
-민감한 정보는 HTML 주석에도 적지 않는다.
-
----
-
-<a id="section-8"></a>
-
-## 5. 조건문
-
-```jinja2
-{% if star > 3 %}
-    별점이 높아요: {{ star }}
-{% elif star == 3 %}
-    별점이 중간입니다: {{ star }}
-{% elif 0 <= star <= 2 %}
-    별점이 낮아요: {{ star }}
-{% else %}
-    별점이 올바르지 않습니다.
-{% endif %}
-```
-
-값이 전달되지 않은 변수를 단순 출력하면 기본 Undefined 설정에서는 빈 값처럼 보일 수 있지만, 비교·연산하면 오류가 발생할 수 있다. 필요한 값은 FastAPI Context에서 명확히 전달하거나 `default` Filter를 사용한다.
-
-```jinja2
-{{ star2 | default('기본값') }}
-{{ star2 | d('기본값') }}
-```
-
-### 5.1 실제 값에 따른 출력
-
-FastAPI Context:
+출처: `me/workspace_python/02_todos/02_jinja/api.py` 1–26행 · **원본 발췌**
 
 ```python
-{'star': 4}
-```
-
-Jinja 조건:
-
-```jinja2
-{% if star > 3 %}
-    별점이 높아요: {{ star }}
-{% endif %}
-```
-
-Rendering 결과:
-
-```html
-별점이 높아요: 4
-```
-
-Context의 `star`가 숫자가 아니라 문자열 `'4'`라면 숫자 `3`과 비교할 때 오류가 날 수 있다. Jinja에 전달하기 전에 Python과 Pydantic 단계에서 Type을 확정하는 것이 좋다.
-
----
-
-<a id="section-9"></a>
-
-## 6. 반복문과 Loop 변수
-
-```jinja2
-{% for item in bookmark %}
-    <div>
-        {{ loop.index }}. {{ item }}
-        first={{ loop.first }}
-        last={{ loop.last }}
-    </div>
-{% endfor %}
-```
-
-| 변수 | 의미 |
-| --- | --- |
-| `loop.index` | 1부터 시작하는 순번 |
-| `loop.index0` | 0부터 시작하는 순번 |
-| `loop.first` | 첫 번째 반복 여부 |
-| `loop.last` | 마지막 반복 여부 |
-
-### 6.1 실제 Rendering 결과
-
-Context:
-
-```python
-{'bookmark': ['동영상1', '동영상2', '동영상3']}
-```
-
-Template:
-
-```jinja2
-{% for item in bookmark %}
-{{ loop.index }}. {{ item }}
-{% endfor %}
-```
-
-결과:
-
-```text
-1. 동영상1
-2. 동영상2
-3. 동영상3
-```
-
-List가 비어 있을 때의 결과도 명시하려면 `for ... else`를 사용할 수 있다.
-
-```jinja2
-{% for item in bookmark %}
-    {{ item }}
-{% else %}
-    저장된 동영상이 없습니다.
-{% endfor %}
-```
-
----
-
-<a id="section-10"></a>
-
-## 7. Template 상속
-
-공통 Layout을 부모 Template로 만들고 Page별 영역만 자식 Template에서 작성한다.
-
-### 7.1 부모 Template
-
-```jinja2
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <title>{% block title %}{% endblock %}</title>
-    <style>{% block css %}{% endblock %}</style>
-</head>
-<body>
-    {% include 'header.html' %}
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-</body>
-</html>
-```
-
-### 7.2 자식 Template
-
-```jinja2
-{% extends 'layout.html' %}
-
-{% block title %}동영상 페이지{% endblock %}
-
-{% block content %}
-    {{ super() }}
-    <div>좋아요 {{ like }}</div>
-{% endblock %}
-```
-
-- `extends`: 부모 Template 상속
-- `block`: 자식이 채우거나 덮어쓸 영역
-- `super()`: 부모 Block의 기존 내용 유지
-- Block 밖의 일반 HTML은 상속 구조에서 기대한 위치에 출력되지 않을 수 있다.
-
-### 7.3 어떤 파일이 어떤 순서로 합쳐지는가?
-
-```text
-youtube.html 요청
-→ {% extends 'layout.html' %} 확인
-→ layout.html을 전체 뼈대로 사용
-→ layout.html의 include 위치에 header.html 삽입
-→ youtube.html의 title Block으로 부모 title 교체
-→ youtube.html의 content Block으로 부모 content 교체
-→ super()가 있으면 부모 Block 내용도 유지
-→ 최종 HTML 한 개 생성
-```
-
-Template 파일 여러 개가 Browser로 각각 전달되는 것이 아니다. Server에서 합쳐진 최종 HTML Response 한 개가 전달된다.
-
----
-
-<a id="section-11"></a>
-
-## 8. Include와 Import
-
-<a id="index-section-31"></a>
-
-### 8.1 Include
-
-```jinja2
-{% include 'header.html' %}
-```
-
-HTML 조각을 현재 위치에 삽입한다. Header, Footer처럼 공통 화면 조각에 적합하다.
-
-### 8.2 Import
-
-```jinja2
-{% import 'macros.html' as macros %}
-{{ macros.render_card('제목', '내용') }}
-```
-
-다른 Template의 Macro를 Namespace로 가져온다.
-
----
-
-<a id="section-12"></a>
-
-## 9. Macro
-
-Macro는 반복되는 HTML 구조를 함수처럼 재사용한다.
-
-```jinja2
-{% macro render_card(title, text) %}
-<article class="card">
-    <h2>{{ title }}</h2>
-    <p>{{ text }}</p>
-</article>
-{% endmacro %}
-```
-
-```jinja2
-{{ render_card('제목 1', '내용 1') }}
-{{ render_card('제목 2', '내용 2') }}
-```
-
-수업의 `macros.html`처럼 재사용 Macro를 별도 파일에 모을 수 있다.
-
----
-
-<a id="section-13"></a>
-
-## 10. 기본 Filter
-
-```jinja2
-{{ text | length }}
-{{ text | truncate(10, True, '...') }}
-{{ '3.14' | int }}
-{{ missing | default('기본값') }}
-```
-
-Filter는 `|` 왼쪽의 값을 가공해 출력한다.
-
----
-
-<a id="section-14"></a>
-
-## 11. 사용자 정의 Filter
-
-### 11.1 금액 표시
-
-```python
-def price(value):
-    return f'{int(value):,}'
-
-templates.env.filters['price'] = price
-```
-
-```jinja2
-{{ 15000 | price }}원
-```
-
-### 11.2 날짜 표시
-
-```python
-from datetime import datetime
-
-
-def format_date(value, fmt='%Y-%m-%d %H:%M:%S'):
-    parsed = datetime.fromisoformat(value)
-    return parsed.strftime(fmt)
-
-
-templates.env.filters['format_date'] = format_date
-```
-
-내 코드는 함수명과 Filter 이름을 `format_date`로 통일했다. 강사님 코드는 `format_data`를 사용하므로 오타로 단정하기보다 실제 등록 이름과 Template 사용 이름이 일치하는지가 중요하다.
-
-### 11.3 Filter 실행 시점과 값
-
-```jinja2
-{{ '15000' | price }}원
-```
-
-동작 순서:
-
-```text
-문자열 '15000'
-→ price('15000') 호출
-→ int('15000')
-→ f'{15000:,}'
-→ '15,000'
-→ HTML에 '15,000원' 출력
-```
-
-Debugging할 때 Filter 함수 안에서 입력과 출력을 확인할 수 있다.
-
-```python
-def price(value):
-    result = f'{int(value):,}'
-    print('price input:', value, 'output:', result)
-    return result
-```
-
-Terminal:
-
-```text
-price input: 15000 output: 15,000
-```
-
----
-
-<a id="section-15"></a>
-
-## 12. Autoescape와 Markup
-
-Jinja2는 HTML Template에서 문자열을 Escape해 Script 삽입 위험을 줄인다.
-
-```jinja2
-{{ '<h1>Hello</h1>' }}
-```
-
-`Markup`은 값을 안전한 HTML이라고 표시한다.
-
-```python
-from markupsafe import Markup
-
-
-def n2br(value):
-    escaped = Markup.escape(value)
-    return Markup('<br>'.join(escaped.splitlines()))
-```
-
-원본의 다음 형태는 입력값에 악성 HTML이 있을 때 XSS 위험이 있다.
-
-```python
-Markup(value.replace('\n', '<br>'))
-```
-
-사용자 입력을 먼저 Escape한 뒤 필요한 `<br>`만 추가해야 한다.
-
----
-
-<a id="section-16"></a>
-
-## 13. 내 코드와 강사님 코드 비교
-
-| 항목 | 내 코드 | 강사님 코드 | 판단 |
-| --- | --- | --- | --- |
-| `/hello`, `/youtube` | 동일 흐름 | 동일 흐름 | 핵심 구조 동일 |
-| 별점 | `4` | `1.5` | 조건문 결과만 다름 |
-| 날짜 Filter | `format_date` | `format_data` | 등록명과 사용명은 각 코드 안에서 일치 |
-| `truncate` | 추가 실습 | 없음 | 내 코드에 Filter 실습 보강 |
-| Layout 기본 Content | 설명형 Text | 임시 Text | 내 코드가 의도 설명에 유리 |
-| Macro | 외부·내부 Macro | 동일 | 구조 동일 |
-
----
-
-<a id="section-17"></a>
-
-## 14. 개선된 통합 예제
-
-```python
-from pathlib import Path
-
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 
-BASE_DIR = Path(__file__).resolve().parent
-
 app = FastAPI()
-templates = Jinja2Templates(directory=BASE_DIR / 'templates')
+templates = Jinja2Templates(directory='templates/')
 
+@app.get('/hello')
+def hello(request : Request) :
+    print('/hello 실행')
+    # 2026년 3월경부터 TemplateResponse의 인자값 순서가 변경되어 참고
+    # request뒤에 파일명을 넣어준다면, 상단에 Jinja...directory='경로'에 가서 찾게 됨 (동기로 동작)
+    # html로 인식하라는 header도 같이 포함해서 요청하는 것
+    # html에서 사용할 땐 {{ ip }} 같이 넣어서 사용
+    return templates.TemplateResponse(request, 'home.html', {
+        'ip' : request.client.host,
+        'msg' : '안니용?'
+    })
 
-@app.get('/videos')
-def videos(request: Request):
-    return templates.TemplateResponse(
-        request,
-        'youtube.html',
-        {
-            'like': 3,
-            'star': 4,
-            'bookmark': ['동영상 1', '동영상 2'],
-        },
-    )
+@app.get('/youtube')
+def youtube(request : Request) :
+    print('/youtube 실행')
+    return templates.TemplateResponse(request, 'youtube.html', {
+        'like' : 3,
+        'star' : 4,
+        'bookmark' : ['동영상1','동영상2','동영상3','동영상4','동영상5']
+    })
 ```
 
-절대 기준 경로를 만들면 Uvicorn 실행 Directory가 달라져도 Template 경로를 안정적으로 찾을 수 있다.
+`Jinja2Templates(directory='templates/')`는 템플릿 폴더를 정한다. `TemplateResponse(request, 'home.html', {'ip': ..., 'msg': ...})`는 템플릿에 두 값을 전달해 HTML 응답을 만든다. 내 `msg`는 `안니용?`, 강사님은 `안뇽?`라서 실제 표시 문구가 다르다. `/youtube`도 `like`, `star`, `bookmark` 목록을 보낸다. 강사님 `star=1.5`, 나는 `star=4`다.
 
----
+## 2. 내장 반복과 조건이 있는 실제 템플릿
 
-<a id="section-18"></a>
+### 강사님 코드
 
-## 15. 자주 하는 실수와 Debugging
+출처: `teacher/workspace_python/todos/02_jinja/templates/youtube.html` 31–38행 · **원본 발췌**
 
-| 증상 | 원인 | 해결 |
-| --- | --- | --- |
-| Template를 못 찾음 | 실행 위치 또는 Directory 오류 | `BASE_DIR` 기준 경로 사용 |
-| 변수가 비어 있음 | Context Key 누락 | Python Dict와 Template 이름 비교 |
-| Undefined 오류 | 없는 값으로 비교·연산 | 기본값 전달 또는 `default` 사용 |
-| Block 밖 내용이 안 보임 | 상속 Template 구조 위반 | 모든 Page 내용을 Block 안에 작성 |
-| Filter를 찾지 못함 | 등록명과 사용명 불일치 | `env.filters` Key 확인 |
-| HTML이 그대로 보임 | Autoescape 작동 | 안전한 Data만 제한적으로 Markup 처리 |
+```html
+{% block star %}
+<div>
+    {% if star %}
+        star를 전달 받았다<br>
 
----
-
-### 15.1 수업 원본에서 다시 찾기
-
-| 배운 개념 | 내 코드 파일·함수 | 강사님 코드 파일·함수 | 다시 확인할 내용 |
-| --- | --- | --- | --- |
-| Template 설정 | `02_jinja/api.py` 상단 | 같은 위치 | `Jinja2Templates(directory=...)` |
-| Context 전달 | `hello()` | `hello()` | Request IP와 Message가 HTML로 이동 |
-| 여러 Data 전달 | `youtube()` | `youtube()` | 숫자와 List Context |
-| 변수·주석 | `templates/home.html` | 같은 파일 | `{{ }}`, `{# #}` |
-| Layout 상속 | `youtube.html`, `layout.html` | 같은 파일 | `extends`, `block`, `super()` |
-| 공통 조각 | `layout.html`의 `include` | 같은 위치 | `header.html` 삽입 |
-| 조건·반복 | `youtube.html`의 `star`, `bookmark` Block | 같은 위치 | `if`, `for`, `loop` |
-| 기본 Filter | `youtube.html`의 `filter` Block | 같은 위치 | `length`, `truncate`, `int`, `default` |
-| 금액 Filter | `api.py`의 `price()` | 같은 함수 | 입력값과 `15,000` 결과 |
-| 날짜 Filter | `api.py`의 `format_date()` | `format_data()` | Filter 등록명과 사용명 일치 |
-| HTML 줄바꿈 | `api.py`의 `n2br()` | 같은 함수 | Escape와 Markup 위험 |
-| Macro | `youtube.html`, `macros.html` | 같은 파일 | 내부 Macro와 Import Macro |
-
-### 15.2 직접 재현하기
-
-```text
-GET /hello
-→ Terminal Context 출력
-→ Browser 완성 HTML 확인
-→ Page Source에서 {{ msg }}가 남아 있는지 확인
-
-GET /youtube
-→ 조건문 결과 확인
-→ bookmark 반복 결과 확인
-→ 가격·날짜 Filter 결과 확인
-→ Layout, Header, 자식 Block 합성 결과 확인
+        {% if star >= 0 %}
+            별점이 있습니다<br>
+        {% endif %}
 ```
 
----
+출처: `teacher/workspace_python/todos/02_jinja/templates/youtube.html` 75–82행 · **원본 발췌**
 
-<a id="section-19"></a>
-
-## 16. 종합실습
-
-1. 공통 `layout.html`을 만든다.
-2. `header.html`을 Include한다.
-3. 자식 Page에서 Title, CSS, Content Block을 재정의한다.
-4. FastAPI에서 이름, 별점, 목록을 Context로 전달한다.
-5. 조건문으로 별점 등급을 출력한다.
-6. 반복문과 `loop.index`로 목록 번호를 출력한다.
-7. 금액 Filter와 안전한 줄바꿈 Filter를 등록한다.
-8. Card Macro를 별도 파일에서 Import한다.
-
----
-
-<a id="section-20"></a>
-
-## 17. 정답 핵심
-
-```jinja2
-{% extends 'layout.html' %}
-{% import 'macros.html' as macros %}
-
-{% block title %}동영상 목록{% endblock %}
-
-{% block content %}
-    {% if star >= 4 %}<strong>추천</strong>{% endif %}
-
-    {% for video in bookmark %}
-        {{ macros.render_card(loop.index, video) }}
-    {% else %}
-        <p>목록이 없습니다.</p>
+```html
+{% block bookmark %}
+    bookmark 블럭 <br>
+    {% for bm in bookmark %}
+        <div>
+            {{loop.index}}. {{bm}} {{loop.first}} {{loop.last}}
+        </div>
     {% endfor %}
 {% endblock %}
 ```
 
-부모 Layout은 전체 구조를, 자식은 Page별 내용만 담당한다. 반복 구조는 Macro로 옮기고 Python에서 전달하는 Context Key를 명확하게 유지한다.
+### 내 코드
 
----
+출처: `me/workspace_python/02_todos/02_jinja/templates/youtube.html` 36–43행 · **원본 발췌**
 
-<a id="section-21"></a>
+```html
+    {% if star %}
+        star를 전달 받았다<br>
 
-## 최종 체크리스트
-
-- [ ] `TemplateResponse`의 Request, Template, Context를 설명할 수 있다.
-- [ ] `{{ }}`, `{% %}`, `{# #}`를 구분할 수 있다.
-- [ ] 조건문과 반복문을 작성할 수 있다.
-- [ ] `extends`, `block`, `super`, `include`를 구분할 수 있다.
-- [ ] Macro와 Filter를 구분할 수 있다.
-- [ ] 없는 변수와 기본값을 안전하게 처리할 수 있다.
-- [ ] Autoescape와 `Markup`의 XSS 위험을 설명할 수 있다.
-- [ ] Template 경로 오류를 Debugging할 수 있다.
-
----
-
-<a id="section-22"></a>
-
-## 핵심 요약
-
-```text
-Jinja2 = Python Data + HTML Template
-Context Key = Template 변수명
-extends/block = Layout 상속
-include = HTML 조각 삽입
-macro = HTML 구조 재사용
-filter = 값 가공
-Markup = 신뢰할 수 있는 HTML에만 제한적으로 사용
+        {% if star >= 0 %}
+            별점이 있습니다.<br>
+        {% endif %}
+        {#
+            만약 {% if star2 >= 0 %} 처럼 받지 않은 변수를
 ```
+
+출처: `me/workspace_python/02_todos/02_jinja/templates/youtube.html` 77–84행 · **원본 발췌**
+
+```html
+{% block bookmark %}
+    bookmark 블럭<br>
+    {% for bm in bookmark %}
+        <div>
+            {{ loop.index }}. {{ bm }} {{ loop.first }} {{ loop.last }}
+        </div>
+    {% endfor %}
+{% endblock %}
+```
+
+`{{ 값 }}`은 값을 출력하고, `{% for ... %}`와 `{% if ... %}`는 반복·조건을 처리한다. Python에서 보낸 `bookmark`의 5개 문자열을 화면에 차례로 보여 준다. 템플릿의 HTML은 브라우저가 해석할 최종 문서의 재료이며, `/html`에서 단순 문자열을 반환한 예제와 다르다.
+
+## 3. 상속·포함·매크로로 화면 재사용
+
+### 강사님 코드
+
+출처: `teacher/workspace_python/todos/02_jinja/templates/youtube.html` 1–1행 · **원본 발췌**
+
+```html
+{% extends 'layout.html' %}
+```
+
+출처: `teacher/workspace_python/todos/02_jinja/templates/layout.html` 37–45행 · **원본 발췌**
+
+```html
+<body>
+    <div class="container">
+        <!-- <header>
+            <div>logo, menu</div>
+        </header> -->
+        {# 다른 html 가져오기 #}
+        {% include 'header.html' %}
+    
+        <div class="wrap">
+```
+
+출처: `teacher/workspace_python/todos/02_jinja/templates/youtube.html` 110–138행 · **원본 발췌**
+
+```html
+{# 외부에 매크로 모아두고 사용하기 #}
+{% import 'macros.html' as macros %}
+
+{% block macro %}
+<!-- 
+    <div class="card">
+        <h2>제목</h2>
+        <div>
+            내용
+        </div>
+    </div>
+ -->
+    {{ render_card('제목1', '내용1') }}
+    {{ render_card('제목2', '내용2') }}
+    {{ macros.render_card2('제목3', '내용3') }}
+{% endblock %}
+
+{# macro 매크로명(전달인자 들) #}
+{% macro render_card(title, text) %}
+    <div class="card">
+        <h2>{{title}}</h2>
+        <div>
+            {{text}}
+        </div>
+        <div>
+            {{like}}
+        </div>
+    </div>
+{% endmacro %}
+```
+
+### 내 코드
+
+출처: `me/workspace_python/02_todos/02_jinja/templates/youtube.html` 1–1행 · **원본 발췌**
+
+```html
+{% extends 'layout.html' %}
+```
+
+출처: `me/workspace_python/02_todos/02_jinja/templates/layout.html` 41–49행 · **원본 발췌**
+
+```html
+    <body>
+        <div class="container">
+            <!-- <header>
+                <div>logo, menu</div>
+            </header> -->
+            {# include로 쓰거나, block으로 써도 됨 #}
+            {% include 'header.html' %}
+    
+            <div class="wrap">
+```
+
+출처: `me/workspace_python/02_todos/02_jinja/templates/youtube.html` 113–140행 · **원본 발췌**
+
+```html
+{# 외부 파일 한 곳에 macro를 모아두고 import하여 사용하는 방법 #}
+{% import 'macros.html' as macros %}
+
+{% block macro %}
+    <!-- <div class="card">
+        <h2>제목</h2>
+        <div>
+            내용
+        </div>
+    </div> -->
+
+    {{ render_card('제목1', '내용1') }}
+    {{ render_card('제목2', '내용2') }}
+    {{ macros.render_card2('제목3', '내용3') }}
+{% endblock %}
+
+{# 아래처럼 macro의 형식을 만들어놓고 인자값만 준다면 위처럼 편하게 사용 가능 #}
+{% macro render_card(title, text) %}
+    <div class="card">
+        <h2>{{ title }}</h2>
+        <div>
+            {{ text }}
+        </div>
+        <div>
+            {{ like }}
+        </div>
+    </div>
+{% endmacro %}
+```
+
+`extends`는 공통 `layout.html`을 부모로 삼는다. 그 안의 `include 'header.html'`은 별도 헤더를 넣는다. `import 'macros.html' as macros` 뒤의 `macros.render_card2(...)`는 외부 파일의 매크로를 호출한다. 두 코드에 모두 있는 실제 템플릿 재사용 실습이므로 본문에 둔다. 내 `macros.html`은 카드 번호 `[3]`까지 표시하지만 강사님 `render_card3`에는 그 접두 표시가 없다. 복습할 때는 **부모 레이아웃 → 자식 블록 → 포함 파일과 매크로** 순서로 화면 조합을 따라가면 된다.
+
+## 4. 사용자 필터의 이름도 비교하기
+
+### 강사님 코드
+
+출처: `teacher/workspace_python/todos/02_jinja/api.py` 27–45행 · **원본 발췌**
+
+```python
+def price(value) :
+    return f'{ int(value) :,}'
+# 사용자 필터 만들고 적용하기
+# ['price'] : Jinja에서 사용할 필터 이름
+templates.env.filters['price'] = price
+
+# 날짜 포멧
+from datetime import datetime
+def format_data(value, format="%Y-%m-%d %H:%M:%S"):
+    v = datetime.fromisoformat(value)
+    return v.strftime(format)
+templates.env.filters['format_data'] = format_data
+
+# textarea의 엔터 문자인 \n을 <br>로 바꾸고 HTML로 인식 시키는 필터
+
+def n2br(value):
+    from markupsafe import Markup # innerHTML로 만들어 주는 모듈
+    return Markup(value.replace('\n', '<br>'))
+templates.env.filters['n2br'] = n2br
+```
+
+### 내 코드
+
+출처: `me/workspace_python/02_todos/02_jinja/api.py` 28–48행 · **원본 발췌**
+
+```python
+# 아래처럼 Jinja에 별도로 만든 함수를 환경변수에 넣어 사용할 수 있음
+def price(value) :
+    # print(f'{value:,}')
+    return f'{ int(value) :,}'
+# 사용자 Filter만들고 적용하기
+# ['price] 는 Jinja에서 사용 할 필터 명
+templates.env.filters['price'] = price
+
+# 날짜 포매팅 필터
+from datetime import datetime
+def format_date(value, format='%Y-%m-%d %H:%M:%S') :
+    v = datetime.fromisoformat(value)
+    return v.strftime(format)
+templates.env.filters['format_date'] = format_date
+
+# Textarea의 \n을 <br>로 변환하고 HTML로 인식시키는 필터
+# Markup 모듈로 innerHTML로 만들어 줄 수 있음 
+def n2br(value) :
+    from markupsafe import Markup
+    return Markup(value.replace('\n', '<br>'))
+templates.env.filters['n2br'] = n2br
+```
+
+`price`는 숫자에 쉼표를 넣고, 날짜 필터는 ISO 형식 문자열을 날짜로 바꿔 출력 형식을 만든다. 강사님 필터 이름은 `format_data`, 내 것은 `format_date`다. 템플릿에서 호출할 이름과 등록 이름이 같아야 한다. `n2br`는 줄바꿈을 `<br>`로 바꾼 뒤 `Markup`으로 HTML로 취급하게 한다. **사용자 입력을 무조건 신뢰해 HTML로 바꾸는 일반 규칙으로 확대하지 않는다.** 여기서는 수업 코드의 동작을 읽는다.
+
+## 직접 확인할 질문
+
+1. `/hello`의 `ip`, `msg`는 템플릿 파일에서 만들어지는가, Python 함수에서 전달되는가?
+2. 강사님과 내 `star` 값은 각각 무엇인가?
+3. `extends`, `include`, `import`는 각각 어느 파일을 재사용하는가?
+4. 내 템플릿이 `format_data`를 호출하면 등록한 필터 이름과 맞는가?
+
+## 추가로 알면 좋은 것
+
+Jinja의 자동 이스케이프와 HTML 신뢰 경계는 실제 서비스를 만들 때 중요하지만, 이 장에서는 원본에 있는 **값 전달·반복·조건·템플릿 재사용·필터 등록**을 먼저 다룬다.

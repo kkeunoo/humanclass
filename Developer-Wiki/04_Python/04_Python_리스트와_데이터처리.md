@@ -1,2736 +1,309 @@
----
-title: Python 리스트와 데이터 처리
-version: v4.0-detailed-encyclopedia
-last_updated: 2026-09-17
-status: Completed
----
+# 04. 리스트 — 여러 값을 순서대로 다루기
 
-# Python 리스트와 데이터 처리
+[Python 목차](README.md) · [이전: 문자열](03_Python_문자열과_포매팅.md) · [다음: 참조·순회·컴프리헨션](04-02_Python_리스트참조와_컴프리헨션.md)
 
-## 이 문서에서 바로 찾기
+양쪽 `04_list.py`는 리스트 만들기, 값 추가·삭제, 정렬, 복사, 순회까지 긴 실습이다. 이 장은 **리스트 값을 직접 바꾸는 동작**을 먼저 다루고, 참조와 반복은 다음 문서로 분리한다.
 
-- [학습 목표](#py-04-section-4)
-- [개념에서 실제 실행까지 — 리스트란? — 변경, 반환값, 별칭과 얕은 복사](#py-04-section-5)
-- [16. 추가 메서드 비교](#py-04-section-21)
-- [47. 내 코드와 강사님 코드 비교](#py-04-section-52)
-- [52. 핵심 요약](#py-04-section-57)
-- [53. 최종 체크리스트](#py-04-section-58)
+<!-- chapter-toc -->
 
-<details>
-<summary>상세 목차 전체 펼치기</summary>
+- [1. 리스트 만들고 값 붙이기](#section-1)
+- [2. 정렬·뒤집기·삭제](#section-2)
+- [3. 길이 끝 위치와 슬라이스 추가](#section-3)
+- [직접 확인할 질문](#section-4)
+- [추가로 알면 좋은 것](#section-5)
 
-- [문서 정보](#py-04-section-1)
-- [개요](#py-04-section-2)
-- [핵심 개념](#py-04-section-3)
-- [학습 목표](#py-04-section-4)
-- [개념에서 실제 실행까지 — 리스트란? — 변경, 반환값, 별칭과 얕은 복사](#py-04-section-5)
-- [1. 리스트 생성](#py-04-section-6)
-- [2. 리스트의 특징](#py-04-section-7)
-- [3. `range()` 기본 구조](#py-04-section-8)
-- [4. 전달인자 하나인 `range()`](#py-04-section-9)
-- [5. 전달인자 두 개인 `range()`](#py-04-section-10)
-- [6. 시작값이 종료값보다 큰 경우](#py-04-section-11)
-- [7. 전달인자 세 개인 `range()`](#py-04-section-12)
-- [8. 리스트와 `range()` 연결](#py-04-section-13)
-- [9. 인덱스](#py-04-section-14)
-- [10. `del`로 인덱스 삭제](#py-04-section-15)
-- [11. `+`로 새 리스트 만들기](#py-04-section-16)
-- [12. `+=`로 리스트 확장](#py-04-section-17)
-- [13. `append()`](#py-04-section-18)
-- [14. `extend()`](#py-04-section-19)
-- [15. `insert()`](#py-04-section-20)
-- [16. 추가 메서드 비교](#py-04-section-21)
-- [17. `remove()`](#py-04-section-22)
-- [18. `pop()`](#py-04-section-23)
-- [19. 스택과 큐](#py-04-section-24)
-- [20. `sort()`](#py-04-section-25)
-- [21. `sorted()`](#py-04-section-26)
-- [22. 슬라이싱으로 역순 만들기](#py-04-section-27)
-- [23. `reverse()`](#py-04-section-28)
-- [24. `reversed()`](#py-04-section-29)
-- [25. `index()`](#py-04-section-30)
-- [26. `count()`](#py-04-section-31)
-- [27. `clear()`](#py-04-section-32)
-- [28. 범위를 벗어난 인덱스와 슬라이싱](#py-04-section-33)
-- [29. 슬라이스 대입](#py-04-section-34)
-- [30. 빈 리스트와 Truthy/Falsy](#py-04-section-35)
-- [31. 리스트 단순 대입](#py-04-section-36)
-- [32. `copy()`](#py-04-section-37)
-- [33. 얕은 복사 주의](#py-04-section-38)
-- [34. 튜플 언패킹](#py-04-section-39)
-- [35. 리스트 직접 순회](#py-04-section-40)
-- [36. `enumerate()`](#py-04-section-41)
-- [37. 가장 큰 값 찾기](#py-04-section-42)
-- [38. `range(len())` 사용 기준](#py-04-section-43)
-- [39. 반복문으로 리스트 만들기](#py-04-section-44)
-- [40. 리스트 컴프리헨션](#py-04-section-45)
-- [41. 조건이 있는 리스트 컴프리헨션](#py-04-section-46)
-- [42. 문자열을 만드는 컴프리헨션](#py-04-section-47)
-- [43. 반복문으로 형 변환](#py-04-section-48)
-- [44. `map()`](#py-04-section-49)
-- [45. 2차원 리스트](#py-04-section-50)
-- [46. 리스트 반복](#py-04-section-51)
-- [47. 내 코드와 강사님 코드 비교](#py-04-section-52)
-- [48. 기존 코드에서 개선 코드로 바꾼 이유](#py-04-section-53)
-- [49. 실무형 예제: 상품 재고 목록](#py-04-section-54)
-- [50. 대표 오류로 이해하기](#py-04-section-55)
-- [51. 자주 하는 실수](#py-04-section-56)
-- [52. 핵심 요약](#py-04-section-57)
-- [53. 최종 체크리스트](#py-04-section-58)
-- [마무리](#py-04-section-59)
-- [V3 동작 백과 보강 — 리스트의 참조와 변경](#py-04-section-60)
+<a id="section-1"></a>
 
-</details>
+## 1. 리스트 만들고 값 붙이기
 
----
+### 강사님 코드
 
-<a id="py-04-section-1"></a>
-
-## 문서 정보
-
-| 항목 | 내용 |
-| --- | --- |
-| 문서 | `04_Python_리스트와_데이터처리.md` |
-| 분류 | `04_Python` |
-| 원본 기준 | `workspace_python/04_list.py`, `workspace_teacher/workspace_python/_04_list.py` |
-| 핵심 범위 | 리스트 생성, `range()`, 추가·삭제·정렬, 검색, 복사, 순회, `enumerate()`, 리스트 컴프리헨션, `map()`, 2차원 리스트 |
-| 실습 범위 | 숫자 목록 생성, 리스트 변경, 값 검색, 복사 비교, 짝수 목록, 형 변환, 중첩 리스트 조회 |
-| 문서 형식 | 상세 학습 백과 형식 — 기존 학습·실습 본문 유지 |
-
-> 이 문서는 내 코드와 강사님 코드 전체를 한 번에 나열하지 않는다.  
-> 리스트의 생성·변경·검색·순회·변환에 필요한 코드만 발췌하고, 메서드별 원본 변경 여부와 오류 조건을 함께 설명한다.
-
----
-
-<a id="py-04-section-2"></a>
-
-## 개요
-
-리스트는 여러 값을 순서대로 저장하는 자료형이다.
-
-```text
-사용자 목록
-상품 목록
-점수 목록
-게시글 목록
-주문 내역
-    ↓
-여러 값을 하나의 변수로 관리
-```
-
-리스트를 사용하면 다음과 같은 작업을 할 수 있다.
-
-```text
-값 추가
-값 삭제
-값 검색
-값 정렬
-값 반복 처리
-조건에 맞는 새 목록 생성
-```
-
-Python에서 리스트는 가장 자주 사용하는 자료형 중 하나이며, 이후 반복문·함수·클래스·파일 처리에서도 계속 사용된다.
-
----
-
-<a id="py-04-section-3"></a>
-
-## 핵심 개념
-
-| 개념 | 핵심 역할 |
-| --- | --- |
-| 리스트 | 여러 값을 순서대로 저장하는 변경 가능한 자료형 |
-| 인덱스 | 각 값의 위치를 나타내는 번호 |
-| `range()` | 일정한 규칙의 숫자 범위 생성 |
-| `append()` | 값 하나를 리스트 끝에 추가 |
-| `extend()` | 여러 값을 리스트 끝에 추가 |
-| `insert()` | 지정 위치에 값 추가 |
-| `remove()` | 처음 만나는 특정 값 삭제 |
-| `pop()` | 값을 꺼내며 삭제 |
-| `sort()` | 원본 리스트 정렬 |
-| `reverse()` | 원본 순서 뒤집기 |
-| `copy()` | 얕은 복사본 생성 |
-| `enumerate()` | 인덱스와 값을 함께 순회 |
-| 리스트 컴프리헨션 | 반복·조건을 이용해 새 리스트 생성 |
-| `map()` | 모든 값에 같은 함수를 적용 |
-| 2차원 리스트 | 리스트 안에 리스트를 저장한 구조 |
-
----
-
-<a id="py-04-section-4"></a>
-
-## 학습 목표
-
-- 가변 목록의 상태와 참조 공유를 분리해 추적한다.
-- 예제의 입력·처리·출력과 대표 실패 조건을 직접 확인한다.
-
----
-
-<a id="py-04-section-5"></a>
-
-## 개념에서 실제 실행까지 — 리스트란? — 변경, 반환값, 별칭과 얕은 복사
-
-### 무엇이며 왜 배워야 할까?
-
-리스트는 여러 객체의 참조를 순서대로 보관하는 가변 시퀀스다. append(x)는 x 하나를 끝에 넣고 extend(xs)는 xs를 순회하여 각 요소를 넣는다. append([3,4])는 중첩 리스트를 만들지만 extend([3,4])는 숫자 두 개를 추가한다. sort와 reverse는 원본을 변경하고 None을 반환하므로 a = a.sort()처럼 대입하면 목록 이름이 None에 연결된다.
-
-alias = a는 새 목록을 만들지 않는다. a.clear()는 공유한 목록을 비우므로 alias도 빈 목록을 본다. a=[]는 새 목록으로 a의 연결만 바꾸므로 이전 목록을 가리킨 alias에는 원래 내용이 남는다. 따라서 수업 메모의 clear와 []를 ‘같다’라고 읽으면 별칭이 있는 코드에서 틀린 결과를 예상한다.
-
-copy는 바깥 목록만 복사한다. 안에 든 목록은 여전히 공유할 수 있으므로 nested[0].append(...)와 copied.append(...)의 영향 범위가 다르다. 다음 코드에서는 중첩 요소를 바꾼 뒤 바깥 요소를 별도로 추가해 두 차이를 함께 관찰한다.
-
-강사님 04번에서 컴프리헨션으로 만든 a에 이어 for 문으로 같은 값을 append한다. 이 두 방식을 각각 독립적인 대안으로 설명할 때는 길이 10이지만 실제 원본의 연속 실행에서는 길이 20이다.
-
-### 독립 실행 예제: 입력에서 결과까지
-
-다음 코드는 앞 문서의 변수 없이 새 .py 파일에서 실행할 수 있는 보충 예제다. 직접 적은 입력값을 사용하므로 같은 조건에서 아래 출력과 비교할 수 있다.
+출처: `teacher/workspace_python/_04_list.py` 1–46행 · **원본 발췌**
 
 ```python
-original = [[1], [2]]
-alias = original
-copied = original.copy()
-original[0].append(9)
-copied.append([3])
-print(original)
-print(copied)
-print(original is alias, original is copied)
-print(original[0] is copied[0])
-items = [3, 1, 2]
-result = items.sort()
-print(items, result)
-```
 
-예상 출력:
-
-```text
-[[1, 9], [2]]
-[[1, 9], [2], [3]]
-True False
-True
-[1, 2, 3] None
-```
-
-### 실행 순서를 한 단계씩 따라가기
-
-1. original의 바깥 목록과 두 내부 목록을 생성한다. alias는 새 목록이 아니라 같은 original에 연결된다.
-2. copy가 새로운 바깥 목록을 만들되 내부 목록 참조는 공유한다.
-3. original[0]을 변경하면 copied[0]에서도 보이고, copied에 새 행을 추가하면 original 바깥 목록은 늘어나지 않는다.
-4. items.sort()는 items를 정렬한 뒤 None을 반환한다. print의 두 관찰 결과를 분리한다.
-
-### 원본에서 어디에 사용했을까?
-
-
-#### 내 코드: `04_list.py` 127~133행
-
-문맥 확인용 원본 발췌다. 이 조각만 독립 실행할 수 있다는 뜻은 아니다. 주석의 설명은 아래 실제 동작 해설과 대조한다.
-
-```python
-b = a.copy() # copy를 이용하면 모든 요소를 아예 복사해오기 때문에, 이럴 땐 주소값이 달라져 개별 값만 바꿔짐
-b[2] = 30
-print(b)
-print(a)
-
-a = [1,2,3,4,5]
-b = a.copy()
-```
-
-<a id="index-section-12"></a>
-
-#### 강사님 코드: `_04_list.py` 109~115행
-
-문맥 확인용 원본 발췌다. 이 조각만 독립 실행할 수 있다는 뜻은 아니다. 주석의 설명은 아래 실제 동작 해설과 대조한다.
-
-```python
-b = a.copy()
-b[2] = 30
-print(b)
-print(a)
-```
-
-새 결과가 필요하면 sorted, 원본 정렬이 의도면 sort를 선택한다. [[0]*2]*3은 같은 내부 목록을 반복하므로 독립 행이 필요하면 [[0]*2 for _ in range(3)]을 사용한다.
-
-### 실무에서 판단할 기준과 디버깅
-
-정상 입력에서 결과가 나오는 것뿐 아니라 아래 본문의 오류·경계 입력도 확인한다. 화면 출력, 반환값, 원본 객체의 변경은 서로 다른 관찰 대상이다. 문제가 생기면 실패 문장에 쓰인 값의 출처와 자료형을 먼저 확인한 뒤 같은 입력으로 다시 실행한다.
-
-<a id="index-section-14"></a>
-
-### clear와 재대입 — 별칭이 보는 결과
-
-첫 목록의 두 이름은 같은 객체를 가리킨다. clear는 그 객체를 비우고, 새 목록 대입은 한 이름만 새 객체에 연결한다. 그 때문에 메모의 두 방식을 무조건 같다고 설명할 수 없다.
-
-```python
-a = [1, 2]
-b = a
-a.clear()
-print(a, b)
-a = [1, 2]
-b = a
-a = []
-print(a, b)
-```
-
-출력:
-
-```text
-[] []
-[] [1, 2]
-```
-
-### 이해 확인 실습과 해설
-
-1. original.clear() 후 alias와 copied는 각각 무엇일까? copied[0]도 사라질까?
-2. matrix=[[0]*2]*3에서 matrix[0][0]=1 뒤 세 행은?
-
-<details>
-<summary>정답과 이유 보기 — 먼저 출력·상태를 예측한 뒤 펼치기</summary>
-
-1. alias는 []다. copied는 [[1,9],[2],[3]]로 남으며 내부 객체를 여전히 가리킨다. 바깥 목록을 비운다고 다른 목록의 요소까지 삭제되지 않는다.
-2. 세 행 모두 [1,0]이다. 같은 내부 행 객체를 반복해 참조했기 때문이다. 컴프리헨션으로 행을 각각 생성한다.
-
-</details>
-
-### 이 주제를 다시 사용할 수 있는지 확인
-
-- [ ] 이 개념이 무엇이며 언제 필요한지 내 말로 설명한다.
-- [ ] 예제의 입력 출처, 자료형, 처리 순서, 결과를 설명한다.
-- [ ] 원본과 보충 예제의 조건이 같은지 구분한다.
-- [ ] 오류 사례와 경계 입력을 바꾸어 직접 확인한다.
-
----
-
-<a id="py-04-section-6"></a>
-
-## 1. 리스트 생성
-
-### 1-1. 내 코드와 강사님 코드
-
-```python
 a = []
 b = list()
+print( type(a) )
+print( type(b) )
 
+a = [1,2,3]
+print(a)
+
+# range
+# 전달인자 1개 : 0부터 숫자 바로 앞 까지
+c = range(10)
+print(c)
+print( list(c) )
+
+# 전달인자 2개 : 첫 번째 부터 두 번째 바로 앞
+d = range(5, 12)
+print(list(d))
+
+e = range(12, 5) # []
+print(list(e))
+
+# 전달인자 3개 : 첫 번째 부터, 두 번째 바로 앞까지, 세 번째씩 건너 뛰기
+f = range(-4, 10, 2)
+print(list(f))
+
+a = [0,1,2,3,4,5]
+a = list(range(6))
+
+del a[3]
+print(a)
+
+a = a + [6]
+print(a)
+
+a += [7]
+print(a)
+
+a.append(8)
+print(a)
+
+b = [9,10]
+a.append(b)
+print(a) # [0, 1, 2, 4, 5, 6, 7, 8, [9, 10]]
+
+print('-='*30)
+```
+
+### 내 코드
+
+출처: `me/workspace_python/04_list.py` 1–48행 · **원본 발췌**
+
+```python
+
+a = []
+b = list()
 print(type(a))
 print(type(b))
-```
 
-### 1-2. 출력 결과
-
-```text
-<class 'list'>
-<class 'list'>
-```
-
-`[]`와 `list()`는 모두 빈 리스트를 만든다.
-
-### 1-3. 값이 있는 리스트
-
-```python
-numbers = [1, 2, 3]
-
-print(numbers)
-```
-
-출력:
-
-```text
-[1, 2, 3]
-```
-
-### 1-4. 구성
-
-| 요소 | 의미 |
-| --- | --- |
-| `[]` | 리스트 생성 기호 |
-| `1, 2, 3` | 리스트에 저장된 값 |
-| `numbers` | 리스트를 가리키는 변수 |
-
-> [!TIP]
-> 빈 리스트는 일반적으로 `[]`로 작성하는 경우가 많다.
->
-> 다른 반복 가능한 객체를 리스트로 변환할 때는 `list()`를 사용한다.
-
----
-
-<a id="py-04-section-7"></a>
-
-## 2. 리스트의 특징
-
-리스트는 다음 특징을 가진다.
-
-- 값의 순서를 유지한다.
-- 같은 값을 여러 번 저장할 수 있다.
-- 서로 다른 자료형을 함께 저장할 수 있다.
-- 인덱스로 값을 조회할 수 있다.
-- 생성 후 값을 추가·삭제·변경할 수 있다.
-
-```python
-data = [
-    1,
-    "Python",
-    True,
-    3.14,
-]
-
-print(data)
-```
-
-출력:
-
-```text
-[1, 'Python', True, 3.14]
-```
-
-> [!IMPORTANT]
-> 서로 다른 자료형을 저장할 수는 있지만, 실제 데이터 목록은 같은 의미의 값으로 통일하는 편이 관리하기 쉽다.
-
----
-
-<a id="py-04-section-8"></a>
-
-## 3. `range()` 기본 구조
-
-`range()`는 일정한 규칙의 정수 범위를 표현한다.
-
-```python
-numbers = range(10)
-
-print(numbers)
-print(list(numbers))
-```
-
-### 3-1. 출력 결과
-
-```text
-range(0, 10)
-[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-```
-
-`range(10)`은 0부터 10 바로 앞까지의 숫자를 표현한다.
-
-```text
-시작
-→ 0
-
-종료
-→ 10 미포함
-```
-
-> [!TIP]
-> `range()` 자체는 리스트가 아니다.
->
-> 실제 목록 형태로 확인하려면 `list()`로 변환한다.
-
----
-
-<a id="py-04-section-9"></a>
-
-## 4. 전달인자 하나인 `range()`
-
-```python
-numbers = range(5)
-
-print(list(numbers))
-```
-
-출력:
-
-```text
-[0, 1, 2, 3, 4]
-```
-
-구조:
-
-```python
-range(stop)
-```
-
-```text
-0부터 stop 바로 앞까지
-```
-
----
-
-<a id="py-04-section-10"></a>
-
-## 5. 전달인자 두 개인 `range()`
-
-### 5-1. 원본 코드
-
-```python
-numbers = range(5, 12)
-
-print(list(numbers))
-```
-
-### 5-2. 출력 결과
-
-```text
-[5, 6, 7, 8, 9, 10, 11]
-```
-
-구조:
-
-```python
-range(start, stop)
-```
-
-`start`부터 `stop` 바로 앞까지 생성한다.
-
----
-
-<a id="py-04-section-11"></a>
-
-## 6. 시작값이 종료값보다 큰 경우
-
-### 6-1. 원본 코드
-
-```python
-numbers = range(12, 5)
-
-print(list(numbers))
-```
-
-### 6-2. 출력 결과
-
-```text
-[]
-```
-
-기본 증가값은 `1`이다.
-
-```text
-12에서 시작
-    ↓
-계속 증가해야 함
-    ↓
-5보다 작은 방향으로 갈 수 없음
-    ↓
-빈 범위
-```
-
-감소하는 범위가 필요하면 음수 증가값을 사용한다.
-
----
-
-<a id="py-04-section-12"></a>
-
-## 7. 전달인자 세 개인 `range()`
-
-구조:
-
-```python
-range(start, stop, step)
-```
-
-### 7-1. 증가 범위
-
-```python
-numbers = range(
-    -4,
-    10,
-    2,
-)
-
-print(list(numbers))
-```
-
-출력:
-
-```text
-[-4, -2, 0, 2, 4, 6, 8]
-```
-
-### 7-2. 감소 범위
-
-내 코드에는 감소 범위 예제가 추가되어 있다.
-
-```python
-numbers = range(
-    10,
-    0,
-    -1,
-)
-
-print(list(numbers))
-```
-
-출력:
-
-```text
-[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-```
-
-> [!IMPORTANT]
-> `step`이 양수면 증가하고, 음수면 감소한다.
->
-> 진행 방향과 시작·종료값이 맞지 않으면 빈 범위가 된다.
-
----
-
-<a id="py-04-section-13"></a>
-
-## 8. 리스트와 `range()` 연결
-
-다음 두 코드는 같은 리스트를 만든다.
-
-```python
-numbers = [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-]
-```
-
-```python
-numbers = list(
-    range(6)
-)
-```
-
-출력:
-
-```text
-[0, 1, 2, 3, 4, 5]
-```
-
-연속된 숫자 목록은 `range()`를 사용하면 더 간결하다.
-
----
-
-<a id="py-04-section-14"></a>
-
-## 9. 인덱스
-
-리스트의 각 값은 0부터 시작하는 인덱스를 가진다.
-
-```python
-numbers = [
-    10,
-    20,
-    30,
-]
-```
-
-```text
-값      10  20  30
-인덱스   0   1   2
-음수    -3  -2  -1
-```
-
-조회:
-
-```python
-print(numbers[0])
-print(numbers[-1])
-```
-
-출력:
-
-```text
-10
-30
-```
-
----
-
-<a id="py-04-section-15"></a>
-
-## 10. `del`로 인덱스 삭제
-
-### 10-1. 원본 코드
-
-```python
-numbers = list(
-    range(6)
-)
-
-del numbers[3]
-
-print(numbers)
-```
-
-### 10-2. 출력 결과
-
-```text
-[0, 1, 2, 4, 5]
-```
-
-`del numbers[3]`은 인덱스 3의 값 `3`을 삭제한다.
-
-> [!TIP]
-> `del`은 위치를 기준으로 삭제한다.
->
-> 특정 값을 기준으로 삭제하려면 `remove()`를 사용한다.
-
----
-
-<a id="py-04-section-16"></a>
-
-## 11. `+`로 새 리스트 만들기
-
-```python
-numbers = [
-    0,
-    1,
-    2,
-]
-
-new_numbers = (
-    numbers
-    + [3]
-)
-
-print(numbers)
-print(new_numbers)
-```
-
-출력:
-
-```text
-[0, 1, 2]
-[0, 1, 2, 3]
-```
-
-`+`는 두 리스트를 합친 새 리스트를 만든다.
-
-원본 `numbers`는 변경되지 않는다.
-
----
-
-<a id="py-04-section-17"></a>
-
-## 12. `+=`로 리스트 확장
-
-```python
-numbers = [
-    0,
-    1,
-    2,
-]
-
-numbers += [3]
-
-print(numbers)
-```
-
-출력:
-
-```text
-[0, 1, 2, 3]
-```
-
-리스트의 `+=`는 기존 리스트에 값을 확장하는 방식으로 동작한다.
-
----
-
-<a id="py-04-section-18"></a>
-
-## 13. `append()`
-
-`append()`는 값 하나를 리스트 끝에 추가한다.
-
-### 13-1. 원본 코드
-
-```python
-numbers = [
-    0,
-    1,
-    2,
-]
-
-numbers.append(3)
-
-print(numbers)
-```
-
-### 13-2. 출력 결과
-
-```text
-[0, 1, 2, 3]
-```
-
-### 13-3. 리스트를 추가하면
-
-```python
-numbers = [1, 2]
-extra_numbers = [3, 4]
-
-numbers.append(
-    extra_numbers
-)
-
-print(numbers)
-```
-
-출력:
-
-```text
-[1, 2, [3, 4]]
-```
-
-리스트 전체가 값 하나로 추가된다.
-
-> [!IMPORTANT]
-> `append()`는 전달받은 객체 하나를 추가한다.
->
-> 리스트 안의 여러 값을 각각 추가하는 기능은 `extend()`다.
-
----
-
-<a id="py-04-section-19"></a>
-
-## 14. `extend()`
-
-`extend()`는 반복 가능한 객체의 각 값을 리스트 끝에 추가한다.
-
-```python
-numbers = [1, 2]
-
-numbers.extend(
-    [3, 4]
-)
-
-print(numbers)
-```
-
-출력:
-
-```text
-[1, 2, 3, 4]
-```
-
-### 14-1. `append()`와 비교
-
-```python
-a = [1, 2]
-a.append([3, 4])
-
-b = [1, 2]
-b.extend([3, 4])
-
+a = [1,2,3]
 print(a)
-print(b)
-```
 
-출력:
-
-```text
-[1, 2, [3, 4]]
-[1, 2, 3, 4]
-```
-
----
-
-<a id="py-04-section-20"></a>
-
-## 15. `insert()`
-
-`insert()`는 지정한 인덱스에 값을 추가한다.
-
-### 15-1. 원본 코드
-
-```python
-numbers = [
-    10,
-    20,
-    30,
-]
-
-numbers.insert(
-    0,
-    100,
-)
-
-print(numbers)
-```
-
-### 15-2. 출력 결과
-
-```text
-[100, 10, 20, 30]
-```
-
-### 15-3. 범위를 넘는 인덱스
-
-```python
-numbers.insert(
-    100,
-    200,
-)
-
-print(numbers)
-```
-
-출력:
-
-```text
-[100, 10, 20, 30, 200]
-```
-
-인덱스가 리스트 길이보다 크면 끝에 추가된다.
-
----
-
-<a id="py-04-section-21"></a>
-
-## 16. 추가 메서드 비교
-
-| 방식 | 동작 |
-| --- | --- |
-| `append(value)` | 값 하나를 끝에 추가 |
-| `extend(values)` | 여러 값을 끝에 추가 |
-| `insert(index, value)` | 지정 위치에 값 하나 추가 |
-| `+` | 합쳐진 새 리스트 반환 |
-| `+=` | 기존 리스트 확장 |
-
-> [!TIP]
-> 어떤 값이 추가되는지 먼저 생각한다.
->
-> 값 하나면 `append()`, 여러 값이면 `extend()`를 우선 고려한다.
-
----
-
-<a id="py-04-section-22"></a>
-
-## 17. `remove()`
-
-`remove()`는 처음 만나는 특정 값을 삭제한다.
-
-### 17-1. 원본 코드
-
-```python
-numbers = [
-    1,
-    2,
-    3,
-    4,
-    2,
-]
-
-numbers.remove(2)
-
-print(numbers)
-```
-
-### 17-2. 출력 결과
-
-```text
-[1, 3, 4, 2]
-```
-
-첫 번째 `2`만 삭제된다.
-
-### 17-3. 없는 값 삭제
-
-```python
-numbers.remove(5)
-```
-
-발생 결과:
-
-```text
-ValueError
-```
-
-안전하게 삭제:
-
-```python
-if 5 in numbers:
-    numbers.remove(5)
-```
-
----
-
-<a id="py-04-section-23"></a>
-
-## 18. `pop()`
-
-`pop()`은 값을 삭제하면서 반환한다.
-
-### 18-1. 마지막 값 꺼내기
-
-```python
-numbers = [
-    10,
-    20,
-    30,
-]
-
-removed_value = (
-    numbers.pop()
-)
-
-print(numbers)
-print(removed_value)
-```
-
-출력:
-
-```text
-[10, 20]
-30
-```
-
-### 18-2. 특정 인덱스
-
-```python
-numbers = [
-    10,
-    20,
-    30,
-]
-
-removed_value = (
-    numbers.pop(0)
-)
-
-print(numbers)
-print(removed_value)
-```
-
-출력:
-
-```text
-[20, 30]
-10
-```
-
-### 18-3. `remove()`와 비교
-
-| 메서드 | 기준 | 반환값 |
-| --- | --- | --- |
-| `remove(value)` | 특정 값 | 없음 |
-| `pop(index)` | 특정 위치 | 삭제한 값 |
-
----
-
-<a id="py-04-section-24"></a>
-
-## 19. 스택과 큐
-
-내 코드에는 스택과 큐를 설명한 메모가 있다.
-
-```text
-스택
-→ 뒤에서 넣고 뒤에서 꺼냄
-
-큐
-→ 뒤에서 넣고 앞에서 꺼냄
-```
-
-### 19-1. 리스트로 스택 구현
-
-```python
-stack = []
-
-stack.append("A")
-stack.append("B")
-
-print(stack.pop())
-print(stack.pop())
-```
-
-출력:
-
-```text
-B
-A
-```
-
-### 19-2. 큐 주의점
-
-리스트에서 `pop(0)`을 반복하면 앞쪽 값을 이동시키는 비용이 발생한다.
-
-실무에서 큐가 필요하면 `collections.deque`를 우선 고려한다.
-
----
-
-<a id="py-04-section-25"></a>
-
-## 20. `sort()`
-
-`sort()`는 원본 리스트를 정렬한다.
-
-### 20-1. 오름차순
-
-```python
-numbers = [
-    654,
-    156,
-    964,
-    15,
-    35,
-]
-
-numbers.sort()
-
-print(numbers)
-```
-
-출력:
-
-```text
-[15, 35, 156, 654, 964]
-```
-
-### 20-2. 내림차순
-
-```python
-numbers.sort(
-    reverse=True
-)
-
-print(numbers)
-```
-
-출력:
-
-```text
-[964, 654, 156, 35, 15]
-```
-
-### 20-3. 반환값 주의
-
-```python
-numbers = [3, 1, 2]
-
-result = numbers.sort()
-
-print(result)
-```
-
-출력:
-
-```text
-None
-```
-
-> [!IMPORTANT]
-> `sort()`는 원본을 변경하고 `None`을 반환한다.
-
----
-
-<a id="py-04-section-26"></a>
-
-## 21. `sorted()`
-
-원본을 유지하고 정렬된 새 리스트가 필요하면 `sorted()`를 사용할 수 있다.
-
-```python
-numbers = [3, 1, 2]
-
-sorted_numbers = sorted(
-    numbers
-)
-
-print(numbers)
-print(sorted_numbers)
-```
-
-출력:
-
-```text
-[3, 1, 2]
-[1, 2, 3]
-```
-
-### 21-1. 선택 기준
-
-```text
-원본 변경 가능
-→ list.sort()
-
-원본 유지 필요
-→ sorted()
-```
-
----
-
-<a id="py-04-section-27"></a>
-
-## 22. 슬라이싱으로 역순 만들기
-
-### 22-1. 원본 코드
-
-```python
-numbers = [
-    15,
-    35,
-    156,
-    654,
-    964,
-]
-
-reversed_numbers = (
-    numbers[::-1]
-)
-
-print(reversed_numbers)
-```
-
-### 22-2. 출력 결과
-
-```text
-[964, 654, 156, 35, 15]
-```
-
-`[::-1]`은 역순의 새 리스트를 만든다.
-
-원본은 변경되지 않는다.
-
----
-
-<a id="py-04-section-28"></a>
-
-## 23. `reverse()`
-
-`reverse()`는 원본 리스트의 순서를 뒤집는다.
-
-```python
-numbers = [
-    15,
-    35,
-    156,
-]
-
-numbers.reverse()
-
-print(numbers)
-```
-
-출력:
-
-```text
-[156, 35, 15]
-```
-
-### 23-1. 비교
-
-| 방식 | 원본 변경 | 결과 |
-| --- | --- | --- |
-| `numbers[::-1]` | 아니오 | 새 리스트 |
-| `numbers.reverse()` | 예 | `None` |
-| `reversed(numbers)` | 아니오 | 이터레이터 |
-
----
-
-<a id="py-04-section-29"></a>
-
-## 24. `reversed()`
-
-```python
-numbers = [
-    1,
-    2,
-    3,
-]
-
-result = reversed(
-    numbers
-)
-
-print(result)
-print(list(result))
-```
-
-출력 형태:
-
-```text
-<list_reverseiterator object at ...>
-[3, 2, 1]
-```
-
-`reversed()`는 리스트 자체가 아니라 이터레이터를 반환한다.
-
----
-
-<a id="py-04-section-30"></a>
-
-## 25. `index()`
-
-`index()`는 처음 만나는 값의 위치를 반환한다.
-
-### 25-1. 원본 코드
-
-```python
-numbers = [
-    1,
-    2,
-    3,
-    4,
-    2,
-    4,
-]
-
-position = numbers.index(2)
-
-print(position)
-```
-
-### 25-2. 출력 결과
-
-```text
-1
-```
-
-없는 값을 검색하면 오류가 발생한다.
-
-```python
-numbers.index(5)
-```
-
-발생 결과:
-
-```text
-ValueError
-```
-
-> [!IMPORTANT]
-> 문자열에는 `find()`가 있지만 리스트에는 `find()`가 없다.
-
-포함 여부만 필요하면 `in`을 사용한다.
-
-```python
-print(5 in numbers)
-```
-
----
-
-<a id="py-04-section-31"></a>
-
-## 26. `count()`
-
-`count()`는 특정 값이 몇 번 나타나는지 반환한다.
-
-```python
-numbers = [
-    1,
-    2,
-    3,
-    4,
-    2,
-    4,
-]
-
-print(numbers.count(4))
-```
-
-출력:
-
-```text
-2
-```
-
----
-
-<a id="py-04-section-32"></a>
-
-## 27. `clear()`
-
-`clear()`는 리스트의 모든 값을 삭제한다.
-
-```python
-numbers = [
-    1,
-    2,
-    3,
-]
-
-numbers.clear()
-
-print(numbers)
-```
-
-출력:
-
-```text
-[]
-```
-
-다음과 비슷해 보인다.
-
-```python
-numbers = []
-```
-
-하지만 차이가 있다.
-
-```text
-clear()
-→ 기존 리스트 객체를 비움
-
-numbers = []
-→ 변수에 새로운 빈 리스트를 대입
-```
-
-다른 변수가 같은 리스트를 참조하고 있다면 결과가 달라질 수 있다.
-
----
-
-<a id="py-04-section-33"></a>
-
-## 28. 범위를 벗어난 인덱스와 슬라이싱
-
-### 28-1. 인덱스 조회
-
-```python
-numbers = [
-    1,
-    2,
-    3,
-]
-
-print(numbers[3])
-```
-
-발생 결과:
-
-```text
-IndexError
-```
-
-### 28-2. 슬라이싱
-
-```python
-print(numbers[3:])
-print(numbers[len(numbers):])
-```
-
-출력:
-
-```text
-[]
-[]
-```
-
-슬라이싱은 범위를 넘더라도 가능한 범위 안에서 결과를 반환한다.
-
-> [!TIP]
-> 단일 인덱스 조회는 값이 반드시 있어야 하지만, 슬라이싱은 빈 리스트를 반환할 수 있다.
-
----
-
-<a id="py-04-section-34"></a>
-
-## 29. 슬라이스 대입
-
-### 29-1. 리스트 끝에 여러 값 추가
-
-```python
-numbers = [
-    1,
-    2,
-    3,
-]
-
-numbers[3:] = [
-    4,
-    5,
-    6,
-]
-
-print(numbers)
-```
-
-출력:
-
-```text
-[1, 2, 3, 4, 5, 6]
-```
-
-### 29-2. 반복 가능한 값 필요
-
-```python
-numbers[3:] = 4
-```
-
-발생 결과:
-
-```text
-TypeError
-```
-
-슬라이스에는 리스트처럼 반복 가능한 객체를 대입해야 한다.
-
-### 29-3. 길이를 이용한 끝 추가
-
-```python
-numbers = [
-    1,
-    2,
-    3,
-]
-
-numbers[len(numbers):] = [
-    500
-]
-
-print(numbers)
-```
-
-출력:
-
-```text
-[1, 2, 3, 500]
-```
-
----
-
-<a id="py-04-section-35"></a>
-
-## 30. 빈 리스트와 Truthy/Falsy
-
-### 30-1. 원본 코드
-
-```python
-values = []
-
-print(len(values))
-print(not len(values))
-```
-
-### 30-2. 출력 결과
-
-```text
-0
-True
-```
-
-빈 리스트는 Falsy로 평가된다.
-
-더 Python다운 표현:
-
-```python
-if not values:
-    print("목록이 비어 있습니다.")
-```
-
-출력:
-
-```text
-목록이 비어 있습니다.
-```
-
-> [!TIP]
-> 비어 있는지만 확인할 때는 `len(values) == 0`보다 `not values`를 우선 고려한다.
-
----
-
-<a id="py-04-section-36"></a>
-
-## 31. 리스트 단순 대입
-
-### 31-1. 원본 코드
-
-```python
-a = [
-    1,
-    2,
-    3,
-    4,
-    5,
-]
-
-b = a
-
-b[2] = 30
-
-print(b)
-print(a)
-```
-
-### 31-2. 출력 결과
-
-```text
-[1, 2, 30, 4, 5]
-[1, 2, 30, 4, 5]
-```
-
-`b = a`는 리스트 값을 새로 복사하지 않는다.
-
-두 변수가 같은 리스트 객체를 가리킨다.
-
-```text
-a ─┐
-   ├→ 같은 리스트 객체
-b ─┘
-```
-
----
-
-<a id="py-04-section-37"></a>
-
-## 32. `copy()`
-
-### 32-1. 원본 코드
-
-```python
-a = [
-    1,
-    2,
-    3,
-    4,
-    5,
-]
-
-b = a.copy()
-
-b[2] = 30
-
-print(b)
-print(a)
-```
-
-### 32-2. 출력 결과
-
-```text
-[1, 2, 30, 4, 5]
-[1, 2, 3, 4, 5]
-```
-
-`copy()`는 새로운 리스트 객체를 만든다.
-
-<a id="index-section-97"></a>
-
-### 32-3. 동일성과 값 비교
-
-```python
-a = [
-    1,
-    2,
-    3,
-]
-
-b = a.copy()
-
-print(a is b)
-print(a == b)
-```
-
-출력:
-
-```text
-False
-True
-```
-
-| 표현 | 의미 |
-| --- | --- |
-| `a is b` | 같은 객체인지 확인 |
-| `a == b` | 내부 값이 같은지 확인 |
-
----
-
-<a id="py-04-section-38"></a>
-
-## 33. 얕은 복사 주의
-
-`copy()`는 얕은 복사다.
-
-중첩 리스트의 내부 객체는 공유될 수 있다.
-
-```python
-a = [
-    [1, 2],
-    [3, 4],
-]
-
-b = a.copy()
-
-b[0][0] = 100
-
-print(a)
-print(b)
-```
-
-출력:
-
-```text
-[[100, 2], [3, 4]]
-[[100, 2], [3, 4]]
-```
-
-중첩 구조를 완전히 분리하려면 `copy.deepcopy()`를 검토한다.
-
----
-
-<a id="py-04-section-39"></a>
-
-## 34. 튜플 언패킹
-
-### 34-1. 기존 방식
-
-```python
-values = (
-    1,
-    2,
-)
-
-a = values[0]
-b = values[1]
-```
-
-### 34-2. Python 방식
-
-```python
-a, b = (
-    1,
-    2,
-)
-
-print(a)
-print(b)
-```
-
-### 34-3. 출력 결과
-
-```text
-1
-2
-```
-
-오른쪽의 값을 왼쪽 변수에 순서대로 대입한다.
-
----
-
-<a id="py-04-section-40"></a>
-
-## 35. 리스트 직접 순회
-
-### 35-1. 원본 코드
-
-```python
-numbers = [
-    10,
-    20,
-    30,
-]
-
-for number in numbers:
-    print(number)
-```
-
-### 35-2. 출력 결과
-
-```text
-10
-20
-30
-```
-
-인덱스가 필요하지 않으면 값을 직접 순회하는 방식이 가장 자연스럽다.
-
----
-
-<a id="py-04-section-41"></a>
-
-## 36. `enumerate()`
-
-`enumerate()`는 인덱스와 값을 함께 반환한다.
-
-### 36-1. 원본 코드
-
-```python
-numbers = [
-    10,
-    20,
-    30,
-]
-
-for index, value in enumerate(
-    numbers
-):
-    print(index, value)
-```
-
-### 36-2. 출력 결과
-
-```text
-0 10
-1 20
-2 30
-```
-
-### 36-3. 시작 인덱스 지정
-
-```python
-for index, value in enumerate(
-    numbers,
-    start=100,
-):
-    print(index, value)
-```
-
-출력:
-
-```text
-100 10
-101 20
-102 30
-```
-
-> [!TIP]
-> 인덱스가 필요하면 `range(len(numbers))`보다 `enumerate(numbers)`를 우선 고려한다.
-
----
-
-<a id="py-04-section-42"></a>
-
-## 37. 가장 큰 값 찾기
-
-### 37-1. 원본 방식
-
-```python
-numbers = [
-    7,
-    3,
-    5,
-    8,
-    4,
-]
-
-numbers.sort()
-
-print(numbers[-1])
-```
-
-출력:
-
-```text
-8
-```
-
-정렬 후 마지막 값을 가져올 수 있다.
-
-### 37-2. 더 직접적인 방식
-
-```python
-numbers = [
-    7,
-    3,
-    5,
-    8,
-    4,
-]
-
-print(max(numbers))
-```
-
-출력:
-
-```text
-8
-```
-
-> [!IMPORTANT]
-> 가장 큰 값 하나만 필요하다면 전체 정렬보다 `max()`가 의도를 더 직접적으로 표현한다.
-
----
-
-<a id="py-04-section-43"></a>
-
-## 38. `range(len())` 사용 기준
-
-원본에는 인덱스를 이용해 마지막 값을 찾는 반복문이 있다.
-
-```python
-for index in range(
-    len(numbers)
-):
-    if index == (
-        len(numbers) - 1
-    ):
-        print(numbers[index])
-```
-
-동작하지만 마지막 값만 필요하다면 다음이 더 간단하다.
-
-```python
-print(numbers[-1])
-```
-
-### 38-1. 언제 `range(len())`을 사용할까?
-
-- 인덱스로 여러 위치를 직접 수정해야 할 때
-- 앞뒤 값의 위치를 계산해야 할 때
-- 인덱스 범위 자체가 핵심일 때
-
-단순 순회는 직접 값 순회 또는 `enumerate()`가 더 읽기 쉽다.
-
----
-
-<a id="py-04-section-44"></a>
-
-## 39. 반복문으로 리스트 만들기
-
-### 39-1. 원본 코드
-
-```python
-numbers = []
-
-for number in range(10):
-    numbers.append(number)
-
-print(numbers)
-```
-
-### 39-2. 출력 결과
-
-```text
-[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-```
-
-```text
-빈 리스트 생성
-    ↓
-0~9 반복
-    ↓
-append()
-    ↓
-새 값 추가
-```
-
----
-
-<a id="py-04-section-45"></a>
-
-## 40. 리스트 컴프리헨션
-
-같은 코드를 리스트 컴프리헨션으로 작성할 수 있다.
-
-```python
-numbers = [
-    number
-    for number in range(10)
-]
-
-print(numbers)
-```
-
-출력:
-
-```text
-[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-```
-
-### 40-1. 기본 구조
-
-```python
-[
-    표현식
-    for 변수 in 반복가능객체
-]
-```
-
-### 40-2. 값 변환
-
-강사님 코드에는 값을 두 배로 만드는 예제가 있다.
-
-```python
-numbers = [
-    number * 2
-    for number in range(5)
-]
-
-print(numbers)
-```
-
-출력:
-
-```text
-[0, 2, 4, 6, 8]
-```
-
----
-
-<a id="py-04-section-46"></a>
-
-## 41. 조건이 있는 리스트 컴프리헨션
-
-### 41-1. 반복문 방식
-
-```python
-even_numbers = []
-
-for number in range(10):
-    if number % 2 == 0:
-        even_numbers.append(
-            number
-        )
-```
-
-### 41-2. 컴프리헨션 방식
-
-```python
-even_numbers = [
-    number
-    for number in range(10)
-    if number % 2 == 0
-]
-
-print(even_numbers)
-```
-
-### 41-3. 출력 결과
-
-```text
-[0, 2, 4, 6, 8]
-```
-
-> [!TIP]
-> 단순한 변환과 필터링에는 리스트 컴프리헨션이 적합하다.
->
-> 조건과 처리 단계가 복잡하면 일반 반복문이 더 읽기 쉽다.
-
----
-
-<a id="py-04-section-47"></a>
-
-## 42. 문자열을 만드는 컴프리헨션
-
-강사님 코드에는 구구단 문자열 예제가 있다.
-
-```python
-results = [
-    f"2x{number}={2 * number}"
-    for number in range(10)
-    if number % 2 == 0
-]
-
-print(results)
-```
-
-출력:
-
-```text
-['2x0=0', '2x2=4', '2x4=8', '2x6=12', '2x8=16']
-```
-
-컴프리헨션의 표현식에는 f-string도 사용할 수 있다.
-
----
-
-<a id="py-04-section-48"></a>
-
-## 43. 반복문으로 형 변환
-
-### 43-1. 원본 코드
-
-```python
-numbers = [
-    1.2,
-    2.5,
-    3.7,
-    4.6,
-    -3.5,
-]
-
-for index, value in enumerate(
-    numbers
-):
-    numbers[index] = int(value)
-
-print(numbers)
-```
-
-### 43-2. 출력 결과
-
-```text
-[1, 2, 3, 4, -3]
-```
-
-`int()`는 소수 부분을 0 방향으로 제거한다.
-
----
-
-<a id="py-04-section-49"></a>
-
-## 44. `map()`
-
-`map()`은 반복 가능한 객체의 각 값을 함수에 전달한다.
-
-### 44-1. 원본 코드
-
-```python
-numbers = [
-    1.2,
-    2.5,
-    3.7,
-    4.6,
-    -3.5,
-]
-
-converted_numbers = list(
-    map(
-        int,
-        numbers,
-    )
-)
-
-print(converted_numbers)
-```
-
-### 44-2. 출력 결과
-
-```text
-[1, 2, 3, 4, -3]
-```
-
-### 44-3. 동작 과정
-
-```text
-numbers의 값 하나씩 꺼냄
-    ↓
-int()에 전달
-    ↓
-변환 결과 생성
-    ↓
-map 객체 반환
-    ↓
-list()로 리스트 변환
-```
-
-### 44-4. 컴프리헨션과 비교
-
-```python
-converted_numbers = [
-    int(number)
-    for number in numbers
-]
-```
-
-두 방식 모두 사용할 수 있다.
-
-단순 변환은 리스트 컴프리헨션이 더 읽기 쉬운 경우가 많다.
-
----
-
-<a id="py-04-section-50"></a>
-
-## 45. 2차원 리스트
-
-리스트 안에 리스트를 저장할 수 있다.
-
-### 45-1. 원본 코드
-
-```python
-matrix = [
-    [10, 20],
-    [30, 40],
-    [50, 60],
-]
-```
-
-### 45-2. 행 개수
-
-```python
-print(len(matrix))
-```
-
-출력:
-
-```text
-3
-```
-
-### 45-3. 특정 값 조회
-
-```python
-print(matrix[1][0])
-```
-
-출력:
-
-```text
-30
-```
-
-```text
-matrix[1]
-→ 두 번째 리스트 [30, 40]
-
-matrix[1][0]
-→ 그 리스트의 첫 번째 값 30
-```
-
----
-
-<a id="py-04-section-51"></a>
-
-## 46. 리스트 반복
-
-### 46-1. 원본 코드
-
-```python
-print([0] * 10)
-```
-
-### 46-2. 출력 결과
-
-```text
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-```
-
-같은 값을 여러 개 가진 초기 리스트를 만들 수 있다.
-
-### 46-3. 중첩 리스트 주의
-
-```python
-matrix = [
-    [0] * 3
-] * 3
-```
-
-각 행이 같은 내부 리스트를 공유할 수 있다.
-
-안전한 생성:
-
-```python
-matrix = [
-    [0] * 3
-    for _ in range(3)
-]
-```
-
----
-
-<a id="py-04-section-52"></a>
-
-## 47. 내 코드와 강사님 코드 비교
-
-| 항목 | 내 코드 | 강사님 코드 |
-| --- | --- | --- |
-| `range()` | 감소 범위 예제 추가 | 기본 1·2·3개 인자 중심 |
-| 추가 메서드 | `append()`와 `extend()` 차이를 상세 기록 | 핵심 동작 중심 |
-| 정렬 | JavaScript 정렬과 비교 메모 | Python 정렬 예제 중심 |
-| 스택·큐 | 개념 메모 추가 | 직접 설명 없음 |
-| 슬라이싱 | 길이를 이용한 끝 추가 예제 추가 | 기본 슬라이스 대입 |
-| 복사 | `is`, `==` 비교 추가 | 단순 대입과 `copy()` 비교 |
-| 최대값 | 여러 방식으로 마지막 값 확인 | 정렬 후 마지막 값 |
-| 컴프리헨션 | 기본·짝수 예제 | 변환·조건·f-string 예제 |
-| `map()` | 원본 실수 목록에 다시 적용 | 반복 변환 후 `map()` 적용 |
-
-### 47-1. 내 코드의 장점
-
-- 메서드별 차이와 오류 조건을 자세히 기록했다.
-- 감소 범위, 스택·큐, 슬라이싱 대입을 추가로 실험했다.
-- 단순 대입과 복사의 객체 차이를 직접 확인했다.
-- `enumerate()`, 컴프리헨션, `map()`의 목적을 메모했다.
-
-### 47-2. 내 코드의 개선점
-
-- `append()`와 `extend()`를 JavaScript 개념에만 연결하기보다 Python 동작을 우선 설명해야 한다.
-- `reverse()`는 내림차순 정렬이 아니라 현재 순서를 뒤집는 메서드다.
-- 가장 큰 값 하나를 찾기 위해 전체 정렬할 필요는 없다.
-- `copy()`는 중첩 객체까지 완전히 복사하는 깊은 복사가 아니다.
-- 빈 리스트 검사는 `not values`로 더 직접적으로 작성할 수 있다.
-
-### 47-3. 강사님 코드의 장점
-
-- 리스트의 생성부터 변환까지 주요 기능을 한 흐름으로 실습한다.
-- 반복문과 리스트 컴프리헨션을 비교할 수 있다.
-- `enumerate()`와 `map()`의 기본 동작을 직접 확인할 수 있다.
-- 오류 예제를 주석 처리해 정상 실행과 함께 비교할 수 있다.
-
-### 47-4. 강사님 코드의 보충점
-
-- `append()`와 `extend()`의 중첩 결과 차이를 더 명확히 설명할 필요가 있다.
-- `sort()`, `reverse()`, `reversed()`의 원본 변경 여부를 구분해야 한다.
-- `copy()`가 얕은 복사라는 설명이 필요하다.
-- 리스트 최대값에는 `max()`를 사용할 수 있다는 보충이 필요하다.
-
----
-
-<a id="py-04-section-53"></a>
-
-## 48. 기존 코드에서 개선 코드로 바꾼 이유
-
-### 48-1. 직접 순회
-
-기존:
-
-```python
-for index in range(
-    len(numbers)
-):
-    print(numbers[index])
-```
-
-개선:
-
-```python
-for number in numbers:
-    print(number)
-```
-
-이유:
-
-- 값만 필요할 때 인덱스를 만들 필요가 없다.
-- 코드의 목적이 더 명확하다.
-
-### 48-2. 인덱스와 값
-
-기존:
-
-```python
-for index in range(
-    len(numbers)
-):
-    value = numbers[index]
-```
-
-개선:
-
-```python
-for index, value in enumerate(
-    numbers
-):
-    ...
-```
-
-### 48-3. 최대값
-
-기존:
-
-```python
-numbers.sort()
-largest = numbers[-1]
-```
-
-개선:
-
-```python
-largest = max(numbers)
-```
-
-### 48-4. 빈 목록 확인
-
-기존:
-
-```python
-if len(values) == 0:
-    ...
-```
-
-개선:
-
-```python
-if not values:
-    ...
-```
-
-### 48-5. 원본 유지 정렬
-
-기존:
-
-```python
-numbers.sort()
-```
-
-원본을 유지해야 한다면:
-
-```python
-sorted_numbers = sorted(
-    numbers
-)
-```
-
----
-
-<a id="py-04-section-54"></a>
-
-## 49. 실무형 예제: 상품 재고 목록
-
-```python
-products = [
-    {
-        "name": "Keyboard",
-        "price": 45000,
-        "stock": 5,
-    },
-    {
-        "name": "Mouse",
-        "price": 25000,
-        "stock": 0,
-    },
-    {
-        "name": "Monitor",
-        "price": 210000,
-        "stock": 3,
-    },
-]
-
-available_products = [
-    product
-    for product in products
-    if product["stock"] > 0
-]
-
-sorted_products = sorted(
-    available_products,
-    key=lambda product: (
-        product["price"]
-    ),
-)
-
-for number, product in enumerate(
-    sorted_products,
-    start=1,
-):
-    print(
-        f'{number}. '
-        f'{product["name"]} / '
-        f'{product["price"]:,}원 / '
-        f'재고 {product["stock"]}개'
-    )
-```
-
-### 49-1. 출력 결과
-
-```text
-1. Keyboard / 45,000원 / 재고 5개
-2. Monitor / 210,000원 / 재고 3개
-```
-
-### 49-2. 코드에서 무엇을 사용하는 걸까?
-
-| 코드 | 사용하는 이유 |
-| --- | --- |
-| 리스트 안의 딕셔너리 | 여러 상품 정보를 구조적으로 저장 |
-| 리스트 컴프리헨션 | 재고가 있는 상품만 필터링 |
-| `sorted()` | 원본을 유지하며 가격순 정렬 |
-| `lambda` | 상품 가격을 정렬 기준으로 반환 |
-| `enumerate()` | 출력 순번과 상품을 함께 사용 |
-| f-string | 가격과 재고를 읽기 좋은 문자열로 출력 |
-
----
-
-<a id="py-04-section-55"></a>
-
-## 50. 대표 오류로 이해하기
-
-### 50-1. 없는 인덱스 조회
-
-```python
-numbers = [1, 2, 3]
-
-print(numbers[3])
-```
-
-발생 결과:
-
-```text
-IndexError
-```
-
----
-
-### 50-2. 없는 값 삭제
-
-```python
-numbers = [1, 2, 3]
-
-numbers.remove(5)
-```
-
-발생 결과:
-
-```text
-ValueError
-```
-
----
-
-### 50-3. 없는 값의 인덱스 검색
-
-```python
-numbers = [1, 2, 3]
-
-numbers.index(5)
-```
-
-발생 결과:
-
-```text
-ValueError
-```
-
----
-
-### 50-4. 빈 리스트에서 `pop()`
-
-```python
-numbers = []
-
-numbers.pop()
-```
-
-발생 결과:
-
-```text
-IndexError
-```
-
----
-
-### 50-5. `sort()` 반환값 저장
-
-```python
-numbers = [3, 1, 2]
-
-numbers = numbers.sort()
-
-print(numbers)
-```
-
-출력:
-
-```text
-None
-```
-
-개선:
-
-```python
-numbers.sort()
-```
-
-또는:
-
-```python
-numbers = sorted(numbers)
-```
-
----
-
-### 50-6. 단순 대입을 복사로 착각
-
-```python
-a = [1, 2, 3]
-b = a
-
-b.append(4)
-
-print(a)
-```
-
-출력:
-
-```text
-[1, 2, 3, 4]
-```
-
-같은 리스트를 공유하기 때문이다.
-
----
-
-<a id="py-04-section-56"></a>
-
-## 51. 자주 하는 실수
-
-### 51-1. `range()`의 종료값이 포함된다고 생각
-
-종료값 바로 앞까지만 생성한다.
-
-<a id="index-section-165"></a>
-
-### 51-2. 감소 범위에 양수 `step` 사용
-
-진행 방향이 맞지 않아 빈 범위가 된다.
-
-### 51-3. `append()`가 리스트 내부 값을 펼친다고 생각
-
-전달한 리스트 전체가 값 하나로 추가된다.
-
-### 51-4. `extend()`에 숫자 하나 전달
-
-숫자는 반복 가능한 객체가 아니므로 오류가 발생한다.
-
-### 51-5. `remove()`가 모든 같은 값을 삭제한다고 생각
-
-처음 만나는 값 하나만 삭제한다.
-
-### 51-6. `sort()`와 `reverse()`를 같은 기능으로 이해
-
-`sort()`는 값의 크기 기준 정렬, `reverse()`는 현재 순서 반전이다.
-
-### 51-7. `sort()` 결과를 변수에 저장
-
-`None`이 저장된다.
-
-<a id="index-section-171"></a>
-
-### 51-8. 리스트에 `find()` 사용
-
-리스트에는 `find()`가 없다.
-
-### 51-9. 슬라이싱과 단일 인덱스 오류를 같은 방식으로 생각
-
-슬라이싱은 범위를 넘으면 빈 리스트를 반환할 수 있다.
-
-### 51-10. `b = a`를 복사로 이해
-
-두 변수가 같은 객체를 가리킨다.
-
-### 51-11. `copy()`가 중첩 객체까지 완전히 분리한다고 생각
-
-얕은 복사이므로 내부 객체를 공유할 수 있다.
-
-### 51-12. 값만 필요한데 `range(len())` 사용
-
-직접 순회가 더 간단하다.
-
-### 51-13. 복잡한 처리를 리스트 컴프리헨션 한 줄에 작성
-
-가독성이 떨어질 수 있다.
-
-### 51-14. 중첩 리스트를 `[[0] * n] * n`으로 생성
-
-각 행이 같은 내부 리스트를 공유할 수 있다.
-
----
-
-<a id="py-04-section-57"></a>
-
-## 52. 핵심 요약
-
-```text
-[]
-list()
-→ 리스트 생성
-
-range()
-→ 숫자 범위
-
-append()
-→ 값 하나 추가
-
-extend()
-→ 여러 값 추가
-
-insert()
-→ 지정 위치 추가
-```
-
-```text
-del
-→ 인덱스로 삭제
-
-remove()
-→ 값으로 삭제
-
-pop()
-→ 삭제하며 반환
-
-clear()
-→ 전체 삭제
-```
-
-```text
-sort()
-→ 원본 정렬
-
-sorted()
-→ 새 정렬 리스트
-
-reverse()
-→ 원본 순서 반전
-
-[::-1]
-→ 역순 새 리스트
-```
-
-```text
-index()
-→ 값 위치
-
-count()
-→ 값 개수
-
-copy()
-→ 얕은 복사
-
-enumerate()
-→ 인덱스와 값
-
-map()
-→ 같은 함수 적용
-```
-
----
-
-<a id="py-04-section-58"></a>
-
-## 53. 최종 체크리스트
-
-- [ ] 빈 리스트와 값이 있는 리스트를 만들 수 있는가?
-- [ ] `range()`의 종료값이 포함되지 않음을 이해했는가?
-- [ ] 증가·감소 범위를 만들 수 있는가?
-- [ ] 인덱스로 값을 조회하고 삭제할 수 있는가?
-- [ ] `append()`, `extend()`, `insert()`를 구분할 수 있는가?
-- [ ] `remove()`와 `pop()`을 구분할 수 있는가?
-- [ ] `sort()`가 원본을 변경하고 `None`을 반환함을 이해했는가?
-- [ ] `sorted()`로 원본을 유지할 수 있는가?
-- [ ] `reverse()`, `reversed()`, `[::-1]`을 구분할 수 있는가?
-- [ ] `index()`와 `count()`를 사용할 수 있는가?
-- [ ] 슬라이싱과 단일 인덱스의 범위 초과 차이를 이해했는가?
-- [ ] 빈 리스트를 `not values`로 검사할 수 있는가?
-- [ ] 단순 대입과 `copy()`의 차이를 이해했는가?
-- [ ] 얕은 복사의 한계를 이해했는가?
-- [ ] 튜플 언패킹을 사용할 수 있는가?
-- [ ] 값만 필요할 때 직접 순회할 수 있는가?
-- [ ] 인덱스가 필요할 때 `enumerate()`를 사용할 수 있는가?
-- [ ] 리스트 컴프리헨션으로 변환·필터링할 수 있는가?
-- [ ] `map()`으로 모든 값을 변환할 수 있는가?
-- [ ] 2차원 리스트의 특정 값을 조회할 수 있는가?
-- [ ] 중첩 리스트 초기화 시 객체 공유를 주의하는가?
-
----
-
-<a id="py-04-section-59"></a>
-
-## 마무리
-
-리스트 처리의 핵심은 여러 값을 저장하는 것에서 끝나지 않는다.
-
-```text
-값을 순서대로 저장하고
-    ↓
-필요한 값을 추가·삭제하고
-    ↓
-검색·정렬하고
-    ↓
-반복문으로 처리하고
-    ↓
-조건에 맞는 새 리스트로 변환하는 것
-```
-
-이 흐름을 이해하면 이후 튜플·딕셔너리·집합과 반복문을 더 자연스럽게 연결할 수 있다.
-
-<a id="py-04-section-60"></a>
-
-## V3 동작 백과 보강 — 리스트의 참조와 변경
-
-리스트는 여러 객체의 참조를 순서대로 보관하는 변경 가능한 객체다. `append(x)`는 `x` 하나를 끝에 넣고, `extend(iterable)`은 반복 가능한 값의 원소를 차례로 넣는다. 두 메서드는 원본 리스트를 바꾸며 반환값은 `None`이다.
-
-```python
-a = [1, 2]
-b = a
-c = a.copy()
-a.append(3)
-print(a)
-print(b)
+# 전달인자가 하나인 경우, 0번부터 시작해서 숫자 바로 앞까지(0~9)를 만들어라
+c = range(10)
 print(c)
+# list는 배열의 선언보다 배열로 바꾸어주는 것
+print(list(c)) # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+# 전달인자가 두개인 경우, 첫 번째 두 번째 바로 앞까지
+d = range(5, 12)
+print(list(d)) # [5, 6, 7, 8, 9, 10, 11]
+
+e = range(12, 5)
+print(list(e)) # value: [] 빈 배열
+
+# 전달인자가 세개인 경우 첫 번째 부터, 두 번째 바로 앞까지, 세 번째 값 씩 건너 뛰기(step)
+f = range(-4, 10, 2)
+print(list(f)) # [-4, -2, 0, 2, 4, 6, 8]
+f1 = range(10,0,-1)
+print(list(f1)) # [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+a = [0,1,2,3,4,5]
+a = list(range(6))
+
+del a[3]
+print( a )
+
+a = a + [6]
+print( a )
+
+a += [7]
+print( a )
+ 
+a.append(8) # python 에서는 list에 push대신 append로 붙일 수 있음
+print( a )
+
+b = [9,10] # concat개념이 아니라, append는 단순하게 하나를 추가하는 것
+print( b , type(b) )
+a.append(b)
+print( a , type(a) ) # [0, 1, 2, 4, 5, 6, 7, 8, [9, 10]] <class 'list'>
+
 ```
 
-```text
-[1, 2, 3]
-[1, 2, 3]
-[1, 2]
+`[]`와 `list()`는 빈 리스트를 만든다. `range(6)`을 리스트로 바꾸면 `0`부터 `5`까지 담긴다. `a + [6]`은 새 리스트를 만들고 그 결과를 다시 `a`에 넣는다. `append(8)`은 기존 리스트 끝에 한 **요소**를 붙인다. 따라서 `append([9,10])`은 `9`와 `10`을 각각 붙이는 것이 아니라 중첩 리스트 한 개를 추가한다.
+
+<a id="section-2"></a>
+
+## 2. 정렬·뒤집기·삭제
+
+### 강사님 코드
+
+출처: `teacher/workspace_python/_04_list.py` 47–89행 · **원본 발췌**
+
+```python
+c = [654,156,964,15,35]
+c.sort() # 오름차순
+print(c)
+c.sort(reverse=True)
+print(c)
+
+
+c = c[::-1]
+print(c)
+
+c.reverse()
+print(c)
+
+d = c.pop()
+print(c, d)
+
+c.insert(0, 100)
+print(c)
+
+c.insert(10, 200) # index를 벗어나면 걍 끝에
+print(c)
+
+c.extend([1,2]) # 리스트를 합쳐준다
+print(c)
+
+a = [1,2,3,4,2]
+a.remove(2) # 처음 만나는 값을 찾아서 지운다
+print(a)
+
+if 5 in a :
+    a.remove(5) # 없는 값은 에러난다
+
+a = [1,2,3,4,2,4]
+b = a.index(2)
+print(b)
+# b = a.index(5) # 없는 값은 에러
+c = a.count(4)
+print(c)
+
+a.reverse()
+print(a)
+
+a.clear()
 ```
 
-`b = a`는 복사가 아니라 같은 리스트를 가리키는 이름을 하나 더 만든다. `copy()`는 새 바깥 리스트를 만들지만 내부에 중첩된 객체까지 복제하는 깊은 복사는 아니다. 인덱스 범위를 벗어나면 `IndexError`가 발생한다.
+### 내 코드
 
-**원본 연결:** 내 코드 `workspace_python/04_list.py`, 강사님 코드 `workspace_python/_04_list.py`의 생성, 추가·삭제, 정렬, 반복 처리 예제를 기반으로 한다.
+출처: `me/workspace_python/04_list.py` 49–101행 · **원본 발췌**
+
+```python
+print(':='*30)
+c = [654,156,964,15,35]
+c.sort() # 오름차순 원본이 바뀜, [15, 35, 156, 654, 964]
+print( c ) # JavaScript와 다르게 sort는 15 156이 아닌, 숫자 크기대로 정렬해줌
+c.sort(reverse=True) # sort의 기본값은 reverse=False (오름차순)
+print( c )
+print(':='*30)
+
+c = c[::-1] # -1은 원본을 바꾸지 않음, [964, 654, 156, 35, 15]
+print( c )
+
+c.reverse() # 내림차순 원본이 바뀜, [15, 35, 156, 654, 964]
+print( c )
+
+d = c.pop()
+print(c, d)
+
+c.insert(0,100) # 0번째에 100추가
+print(c)
+
+c.insert(10,200) # 10번째에 200추가인데, 범위를 넘어서도 끝으로 들어감
+print(c)
+
+# extend는 insert, append와 다르게 여러 개의 리스트 값을 원본에 추가해줌
+c.extend([1,2])
+print(c)
+
+# remove는 처음 만나는 값을 찾아서 지워준다
+a = [1,2,3,4,2]
+a.remove(2)
+print(a)
+
+if 5 in a : # in으로 값이 있을 때 실행하도록 진행
+    a.remove(5) # 없는 값의 경우 에러 발생
+
+a = [1,2,3,4,2,4]
+b = a.index(2)
+print(b)
+# b = a.index(5) # 없는 값의 경우 에러 발생
+# b = a.find(5) # 리스트에서 find는 사용할 수 없음
+
+# stack과 queue란?
+# stack은 프링글스통 기존 스택 설명과 같이 넣을 때 뒤로가고 뺄 때도 뒤에서
+# queue는 넣을 때 뒤로가고 뺄 때는 제일 앞에서
+c = a.count(4)
+print(c)
+
+a.reverse()
+print(a)
+b = reversed(a)
+print(b)
+
+a.clear() # a = [] 는 동일하게 사용할 수 있음
+```
+
+`sort()`와 `reverse()`는 현재 리스트를 바꾼다. `c[::-1]`은 거꾸로 읽은 새 리스트를 만들고, 원본 코드처럼 **`c = c[::-1]`로 다시 대입하면** 그 뒤의 `c`는 새 리스트를 가리킨다. `pop()`은 마지막 요소를 빼면서 그 요소를 돌려주고, `insert`는 지정한 위치에 넣는다. `extend([1,2])`는 두 값을 각각 끝에 붙인다.
+
+`remove(2)`는 첫 번째로 만난 `2` 하나를 지운다. 없는 값을 지우는 코드는 원본에서 주석 처리되어 있다. `index(5)`도 없는 값을 찾으면 오류가 나므로 주석이다. `count(4)`는 `4`가 몇 개 있는지 센다.
+
+내 `a.clear() # a = [] 는 동일` 주석은 **최종 변수 a가 빈 리스트가 된다는 결과만 같다.** 다른 변수가 같은 리스트를 가리키면 `clear()`는 그 변수에도 빈 상태가 보이지만 `a = []`는 a만 새 리스트를 가리키게 된다. 이 차이는 다음 문서의 참조 예제와 연결된다.
+
+<a id="section-3"></a>
+
+## 3. 길이 끝 위치와 슬라이스 추가
+
+### 강사님 코드
+
+출처: `teacher/workspace_python/_04_list.py` 91–100행 · **원본 발췌**
+
+```python
+a = []
+
+a = [1,2,3]
+print( a[len(a):] )
+# print( a[3] )
+print( a[3:] )
+
+# a[3:] = 4 #TypeError: must assign iterable to extended slice
+a[3:] = [4,5,6]
+print(a)
+```
+
+### 내 코드
+
+출처: `me/workspace_python/04_list.py` 104–118행 · **원본 발췌**
+
+```python
+a = [1,2,3]
+print( a[len(a):] )
+# print( a[3] ) # a[3] 으로 하면 IndexError: list index out of range 발생
+print( a[3:] ) # :을 넣으면 에러는 나지 않음
+
+# a[3:] = 4 # TypeError: must assign iterable to extended slice 에러는 반복될 수 있는 배열같은 것이 필요
+a[3:] = [4,5,6] # extend처럼 비슷하게 사용할 수 있음, append는 단독 1개이기 때문에 다름
+print(a)
+
+a[len(a):] = [500] # a의 길이는 3이고 3: (3부터)라는 뜻이기 때문에, index 3에 500추가
+print(a)
+
+f = [] # 비어있으면 False
+print( len(f) ) # False
+print( not len(f) ) # True
+```
+
+리스트 길이가 3일 때 `a[3]`은 존재하지 않는 요소 하나를 읽으려 해 오류가 나지만, `a[3:]`는 비어 있는 부분 리스트를 돌려준다. `a[3:] = [4,5,6]`은 끝에 세 값을 넣는다. 내 코드에서 이어지는 `a[len(a):] = [500]` 시점에는 `a` 길이가 **이미 6**이다. “길이는 3”이라는 주석은 이전 상태를 가리킨 설명으로, 그 줄의 실제 상태와 다르다.
+
+빈 리스트 `f`에 대해 `len(f)`의 결과는 `False`가 아니라 **정수 0**이다. `not len(f)`는 0이 거짓으로 평가되어 `True`가 된다. 값과 진리값 해석을 구분한다.
+
+<a id="section-4"></a>
+
+## 직접 확인할 질문
+
+1. `append([9,10])`과 `extend([9,10])` 뒤 리스트의 마지막 부분은 어떻게 다를까?
+2. `a[3]`과 `a[3:]`는 왜 결과가 다를까?
+3. `len([])`와 `not len([])`는 자료형과 값이 각각 무엇일까?
+
+<a id="section-5"></a>
+
+## 추가로 알면 좋은 것
+
+리스트를 큐나 스택 자료구조로 본격 설계하는 내용은 이 파일의 간단한 `append`·`pop` 관찰보다 넓다. 먼저 수업에서 실행한 메서드가 원본을 바꾸는지 확인한다.
+

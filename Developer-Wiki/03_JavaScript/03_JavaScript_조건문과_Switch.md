@@ -1,2279 +1,298 @@
----
-title: JavaScript 조건문과 Switch
-version: v4.0-detailed-source
-last_updated: 2026-09-17
-status: Completed
----
+# 03. 조건문과 switch — 조건의 순서로 실행 경로 결정하기
 
-# JavaScript 조건문과 Switch
+[JavaScript 목차](README.md) · [이전: 연산자](02_JavaScript_연산자.md)
 
-## 문서 정보
+기준 파일은 양쪽 `03_if.html`과 강사님 `퀴즈/조건문.html`이다. 내 파일의 문제 풀이 상당수는 주석 안에 있다. 아래에 코드만 발췌했더라도 **원본 전체에서는 실행되지 않는 풀이**임을 해당 설명에 표시한다.
 
-| 항목 | 내용 |
-| --- | --- |
-| 문서 | `03_JavaScript_조건문과_Switch.md` |
-| 분류 | `03_JavaScript` |
-| 원본 기준 | `workspace_html/javascript/03_if.html`, `workspace_teacher/workspace_html/javascript/03_if.html` |
-| 핵심 범위 | 조건식, Truthy/Falsy, `if`, `else if`, `else`, 중첩 조건문, `switch`, 다중 `case`, 난수 범위, 입력값 검증 |
-| 실습 범위 | 양수·음수, 홀수·짝수, 큰 수, 교통수단, 가위바위보, 범위 판정, 계절, 온도, 시간 계산, 369게임, 좌표 판정 |
-| 문서 형식 | JavaScript Developer-Wiki V3 개인 강의 백과사전 형식 |
+<!-- chapter-toc -->
 
-> 이 문서는 내 코드와 강사님 코드 전체를 그대로 나열하지 않는다.  
-> 조건문을 이해하는 데 필요한 핵심 코드와 문제 풀이만 발췌하고, 실행 순서·오류 원인·입력값 검증·실무 개선 방향을 함께 설명한다.
+- [1. if와 else if: 먼저 참이 된 갈래 하나](#section-1)
+- [2. switch: 값이 같은 case에서 시작하기](#section-2)
+- [3. 난수와 가위바위보 — 양쪽 모두 검토하기](#section-3)
+- [4. 실제 문제 풀이의 경계값 점검](#section-4)
+- [5. 교정 예제와 복습](#section-5)
+- [추가로 알면 좋은 것](#section-6)
 
----
+<a id="section-1"></a>
 
-## 이 문서에서 바로 찾기
+## 1. if와 else if: 먼저 참이 된 갈래 하나
 
-- [개념에서 실제 실행까지: 조건문은 값이 어느 실행 경로로 들어갈지 결정한다](#js-03-section-4)
-- [18. `switch`는 엄격하게 비교한다](#js-03-section-22)
-- [39. 문제 10: 두 자리 숫자의 각 자리 비교](#js-03-section-43)
-- [43. JavaScript의 연속 비교 주의](#js-03-section-47)
-- [48. 내 코드와 강사님 코드 비교](#js-03-section-52)
-- [50. 실무형 예제: 회원 등급 판정](#js-03-section-54)
-- [51. 대표 오류로 이해하기](#js-03-section-55)
-- [52. 자주 하는 실수](#js-03-section-56)
-- [53. 핵심 요약](#js-03-section-57)
-- [54. 최종 체크리스트](#js-03-section-58)
+`if (조건)`의 조건이 참으로 평가되면 연결된 블록을 실행한다. `else`는 앞 조건이 거짓일 때 실행할 갈래다. else if를 이어 쓰면 위에서부터 검사하고 처음 참인 갈래만 실행한다. 반면 독립된 if 여러 개는 각각 검사하므로 여러 블록이 실행될 수 있다.
 
-<details>
-<summary>세부 목차 펼치기 — 번호형 본문 전체</summary>
+### 강사님 코드
 
-- [개요](#js-03-section-1)
-- [핵심 개념](#js-03-section-2)
-- [학습 목표](#js-03-section-3)
-- [개념에서 실제 실행까지: 조건문은 값이 어느 실행 경로로 들어갈지 결정한다](#js-03-section-4)
-- [1. 기본 `if`](#js-03-section-5)
-- [2. 조건이 참일 때만 실행](#js-03-section-6)
-- [3. 서로 반대인 두 개의 `if`](#js-03-section-7)
-- [4. `if·else`](#js-03-section-8)
-- [5. 합격 판정](#js-03-section-9)
-- [6. 조건식은 Boolean으로 평가된다](#js-03-section-10)
-- [7. 실행 블록](#js-03-section-11)
-- [8. 중괄호 생략](#js-03-section-12)
-- [9. 최소값 보정](#js-03-section-13)
-- [10. 중첩 조건문](#js-03-section-14)
-- [11. `else if`로 단순화](#js-03-section-15)
-- [12. 조건 순서의 중요성](#js-03-section-16)
-- [13. Truthy와 Falsy](#js-03-section-17)
-- [14. Truthy 값](#js-03-section-18)
-- [15. Boolean 변환](#js-03-section-19)
-- [16. 과일 분기](#js-03-section-20)
-- [17. `switch` 기본 구조](#js-03-section-21)
-- [18. `switch`는 엄격하게 비교한다](#js-03-section-22)
-- [19. `break`가 필요한 이유](#js-03-section-23)
-- [20. 여러 `case` 묶기](#js-03-section-24)
-- [21. `if`와 `switch` 선택 기준](#js-03-section-25)
-- [22. 객체를 이용한 단순 매핑](#js-03-section-26)
-- [23. 문제 해결 기본 흐름](#js-03-section-27)
-- [24. 문제 1: 양수·0·음수 판정](#js-03-section-28)
-- [25. 문제 2: 홀수·짝수](#js-03-section-29)
-- [26. 문제 3: 두 수 중 큰 값](#js-03-section-30)
-- [27. 문제 4: 교통수단 선택](#js-03-section-31)
-- [28. 문제 5-1: 컴퓨터가 항상 바위](#js-03-section-32)
-- [29. 문제 5-2: 무작위 가위바위보](#js-03-section-33)
-- [30. 가위바위보 승패 판정](#js-03-section-34)
-- [31. 문제 6: 세 번째 수가 두 수 사이인지](#js-03-section-35)
-- [32. 경계값 포함 여부](#js-03-section-36)
-- [33. 문제 7: 월별 계절](#js-03-section-37)
-- [34. 문자열과 숫자 `case`](#js-03-section-38)
-- [35. 문제 8: 영상·영하 온도](#js-03-section-39)
-- [36. 온도 입력 검증](#js-03-section-40)
-- [37. 문제 9: 35분 후 시간](#js-03-section-41)
-- [38. 시간 계산 일반화](#js-03-section-42)
-- [39. 문제 10: 두 자리 숫자의 각 자리 비교](#js-03-section-43)
-- [40. 문제 11: 369게임](#js-03-section-44)
-- [41. 문자열 방식의 369게임](#js-03-section-45)
-- [42. 문제 12: 좌표가 사각형 안에 있는지](#js-03-section-46)
-- [43. JavaScript의 연속 비교 주의](#js-03-section-47)
-- [44. `Math.random()`](#js-03-section-48)
-- [45. 0부터 2까지 난수](#js-03-section-49)
-- [46. 최소값·최대값 범위 난수](#js-03-section-50)
-- [47. 난수 함수로 분리](#js-03-section-51)
-- [48. 내 코드와 강사님 코드 비교](#js-03-section-52)
-- [49. 기존 코드에서 개선 코드로 바꾼 이유](#js-03-section-53)
-- [50. 실무형 예제: 회원 등급 판정](#js-03-section-54)
-- [51. 대표 오류로 이해하기](#js-03-section-55)
-- [52. 자주 하는 실수](#js-03-section-56)
-- [53. 핵심 요약](#js-03-section-57)
-- [54. 최종 체크리스트](#js-03-section-58)
-- [마무리](#js-03-section-59)
-- [V3 실행 추적 카드 — 조건 평가 → 한 실행 경로 선택](#js-03-section-60)
-
-</details>
-
----
-
-<a id="js-03-section-1"></a>
-
-## 개요
-
-조건문은 프로그램이 상황에 따라 다른 코드를 실행하도록 만든다.
-
-```text
-조건 확인
-    ↓
-참이면 한 경로 실행
-    ↓
-거짓이면 다른 경로 실행
-```
-
-예를 들어 다음 판단에 사용한다.
-
-- 점수가 합격 기준 이상인지
-- 입력한 값이 올바른지
-- 선택한 상품이 존재하는지
-- 사용자가 이겼는지 졌는지
-- 특정 범위 안에 좌표가 들어오는지
+출처: `teacher/workspace_html/javascript/03_if.html` 48–56행 · **원본 발췌**
 
 ```javascript
-const score = 85
-
-if (score >= 60) {
-    console.log("합격")
-} else {
-    console.log("불합격")
-}
+        if(score >= 90){
+            console.log('A')
+        } else if(score >= 80){
+            console.log('B')
+        } else if(score >= 70){
+            console.log('C')
+        } else {
+            console.log('D')
+        }
 ```
 
-출력:
+### 내 코드
 
-```text
-합격
-```
-
-> [!IMPORTANT]
-> 조건문은 단순히 `true`와 `false`를 확인하는 문법이 아니다.
->
-> 입력값을 검증하고, 실행 경로를 결정하며, 잘못된 상태를 차단하는 핵심 제어문이다.
-
----
-
-<a id="js-03-section-2"></a>
-
-## 핵심 개념
-
-| 개념 | 핵심 역할 |
-| --- | --- |
-| 조건식 | 참·거짓으로 평가되는 표현식 |
-| `if` | 조건이 참일 때 실행 |
-| `else if` | 앞 조건이 거짓일 때 추가 조건 검사 |
-| `else` | 모든 앞 조건이 거짓일 때 실행 |
-| 실행 블록 | 중괄호 `{}`로 묶은 코드 영역 |
-| Truthy/Falsy | 값을 참 또는 거짓처럼 평가하는 규칙 |
-| 중첩 조건문 | 조건문 안에 다른 조건문 작성 |
-| `switch` | 하나의 값을 여러 고정값과 비교 |
-| `case` | `switch`에서 비교할 값 |
-| `break` | 현재 `switch` 또는 반복문 종료 |
-| `default` | 어떤 `case`에도 맞지 않을 때 실행 |
-| 단락 평가 | 결과가 정해지면 뒤 조건을 평가하지 않음 |
-| 입력값 검증 | 변환 가능 여부와 범위를 먼저 확인 |
-| 난수 | `Math.random()`으로 생성한 임의의 값 |
-
----
-
-<a id="js-03-section-3"></a>
-
-## 학습 목표
-
-- 검증·형 변환·조건 분기의 순서를 설명한다.
-- 원본의 해당 부분을 찾아 실행 순서와 결과를 다시 확인한다.
-
----
-
-<a id="js-03-section-4"></a>
-
-## 개념에서 실제 실행까지: 조건문은 값이 어느 실행 경로로 들어갈지 결정한다
-
-if는 조건값을 참·거짓처럼 평가하고, else if는 앞 조건이 거짓일 때만 검사한다. 점수 85는 90 이상이 아니므로 다음 80 이상 조건에서 B를 출력하고 나머지 분기를 건너뛴다. 여러 if를 따로 적으면 각각 독립적으로 실행될 수 있다는 차이가 있다.
-
-수업 원본은 Falsy를 다섯 가지로 메모했지만 빈 문자열, -0, 0n도 포함된다. 빈 배열과 빈 객체는 Truthy다. switch는 문자열 "3"을 숫자 3 case와 같게 취급하지 않는다. 원본의 == 비교와 같은 방식이라는 주석은 교정 대상이다.
-
-내 원본의 i15~i17 분기 출력은 '삼성'이며 강사님 원본은 '애플'이다. 이는 문법 오류가 아니라 잘못된 결과 문자열이다. 내 홀짝 풀이의 !q2_result % 2 == 0은 먼저 !를 적용해 Boolean을 만든 뒤 나머지를 구한다. 숫자 자체의 홀짝을 판단하려면 n % 2 !== 0처럼 작성한다. 두 원본의 난수에 % 3을 적용하는 방식도 범위가 3의 배수가 아닐 때 편향이 생긴다.
-
-### 수업 원본에서 사용한 부분
-
-아래는 전체 실행 파일이 아니라 **개념에 대응하는 문맥 발췌**다. 나머지 HTML·선언·등록 코드는 원본과 기존 번호형 본문에서 이어 확인한다. 
-
-내 코드: `workspace_html/javascript/03_if.html`
+출처: `me/workspace_html/javascript/03_if.html` 54–62행 · **원본 발췌**
 
 ```javascript
-// 이 파일에는 대응 구현이 없음
+		if (score >= 90) {
+			console.log('A')
+		} else if (score >= 80) {
+			console.log('B')
+		} else if (score >= 70) {
+			console.log('C')
+		} else {
+			console.log('D')
+		}
 ```
 
-강사님 코드: `workspace_teacher/workspace_html/javascript/03_if.html`
+양쪽 모두 앞에서 score를 85로 지정했으므로 B를 출력한다. 90 이상 검사에 실패한 뒤 80 이상을 검사하므로 여기서 다시 ‘90 미만’을 쓸 필요는 없다. 조건을 70 이상부터 검사하면 95도 C 갈래에 걸린다. 구간 판정은 순서가 중요하다.
+
+내 37행의 ‘컴퓨터가 1번만 일함’은 정확한 기준이 아니다. else if도 앞 조건이 거짓이면 다음 조건을 검사한다. **한 연결문에서 실행되는 갈래가 하나**라는 의미로 이해하자. 또 `!(score >= 60)`과 `score < 60`은 이 수업의 정상 숫자에서는 같지만 NaN까지 포함하면 같지 않다. NaN과의 크기 비교는 거짓이어서 부정 여부에 따라 결과가 달라진다.
+
+양쪽 주석의 거짓 값 목록에는 빈 문자열 `''`가 빠져 있다. 이 수업에서 먼저 기억할 값은 false, 0, '', undefined, null, NaN이다. 문자열 '0'이나 'false'는 빈 문자열이 아니므로 참으로 평가된다. 이 목록을 언어 전체의 완전한 목록이라고 외우지는 말자. [MDN 거짓으로 평가되는 값](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
+
+<a id="section-2"></a>
+
+## 2. switch: 값이 같은 case에서 시작하기
+
+switch는 case 값과 엄격 동등 비교로 일치 여부를 판단한다. 따라서 숫자 3과 문자열 '3'을 구별한다. 일치한 곳부터 실행하다가 break를 만나면 switch 밖으로 나간다. break가 없으면 다음 case에 적힌 문장도 이어 실행될 수 있다. 여러 case가 같은 일을 할 때는 원본처럼 묶을 수 있다. [MDN switch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch)
+
+### 강사님 코드
+
+출처: `teacher/workspace_html/javascript/03_if.html` 104–118행 · **원본 발췌**
 
 ```javascript
-switch(phone){
+        switch(phone){
             case 's23':
             case 's24':
             case 's25':
             case 's26':
                 console.log('삼성')
                 break
+            case 'i15':
+            case 'i16':
+            case 'i17':
+                console.log('애플')
+                break
+            default :
+                console.log('삼성, 애플 아님')
+        }
 ```
 
-### 직접 재현하는 최소 예제와 결과
+### 내 코드
 
-이 예제는 **이번 리팩토링의 설명용 재구성**이다. 원본 그대로의 발췌와 구별한다. 외부 통신 없이 Console에서 실행한다. 다른 예제의 변수와 섞이지 않게 새 실행 문맥에서 실행한다.
+출처: `me/workspace_html/javascript/03_if.html` 113–127행 · **원본 발췌**
 
 ```javascript
-const score = 85;
-if (score >= 90) console.log("A");
-else if (score >= 80) console.log("B");
-else console.log("C");
-switch ("3") {
-  case 3: console.log("숫자"); break;
-  default: console.log("타입 불일치");
+		switch (phone) {
+			case 's23':
+			case 's24':
+			case 's25':
+			case 's26':
+				console.log('삼성')
+				break;
+			case 'i15':
+			case 'i16':
+			case 'i17':
+				console.log('삼성')
+				break;
+			default:
+				console.log('삼성, 애플 아님')
+		}
+```
+
+phone='s23'인 원본 실행에서는 양쪽 모두 삼성이다. 그러나 i15·i16·i17이면 강사님은 애플, 내 코드는 삼성이라고 출력한다. **내 123행의 출력 문자열을 애플로 고치면 된다.** 실행값 하나만 확인하면 놓칠 수 있는 오류다. ‘==만 switch로 바꿀 수 있다’는 내 주석도 정확하지 않다. 여기서는 동일 값 분기에 적합하다고 이해하고, ==의 자동 변환과 switch의 비교를 섞지 않는다.
+
+<a id="section-3"></a>
+
+## 3. 난수와 가위바위보 — 양쪽 모두 검토하기
+
+Math.random()은 0 이상 1 미만의 값을 돌려준다. 수업 범위의 0·1·2 중 하나를 고르려면 `parseInt(Math.random() * 3)`을 쓴다. 원본의 양의 정수 min·max 범위 공식은 `parseInt(Math.random() * (max - min + 1)) + min`이다. 예를 들어 min=5, max=8이면 5–8을 만든다. 보안용 난수가 필요한 상황은 이 실습의 범위 밖이다. [MDN Math.random](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random)
+
+### 강사님 퀴즈: 난수 생성
+
+출처: `teacher/workspace_html/javascript/퀴즈/조건문.html` 13–20행 · **원본 발췌**
+
+```javascript
+        let rand = Math.random() // 0 <= rand < 1
+        rand = parseInt(rand * (2+1)) // 0~2까지 랜덤
+        // 0:가위 1:바위 2:보
+        // let user = '가위'
+        let user = prompt('가위바위보 중에 하나 적으시오')
+        // console.log('user : ', user)
+        let a = user || '취소누름'
+        console.log('user : ', typeof user, a)
+```
+
+### 내 풀이: 난수 생성
+
+출처: `me/workspace_html/javascript/03_if.html` 223–239행 · **원본 발췌**
+
+```javascript
+		let q5_rps = prompt('5. 가위/바위/보 중에 입력해주세요.')
+		// 사용자의 값은 prompt로 입력받으며, 랜드로 0,1,2만 출력하게 하여 해당 값이 출력 될 때
+		// com_rps라는 변수에 가위/바위/보 중에서 값을 받아올 수 있도록 if문 구성
+		let rand = parseInt(Math.random() * 10) % 3
+		let com_rps;
+
+		// console.log로 정확한 값을 받아오는지 출력해본 뒤 com_rps 변수에 값 입력
+		if(rand === 0){
+			com_rps = '가위'
+			// console.log(com_rps)
+		} else if(rand === 1){
+			com_rps = '바위'
+			// console.log(com_rps)
+		} else {
+			com_rps = '보'
+			// console.log(com_rps)
+		}
+```
+
+내 발췌는 원본 222–257행의 블록 주석 안에 있다. 실행하려면 해당 풀이만 따로 꺼내야 한다. 강사님 퀴즈의 3배 방식이 경우를 나누기에 더 적합하다. 내 방식은 0–9를 만든 뒤 나머지를 구하므로 0으로 가는 값은 0·3·6·9 네 개, 1과 2로 가는 값은 각각 세 개다. **결과 범위는 맞지만 분배가 치우친다.** 강사님 기본 파일의 1000배 후 %3도 같은 종류의 작은 치우침이 있다.
+
+강사님 `user || '취소누름'`은 null뿐 아니라 빈 문자열에도 대체 문구를 쓴다. 취소와 빈 입력을 정확히 구분하는 판정은 아니다. 이 원본은 ||가 불리언이 아닌 문자열도 반환한다는 실제 학습 근거다.
+
+### 강사님 퀴즈: 승패 비교
+
+출처: `teacher/workspace_html/javascript/퀴즈/조건문.html` 52–61행 · **원본 발췌**
+
+```javascript
+        if(user == rand){
+            console.log('비겼다')
+        } else if (user=='보' && rand==1
+                    || user=='바위' && rand==0
+                    || user=='가위' && rand==2
+        ) {
+            console.log('이겼다')
+        } else {
+            console.log('졌다')
+        }
+```
+
+### 내 풀이: 승패 비교
+
+출처: `me/workspace_html/javascript/03_if.html` 241–256행 · **원본 발췌**
+
+```javascript
+		// 가위/바위/보 에서 승리/패배/비기는 경우의 수는 3가지씩으로 or(||)로 구성
+		if(q5_rps == com_rps){
+			console.log(`비겼습니다. (나: ${q5_rps} , 컴퓨터: ${com_rps})`)
+		} else if (q5_rps == '가위' && com_rps == '바위'
+			|| q5_rps == '바위' && com_rps == '보'
+			|| q5_rps == '보' && com_rps == '가위'
+		) {
+			console.log(`졌습니다. (나: ${q5_rps} , 컴퓨터: ${com_rps})`)
+		} else if (q5_rps == '가위' && com_rps == '보'
+			|| q5_rps == '바위' && com_rps == '가위'
+			|| q5_rps == '보' && com_rps == '바위'
+		) {
+			console.log(`이겼습니다. (나: ${q5_rps} , 컴퓨터: ${com_rps})`)
+		} else {
+			alert('가위/바위/보 중에서 입력해주세요.')
+		}
+```
+
+강사님 발췌의 user는 '가위' 같은 문자열이고 rand는 0·1·2다. `user == rand`로는 정상 선택의 무승부를 판정하지 못한다. 앞의 중첩 if 풀이와 뒤의 이 풀이가 둘 다 실행되어 결과가 여러 번 출력될 수도 있다. 앞의 중첩 풀이도 컴퓨터가 바위·보일 때 잘못된 입력을 마지막 else에서 승패로 처리한다.
+
+내 코드는 컴퓨터 값을 com_rps 문자열로 맞춘 뒤 비교하고, 유효하지 않은 선택을 마지막에 안내한다. **이 승패 비교는 내 방식이 더 명확하다.** 세 가지 승리·패배 조합에서 &&가 ||보다 먼저 묶이지만, 각 조합을 괄호로 감싸면 읽기 편하다. 난수 생성만 교정하고 무승부·승리·패배·잘못된 입력을 모두 확인하면 된다.
+
+<a id="section-4"></a>
+
+## 4. 실제 문제 풀이의 경계값 점검
+
+강사님 기본 파일 121–182행의 12개 문제와 내 풀이를 비교했다. 아직 작성하지 않은 문제를 완성 풀이로 취급하지 않는다.
+
+| 문제 | 내 원본 위치 | 다시 볼 점 |
+| --- | --- | --- |
+| 양수·0·음수 | 130–144행 | 0을 양수로 처리. 문제는 0을 별도 분류하며 0은 양수가 아님 |
+| 홀짝 | 146–160행 | !q2_result % 2 == 0은 !(q2_result % 2 == 0)과 다름. 정수 입력 전제도 필요 |
+| 두 수의 큰 값 | 162–183행 | Number로 변환 후 같음도 처리한 점이 좋음. 취소·빈 입력은 별도 확인 필요 |
+| 교통비 | 185–201행 | 7000→3000 순서가 적절. 6999·3000·2999 경계도 확인 |
+| 가위바위보 | 203–257행 | 위 절의 난수·승패 비교 참고 |
+| 두 값 사이 | 259–284행 | x와 y 순서가 뒤집힌 경우도 검사한 점이 좋음. 경계 포함 여부는 문제 조건으로 정함 |
+| 월과 계절 | 286–316행 | prompt 문자열을 문자열 case와 비교. '3'과 '03'은 다름 |
+| 온도 | 318–336행 | -3 입력이 ‘영하 -3도’가 됨. 원문 조건처럼 영하 3도로 하려면 부호 변환 |
+| 35분 뒤 | 338–388행 | 첫 풀이에서 60분을 허용하고 24시로 넘어감. 뒤의 참고형에는 24시간 보정이 있음 |
+| 두 자리 같은 숫자 | 390–418행 | 첫 풀이에서 범위보다 %11을 먼저 검사하여 0·110도 같음 처리 |
+| 369 | 420–445행 | 십·일의 자리 풀이이므로 임의 자릿수 전체 검사로 일반화하지 않음 |
+| 사각형 포함 | 447–450행 | 내 파일에는 문제 주석만 있음. 풀이 완료로 표시하지 않음 |
+
+온도 문제의 -1 곱하기는 ‘정수로 변환’이 아니라 부호를 바꾸는 계산이다. 예를 들어 -3.5에 -1을 곱하면 3.5이며 여전히 소수다. 원본의 임의 온도 경고 문구는 수업 출력 예제이지 건강 판단 기준으로 사용하지 않는다.
+
+### 내 시간 풀이의 참고형
+
+강사님 기본 파일에는 시간 문제 조건만 있고, 다음 코드는 **내 파일에 저장된 참고형**이다. 이름만 보고 강사님 원본이라고 붙이지 않는다.
+
+출처: `me/workspace_html/javascript/03_if.html` 376–387행 · **원본 발췌**
+
+```javascript
+		let hour = parseInt(Math.random() * 24)
+		let minute = parseInt(Math.random() * 60)
+		console.log(`${hour}시 ${minute}분`)
+		minute += 35
+		if(minute >= 60){
+		hour ++
+		minute -= 60
+		}
+		if(hour >= 24){
+		hour -= 24
+		}
+		console.log(`${hour}시 ${minute}분`)
+```
+
+이 코드 역시 블록 주석 안에 있다. 35분을 더한 뒤 60분 이상이면 시간을 올리고 분을 줄인다. 시간이 24 이상이면 24를 뺀다. 한 번에 35분만 더하는 이 문제에서는 각 보정 한 번이면 충분하다. 더하는 시간이 매우 큰 경우까지 보장하는 일반 날짜 계산기는 아니다.
+
+<a id="section-5"></a>
+
+## 5. 교정 예제와 복습
+
+아래는 원본 발췌가 아니라 **배운 연산자로 다시 쓴 교정 예제**다. 입력 검증 전체 구현은 생략하고 num이 정상 숫자라고 가정한다.
+
+```javascript
+let num = 0;
+if (num > 0) {
+    console.log('양수');
+} else if (num === 0) {
+    console.log(0);
+} else {
+    console.log('음수');
 }
-console.log(Boolean(""), Boolean([]), 5 % 2 !== 0);
+
+let hour = 23;
+let minute = 51;
+minute += 35;
+if (minute >= 60) {
+    hour++;
+    minute -= 60;
+}
+if (hour >= 24) {
+    hour -= 24;
+}
+console.log(`${hour}시 ${minute}분`);
 ```
 
-예상 출력:
-
-```text
-B
-타입 불일치
-false true true
-```
-
-### 결과를 역추적하는 방법
-
-취소·공백 → 숫자 여부 → 정수 여부 → 범위 → 업무 분기 순서로 검사한다. 0은 수학적으로 양수도 음수도 아니며 수업 문제의 별도 분류 조건을 명시한다.
-
-출력은 아래의 확인 경로로 추적한다. return 값은 호출자에게 전달되고 자동으로 화면에 표시되지 않는다. Console 로그, DOM 변경, 저장소 변경, 서버 응답은 별개 단계다.
-
-| 확인할 단계 | 이 예제에서 볼 것 |
-| --- | --- |
-| 입력 | 리터럴·현재 폼 값·이벤트 인수·응답 중 출처를 위 설명과 대조 |
-| 실행 | 각 줄 또는 콜백이 지금 실행되는지, 나중에 실행되는지 구분 |
-| 결과 | 위 예상 출력과 현재 값·자료형을 함께 대조 |
-| 오류 | 첫 오류 줄의 입력과 직전 상태를 확인하고 뒤 로그 누락 원인 추적 |
-
-### 별도 강사님 퀴즈도 확인: 문자열과 숫자를 먼저 같은 표현으로 맞추기
-
-`workspace_teacher/workspace_html/javascript/퀴즈/조건문.html`은 별도 가위바위보 풀이를 포함한다. 앞쪽 중첩 if는 각 컴퓨터 수에 따라 비교하지만, 뒤쪽 단축 풀이의 `user == rand`는 사용자 문자열 '가위'/'바위'/'보'와 숫자0/1/2를 비교한다. 따라서 같은 선택도 비김을 놓칠 수 있다. 일부 분기는 잘못된 사용자 입력을 패배나 승리로 처리한다. 강사님 코드도 실행 결과를 검증해야 한다.
-
-💡 개선은 선택을 먼저 검증하고 동일한 숫자 표현으로 맞춘 뒤 분기한다. 아래 예제는 정답 함수 전체가 아니라 '비김 판정'에 필요한 부분이다.
-
-```javascript
-const choices = ["가위", "바위", "보"];
-const user = "가위";
-const computer = 0;
-const userIndex = choices.indexOf(user);
-console.log(user == computer, userIndex === computer);
-console.log(choices.indexOf("잘못된 입력"));
-```
-
-예상 출력은 `false true`, 다음 줄 `-1`이다. -1은 승패 계산 전에 잘못된 입력으로 거부한다. 퀴즈의 `user || '취소누름'` 로그도 빈 문자열과 취소null을 같은 문구로 묶으므로 실제 값을 함께 확인한다.
-
-
-### 단계별 복습 실습과 정답
-
-**기본 실습:** 점수90,80,79를 A>=90,B>=80,그 외C로 분류한다.
-
-**응용·디버깅 실습:** 월0,1,13 입력 중 학습 범위1~12에 해당하는 값을 고른다.
-
-**통합 확인:** 위 최소 예제를 새 문맥에서 작성하고 정상값·빈 값·경계값으로 실행한다. 원본에서 대응하는 선언·호출·콜백을 찾아 위에 나타난 차이가 무엇을 바꾸는지 설명한다. 아래 정답은 먼저 예측한 뒤 펼친다. 이 실습은 💡 설명용 보강이며 원본에 모두 완성되어 있다는 뜻은 아니다.
+1. 위 코드의 출력 두 개는?
+2. 3 < a < 20 대신 왜 3 < a && a < 20을 쓰는가?
+3. 사각형 x=10–90, y=20–100에 테두리를 포함하여 점이 속하는 조건은?
 
 <details>
-<summary>정답과 처리 순서 해설</summary>
+<summary>정답 확인</summary>
 
-1. A,B,C다. 높은 기준부터 else if로 검사한다.
-2. 1만 허용한다. 숫자 변환 뒤 정수 여부와 양끝 범위를 함께 검사한다.
-3. 최소 예제의 예상 출력과 한 줄씩 대조한다. 값이 다른 경우 입력 → 형 변환 → 분기/상태 변경 → 출력 순서로 첫 차이를 찾는다. DOM·API 예제는 Console 값만 아니라 화면·Elements·Network가 서로 같은 상태를 말하는지도 점검한다.
+1. 숫자 0과 '0시 26분'이다.
+2. 앞 비교가 true/false가 된 다음 다시 20과 비교되기 때문이다. 두 범위 조건을 &&로 연결해야 한다.
+3. `x >= 10 && x <= 90 && y >= 20 && y <= 100`이다. 원본 문제를 바탕으로 작성한 복습 답이며 내 파일의 완성 코드 인용은 아니다.
 
 </details>
 
-### 복습 질문과 해설
+<a id="section-6"></a>
 
-**질문:** 3 < 10 < 5는 왜 true인가?
+## 추가로 알면 좋은 것
 
-**해설:** 3 < 10의 true가 다음 비교에서 숫자 1로 변환되어 1 < 5가 된다. 범위는 3 < n && n < 5로 검사한다.
+객체 매핑으로 모든 분기를 재설계하는 방법, 회원 등급 앱, Number.isInteger 기반 입력 검증 체계는 별도 확장이다. 본문에서는 실제 수업 문제의 조건·경계·출력 교정에 집중한다.
 
-**한 번 더 확인:** 예제의 입력을 하나 바꾸고 결과를 먼저 예상한 뒤 실행한다. 정상 입력만 아니라 비어 있는 값, 경계값, 두 번 실행했을 때의 상태를 기존 실습·오류 절에서 반복 확인한다.
-
----
-
-<a id="js-03-section-5"></a>
-
-## 1. 기본 `if`
-
-### 1-1. 내 코드와 강사님 코드
-
-```javascript
-let value = false
-
-if (!value) {
-    console.log("이거 true임")
-}
-```
-
-### 1-2. 출력 결과
-
-```text
-이거 true임
-```
-
-`value`는 `false`지만 `!value`는 `true`가 된다.
-
-### 1-3. 구성
-
-| 요소 | 의미 |
-| --- | --- |
-| `if` | 조건문 시작 |
-| `!value` | `value`의 참·거짓 반전 |
-| `{}` | 조건이 참일 때 실행할 블록 |
-| `console.log()` | 결과 확인 |
-
----
-
-<a id="js-03-section-6"></a>
-
-## 2. 조건이 참일 때만 실행
-
-```javascript
-const value = true
-
-if (value) {
-    console.log("참")
-}
-```
-
-출력:
-
-```text
-참
-```
-
-조건이 `false`면 블록을 건너뛴다.
-
----
-
-<a id="js-03-section-7"></a>
-
-## 3. 서로 반대인 두 개의 `if`
-
-### 3-1. 원본 코드
-
-```javascript
-let value2 = true
-
-if (value2) {
-    console.log("참")
-}
-
-if (!value2) {
-    console.log("거짓")
-}
-```
-
-### 3-2. 출력 결과
-
-```text
-참
-```
-
-두 조건은 서로 반대지만 각각 독립적으로 검사된다.
-
-```text
-첫 번째 if 검사
-    ↓
-두 번째 if도 별도로 검사
-```
-
----
-
-<a id="js-03-section-8"></a>
-
-## 4. `if·else`
-
-### 4-1. 원본 코드
-
-```javascript
-let value3 = true
-
-if (value3) {
-    console.log("참")
-} else {
-    console.log("거짓")
-}
-```
-
-### 4-2. 출력 결과
-
-```text
-참
-```
-
-`if`가 참이면 `else`는 검사하지 않는다.
-
-> [!TIP]
-> 두 조건이 정확히 서로 반대라면 독립된 `if` 두 개보다 `if·else`가 의도를 더 명확하게 표현한다.
-
----
-
-<a id="js-03-section-9"></a>
-
-## 5. 합격 판정
-
-### 5-1. 원본 코드
-
-```javascript
-const score = 85
-
-if (score >= 60) {
-    console.log("합격")
-} else {
-    console.log("불합격")
-}
-```
-
-### 5-2. 출력 결과
-
-```text
-합격
-```
-
-### 5-3. 반대 조건
-
-다음 두 조건은 같은 의미다.
-
-```javascript
-score < 60
-```
-
-```javascript
-!(score >= 60)
-```
-
-첫 번째 표현이 더 직접적으로 읽힌다.
-
----
-
-<a id="js-03-section-10"></a>
-
-## 6. 조건식은 Boolean으로 평가된다
-
-```javascript
-const score = 85
-const isPassed = score >= 60
-
-console.log(isPassed)
-```
-
-출력:
-
-```text
-true
-```
-
-비교 연산식의 결과를 변수에 저장할 수 있다.
-
-```javascript
-if (isPassed) {
-    console.log("합격")
-}
-```
-
----
-
-<a id="js-03-section-11"></a>
-
-## 7. 실행 블록
-
-원본 주석에는 `{}`로 감싼 곳을 실행 블록이라고 설명한다.
-
-```javascript
-if (score >= 60) {
-    console.log("합격")
-    console.log("다음 단계로 이동합니다.")
-}
-```
-
-같은 중괄호 안의 문장은 하나의 블록으로 처리된다.
-
----
-
-<a id="js-03-section-12"></a>
-
-## 8. 중괄호 생략
-
-### 8-1. 원본 코드
-
-```javascript
-if (true)
-    console.log(1)
-```
-
-한 문장만 있을 때 중괄호를 생략할 수 있다.
-
-### 8-2. 위험한 예
-
-```javascript
-if (isLoggedIn)
-    console.log("로그인됨")
-    showDashboard()
-```
-
-들여쓰기만 보면 두 문장 모두 조건문 안처럼 보이지만 실제로는 `console.log()`만 조건부 실행이다.
-
-### 8-3. 권장
-
-```javascript
-if (isLoggedIn) {
-    console.log("로그인됨")
-    showDashboard()
-}
-```
-
-> [!IMPORTANT]
-> 실무에서는 한 줄이어도 중괄호를 사용하는 편이 수정과 코드 리뷰에 안전하다.
-
----
-
-<a id="js-03-section-13"></a>
-
-## 9. 최소값 보정
-
-### 9-1. 원본 코드
-
-```javascript
-let age = 17
-
-if (age < 18) {
-    age = 18
-}
-
-console.log(age)
-```
-
-### 9-2. 출력 결과
-
-```text
-18
-```
-
-한 줄로 작성할 수 있지만 블록을 사용하는 편이 명확하다.
-
-```javascript
-if (age < 18) {
-    age = 18
-}
-```
-
-같은 목적에는 다음도 사용할 수 있다.
-
-```javascript
-age = Math.max(age, 18)
-```
-
----
-
-<a id="js-03-section-14"></a>
-
-## 10. 중첩 조건문
-
-### 10-1. 원본 코드
-
-```javascript
-const score = 85
-
-if (score >= 90) {
-    console.log("A")
-} else {
-    if (score >= 80) {
-        console.log("B")
-    } else {
-        console.log("C")
-    }
-}
-```
-
-### 10-2. 출력 결과
-
-```text
-B
-```
-
-### 10-3. 실행 순서
-
-```text
-90 이상?
-    ↓ 아니오
-80 이상?
-    ↓ 예
-B 출력
-```
-
----
-
-<a id="js-03-section-15"></a>
-
-## 11. `else if`로 단순화
-
-```javascript
-const score = 85
-
-if (score >= 90) {
-    console.log("A")
-} else if (score >= 80) {
-    console.log("B")
-} else if (score >= 70) {
-    console.log("C")
-} else {
-    console.log("D")
-}
-```
-
-출력:
-
-```text
-B
-```
-
-중첩 `if`보다 실행 흐름이 평평하게 보인다.
-
----
-
-<a id="js-03-section-16"></a>
-
-## 12. 조건 순서의 중요성
-
-잘못된 순서:
-
-```javascript
-const score = 95
-
-if (score >= 70) {
-    console.log("C 이상")
-} else if (score >= 90) {
-    console.log("A")
-}
-```
-
-출력:
-
-```text
-C 이상
-```
-
-첫 조건이 이미 참이므로 뒤 조건을 검사하지 않는다.
-
-개선:
-
-```javascript
-if (score >= 90) {
-    console.log("A")
-} else if (score >= 70) {
-    console.log("C 이상")
-}
-```
-
-> [!IMPORTANT]
-> 범위가 겹치는 조건은 더 구체적이고 높은 기준부터 작성한다.
-
----
-
-<a id="js-03-section-17"></a>
-
-## 13. Truthy와 Falsy
-
-원본에는 다음 값이 Falsy라고 정리되어 있다.
-
-```text
-false
-0
-undefined
-null
-NaN
-```
-
-JavaScript에서는 다음 값도 Falsy다.
-
-```text
-""
-0n
--0
-```
-
-대표 Falsy 값:
-
-```javascript
-const values = [
-    false,
-    0,
-    -0,
-    0n,
-    "",
-    null,
-    undefined,
-    NaN,
-]
-
-for (const value of values) {
-    console.log(Boolean(value))
-}
-```
-
-모두 `false`가 출력된다.
-
----
-
-<a id="js-03-section-18"></a>
-
-## 14. Truthy 값
-
-Falsy가 아닌 대부분의 값은 Truthy다.
-
-```javascript
-const values = [
-    true,
-    1,
-    -1,
-    "0",
-    "false",
-    [],
-    {},
-]
-
-for (const value of values) {
-    console.log(Boolean(value))
-}
-```
-
-모두 `true`다.
-
-> [!WARNING]
-> 빈 배열 `[]`과 빈 객체 `{}`도 Truthy다.
->
-> Python의 빈 리스트·딕셔너리와 동작이 다르다.
-
----
-
-<a id="js-03-section-19"></a>
-
-## 15. Boolean 변환
-
-```javascript
-console.log(Boolean(""))
-console.log(Boolean("JavaScript"))
-console.log(Boolean(0))
-console.log(Boolean(1))
-```
-
-출력:
-
-```text
-false
-true
-false
-true
-```
-
-조건식 내부에서는 JavaScript가 같은 방식으로 값을 Boolean처럼 평가한다.
-
----
-
-<a id="js-03-section-20"></a>
-
-## 16. 과일 분기
-
-### 16-1. 원본 코드
-
-```javascript
-const fruit = "apple"
-
-if (fruit === "apple") {
-    console.log("사과")
-} else if (fruit === "banana") {
-    console.log("바나나")
-} else {
-    console.log("알 수 없음")
-}
-```
-
-### 16-2. 출력 결과
-
-```text
-사과
-```
-
-원본은 `==`를 사용하지만 실무 기준으로 `===`를 우선 사용한다.
-
----
-
-<a id="js-03-section-21"></a>
-
-## 17. `switch` 기본 구조
-
-```javascript
-switch (fruit) {
-    case "apple":
-        console.log("사과")
-        break
-    case "banana":
-        console.log("바나나")
-        break
-    default:
-        console.log("알 수 없음")
-}
-```
-
-### 17-1. 구성
-
-| 요소 | 의미 |
-| --- | --- |
-| `switch (fruit)` | 비교 대상 |
-| `case "apple"` | 일치 여부 확인 |
-| `break` | `switch` 종료 |
-| `default` | 어떤 경우에도 일치하지 않을 때 |
-
----
-
-<a id="js-03-section-22"></a>
-
-## 18. `switch`는 엄격하게 비교한다
-
-`switch`의 `case` 비교는 엄격한 동등 비교와 유사하게 동작한다.
-
-```javascript
-const value = 1
-
-switch (value) {
-    case "1":
-        console.log("문자열")
-        break
-    case 1:
-        console.log("숫자")
-        break
-}
-```
-
-출력:
-
-```text
-숫자
-```
-
----
-
-<a id="js-03-section-23"></a>
-
-## 19. `break`가 필요한 이유
-
-```javascript
-const fruit = "apple"
-
-switch (fruit) {
-    case "apple":
-        console.log("사과")
-    case "banana":
-        console.log("바나나")
-    default:
-        console.log("알 수 없음")
-}
-```
-
-출력:
-
-```text
-사과
-바나나
-알 수 없음
-```
-
-`break`가 없으면 일치한 `case` 이후의 코드가 계속 실행된다.
-
-이를 fall-through라고 한다.
-
----
-
-<a id="js-03-section-24"></a>
-
-## 20. 여러 `case` 묶기
-
-### 20-1. 원본 코드
-
-```javascript
-const phone = "s23"
-
-switch (phone) {
-    case "s23":
-    case "s24":
-    case "s25":
-    case "s26":
-        console.log("삼성")
-        break
-    case "i15":
-    case "i16":
-    case "i17":
-        console.log("애플")
-        break
-    default:
-        console.log("삼성, 애플 아님")
-}
-```
-
-### 20-2. 출력 결과
-
-```text
-삼성
-```
-
-여러 `case`가 같은 코드를 실행하도록 묶을 수 있다.
-
-> [!NOTE]
-> 내 코드 원본의 iPhone 분기에서 `"삼성"`을 출력하는 부분은 오타이므로 `"애플"`로 수정해야 한다.
-
----
-
-<a id="js-03-section-25"></a>
-
-## 21. `if`와 `switch` 선택 기준
-
-| 상황 | 적합한 방식 |
-| --- | --- |
-| 범위 비교 | `if·else if` |
-| 복잡한 논리 조건 | `if·else if` |
-| 하나의 값을 여러 고정값과 비교 | `switch` |
-| 단순 키와 결과 매핑 | 객체·`Map` 검토 |
-| 분기마다 복잡한 동작 | 함수 분리 검토 |
-
-`switch`가 항상 더 좋은 것은 아니다.
-
----
-
-<a id="js-03-section-26"></a>
-
-## 22. 객체를 이용한 단순 매핑
-
-```javascript
-const fruitNames = {
-    apple: "사과",
-    banana: "바나나",
-}
-
-const fruit = "apple"
-
-console.log(
-    fruitNames[fruit] ?? "알 수 없음",
-)
-```
-
-출력:
-
-```text
-사과
-```
-
-값과 결과만 단순하게 연결할 때 객체가 더 간결할 수 있다.
-
----
-
-<a id="js-03-section-27"></a>
-
-## 23. 문제 해결 기본 흐름
-
-조건문 문제는 다음 순서로 나누면 이해하기 쉽다.
-
-| 단계 | 작업 |
-| --- | --- |
-| 1 | 입력값 받기 |
-| 2 | 필요한 자료형으로 변환 |
-| 3 | 변환 성공 여부 검사 |
-| 4 | 허용 범위 검사 |
-| 5 | 조건에 따라 결과 계산 |
-| 6 | 사용자에게 결과 출력 |
-
-> [!IMPORTANT]
-> 원본 문제 중 일부는 문자열과 숫자의 암시적 형 변환에 의존한다.
->
-> 실제 코드에서는 먼저 `Number()`로 변환하고 `Number.isNaN()`으로 검증하는 것이 안전하다.
-
----
-
-<a id="js-03-section-28"></a>
-
-## 24. 문제 1: 양수·0·음수 판정
-
-### 24-1. 요구사항
-
-```text
-숫자 입력
-→ 양수
-→ 0
-→ 음수
-```
-
-### 24-2. 개선 코드
-
-```javascript
-const input = "10"
-const number = Number(input)
-
-if (Number.isNaN(number)) {
-    console.log("숫자만 입력해주세요.")
-} else if (number > 0) {
-    console.log("양수입니다.")
-} else if (number === 0) {
-    console.log("0입니다.")
-} else {
-    console.log("음수입니다.")
-}
-```
-
-### 24-3. 출력 결과
-
-```text
-양수입니다.
-```
-
-원본 요구사항에는 0을 양수로 처리한다는 메모도 있으므로, 요구사항에 따라 다음처럼 작성할 수도 있다.
-
-```javascript
-if (number >= 0) {
-    console.log("0 또는 양수입니다.")
-}
-```
-
----
-
-<a id="js-03-section-29"></a>
-
-## 25. 문제 2: 홀수·짝수
-
-### 25-1. 원본 코드의 문제
-
-```javascript
-if (result % 2 == 0) {
-    console.log("짝수")
-} else if (!result % 2 == 0) {
-    console.log("홀수")
-}
-```
-
-`!result % 2 == 0`은 연산자 우선순위 때문에 의도대로 읽히지 않는다.
-
-### 25-2. 개선 코드
-
-```javascript
-const input = "7"
-const number = Number(input)
-
-if (
-    Number.isNaN(number)
-    || !Number.isInteger(number)
-) {
-    console.log("정수를 입력해주세요.")
-} else if (number % 2 === 0) {
-    console.log("짝수입니다.")
-} else {
-    console.log("홀수입니다.")
-}
-```
-
-### 25-3. 출력 결과
-
-```text
-홀수입니다.
-```
-
----
-
-<a id="js-03-section-30"></a>
-
-## 26. 문제 3: 두 수 중 큰 값
-
-```javascript
-const first = 3
-const second = 5
-
-if (first > second) {
-    console.log(`큰 수: ${first}`)
-} else if (first < second) {
-    console.log(`큰 수: ${second}`)
-} else {
-    console.log("두 수가 같습니다.")
-}
-```
-
-출력:
-
-```text
-큰 수: 5
-```
-
-단순한 최대값은 다음처럼 계산할 수도 있다.
-
-```javascript
-console.log(
-    Math.max(first, second),
-)
-```
-
----
-
-<a id="js-03-section-31"></a>
-
-## 27. 문제 4: 교통수단 선택
-
-### 27-1. 요구사항
-
-```text
-7,000원 이상
-→ 택시
-
-3,000원 이상 7,000원 미만
-→ 버스
-
-3,000원 미만
-→ 도보
-```
-
-### 27-2. 코드
-
-```javascript
-const money = 6500
-
-if (money >= 7000) {
-    console.log("택시타자")
-} else if (money >= 3000) {
-    console.log("버스타자")
-} else {
-    console.log("걸어가자")
-}
-```
-
-### 27-3. 출력 결과
-
-```text
-버스타자
-```
-
-앞 조건에서 7,000원 이상이 걸러졌으므로 두 번째 조건에는 `money < 7000`을 다시 작성할 필요가 없다.
-
----
-
-<a id="js-03-section-32"></a>
-
-## 28. 문제 5-1: 컴퓨터가 항상 바위
-
-```javascript
-const userChoice = "보"
-const computerChoice = "바위"
-
-if (userChoice === computerChoice) {
-    console.log("비겼습니다.")
-} else if (userChoice === "보") {
-    console.log("이겼습니다.")
-} else if (userChoice === "가위") {
-    console.log("졌습니다.")
-} else {
-    console.log("가위·바위·보만 입력해주세요.")
-}
-```
-
-출력:
-
-```text
-이겼습니다.
-```
-
----
-
-<a id="js-03-section-33"></a>
-
-## 29. 문제 5-2: 무작위 가위바위보
-
-### 29-1. 컴퓨터 선택
-
-```javascript
-const choices = [
-    "가위",
-    "바위",
-    "보",
-]
-
-const randomIndex = Math.floor(
-    Math.random() * choices.length,
-)
-
-const computerChoice = (
-    choices[randomIndex]
-)
-```
-
-`parseInt(Math.random() * 10) % 3`보다 배열 길이를 직접 사용하는 방식이 분포와 의도를 이해하기 쉽다.
-
----
-
-<a id="js-03-section-34"></a>
-
-## 30. 가위바위보 승패 판정
-
-```javascript
-const userChoice = "가위"
-
-const isValidChoice = (
-    choices.includes(userChoice)
-)
-
-if (!isValidChoice) {
-    console.log(
-        "가위·바위·보만 입력해주세요.",
-    )
-} else if (
-    userChoice === computerChoice
-) {
-    console.log("비겼습니다.")
-} else if (
-    (
-        userChoice === "가위"
-        && computerChoice === "보"
-    )
-    || (
-        userChoice === "바위"
-        && computerChoice === "가위"
-    )
-    || (
-        userChoice === "보"
-        && computerChoice === "바위"
-    )
-) {
-    console.log("이겼습니다.")
-} else {
-    console.log("졌습니다.")
-}
-```
-
-> [!TIP]
-> 가능한 입력값 검증을 승패 판정보다 먼저 수행하면 이후 조건이 단순해진다.
-
----
-
-<a id="js-03-section-35"></a>
-
-## 31. 문제 6: 세 번째 수가 두 수 사이인지
-
-### 31-1. 원본 문제
-
-```text
-x, y, z 입력
-→ z가 x와 y 사이인지 판단
-```
-
-### 31-2. 순서를 모를 때
-
-```javascript
-const x = 10
-const y = 30
-const z = 20
-
-const minValue = Math.min(x, y)
-const maxValue = Math.max(x, y)
-
-const isBetween = (
-    z > minValue
-    && z < maxValue
-)
-
-console.log(isBetween)
-```
-
-출력:
-
-```text
-true
-```
-
----
-
-<a id="js-03-section-36"></a>
-
-## 32. 경계값 포함 여부
-
-경계값까지 “사이”로 인정한다면:
-
-```javascript
-const isInside = (
-    z >= minValue
-    && z <= maxValue
-)
-```
-
-경계값을 제외한다면:
-
-```javascript
-const isInside = (
-    z > minValue
-    && z < maxValue
-)
-```
-
-요구사항에서 경계 포함 여부를 먼저 확인해야 한다.
-
----
-
-<a id="js-03-section-37"></a>
-
-## 33. 문제 7: 월별 계절
-
-### 33-1. `switch` 풀이
-
-```javascript
-const month = 8
-
-switch (month) {
-    case 12:
-    case 1:
-    case 2:
-        console.log("겨울")
-        break
-    case 3:
-    case 4:
-    case 5:
-        console.log("봄")
-        break
-    case 6:
-    case 7:
-    case 8:
-        console.log("여름")
-        break
-    case 9:
-    case 10:
-    case 11:
-        console.log("가을")
-        break
-    default:
-        console.log(
-            "1부터 12까지 입력해주세요.",
-        )
-}
-```
-
-출력:
-
-```text
-여름
-```
-
----
-
-<a id="js-03-section-38"></a>
-
-## 34. 문자열과 숫자 `case`
-
-`prompt()` 결과는 문자열이다.
-
-```javascript
-const monthText = "8"
-```
-
-다음 두 방식 중 하나로 통일해야 한다.
-
-숫자로 변환:
-
-```javascript
-const month = Number(monthText)
-```
-
-문자열 `case` 사용:
-
-```text
-case "8":
-```
-
-실무에서는 숫자 범위 검증을 위해 `Number()`로 변환하는 편이 자연스럽다.
-
----
-
-<a id="js-03-section-39"></a>
-
-## 35. 문제 8: 영상·영하 온도
-
-### 35-1. 원본 코드의 문제
-
-원본은 음수값을 그대로 출력해 다음처럼 보일 수 있다.
-
-```text
-영하 -3도
-```
-
-일반적으로는 부호를 제거해 출력한다.
-
-### 35-2. 개선 코드
-
-```javascript
-const temperature = -3
-
-if (temperature >= 0) {
-    console.log(
-        `영상 ${temperature}도입니다.`,
-    )
-} else {
-    console.log(
-        `영하 ${Math.abs(temperature)}도입니다.`,
-    )
-}
-```
-
-### 35-3. 출력 결과
-
-```text
-영하 3도입니다.
-```
-
----
-
-<a id="js-03-section-40"></a>
-
-## 36. 온도 입력 검증
-
-```javascript
-const input = "-3"
-const temperature = Number(input)
-
-if (Number.isNaN(temperature)) {
-    console.log("숫자를 입력해주세요.")
-} else if (
-    temperature < -50
-    || temperature > 50
-) {
-    console.log("온도 범위를 확인해주세요.")
-} else if (temperature >= 0) {
-    console.log(
-        `영상 ${temperature}도입니다.`,
-    )
-} else {
-    console.log(
-        `영하 ${Math.abs(temperature)}도입니다.`,
-    )
-}
-```
-
----
-
-<a id="js-03-section-41"></a>
-
-## 37. 문제 9: 35분 후 시간
-
-### 37-1. 입력값
-
-```text
-3시 51분
-```
-
-### 37-2. 코드
-
-```javascript
-let hour = 3
-let minute = 51
-
-minute += 35
-
-if (minute >= 60) {
-    hour += Math.floor(
-        minute / 60,
-    )
-
-    minute %= 60
-}
-
-if (hour >= 24) {
-    hour %= 24
-}
-
-console.log(
-    `${hour}시 ${minute}분`,
-)
-```
-
-### 37-3. 출력 결과
-
-```text
-4시 26분
-```
-
----
-
-<a id="js-03-section-42"></a>
-
-## 38. 시간 계산 일반화
-
-원본의 `minute >= 25` 분기는 35분 추가에만 맞춘 방식이다.
-
-다음 방식은 추가 시간이 달라져도 사용할 수 있다.
-
-```javascript
-const addedMinutes = 95
-
-minute += addedMinutes
-
-hour += Math.floor(
-    minute / 60,
-)
-
-minute %= 60
-hour %= 24
-```
-
----
-
-<a id="js-03-section-43"></a>
-
-## 39. 문제 10: 두 자리 숫자의 각 자리 비교
-
-```javascript
-const number = 88
-
-if (
-    !Number.isInteger(number)
-    || number < 10
-    || number > 99
-) {
-    console.log(
-        "10부터 99까지 입력해주세요.",
-    )
-} else {
-    const tens = Math.floor(
-        number / 10,
-    )
-
-    const ones = number % 10
-
-    if (tens === ones) {
-        console.log("같음")
-    } else {
-        console.log("다름")
-    }
-}
-```
-
-출력:
-
-```text
-같음
-```
-
-`11`로 나누어떨어지는지 검사하는 방식도 가능하지만, 자리값을 직접 구하면 문제 의도가 더 명확하다.
-
----
-
-<a id="js-03-section-44"></a>
-
-## 40. 문제 11: 369게임
-
-### 40-1. 두 자리 숫자 방식
-
-```javascript
-const number = 31
-
-const tens = Math.floor(
-    number / 10,
-)
-
-const ones = number % 10
-
-const hasClapNumber = (
-    [3, 6, 9].includes(tens)
-    || [3, 6, 9].includes(ones)
-)
-
-console.log(
-    hasClapNumber
-        ? "박수"
-        : number,
-)
-```
-
-출력:
-
-```text
-박수
-```
-
----
-
-<a id="js-03-section-45"></a>
-
-## 41. 문자열 방식의 369게임
-
-자리수가 늘어나도 처리하려면 문자열로 검사할 수 있다.
-
-```javascript
-const number = 3693
-const text = String(number)
-
-const clapCount = [
-    ...text,
-].filter(
-    digit => (
-        digit === "3"
-        || digit === "6"
-        || digit === "9"
-    ),
-).length
-
-console.log(
-    clapCount > 0
-        ? "박수 ".repeat(clapCount).trim()
-        : number,
-)
-```
-
-출력:
-
-```text
-박수 박수 박수 박수
-```
-
----
-
-<a id="js-03-section-46"></a>
-
-## 42. 문제 12: 좌표가 사각형 안에 있는지
-
-### 42-1. 조건
-
-```text
-좌상단
-→ x1 = 10, y1 = 20
-
-우하단
-→ x2 = 90, y2 = 100
-
-경계선 포함
-```
-
-### 42-2. 코드
-
-```javascript
-const x1 = 10
-const y1 = 20
-const x2 = 90
-const y2 = 100
-
-const pointX = 50
-const pointY = 80
-
-const isInside = (
-    pointX >= x1
-    && pointX <= x2
-    && pointY >= y1
-    && pointY <= y2
-)
-
-console.log(isInside)
-```
-
-출력:
-
-```text
-true
-```
-
----
-
-<a id="js-03-section-47"></a>
-
-## 43. JavaScript의 연속 비교 주의
-
-### 43-1. 원본 메모
-
-```javascript
-const a = 10
-
-// 잘못된 방식
-// if (3 < a < 20) {
-```
-
-JavaScript에서는 다음 식을 수학식처럼 해석하지 않는다.
-
-```javascript
-3 < a < 20
-```
-
-평가 과정:
-
-```text
-3 < 10
-→ true
-
-true < 20
-→ 1 < 20
-→ true
-```
-
-### 43-2. 올바른 코드
-
-```javascript
-if (
-    3 < a
-    && a < 20
-) {
-    console.log("범위 안")
-}
-```
-
----
-
-<a id="js-03-section-48"></a>
-
-## 44. `Math.random()`
-
-### 44-1. 원본 코드
-
-```javascript
-const randomValue = Math.random()
-
-console.log(randomValue)
-```
-
-`Math.random()`은 다음 범위의 난수를 반환한다.
-
-```text
-0 이상
-1 미만
-```
-
-```text
-0 <= value < 1
-```
-
----
-
-<a id="js-03-section-49"></a>
-
-## 45. 0부터 2까지 난수
-
-원본:
-
-```javascript
-parseInt(
-    Math.random() * 10,
-) % 3
-```
-
-더 직접적인 방식:
-
-```javascript
-const randomNumber = Math.floor(
-    Math.random() * 3,
-)
-```
-
-가능한 결과:
-
-```text
-0
-1
-2
-```
-
----
-
-<a id="js-03-section-50"></a>
-
-## 46. 최소값·최대값 범위 난수
-
-### 46-1. 원본 공식
-
-```javascript
-const min = 5
-const max = 8
-
-const randomNumber = Math.floor(
-    Math.random()
-    * (max - min + 1),
-) + min
-```
-
-### 46-2. 가능한 결과
-
-```text
-5
-6
-7
-8
-```
-
-### 46-3. 공식
-
-```text
-Math.floor(
-    Math.random()
-    × (최대값 - 최소값 + 1)
-)
-+ 최소값
-```
-
----
-
-<a id="js-03-section-51"></a>
-
-## 47. 난수 함수로 분리
-
-```javascript
-function getRandomInteger(
-    min,
-    max,
-) {
-    return Math.floor(
-        Math.random()
-        * (max - min + 1),
-    ) + min
-}
-
-console.log(
-    getRandomInteger(5, 8),
-)
-```
-
-반복되는 난수 공식을 함수로 분리하면 재사용과 테스트가 쉬워진다.
-
----
-
-<a id="js-03-section-52"></a>
-
-## 48. 내 코드와 강사님 코드 비교
-
-| 항목 | 내 코드 | 강사님 코드 |
-| --- | --- | --- |
-| 기본 조건문 | 설명 주석을 상세히 추가 | 핵심 실행 코드 중심 |
-| Falsy | 5개 값으로 정리 | 동일 |
-| 중괄호 생략 | 사용 가능하나 가독성 주의 설명 | 한 줄 예제 |
-| `switch` | 휴대폰·계절 문제까지 확장 | 기본 과일·휴대폰 예제 |
-| 문제 풀이 | 1~12번 대부분 직접 구현 | 문제 요구사항 중심 |
-| 가위바위보 | 난수와 승패 조건 직접 작성 | 도전 문제로 제시 |
-| 시간 계산 | 35분 전용 조건식 작성 | 일반화된 참고 코드 제공 |
-| 난수 | 범위 공식과 테스트값 추가 | 기본 공식 중심 |
-
-### 48-1. 내 코드의 장점
-
-- 문제 풀이 과정을 상세한 주석과 함께 직접 작성했다.
-- 가위바위보·계절·시간 계산·369게임까지 확장했다.
-- 입력값을 `Number()`로 변환해야 하는 이유를 기록했다.
-- 범위 난수 공식과 연속 비교의 문제를 직접 확인했다.
-
-### 48-2. 내 코드의 개선점
-
-- 숫자 입력 검증에 `Number.isNaN()`을 먼저 사용해야 한다.
-- `!result % 2 == 0`은 우선순위 때문에 의도대로 동작하지 않는다.
-- `prompt()` 문자열과 숫자의 암시적 비교에 의존하지 않는 것이 좋다.
-- iPhone `case`에서 `"삼성"`을 출력하는 오타를 수정해야 한다.
-- 시간 계산은 특정 35분에만 맞춘 분기보다 나눗셈과 나머지로 일반화할 수 있다.
-- 영하 온도 출력에는 `Math.abs()`를 사용해 부호를 제거하는 것이 자연스럽다.
-
-### 48-3. 강사님 코드의 장점
-
-- `if`, 중첩 조건문, `else if`, `switch` 흐름이 단계적으로 이어진다.
-- 문제를 직접 풀 수 있도록 요구사항을 명확하게 제시한다.
-- 난수 생성과 JavaScript 연속 비교의 차이를 함께 설명한다.
-- 시간 계산 참고 코드가 일반적인 분·시간 보정 구조를 보여 준다.
-
-### 48-4. 강사님 코드의 보충점
-
-- Truthy/Falsy에서 빈 문자열과 BigInt 0도 추가 설명할 수 있다.
-- 입력값 검증 예제가 있으면 문제 풀이 안정성이 높아진다.
-- `switch`가 엄격 비교를 사용한다는 설명이 필요하다.
-- 난수에 `%`를 사용하는 방식보다 `Math.floor()` 범위 공식을 권장할 수 있다.
-
----
-
-<a id="js-03-section-53"></a>
-
-## 49. 기존 코드에서 개선 코드로 바꾼 이유
-
-### 49-1. `==`에서 `===`로
-
-기존:
-
-```text
-if (fruit == "apple") {
-```
-
-개선:
-
-```text
-if (fruit === "apple") {
-```
-
-이유:
-
-- 암시적 형 변환을 막는다.
-- 값과 타입이 모두 같은지 확인한다.
-
-### 49-2. 문자열 입력 먼저 변환
-
-기존:
-
-```text
-const money = prompt(
-    "금액을 입력하세요.",
-)
-
-if (money >= 7000) {
-```
-
-개선:
-
-```text
-const money = Number(
-    prompt("금액을 입력하세요."),
-)
-
-if (Number.isNaN(money)) {
-    console.log("숫자를 입력해주세요.")
-} else if (money >= 7000) {
-```
-
-### 49-3. 연속 비교 개선
-
-기존:
-
-```javascript
-3 < value < 20
-```
-
-개선:
-
-```javascript
-3 < value
-&& value < 20
-```
-
-### 49-4. 난수 계산 개선
-
-기존:
-
-```javascript
-parseInt(
-    Math.random() * 10,
-) % 3
-```
-
-개선:
-
-```javascript
-Math.floor(
-    Math.random() * 3,
-)
-```
-
----
-
-<a id="js-03-section-54"></a>
-
-## 50. 실무형 예제: 회원 등급 판정
-
-```javascript
-function getMemberGrade(
-    purchaseAmount,
-) {
-    if (
-        !Number.isFinite(
-            purchaseAmount,
-        )
-        || purchaseAmount < 0
-    ) {
-        return "잘못된 금액"
-    }
-
-    if (purchaseAmount >= 1000000) {
-        return "VIP"
-    }
-
-    if (purchaseAmount >= 500000) {
-        return "GOLD"
-    }
-
-    if (purchaseAmount >= 100000) {
-        return "SILVER"
-    }
-
-    return "BASIC"
-}
-
-const purchaseAmount = 650000
-const grade = getMemberGrade(
-    purchaseAmount,
-)
-
-console.log(grade)
-```
-
-### 50-1. 입력값
-
-```text
-650,000원
-```
-
-### 50-2. 출력 결과
-
-```text
-GOLD
-```
-
-### 50-3. 코드에서 무엇을 사용하는 걸까?
-
-| 코드 | 사용하는 이유 |
-| --- | --- |
-| `Number.isFinite()` | 유효한 유한 숫자인지 검사 |
-| 조기 반환 | 잘못된 입력을 먼저 종료 |
-| 높은 기준부터 검사 | 겹치는 범위의 잘못된 판정 방지 |
-| `return` | 판정 결과 재사용 |
-| 함수 분리 | 등급 규칙을 한곳에서 관리 |
-
----
-
-<a id="js-03-section-55"></a>
-
-## 51. 대표 오류로 이해하기
-
-### 51-1. 대입과 비교 혼동
-
-```javascript
-let score = 85
-
-if (score = 100) {
-    console.log("만점")
-}
-```
-
-`score`에 100이 대입되고 100은 Truthy이므로 블록이 실행된다.
-
-개선:
-
-```text
-if (score === 100) {
-```
-
----
-
-<a id="index-section-127"></a>
-
-### 51-2. `else` 조건 작성
-
-```text
-if (score >= 60) {
-    ...
-} else (score < 60) {
-    ...
-}
-```
-
-발생 결과:
-
-```text
-SyntaxError
-```
-
-추가 조건은 `else if`를 사용한다.
-
----
-
-### 51-3. `switch`의 `break` 누락
-
-일치한 `case` 아래의 코드가 계속 실행될 수 있다.
-
----
-
-### 51-4. 숫자 변환 실패를 검사하지 않음
-
-```text
-const number = Number("문자")
-
-if (number >= 0) {
-    ...
-}
-```
-
-`number`는 `NaN`이며 모든 크기 비교가 `false`다.
-
-`Number.isNaN(number)`를 먼저 검사해야 한다.
-
----
-
-### 51-5. 잘못된 범위 비교
-
-```text
-if (3 < value < 20) {
-```
-
-JavaScript에서는 원하는 범위 비교가 아니다.
-
----
-
-<a id="js-03-section-56"></a>
-
-## 52. 자주 하는 실수
-
-### 52-1. 서로 반대인 조건을 독립된 `if` 두 개로 작성
-
-둘 중 하나만 실행되어야 한다면 `if·else`가 적합하다.
-
-### 52-2. 한 줄 조건문에서 중괄호 생략
-
-나중에 문장을 추가할 때 오류가 생기기 쉽다.
-
-### 52-3. 낮은 기준을 먼저 검사
-
-높은 등급 조건이 실행되지 않을 수 있다.
-
-### 52-4. `==`를 기본 비교로 사용
-
-암시적 형 변환이 발생할 수 있다.
-
-### 52-5. `switch`에서 `break` 누락
-
-원하지 않는 다음 `case`까지 실행될 수 있다.
-
-<a id="index-section-137"></a>
-
-### 52-6. `prompt()` 결과를 숫자로 생각
-
-문자열 또는 `null`이므로 변환과 검증이 필요하다.
-
-<a id="index-section-138"></a>
-
-### 52-7. `NaN` 비교 결과를 일반 숫자처럼 처리
-
-`Number.isNaN()`으로 검사한다.
-
-<a id="index-section-139"></a>
-
-### 52-8. 빈 배열과 빈 객체를 Falsy로 생각
-
-JavaScript에서는 Truthy다.
-
-<a id="index-section-140"></a>
-
-### 52-9. `!number % 2 === 0`처럼 우선순위를 혼동
-
-홀수는 `number % 2 !== 0`으로 직접 작성한다.
-
-### 52-10. 연속 비교식을 수학식처럼 작성
-
-논리 AND로 각 비교를 연결해야 한다.
-
-### 52-11. `Math.random()`이 1을 포함한다고 생각
-
-0 이상 1 미만이다.
-
-### 52-12. 난수에 불필요한 `%` 사용
-
-원하는 범위를 곱한 뒤 `Math.floor()`를 사용한다.
-
----
-
-<a id="js-03-section-57"></a>
-
-## 53. 핵심 요약
-
-```text
-if
-→ 첫 조건 검사
-
-else if
-→ 추가 조건 검사
-
-else
-→ 모든 앞 조건이 거짓일 때
-```
-
-```text
-Truthy
-→ 조건에서 참처럼 평가
-
-Falsy
-→ false, 0, "", null,
-   undefined, NaN 등
-```
-
-```text
-switch
-→ 하나의 값 비교
-
-case
-→ 비교할 값
-
-break
-→ switch 종료
-
-default
-→ 기본 분기
-```
-
-```text
-Number()
-→ 문자열을 숫자로 변환
-
-Number.isNaN()
-→ 변환 실패 검사
-
-Math.floor()
-→ 아래 정수로 내림
-
-Math.random()
-→ 0 이상 1 미만 난수
-```
-
----
-
-<a id="js-03-section-58"></a>
-
-## 54. 최종 체크리스트
-
-- [ ] `if`, `else if`, `else`를 작성할 수 있는가?
-- [ ] `!`로 조건을 반전할 수 있는가?
-- [ ] 서로 반대인 조건을 `if·else`로 구성할 수 있는가?
-- [ ] 실행 블록에 중괄호를 일관되게 사용할 수 있는가?
-- [ ] 범위 조건을 높은 기준부터 작성할 수 있는가?
-- [ ] 대표적인 Falsy 값을 설명할 수 있는가?
-- [ ] 빈 배열과 빈 객체가 Truthy임을 이해했는가?
-- [ ] `switch`, `case`, `break`, `default`를 사용할 수 있는가?
-- [ ] 여러 `case`를 하나의 결과로 묶을 수 있는가?
-- [ ] `switch`가 엄격하게 값을 비교함을 이해했는가?
-- [ ] 입력 문자열을 `Number()`로 변환할 수 있는가?
-- [ ] `Number.isNaN()`으로 변환 실패를 확인할 수 있는가?
-- [ ] 홀수·짝수 조건을 정확하게 작성할 수 있는가?
-- [ ] 두 수 사이 범위를 `&&`로 표현할 수 있는가?
-- [ ] 35분 후 시간을 나눗셈과 나머지로 계산할 수 있는가?
-- [ ] 각 자리 숫자를 나눗셈과 나머지로 구할 수 있는가?
-- [ ] 369게임을 숫자 또는 문자열 방식으로 작성할 수 있는가?
-- [ ] 좌표가 사각형 범위 안에 있는지 판정할 수 있는가?
-- [ ] `Math.random()`의 반환 범위를 설명할 수 있는가?
-- [ ] 최소값·최대값 범위의 정수 난수를 만들 수 있는가?
-- [ ] 연속 비교식을 JavaScript 방식으로 올바르게 바꿀 수 있는가?
-
----
-
-<a id="js-03-section-59"></a>
-
-## 마무리
-
-조건문의 핵심은 분기 문법을 외우는 것에서 끝나지 않는다.
-
-```text
-입력값을 먼저 검증하고
-    ↓
-조건의 우선순위를 정하고
-    ↓
-서로 겹치는 범위를 올바른 순서로 검사하고
-    ↓
-조건에 맞는 실행 경로를 선택하고
-    ↓
-잘못된 입력을 안전하게 처리하는 것
-```
-
-이 흐름을 이해하면 이후 반복문과 함수에서 프로그램의 동작을 더 안정적으로 제어할 수 있다.
-<a id="js-03-section-60"></a>
-
-## V3 실행 추적 카드 — 조건 평가 → 한 실행 경로 선택
-
-`if`는 truthy/falsy를 평가하고 첫 참 분기만 실행한다. `switch`는 표현식과 case를 엄격 비교하며 `break`가 없으면 다음 case까지 이어진다.
-
-`const value="1"; switch(value){case 1: console.log("숫자"); break; default: console.log("불일치");}`는 `불일치`를 출력한다.
-
-**원본 연결:** 내 코드와 강사님 코드의 `workspace_html/javascript/03_if.html`에서 실제 사용 위치와 차이를 확인한다.

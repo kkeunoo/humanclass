@@ -1,781 +1,292 @@
----
-title: FastAPI Jinja Todo CRUD
-version: v4.0-detailed
-last_updated: 2026-09-17
-status: Completed
----
+# 05. Jinja Todo — 화면에서 목록 만들고 고치기
 
-# FastAPI Jinja Todo CRUD
+[FastAPI 목차](README.md) · [이전: 응답과 리다이렉트](04_FastAPI_Response_Redirect_의존성주입.md) · [다음: SQLite](06_Python_SQLite와_Transaction.md)
 
-## 목차
+이전 장의 리스트 CRUD를 **HTML 화면과 폼**에 연결한 수업이다. 강사님은 `Todo` 모델 객체를 리스트에 넣고, 나는 폼에서 꺼낸 `id`, `item` 문자열을 **딕셔너리**에 담았다. 두 저장 형태가 달라서 조회·수정 코드도 다르다. 둘 다 메모리 리스트이며 데이터베이스 저장은 아직 아니다.
 
-- [문서 정보](#section-1)
-- [학습 목표](#section-2)
-- [개념에서 실제 실행까지 — 클릭부터 목록 상태까지 추적한다](#section-3)
-- [1. 전체 화면 흐름](#section-4)
-- [2. Memory 저장소](#section-5)
-- [3. Create](#section-6)
-- [4. Read 목록](#section-7)
-- [5. Detail](#section-8)
-- [6. Update](#section-9)
-- [7. Delete](#section-10)
-- [8. 검색 Helper와 404](#section-11)
-- [9. 내 코드와 강사님 코드 비교](#section-12)
-- [10. 강사님 코드의 보완점](#section-13)
-- [11. 개선된 통합 Model](#section-14)
-- [12. 개선된 Route 설계](#section-15)
-- [13. 실무 지침](#section-16)
-- [14. 자주 하는 실수와 Debugging](#section-17)
-- [15. 종합실습](#section-18)
-- [16. 정답 흐름](#section-19)
-- [최종 체크리스트](#section-20)
-- [핵심 요약](#section-21)
+## 1. 입력 화면과 생성 처리
 
+### 강사님 코드
 
-<a id="section-1"></a>
-
-## 문서 정보
-
-| 항목 | 내용 |
-| --- | --- |
-| 문서 | `05_FastAPI_Jinja_Todo_CRUD.md` |
-| 분류 | `06_FastAPI` |
-| 내 코드 | `workspace_python/02_todos/04_jinja_todo/api.py`, `templates/create.html`, `read.html`, `detail.html`, `update.html` |
-| 강사님 코드 | `workspace_teacher/workspace_python/todos/04_jinja_todo/api.py`, `todo.py`, `templates/add.html`, `list.html`, `detail.html`, `update.html` |
-| 핵심 범위 | Jinja 화면과 FastAPI CRUD 연결, Form, Pydantic, Path·Query, Redirect, PRG, Memory 저장소 |
-| 제외 범위 | DB 연동 상세는 07번 문서에서 설명 |
-| 문서 형식 | FastAPI Developer-Wiki V2 |
-
-> 이 문서는 `04_jinja_todo`의 화면 기반 Todo CRUD를 정리한다. 내 코드는 직접 구현한 Dict 기반 흐름을, 강사님 코드는 Pydantic Form Model과 Resource 식별 방식을 중심으로 비교한다.
-
----
-
-<a id="section-2"></a>
-
-## 학습 목표
-
-- 입력 위치와 실제 처리 순서를 설명한다.
-- 수업 코드·개선 예제의 상태와 응답을 재현한다.
-- 실패 원인을 찾고 같은 기능을 다시 작성한다.
-
----
-
-<a id="section-3"></a>
-
-## 개념에서 실제 실행까지 — 클릭부터 목록 상태까지 추적한다
-
-### 화면 Route와 데이터 변경 Route를 구분하기
-
-GET /create는 빈 작성 HTML을 보내는 일이고 POST /create는 작성 내용을 받아 todo_list에 추가하는 일이다. 같은 주소지만 method에 따라 다른 함수가 실행된다. HTML input의 name은 전송 Key이고 id는 DOM 선택에 쓰는 속성이다. 화면에 ID라는 글씨를 써도 name이 id가 아니면 서버가 찾는 값이 들어오지 않는다.
-
-### 내 코드의 상태를 먼저 읽기
-
-내 api_create()는 await request.form()으로 읽은 문자열 id/item을 dict에 넣는다. id != "" 조건은 값 누락 None이나 공백 " "을 충분히 차단하지 못한다. 존재하지 않는 필드도 None != ""는 True이므로 '빈값 검증 완료'라고 설명하면 안 된다. 강사님은 Todo = Form()으로 정수 id와 item을 모델로 받는다.
+출처: `teacher/workspace_python/todos/04_jinja_todo/api.py` 29–47행 · **원본 발췌**
 
 ```python
-# 내 수업의 저장 형태를 보여주는 독립적인 상태 예제
-todo_list = []
-todo_list.append({"id": "1", "item": "공부"})
-print("추가:", todo_list)
-for todo in todo_list:
-    if todo["id"] == "1":
-        todo["item"] = "복습"
-print("수정:", todo_list)
-todo_list[:] = [t for t in todo_list if t["id"] != "1"]
-print("삭제:", todo_list)
-```
-
-```text
-추가: [{'id': '1', 'item': '공부'}]
-수정: [{'id': '1', 'item': '복습'}]
-삭제: []
-```
-
-
-요청 사이에 남는 것은 Python 프로세스의 목록이다. 같은 서버에 접속한 여러 브라우저가 이 목록을 공유하고, --reload 재시작이나 여러 worker 환경에서는 한 목록이 지속적으로 공유된다고 보장되지 않는다. 브라우저 Cookie·Session 저장소와도 다른 상태다.
-
-### Detail이 왜 ID로 재조회해야 하는가?
-
-내 api_detail_page()는 ?id=1&item=공부에서 두 값을 읽어 보여준다. 사용자가 주소의 item을 바꾸면 저장된 todo_list와 상관없는 상세 문구를 만들 수 있다. 강사님 /detail/{id}는 ID로 서버의 목록을 찾아 실제 저장값을 표시한다. 💡 Detail에는 식별자를 보내고 표시할 값은 서버에서 조회하는 개선 방식이 일관적이다.
-
-```python
-from fastapi import HTTPException
-def find_todo(todo_id: str):
-    for todo in todo_list:
-        if todo["id"] == todo_id:
-            return todo
-    raise HTTPException(status_code=404, detail="없는 할 일")
-```
-
-
-이 조각은 내 dict 저장 방식 기준이다. 강사님 모델 저장은 todo.id로 읽는다. 모델과 dict를 섞어서 같은 접근식을 쓸 수 없다.
-
-<a id="index-section-8"></a>
-
-### Update·Delete의 실패도 관찰하기
-
-내 POST /read는 수정 후 HTML을 바로 보내므로 새로고침 시 POST 재전송 가능성이 있다. 강사님 /api/update는 변경 후 303 /list로 이동한다. PRG는 POST→Redirect→GET으로 변경 재전송을 줄이는 흐름이지 중복 제출 방지의 모든 문제를 해결하는 장치는 아니다.
-
-내 GET /delete/{id}는 링크 방문만으로 삭제하며, 순회 중 remove하므로 중복 ID가 있다면 항목을 건너뛸 수도 있다. 강사님은 POST로 받고 인덱스 pop 후 break하여 첫 항목만 지운다. 어느 쪽도 중복 ID를 자동 거부하지 않는다. 생성 단계에서 중복이면 409, 대상 없음이면 404, 변경 성공 뒤 303으로 정리한다.
-
-강사님 Todo의 item: str = None은 기본값 None과 선언 str가 불일치한다. 원본 필드를 그대로 수업 사례로 남기되, 개선 모델에서는 필수 str 또는 str | None으로 의도를 명확히 한다. 삭제용 입력에는 item 없이 id만 받는 별도 선언이 더 간결하다.
-
-### 브라우저에서 실행 확인하는 순서
-
-1. GET /create로 Form을 연다. 주소창 요청과 터미널 진입 출력을 확인한다.
-2. id=1, item=공부를 제출한다. Network에서 POST의 Form Data를 확인한다.
-3. 상태는 []→[{"id":"1","item":"공부"}], 응답은 303 Location: /read이다.
-4. 후속 GET /read가 목록을 렌더링하고, HTML에 공부가 나타난다.
-5. 수정 요청 전후 리스트의 item과 HTML을 비교한다.
-6. 누락 필드·중복 ID·없는 ID를 각각 시험한다. 개선 규칙과 원본 동작을 혼동하지 않는다.
-
-💡 Form 페이지에도 CSRF 방어가 필요할 수 있다. CORS 설정이 모든 Form 요청의 변경을 차단하는 보호 수단은 아니다. 강사님 코드라고 바로 운영용 인증·보안 검증까지 완료된 것은 아니다.
-
-### 확인 문제와 해설
-
-<details><summary>id를 "1"로 저장했는데 Path int 1로 찾으면 왜 안 맞을까?</summary>
-
-문자열 "1"과 정수 1은 비교에서 같지 않다. 입력 경계에서 일관된 타입으로 변환하고 저장·조회 모두 같은 모델을 쓴다.
-
-</details>
-
-<details><summary>상세 화면의 item을 URL에서 받아도 되는가?</summary>
-
-수업 실험은 가능하지만 저장 데이터의 진실을 URL이 결정하게 된다. ID로 서버 저장소를 다시 조회해야 변경·위조·새로고침에서 일관된 상세를 표시한다.
-
-</details>
-
----
-
-<a id="section-4"></a>
-
-## 1. 전체 화면 흐름
-
-```text
-GET  목록 Page
-→ GET 생성 Form
-→ POST 생성 처리
-→ 303 Redirect
-→ GET 목록 Page
-→ GET 상세 Page
-→ GET 수정 Form
-→ POST 수정 처리
-→ POST 삭제 처리
-```
-
-화면을 보여주는 GET과 Data를 변경하는 POST를 분리하는 것이 핵심이다.
-
-### 1.1 Browser·FastAPI·Jinja·List의 역할
-
-```text
-Browser
-→ Link 클릭, Form 입력·제출
-
-FastAPI Route
-→ Method와 Path 판단
-→ Form·Path·Query 값 수신
-→ CRUD Logic 실행
-
-todo_list
-→ 현재 Process Memory에 Todo 저장
-
-Jinja2
-→ todo_list Data를 HTML에 삽입
-
-RedirectResponse
-→ 변경 처리 후 Browser에 다음 GET 주소 전달
-```
-
-### 1.2 값이 이동하는 전체 예
-
-사용자가 생성 Form에 입력:
-
-```text
-id 입력칸   → 10
-item 입력칸 → FastAPI 공부
-```
-
-HTML:
-
-```html
-<form method="post" action="/todos">
-    <input name="id" value="10">
-    <input name="item" value="FastAPI 공부">
-    <button type="submit">등록</button>
-</form>
-```
-
-Browser가 보내는 핵심 Request:
-
-```http
-POST /todos HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-id=10&item=FastAPI+공부
-```
-
-FastAPI:
-
-```python
-@app.post('/todos')
-def create(todo: Todo = Form()):
-    print(todo)
-    todo_list.append(todo)
-    return RedirectResponse('/todos', status_code=303)
-```
-
-Terminal:
-
-```text
-id=10 item='FastAPI 공부'
-```
-
-Memory 상태:
-
-```python
-[Todo(id=10, item='FastAPI 공부')]
-```
-
-이후 Browser는 303의 `Location: /todos`를 따라 GET 목록을 요청하고, Jinja가 List를 HTML Table로 Rendering한다.
-
----
-
-<a id="section-5"></a>
-
-## 2. Memory 저장소
-
-수업에서는 List가 임시 Database 역할을 한다.
-
-```python
-todo_list = []
-```
-
-장점은 구조가 단순하고 CRUD Algorithm에 집중할 수 있다는 것이다. 단점은 Process를 재시작하면 모든 Data가 사라지고 여러 Worker 사이에서 Data를 공유할 수 없다는 것이다.
-
----
-
-<a id="section-6"></a>
-
-## 3. Create
-
-### 3.1 내 코드
-
-```python
-@app.post('/create')
-async def api_create(request: Request):
-    data = await request.form()
-    todo_id = data.get('id')
-    item = data.get('item')
-
-    if todo_id != '' and item != '':
-        todo_list.append({'id': todo_id, 'item': item})
-        return RedirectResponse('/read', status_code=303)
-
-    return RedirectResponse('/create', status_code=303)
-```
-
-직접 Form Data를 추출해 Dict로 저장한다. 빈 문자열만 일부 막으며 None·공백·누락은 충분히 검사하지 못한다. 또한 ID의 정수 변환, 길이, 중복 여부 검증은 없다.
-
-### 3.2 강사님 코드
-
-```python
-class Todo(BaseModel):
-    id: int
-    item: str | None = None
-
+@app.get('/add')
+def add(request: Request) :
+    print('/add 실행')
+    return templates.TemplateResponse(
+        request, 
+        'add.html'
+    )
 
 @app.post('/api/add')
-def add_todo(todo: Todo = Form()):
+def apiAdd(todo:Todo = Form()):
+    print('/api/add 실행')
+    print('todo:', todo)
+
     todo_list.append(todo)
-    return RedirectResponse('/list', status_code=303)
+
+    return RedirectResponse(
+        url='/list',
+        status_code=303 # 303: 무조건 GET으로 다시 들어오게 한다
+    )
 ```
 
-Pydantic Model로 Form Data의 구조와 Type을 검증한다. 원본의 `item: str = None`은 Annotation과 기본값이 어긋나므로 `str | None` 또는 필수 `str`로 표현하는 편이 정확하다.
+### 내 코드
 
-### 3.3 input의 name이 Python Field로 들어온다
-
-```html
-<input name="id">
-<input name="item">
-```
+출처: `me/workspace_python/02_todos/04_jinja_todo/api.py` 10–45행 · **원본 발췌**
 
 ```python
-class Todo(BaseModel):
-    id: int
-    item: str
+# Create 페이지 불러오기
+@app.get('/create')
+def api_create_page(request : Request) :
+    print('/create 진입')
+    return templates.TemplateResponse(request, 'create.html')
+
+# Create하여 todo_list에 append
+@app.post('/create')
+async def api_create(request : Request) :
+    print('/create 보내기')
+    # form으로 id, item 받아옴
+    data = await request.form()
+
+    id = data.get('id')
+    item = data.get('item')
+    print(id, item)
+    # 공백일 때를 방지하기 위해 공백이 아닌 경우에 추가
+    if id != '' and item != '' :
+        print('/create 추가완료')
+        todo_list.append({
+            'id' : id,
+            'item' : item
+        })
+
+        # 추가 되었으면 전체 목록 페이지로 이동하도록 구성
+        return RedirectResponse(
+            url = '/read',
+            status_code = 303, # 기본값은 307
+        )
+    # 공백인 경우 다시 페이지를 리다이렉트하여 다시 입력하도록 구성
+    else :
+        print('/create 비어있음 다시시도')
+        return RedirectResponse(
+            url = '/create',
+            status_code = 303, # 기본값은 307
+        )
 ```
 
-```text
-HTML name="id"   → Form Key id   → Todo.id
-HTML name="item" → Form Key item → Todo.item
-```
+강사님은 `GET /add`로 화면을 보여 주고 `POST /api/add`에서 `Todo = Form()`으로 값을 받아 저장한다. 나는 `GET /create`와 `POST /create`를 나누고 `await request.form()`에서 직접 값을 꺼낸다. 입력이 빈 문자열이면 다시 입력 화면으로 보내는 분기도 내 코드에 있다. **강사님은 모델 필드를 사용**하고 **나는 문자열 딕셔너리를 사용**한다. 두 코드 모두 저장 후 `303`으로 목록 페이지에 새 GET 요청을 보낸다.
 
-`id`를 `todoID`처럼 바꾸면 Model Field와 이름이 달라 검증에 실패한다. HTML `id` Attribute는 CSS·JavaScript 식별용이고, Form 전송 Key는 `name` Attribute다.
+## 2. 목록과 상세 화면
 
-```html
-<input id="todo-id" name="id">
-```
+### 강사님 코드
 
-위 입력은 `todo-id`가 아니라 `id`라는 이름으로 Server에 전달된다.
-
-### 3.4 성공과 실패 결과
-
-정상 입력:
-
-```text
-id=10&item=공부
-→ Todo(id=10, item='공부')
-→ List 추가
-→ 303 Redirect
-```
-
-잘못된 입력:
-
-```text
-id=abc&item=공부
-→ id를 int로 변환 실패
-→ Endpoint 함수 실행 전 422
-→ todo_list에는 추가되지 않음
-```
-
----
-
-<a id="section-7"></a>
-
-## 4. Read 목록
+출처: `teacher/workspace_python/todos/04_jinja_todo/api.py` 17–27행 · **원본 발췌**
 
 ```python
-@app.get('/todos')
-def list_page(request: Request):
+@app.get('/list')
+def list(request: Request) :
+    print('/list')
+
     return templates.TemplateResponse(
-        request,
+        request, 
         'list.html',
-        {'todos': todo_list},
+        {
+            'list': todo_list
+        }
     )
 ```
 
-```jinja2
-{% if todos %}
-    {% for todo in todos %}
-        <a href="/todos/{{ todo.id }}">{{ todo.item }}</a>
-    {% endfor %}
-{% else %}
-    <p>조회할 목록이 없습니다.</p>
-{% endif %}
-```
-
-Jinja에서는 Dict의 Key와 객체 Attribute 모두 `todo.id` 형태로 접근할 수 있어 두 구현이 비슷해 보인다.
-
-### 4.1 목록 Rendering 결과
-
-Python Data:
+출처: `teacher/workspace_python/todos/04_jinja_todo/api.py` 49–67행 · **원본 발췌**
 
 ```python
-[
-    Todo(id=10, item='FastAPI 공부'),
-    Todo(id=20, item='Jinja 공부'),
-]
-```
+@app.get('/detail/{id}')
+def detail(request: Request, id:int):
+    print('/detail/{id} 실행')
+    print('id:', id)
 
-Jinja 반복 후 Browser가 받는 HTML 일부:
+    result = None
+    for todo in todo_list:
+        print(todo)
+        if todo.id == id:
+            result = todo
 
-```html
-<a href="/todos/10">FastAPI 공부</a>
-<a href="/todos/20">Jinja 공부</a>
-```
-
-Browser는 Python List나 Todo 객체를 직접 받지 않는다. Jinja가 변환한 HTML 문자열을 받는다.
-
----
-
-<a id="section-8"></a>
-
-## 5. Detail
-
-내 코드는 목록 Link에서 ID와 Item을 모두 Query String으로 전달한다.
-
-```text
-/detail?id=1&item=내용
-```
-
-이 방식은 사용자가 URL의 `item`을 수정할 수 있어 Server 저장값과 다른 내용이 표시될 수 있다. ID만 받고 Server의 List에서 다시 조회해야 한다.
-
-```python
-@app.get('/todos/{todo_id}')
-def detail_page(request: Request, todo_id: int):
-    todo = find_todo(todo_id)
+    print('result', result)
     return templates.TemplateResponse(
-        request,
+        request, 
         'detail.html',
-        {'todo': todo},
+        {
+            'todo': result
+        }
     )
 ```
 
-강사님 코드의 `/detail/{id}`가 Resource 식별 관점에서 더 안전하다.
+### 내 코드
 
-### 5.1 Detail 실제 동작
-
-```text
-Browser가 /todos/10 Link 클릭
-→ GET /todos/10
-→ FastAPI가 Path에서 10 추출
-→ todo_id: int로 검증
-→ todo_list에서 id=10 검색
-→ 찾은 Todo를 Context에 저장
-→ detail.html Rendering
-→ Browser에 HTML Response
-```
-
-Terminal Debugging:
+출처: `me/workspace_python/02_todos/04_jinja_todo/api.py` 47–54행 · **원본 발췌**
 
 ```python
-print('path id:', todo_id)
-print('found todo:', todo)
+# Read 페이지 불러오기
+@app.get('/read')
+def api_read_page(request : Request) :
+    print('/read 진입')
+    # Read 페이지에서 todo_list를 Jinja로 사용할 수 있도록 구성
+    return templates.TemplateResponse(request, 'read.html', {
+        'list' : todo_list
+    }) 
 ```
 
-```text
-path id: 10
-found todo: id=10 item='FastAPI 공부'
-```
-
-없는 ID라면:
-
-```text
-GET /todos/999
-→ List 검색 결과 없음
-→ HTTPException(404)
-→ 404 JSON Response
-```
-
----
-
-<a id="section-9"></a>
-
-## 6. Update
-
-Update는 기존 Data를 조회해 Form에 표시한 뒤 변경값을 전송한다.
-
-```jinja2
-<form method="post" action="/todos/{{ todo.id }}/update">
-    <input type="text" name="item" value="{{ todo.item }}">
-    <button type="submit">수정</button>
-</form>
-```
+출처: `me/workspace_python/02_todos/04_jinja_todo/api.py` 79–93행 · **원본 발췌**
 
 ```python
-@app.post('/todos/{todo_id}/update')
-def update_todo(todo_id: int, item: str = Form(min_length=1)):
-    todo = find_todo(todo_id)
-    todo.item = item
-    return RedirectResponse(f'/todos/{todo_id}', status_code=303)
+# Detail 페이지 불러오기
+@app.get('/detail')
+def api_detail_page(request : Request) :
+    print('/detail 진입')
+    # print(request.query_params)
+    data = request.query_params
+
+    id = data.get('id')
+    item = data.get('item')
+
+    # Detail 페이지에서 id와 item을 사용하여 출력할 수 있도록 구성
+    return templates.TemplateResponse(request, 'detail.html', {
+        'id' : id,
+        'item' : item
+    })
 ```
 
-내 코드는 POST 처리 후 목록 Template을 바로 Rendering한다. Redirect로 GET 목록을 다시 요청하면 새로고침 시 Form 재전송을 방지할 수 있다.
+강사님 `/detail/{id}`는 서버의 `todo_list`에서 **해당 ID를 다시 찾아** `detail.html`에 보낸다. 내 `/detail?id=...&item=...`은 **주소에서 받은 `id`, `item`을 그대로 화면에 넘긴다**. 목록에서 항목이 수정된 뒤 옛 주소를 열면 내 상세 화면은 최신 저장 값을 보장하지 않는다. 여기서는 강사님 조회 방식이 실제 저장 상태와 더 잘 맞는다. 내 코드는 목록을 전달하는 `read.html` 화면과 쿼리값을 보여 주는 `detail.html`을 분리해 연습했다.
 
-### 6.1 수정 전후 실제 값
+## 3. 수정 화면과 수정 처리
 
-```text
-수정 전
-Todo(id=10, item='FastAPI 공부')
+### 강사님 코드
 
-Form 전송
-item=FastAPI Request 공부
-
-수정 후
-Todo(id=10, item='FastAPI Request 공부')
-```
-
-Terminal에서 다음을 출력하면 객체가 실제로 바뀌는 시점을 확인할 수 있다.
+출처: `teacher/workspace_python/todos/04_jinja_todo/api.py` 69–102행 · **원본 발췌**
 
 ```python
-print('before:', todo)
-todo.item = item
-print('after:', todo)
+@app.get('/update')
+def detail(request: Request, id:int):
+    print('/update')
+    print('id', id)
+
+    result = None
+    for todo in todo_list:
+        print(todo)
+        if todo.id == id:
+            result = todo
+
+    print('result', result)
+    return templates.TemplateResponse(
+        request, 
+        'update.html',
+        {
+            'todo': result
+        }
+    )
+
+@app.post('/api/update')
+def apiAdd(todo:Todo = Form()):
+    print('/api/update 실행')
+    print('todo:', todo)
+
+    for t in todo_list:
+        if t.id == todo.id:
+            t.item = todo.item
+
+    return RedirectResponse(
+        # url='/detail/'+todo.id,
+        url='/list',
+        status_code=303 # 303: 무조건 GET으로 다시 들어오게 한다
+    )
 ```
 
-```text
-before: id=10 item='FastAPI 공부'
-after: id=10 item='FastAPI Request 공부'
+### 내 코드
+
+출처: `me/workspace_python/02_todos/04_jinja_todo/api.py` 56–77행 · **원본 발췌**
+
+```python
+# Update 완료 후 Read 페이지 다시 불러오기
+@app.post('/read')
+async def api_read_update(request : Request) :
+    print('/read 수정완료')
+    data = await request.form()
+    # print(data)
+
+    # Print로 변경 된 값 잘 들어가는지 확인
+    id = data.get('id')
+    item = data.get('item')
+    print('변경값:', id, item)
+
+    # ID가 같을 때 해당 ID의 값 변경
+    for todo in todo_list :
+        # print(todo['id'])
+        if todo['id'] == id :
+            todo['item'] = item
+
+    # Read 페이지에서 Update된 List를 사용하여 출력할 수 있도록 구성
+    return templates.TemplateResponse(request, 'read.html', {
+        'list' : todo_list
+    })
 ```
 
----
+강사님은 수정 화면을 다시 조회한 객체로 채우고, POST에서 같은 `id` 객체의 `item`을 바꾼 뒤 목록으로 리다이렉트한다. 나는 `POST /read`에서 폼의 `id`와 같은 딕셔너리를 찾아 `todo['item']`을 바꾸고 **곧바로 `read.html`을 반환**한다. 내 방식에서는 수정 완료 뒤 주소가 `/read`의 POST 상태에 머문다. 강사님의 303 리다이렉트는 새 GET 목록으로 이동시킨다는 점에서 흐름을 따라가기 쉽다.
 
-<a id="section-10"></a>
+## 4. 삭제 처리
 
-## 7. Delete
+### 강사님 코드
 
-내 코드는 GET Route로 삭제한다.
+출처: `teacher/workspace_python/todos/04_jinja_todo/api.py` 104–118행 · **원본 발췌**
+
+```python
+@app.post('/api/delete')
+def apiAdd(todo:Todo = Form()):
+    print('/api/delete 실행')
+    print('todo:', todo)
+
+    for i in range(len(todo_list)) :
+        if todo_list[i].id == todo.id:
+            todo_list.pop(i)
+            break
+
+    return RedirectResponse(
+        # url='/detail/'+todo.id,
+        url='/list',
+        status_code=303 # 303: 무조건 GET으로 다시 들어오게 한다
+    )
+```
+
+### 내 코드
+
+출처: `me/workspace_python/02_todos/04_jinja_todo/api.py` 111–126행 · **원본 발췌**
 
 ```python
 @app.get('/delete/{id}')
+async def api_delete_page(id) :
+    print('/delete 진입')
+    print(id)
+    # data = await request.form()
+    # print(data)
+
+    for todo in todo_list :
+        if todo['id'] == id :
+            todo_list.remove(todo)
+            print('/delete 삭제완료')
+
+    return RedirectResponse(
+        url = '/read',
+        status_code = 303, # 기본값은 307
+    )
 ```
 
-GET은 조회를 위한 안전한 Method로 취급되며 Link Preview, Crawler, 재요청만으로도 실행될 수 있다. Data 삭제에 GET을 사용하지 않는다.
+강사님은 `POST /api/delete`에서 `id`가 같은 모델 객체를 찾아 리스트에서 제거한다. 나는 `GET /delete/{id}`에서 딕셔너리를 찾아 제거한다. 둘 다 실제 원본이지만, **목록을 바꾸는 삭제를 GET 경로로 열 수 있는 내 방식**은 주소 방문만으로 삭제가 일어나는 문제가 있다. 이 작업에는 강사님의 POST 방식이 더 적절하다. 두 코드는 삭제 뒤 303으로 목록을 다시 요청한다.
 
-HTML Form은 기본적으로 GET과 POST만 지원하므로 수업 Page에서는 POST 처리 Route가 적절하다.
+## 직접 확인할 질문
 
-```jinja2
-<form method="post" action="/todos/{{ todo.id }}/delete">
-    <button type="submit">삭제</button>
-</form>
-```
+1. 강사님 목록의 항목과 내 목록의 항목은 각각 어떤 자료형인가?
+2. 내 상세 화면은 저장된 최신 값을 다시 조회하는가?
+3. 내 삭제 경로를 주소창에서 열면 왜 항목이 없어질 수 있는가?
 
-```python
-@app.post('/todos/{todo_id}/delete')
-def delete_todo(todo_id: int):
-    # 삭제 처리
-    return RedirectResponse('/todos', status_code=303)
-```
+## 추가로 알면 좋은 것
 
-JavaScript API Client라면 `DELETE /todos/{id}`를 사용할 수 있다.
-
-### 7.1 삭제 전후 실제 값
-
-```text
-삭제 전 List
-[Todo(id=10, ...), Todo(id=20, ...)]
-
-POST /todos/10/delete
-→ Path id 10 추출
-→ List에서 id=10의 Index 검색
-→ pop(index)
-
-삭제 후 List
-[Todo(id=20, ...)]
-```
-
-삭제 대상이 없는데도 성공처럼 Redirect하면 사용자는 문제를 알기 어렵다. 삭제 여부를 확인하고 없으면 `404`를 반환한다.
-
----
-
-<a id="section-11"></a>
-
-## 8. 검색 Helper와 404
-
-반복되는 List 검색을 함수로 분리한다.
-
-```python
-from fastapi import HTTPException
-
-
-def find_todo(todo_id: int):
-    for todo in todo_list:
-        if todo.id == todo_id:
-            return todo
-
-    raise HTTPException(status_code=404, detail='Todo를 찾을 수 없습니다.')
-```
-
-원본들은 값이 없을 때 `None`을 Template에 전달하거나 화면이 비어 보일 수 있다. Resource가 없으면 `404`로 명확히 응답한다.
-
----
-
-<a id="section-12"></a>
-
-## 9. 내 코드와 강사님 코드 비교
-
-| 항목 | 내 코드 | 강사님 코드 | 판단 |
-| --- | --- | --- | --- |
-| 저장 객체 | Dict | Pydantic `Todo` | 강사님 코드가 Type 검증에 유리 |
-| 목록 URI | `/read` | `/list` | 둘 다 학습용, `/todos` 권장 |
-| 생성 URI | GET·POST `/create` | GET `/add`, POST `/api/add` | 내 코드는 Page/처리 URI 통합 |
-| 상세 식별 | Query에 ID·Item | Path에 ID | 강사님 방식이 저장값 재조회에 유리 |
-| 수정 | Template 직접 반환 | 303 목록 Redirect | 강사님 방식이 PRG에 적합 |
-| 삭제 | GET Path | POST Form | 강사님 방식이 안전 |
-| UI | CSS가 포함된 자체 화면 | 기능 중심 기본 화면 | 내 코드가 시각적 완성도 보강 |
-
-내 코드는 화면 구성과 전체 흐름을 직접 완성했다는 장점이 크다. Backend 설계는 강사님 코드의 Pydantic, Path ID, POST 삭제, PRG 방식을 결합하면 더 안전해진다.
-
----
-
-<a id="section-13"></a>
-
-## 10. 강사님 코드의 보완점
-
-- `list`, `detail`, `apiAdd`처럼 함수 이름이 중복되거나 Built-in 이름과 겹치지 않게 고유 이름을 사용한다.
-- `Todo.item`이 선택값이면 `str | None`, 필수라면 `str`로 선언한다.
-- ID 중복을 검사한다.
-- 없는 ID는 `404`를 반환한다.
-- 수정·삭제 후 실제 변경 여부를 확인한다.
-- Memory 저장소의 한계를 문서화한다.
-
----
-
-<a id="section-14"></a>
-
-## 11. 개선된 통합 Model
-
-```python
-from pydantic import BaseModel, Field
-
-
-class Todo(BaseModel):
-    id: int = Field(ge=1)
-    item: str = Field(min_length=1, max_length=100)
-```
-
-Form에서 Model을 받는다.
-
-```python
-from typing import Annotated
-from fastapi import Form
-
-
-TodoForm = Annotated[Todo, Form()]
-
-
-@app.post('/todos')
-def create_todo(todo: TodoForm):
-    if any(saved.id == todo.id for saved in todo_list):
-        raise HTTPException(status_code=409, detail='이미 존재하는 ID입니다.')
-
-    todo_list.append(todo)
-    return RedirectResponse('/todos', status_code=303)
-```
-
----
-
-<a id="section-15"></a>
-
-## 12. 개선된 Route 설계
-
-| 목적 | Method | URI |
-| --- | --- | --- |
-| 목록 | GET | `/todos` |
-| 생성 Form | GET | `/todos/new` |
-| 생성 처리 | POST | `/todos` |
-| 상세 | GET | `/todos/{id}` |
-| 수정 Form | GET | `/todos/{id}/edit` |
-| 수정 처리 | POST | `/todos/{id}/update` |
-| 삭제 처리 | POST | `/todos/{id}/delete` |
-
-HTML Form 제약을 반영한 Server-rendered Page 설계다. 순수 REST API라면 PUT/PATCH와 DELETE를 사용한다.
-
----
-
-<a id="section-16"></a>
-
-## 13. 실무 지침
-
-- HTML의 `action`과 `href`에 Host·Port를 Hard Coding하지 말고 상대 URL을 사용한다.
-- 사용자에게 받은 Item 값을 URL에 다시 싣지 말고 Server에서 ID로 조회한다.
-- Data 변경 후 `303` Redirect로 PRG를 적용한다.
-- 삭제는 GET Link가 아니라 POST Form 또는 DELETE Request로 처리한다.
-- Input 검증은 HTML 속성만 믿지 말고 Server에서도 수행한다.
-- 실제 Service에서는 CSRF 방어, 인증·권한, Database Transaction을 추가한다.
-
----
-
-<a id="section-17"></a>
-
-## 14. 자주 하는 실수와 Debugging
-
-| 증상 | 원인 | 해결 |
-| --- | --- | --- |
-| ID 비교 실패 | 내 코드는 Form ID가 문자열 | Model에서 `int` 검증 |
-| 상세값 조작 | Item을 Query로 전달 | ID만 받고 Server에서 재조회 |
-| 새로고침 시 중복 처리 | POST 후 Template 직접 반환 | 303 Redirect |
-| 삭제가 예기치 않게 실행 | GET 삭제 | POST 또는 DELETE 사용 |
-| 없는 ID에서 화면 오류 | `None` Template 접근 | 404 처리 |
-| 재시작 후 Data 소실 | Memory List | 이후 DB 저장소 연결 |
-
----
-
-### 14.1 수업 원본에서 다시 찾기
-
-| CRUD | 내 코드 위치 | 강사님 코드 위치 | 핵심 차이 |
-| --- | --- | --- | --- |
-| 목록 | `api.py`의 `api_read_page()`, `read.html` | `list()`, `list.html` | Dict List와 Pydantic List Rendering |
-| 생성 화면 | `api_create_page()`, `create.html` | `add()`, `add.html` | Form `action`과 `name` |
-| 생성 처리 | `api_create()` | `apiAdd()` `/api/add` | Raw Form과 Pydantic Form Model |
-| 상세 | `api_detail_page()`, `detail.html` | `detail()` `/detail/{id}` | Query로 Item 전달 vs ID로 재조회 |
-| 수정 화면 | `api_update_page()`, `update.html` | `/update` Route, `update.html` | 기존 값 전달 방식 |
-| 수정 처리 | `api_read_update()` | `/api/update` | Template 직접 반환 vs 303 Redirect |
-| 삭제 | `api_delete_page()` GET | `/api/delete` POST | GET 삭제의 위험 |
-| Model | Dict 사용 | `todo.py`의 `Todo` | 문자열 ID vs 정수 검증 |
-
-### 14.2 기능별 실행 확인표
-
-| 사용자의 행동 | 발생 Request | Terminal에서 볼 값 | Browser 최종 결과 |
-| --- | --- | --- | --- |
-| 목록 Link 클릭 | `GET /read` 또는 `/list` | 현재 `todo_list` | HTML Table |
-| 생성 Form 제출 | `POST /create` 또는 `/api/add` | ID, Item, Model | 303 후 목록 |
-| Item Link 클릭 | Detail GET | Path 또는 Query ID | 상세 HTML |
-| 수정 Form 제출 | Update POST | 변경 전·후 객체 | 수정된 목록·상세 |
-| 삭제 Button 클릭 | Delete POST 권장 | 삭제 ID·List 길이 | 해당 Row가 없는 목록 |
-
-기능을 복습할 때 화면만 보지 말고 Network의 Request Payload, Terminal의 `print`, 처리 후 `todo_list`, 최종 HTML 네 가지를 함께 확인한다.
-
----
-
-<a id="section-18"></a>
-
-## 15. 종합실습
-
-1. Pydantic `Todo` Model을 작성한다.
-2. 목록·생성·상세·수정·삭제 Page를 연결한다.
-3. ID는 Path Parameter로 사용한다.
-4. 상세 Page는 ID로 Server List를 다시 조회한다.
-5. 중복 ID는 `409`, 없는 ID는 `404`로 처리한다.
-6. 수정·삭제는 POST 처리 후 `303` Redirect한다.
-7. Template URL에서 Host와 Port Hard Coding을 제거한다.
-8. Server 재시작 후 Data가 사라지는 이유를 설명한다.
-
----
-
-<a id="section-19"></a>
-
-## 16. 정답 흐름
-
-```text
-GET /todos/new
-→ 생성 Form
-
-POST /todos
-→ Form Model 검증
-→ List 추가
-→ 303 /todos
-
-GET /todos/{id}
-→ Server에서 ID 조회
-→ 상세 Rendering
-
-POST /todos/{id}/update
-→ 기존 객체 수정
-→ 303 /todos/{id}
-
-POST /todos/{id}/delete
-→ List에서 삭제
-→ 303 /todos
-```
-
----
-
-<a id="section-20"></a>
-
-## 최종 체크리스트
-
-- [ ] 화면 Route와 처리 Route를 구분할 수 있다.
-- [ ] Form Data를 Pydantic Model로 검증할 수 있다.
-- [ ] 목록·상세·생성·수정·삭제 화면을 연결할 수 있다.
-- [ ] 상세 조회에 ID만 전달해야 하는 이유를 설명할 수 있다.
-- [ ] GET으로 삭제하면 안 되는 이유를 설명할 수 있다.
-- [ ] 303 Redirect로 PRG를 적용할 수 있다.
-- [ ] 중복 ID와 없는 ID를 HTTP Error로 처리할 수 있다.
-- [ ] Memory 저장소의 한계를 설명할 수 있다.
-
----
-
-<a id="section-21"></a>
-
-## 핵심 요약
-
-```text
-GET = Page·Data 조회
-POST = Form Data 변경
-ID만 전달하고 저장값은 Server에서 재조회
-Pydantic = Form 구조와 Type 검증
-303 = POST 후 GET으로 이동
-삭제 GET 금지
-Memory List = 학습용, 재시작 시 Data 소실
-```
+로그인별 목록 분리, 영구 저장, 중복 ID 검사, 삭제 전 확인 화면은 이 Todo 실습에 구현되지 않았다. 다음 장의 SQLite부터 **메모리와 파일 저장의 차이**를 배운다.
