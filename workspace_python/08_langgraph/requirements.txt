@@ -10,3 +10,4 @@ langgraph>=0.2,<2.0
 sentence-transformers>=3.0,<6.0
 google-genai
 openai
+python-dotenv
