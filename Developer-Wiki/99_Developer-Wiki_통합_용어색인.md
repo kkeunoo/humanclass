@@ -47,6 +47,7 @@
 | `SELECT`·`WHERE` | [SQL SELECT](05_SQL/01_SQL_기초와_SELECT.md), [조건](05_SQL/02_SQL_WHERE와_조건연산자.md) |
 | `JOIN`·서브쿼리 | [SQL JOIN](05_SQL/12_SQL_JOIN.md), [서브쿼리](05_SQL/11_SQL_서브쿼리.md) |
 | DDL·DML·트랜잭션 | [SQL DDL](05_SQL/14_SQL_DDL과_제약조건.md), [DML](05_SQL/15_SQL_DML.md), [트랜잭션](05_SQL/16_SQL_Transaction.md) |
+| 재귀 CTE·부모/자식 댓글 연습 | [SQL 재귀 CTE](05_SQL/18_SQL_Recursive_CTE.md) |
 | `APIRouter`·CORS·폼·Pydantic | [FastAPI Router와 입력](06_FastAPI/02_FastAPI_Router_Request_Pydantic_CRUD.md) |
 | Jinja `extends`·`include`·매크로 | [Jinja 템플릿](06_FastAPI/03_FastAPI_Jinja2_템플릿.md) |
 | `RedirectResponse`·303·307 | [함수 호출과 리다이렉트](06_FastAPI/04_FastAPI_Response_Redirect_의존성주입.md) |
@@ -57,3 +58,30 @@
 | `Cookie()`·세션·미들웨어 | [쿠키·세션·로그인 검사](06_FastAPI/09_FastAPI_Cookie_Session_로그인.md) |
 
 `request.headers`와 `response_model` 같은 수업 밖 내용은 [FastAPI 추가편](06_FastAPI/추가편_기존자료_학습범위_분류.md)에 있다.
+
+## 데이터 분석·기초 머신러닝
+
+| 찾는 말 | 설명 위치 |
+| --- | --- |
+| pandas·`DataFrame`·`read_csv` | [와인 CSV와 입력·정답](07_데이터분석과_머신러닝/01_Pandas_와인데이터와_학습입력.md) |
+| `train_test_split`·`stratify` | [학습·시험 분리](07_데이터분석과_머신러닝/01_Pandas_와인데이터와_학습입력.md) |
+| `RandomForestClassifier`·`fit`·`predict_proba` | [학습과 예측](07_데이터분석과_머신러닝/02_RandomForest_학습과_예측.md) |
+| F1·ROC AUC·`GridSearchCV`·`StratifiedKFold` | [평가와 교차 검증](07_데이터분석과_머신러닝/03_평가와_교차검증.md) |
+
+## Elasticsearch·RAG
+
+| 찾는 말 | 설명 위치 |
+| --- | --- |
+| Elasticsearch `text`·`keyword`·`bulk` | [연결·적재](08_Elasticsearch와_RAG/01_연결과_문서적재.md) |
+| `match`·`term`·`range`·CRUD | [검색과 수정](08_Elasticsearch와_RAG/02_검색과_CRUD.md) |
+| 청크·겹침·`dense_vector`·임베딩 | [청크와 임베딩](08_Elasticsearch와_RAG/03_청크와_임베딩.md) |
+| `knn`·하이브리드·RRF | [벡터와 하이브리드 검색](08_Elasticsearch와_RAG/04_벡터와_하이브리드검색.md) |
+| RAG·검색 문맥·답변 | [RAG 질문응답](08_Elasticsearch와_RAG/05_RAG_질문응답.md) |
+
+## 영화 CSV·청크·임베딩
+
+| 찾는 말 | 설명 위치 |
+| --- | --- |
+| MovieLens·`movieId`·`read_csv` | [CSV 읽기와 검증](09_영화CSV_청크와_임베딩/01_CSV읽기와_검증.md) |
+| 장르·태그·`groupby`·겹치는 청크 | [영화 텍스트와 청크](09_영화CSV_청크와_임베딩/02_영화텍스트와_청크.md) |
+| Gemini·OpenAI 임베딩·action 목록 | [임베딩과 미완성 경계](09_영화CSV_청크와_임베딩/03_임베딩과_미완성경계.md) |

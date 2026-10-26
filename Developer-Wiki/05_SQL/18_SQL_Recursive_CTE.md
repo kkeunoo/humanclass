@@ -8,8 +8,9 @@
 
 - [1. 두 단계만 직접 적은 첫 시도](#section-1)
 - [2. `WITH RECURSIVE`의 시작 부분과 반복 부분](#section-2)
-- [직접 확인할 질문](#section-3)
-- [추가로 알면 좋은 것](#section-4)
+- [3. 이후 내 댓글 계층 연습의 열 순서 점검](#section-3)
+- [직접 확인할 질문](#section-4)
+- [추가로 알면 좋은 것](#section-5)
 
 <a id="section-1"></a>
 
@@ -115,13 +116,57 @@ order by sort_key;
 
 <a id="section-3"></a>
 
+## 3. 이후 내 댓글 계층 연습의 열 순서 점검
+
+새로 받은 내 `Script.sql`에는 위 조직도 예제를 **댓글의 부모·자식 관계**로 바꾸려는 시도가 더 있다. 강사님 원본에 같은 댓글 테이블 예제는 없으므로, 위의 강사님 `emp_recu`와 연결 원리만 비교한다. 아래는 **내 코드의 추가 원본 발췌**이며 완성·실행 확인된 예제로 취급하지 않는다.
+
+출처: `D:/workspace/workspace_sql/Script.sql` 1009–1038행 · **내 코드 원본 발췌**
+
+```sql
+with recursive comment_recu as (
+    select
+        comment_code,
+        member_code,
+        member_id,
+        comment_content,
+        date_format(comment_time, '%Y.%m.%d %H:%i') as comment_time,
+        lpad(member_id, length(member_id), ' '),
+        1 as level,
+        cast(member_id as char(200)) as sort_key
+    from
+        comment c join member m using(member_code)
+    where
+        parent_comment_code is null
+        and board_code = :board_code
+    union all
+    select
+        c.comment_code as comment_code,
+        m.member_id as member_id,
+        c.comment_content as comment_content,
+        c.parent_comment_code as parent_comment_code,
+        date_format(c.comment_time, '%Y.%m.%d %H:%i') as comment_time,
+        lpad(m.member_id, (cr.level * 4)+ length(m.member_id), ' '),
+        cr.level + 1 as level,
+        concat(cr.sort_key, '-', cast(m.member_id as char(200))) as sort_key
+    from
+        comment c join member m using(member_code)
+    join comment_recu cr on
+        c.parent_comment_code = cr.comment_code
+    )
+```
+
+`c.parent_comment_code = cr.comment_code`는 조직도 코드의 `e.mgr = er.empno`처럼 **부모 행과 자식 행을 잇는 조건**이다. 그러나 `UNION ALL` 양쪽의 열은 **이름이 아니라 위치**로 대응한다. 시작 부분의 2·3·4번째 열은 `member_code`, `member_id`, `comment_content`인데, 반복 부분의 같은 자리는 `member_id`, `comment_content`, `parent_comment_code`다. 개수는 같아도 뜻과 자료형이 어긋나므로 이 상태의 조회 결과를 올바른 댓글 계층이라고 설명할 수 없다. `:board_code`도 사용 중인 SQL 클라이언트가 값을 바인딩할 때만 통하는 표기다. 먼저 양쪽 SELECT의 각 열 위치를 맞추는 것이 다음 수정 과제다.
+
+<a id="section-4"></a>
+
 ## 직접 확인할 질문
 
 1. 시작 부분에서 왜 `mgr IS NULL`을 쓰는가?
 2. 다음 단계의 `e.mgr = er.empno`는 어떤 두 사원을 연결하는가?
 3. 두 단계만 적은 첫 시도와 재귀 CTE는 어디까지 내려갈 수 있다는 점이 다른가?
+4. 추가 댓글 연습에서 양쪽 SELECT의 두 번째 열은 각각 무엇인가?
 
-<a id="section-4"></a>
+<a id="section-5"></a>
 
 ## 추가로 알면 좋은 것
 

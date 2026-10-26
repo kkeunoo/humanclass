@@ -1,0 +1,169 @@
+# 01. CSV를 읽고 영화 ID의 관계를 확인하기
+
+[목차](README.md) · [다음: 영화 텍스트와 청크](02_영화텍스트와_청크.md)
+
+`movies.csv`에는 영화와 장르, `tags.csv`에는 사용자가 붙인 태그, `ratings.csv`에는 평점이 있다. 연결 키는 `movieId`다. 전체 행을 API로 내보내기 전에 일부 행을 보고, 태그·평점이 영화 목록에 없는 ID를 가리키는지 확인한다.
+
+## CSV 파일 찾기
+
+### 강사님 코드 — 원본 발췌
+
+출처: `D:/workspace_teacher/workspace_python/08_langgraph/util.py` 5–17행
+
+```python
+def load_csv(fileName) :
+    BASE_DIR = Path(__file__).resolve().parents[0] # 08_langgraph 폴더로 이동
+    DOCUMENT_FILE = BASE_DIR / "data" / "ml-latest-small" / fileName
+    # print(DOCUMENT_FILE)
+
+    frame = None
+    try:
+        frame = pd.read_csv(DOCUMENT_FILE)
+    except Exception as e :
+        traceback.print_exc()
+        print('read_csv 파일 로딩 오류', e)
+    
+    return frame
+```
+
+### 내 코드 — 원본 발췌
+
+출처: `D:/workspace/workspace_python/08_langgraph/util.py` 15–27행
+
+```python
+def load_csv(fileName) :
+    BASE_DIR = Path(__file__).resolve().parents[0] # 08_langgraph 폴더로 이동
+    DOCUMENT_FILE = BASE_DIR / "data" / "ml-latest-small" / fileName
+    # print(DOCUMENT_FILE)
+
+    frame = None
+    try:
+        frame = pd.read_csv(DOCUMENT_FILE)
+    except Exception as e :
+        traceback.print_exc()
+        print('read_csv 파일 로딩 오류', e)
+
+    return frame
+```
+
+둘 다 현재 `util.py`의 위치에서 `data/ml-latest-small/파일명`을 만들고 `pd.read_csv()`로 읽는다. 읽기 오류가 나면 예외를 출력하고 `None`을 반환한다. `/read/head`는 그다음 `head()`의 기본 앞 5행을 `to_dict(orient='records')`로 바꾼다. 이는 전체 CSV가 아니라 미리보기다.
+
+## 연결되지 않은 ID와 평점 범위
+
+### 강사님 코드 — 원본 발췌
+
+출처: `D:/workspace_teacher/workspace_python/08_langgraph/router/es_router.py` 27–50행
+
+```python
+@router.get('/read/valid')
+def valid():
+    df_movies = util.load_csv('movies.csv')
+    df_tags = util.load_csv('tags.csv')
+    df_ratings = util.load_csv('ratings.csv')
+
+    # dropna : N/A 즉 결측치 즉 없는 것 제외
+    notnull = df_movies['movieId'].dropna()
+
+    # set 타입의 속성을 이용해서 id 중복 제거
+    movie_ids = set(notnull)
+    tag_ids = set(df_tags['movieId'].dropna())
+    rating_ids = set(df_ratings['movieId'].dropna())
+
+    result = {}
+    result['no_id'] = {}
+    result['no_id']['tags'] = len(tag_ids - movie_ids)
+    result['no_id']['ratings'] = len(rating_ids - movie_ids)
+
+    result['rating range'] = {}
+    result['rating range']['min'] = float(df_ratings['rating'].min())
+    result['rating range']['max'] = float(df_ratings['rating'].max())
+
+    return result
+```
+
+### 내 코드 — 원본 발췌
+
+출처: `D:/workspace/workspace_python/08_langgraph/router/es_router.py` 27–54행
+
+```python
+@router.get('/read/valid')
+def valid():
+    df_movies = util.load_csv('movies.csv')
+    df_tags = util.load_csv('tags.csv')
+    df_ratings = util.load_csv('ratings.csv')
+
+    # pandas에서 movieId를 전체 select 
+    # dropna : N/A(Not Available) 결측치, 즉 없는걸 제외해라
+    notnull = df_movies['movieId'].dropna()
+
+    # set 타입의 속성을 이용해서 id 중복 제거
+    # set 타입은 json, list와 다르게 중복을 관리해 줌 { 1, 2 } key만 있는 것
+    movie_ids = set(notnull)
+    tag_ids = set(df_tags['movieId'].dropna())
+    rating_ids = set(df_ratings['movieId'].dropna())
+
+    # 중복되지 않은 ID가 있다면 길이를 체크하여 표시
+    result = {}
+    result['no_id'] = {}
+    result['no_id']['tags'] = len(tag_ids - movie_ids)
+    result['no_id']['ratings'] = len(rating_ids - movie_ids)
+
+    # 별점의 min, max 확인
+    result['rating range'] = {}
+    result['rating range']['min'] = float(df_ratings['rating'].min())
+    result['rating range']['max'] = float(df_ratings['rating'].max())
+
+    return result
+```
+
+`dropna()`로 빠진 ID를 제외하고 집합으로 중복 ID를 제거한다. `tag_ids - movie_ids`는 태그에는 있지만 영화 목록에는 없는 **서로 다른 ID의 개수**를 세기 위한 것이다. `rating`의 `min`, `max`도 숫자로 바꿔 반환한다. 이 코드는 CSV를 **검사**할 뿐 CSV를 수정하지 않는다. 두 원본의 알고리즘은 같다.
+
+## 먼저 고쳐야 하는 실행 문제
+
+### 강사님 코드 — 원본 발췌
+
+출처: `D:/workspace_teacher/workspace_python/08_langgraph/router/es_router.py` 1–11행
+
+```python
+from fastapi import APIRouter
+import traceback
+import util
+import pandas as pd
+from typing import Any
+
+router = APIRouter(tags=["엘라스틱서치"])
+
+@router.get("/read/head")
+# def read(fileName) :
+def read(fileName : Literal['movies.csv', 'tags.csv', 'ratings.csv'] = 'movies.csv') :
+```
+
+### 내 코드 — 원본 발췌
+
+출처: `D:/workspace/workspace_python/08_langgraph/router/es_router.py` 1–11행
+
+```python
+from fastapi import APIRouter
+import traceback
+import util
+import pandas as pd
+from typing import Any
+
+router = APIRouter(tags=["엘라스틱서치"])
+
+@router.get("/read/head")
+# def read(fileName) :
+def read(fileName : Literal['movies.csv', 'tags.csv', 'ratings.csv'] = 'movies.csv') :
+```
+
+`read()`의 형식 주석에 `Literal`을 썼지만 양쪽 import 목록에는 `Literal`이 없다. 이 파일을 그대로 import하면 함수를 정의하는 시점에 이름을 찾지 못할 수 있다. `from typing import Any, Literal`을 추가하는 것이 작은 수정이다. 이것은 **원본에 적용한 변경이 아니라 검토로 찾은 개선 제안**이다.
+
+## 직접 확인할 질문
+
+1. `tags.csv`와 `movies.csv`는 어느 열로 연결하는가?
+2. `set`으로 바꾼 뒤 `len`을 구하면 행 개수와 무엇이 다른가?
+3. `head()`를 통해 받은 값은 CSV 전체인가?
+
+## 추가로 알면 좋은 것
+
+결측치·중복 태그를 자동으로 고치는 파이프라인은 이 검증 함수에 없다. 검사 결과를 보고 별도로 결정해야 한다.
