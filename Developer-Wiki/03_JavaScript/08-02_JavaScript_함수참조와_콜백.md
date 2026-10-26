@@ -4,11 +4,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 함수 자체를 변수에 담기](#section-1)
-- [2. test1과 test1() 비교](#section-2)
-- [3. console.log 변경 실험 읽기](#section-3)
-- [4. 짧은 복습](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 함수 자체를 변수에 담기](08-02_JavaScript_함수참조와_콜백.md#section-1)
+- [2. test1과 test1() 비교](08-02_JavaScript_함수참조와_콜백.md#section-2)
+- [3. console.log 변경 실험 읽기](08-02_JavaScript_함수참조와_콜백.md#section-3)
+- [4. 짧은 복습](08-02_JavaScript_함수참조와_콜백.md#section-4)
+- [추가로 알면 좋은 것](08-02_JavaScript_함수참조와_콜백.md#section-5)
 
 <a id="section-1"></a>
 
@@ -134,6 +134,8 @@
 </details>
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/08-02_JavaScript_함수참조와_콜백_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

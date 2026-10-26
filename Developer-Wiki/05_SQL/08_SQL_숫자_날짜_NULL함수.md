@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 반올림·올림·내림·버림](#section-1)
-- [2. 현재 시각 표시와 문자열 날짜 변환](#section-2)
-- [3. `NULL` 수당을 계산에 넣기](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 반올림·올림·내림·버림](08_SQL_숫자_날짜_NULL함수.md#section-1)
+- [2. 현재 시각 표시와 문자열 날짜 변환](08_SQL_숫자_날짜_NULL함수.md#section-2)
+- [3. `NULL` 수당을 계산에 넣기](08_SQL_숫자_날짜_NULL함수.md#section-3)
+- [직접 확인할 질문](08_SQL_숫자_날짜_NULL함수.md#section-4)
+- [추가로 알면 좋은 것](08_SQL_숫자_날짜_NULL함수.md#section-5)
 
 <a id="section-1"></a>
 
@@ -144,6 +144,8 @@ select sal * 12 + ifnull(comm, 0) from emp;
 3. `comm`이 `NULL`일 때 `sal * 12 + comm`과 `sal * 12 + IFNULL(comm, 0)`은 어떻게 다른가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/08_SQL_숫자_날짜_NULL함수_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

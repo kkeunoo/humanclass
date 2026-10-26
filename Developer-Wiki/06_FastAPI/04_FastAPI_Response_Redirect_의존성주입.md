@@ -114,6 +114,8 @@ def step3(request : Request) :
 2. 강사님 `303`과 내 `307`은 다음 요청 방식에서 어떻게 다른가?
 3. 강사님 `/step1` 주소와 내 `/step1?item=...`에서 `item` 값은 어떻게 다른가?
 
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/04_FastAPI_Response_Redirect_의존성주입_연습문제.md)
+
 ## 추가로 알면 좋은 것
 
 응답 본문·헤더의 세부 구성과 `Response` 클래스별 옵션은 이 파일에 직접 작성하지 않았다. `Depends(get_session)` 형태의 **의존성 주입**은 [07 DB와 SQLModel](07_FastAPI_MariaDB_SQLModel_사원_CRUD.md)의 실제 코드에서 배운다.

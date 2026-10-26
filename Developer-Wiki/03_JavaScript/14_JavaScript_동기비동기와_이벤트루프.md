@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 중첩 호출은 순서대로 실행한다](#section-1)
-- [2. 양쪽 원본의 실제 출력 순서](#section-2)
-- [3. 이벤트 루프는 이 정도 흐름부터](#section-3)
-- [4. 이전 실험과 비교하기](#section-4)
-- [5. 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 중첩 호출은 순서대로 실행한다](14_JavaScript_동기비동기와_이벤트루프.md#section-1)
+- [2. 양쪽 원본의 실제 출력 순서](14_JavaScript_동기비동기와_이벤트루프.md#section-2)
+- [3. 이벤트 루프는 이 정도 흐름부터](14_JavaScript_동기비동기와_이벤트루프.md#section-3)
+- [4. 이전 실험과 비교하기](14_JavaScript_동기비동기와_이벤트루프.md#section-4)
+- [5. 복습](14_JavaScript_동기비동기와_이벤트루프.md#section-5)
+- [추가로 알면 좋은 것](14_JavaScript_동기비동기와_이벤트루프.md#section-6)
 
 <a id="section-1"></a>
 
@@ -173,6 +173,8 @@ console.log('3')
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/14_JavaScript_동기비동기와_이벤트루프_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

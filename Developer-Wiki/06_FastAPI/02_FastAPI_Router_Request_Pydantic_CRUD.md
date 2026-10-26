@@ -406,6 +406,8 @@ async def todoD(todoID : int) :
 3. 내 `Todo(value1, value2)` 모델과 `.id`를 읽는 코드의 필드 이름은 맞는가?
 4. 내 삭제 함수가 `todo_list[:]`를 쓰는 이유는 무엇인가?
 
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/02_FastAPI_Router_Request_Pydantic_CRUD_연습문제.md)
+
 ## 추가로 알면 좋은 것
 
 `request.headers`를 읽는 예제와 `response_model` 설정은 두 수업 코드에서 확인되지 않았고, 사용자가 배우지 않았다고 확인했다. [추가편](추가편_기존자료_학습범위_분류.md)에만 둔다. 이 장의 본문은 실제로 작성한 **쿼리·폼·경로·모델·리스트 CRUD**다.

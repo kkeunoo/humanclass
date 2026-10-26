@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 한 번 질문 보내기](#section-1)
-- [2. 여러 번 질문한 내용 보관하기](#section-2)
-- [3. 결과를 읽을 때 구분할 것](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 한 번 질문 보내기](21_JavaScript_외부AI_API요청과_대화기록.md#section-1)
+- [2. 여러 번 질문한 내용 보관하기](21_JavaScript_외부AI_API요청과_대화기록.md#section-2)
+- [3. 결과를 읽을 때 구분할 것](21_JavaScript_외부AI_API요청과_대화기록.md#section-3)
+- [직접 확인할 질문](21_JavaScript_외부AI_API요청과_대화기록.md#section-4)
+- [추가로 알면 좋은 것](21_JavaScript_외부AI_API요청과_대화기록.md#section-5)
 
 <a id="section-1"></a>
 
@@ -232,6 +232,8 @@
 3. 응답 전체를 다음 대화의 `text`로 넣으면 어떤 글이 전달될까?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/21_JavaScript_외부AI_API요청과_대화기록_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

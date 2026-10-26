@@ -6,10 +6,10 @@
 
 <!-- chapter-toc -->
 
-- [1. 생성과 `self`](#section-1)
-- [2. 생성자 인자와 인스턴스마다 다른 속성](#section-2)
-- [직접 확인할 질문](#section-3)
-- [추가로 알면 좋은 것](#section-4)
+- [1. 생성과 `self`](12-01_Python_클래스와_인스턴스.md#section-1)
+- [2. 생성자 인자와 인스턴스마다 다른 속성](12-01_Python_클래스와_인스턴스.md#section-2)
+- [직접 확인할 질문](12-01_Python_클래스와_인스턴스.md#section-3)
+- [추가로 알면 좋은 것](12-01_Python_클래스와_인스턴스.md#section-4)
 
 <a id="section-1"></a>
 
@@ -155,6 +155,8 @@ print(b.addr)
 3. `james.hello()`가 `greeting()`과 다르게 동작하는 이유는?
 
 <a id="section-4"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12-01_Python_클래스와_인스턴스_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 두 단계만 직접 적은 첫 시도](#section-1)
-- [2. `WITH RECURSIVE`의 시작 부분과 반복 부분](#section-2)
-- [3. 이후 내 댓글 계층 연습의 열 순서 점검](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 두 단계만 직접 적은 첫 시도](18_SQL_Recursive_CTE.md#section-1)
+- [2. `WITH RECURSIVE`의 시작 부분과 반복 부분](18_SQL_Recursive_CTE.md#section-2)
+- [3. 이후 내 댓글 계층 연습의 열 순서 점검](18_SQL_Recursive_CTE.md#section-3)
+- [직접 확인할 질문](18_SQL_Recursive_CTE.md#section-4)
+- [추가로 알면 좋은 것](18_SQL_Recursive_CTE.md#section-5)
 
 <a id="section-1"></a>
 
@@ -167,6 +167,8 @@ with recursive comment_recu as (
 4. 추가 댓글 연습에서 양쪽 SELECT의 두 번째 열은 각각 무엇인가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/18_SQL_Recursive_CTE_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

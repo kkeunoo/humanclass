@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 어떤 시점에 실행할까](#section-1)
-- [2. submit 이벤트와 form.submit()은 다르다](#section-2)
-- [3. 검사한 문자열과 제출한 문자열](#section-3)
-- [4. 입력 로그는 글자 출력으로 교정할 수 있다](#section-4)
-- [5. 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 어떤 시점에 실행할까](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md#section-1)
+- [2. submit 이벤트와 form.submit()은 다르다](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md#section-2)
+- [3. 검사한 문자열과 제출한 문자열](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md#section-3)
+- [4. 입력 로그는 글자 출력으로 교정할 수 있다](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md#section-4)
+- [5. 복습](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md#section-5)
+- [추가로 알면 좋은 것](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md#section-6)
 
 <a id="section-1"></a>
 
@@ -181,6 +181,8 @@ log(query.value)는 입력된 문자열을 원본 log 함수의 innerHTML에 넣
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17_JavaScript_폼이벤트와_이벤트전파_실전문제_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

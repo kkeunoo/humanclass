@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 직접 쓴 스타일과 계산된 스타일](#section-1)
-- [2. '66px'에 5 더하기](#section-2)
-- [3. style 요소도 만들어 붙일 수 있다](#section-3)
-- [4. 내 퀴즈 풀이로 다시 확인하기](#section-4)
-- [5. 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 직접 쓴 스타일과 계산된 스타일](12-03_JavaScript_DOM_스타일과_퀴즈.md#section-1)
+- [2. '66px'에 5 더하기](12-03_JavaScript_DOM_스타일과_퀴즈.md#section-2)
+- [3. style 요소도 만들어 붙일 수 있다](12-03_JavaScript_DOM_스타일과_퀴즈.md#section-3)
+- [4. 내 퀴즈 풀이로 다시 확인하기](12-03_JavaScript_DOM_스타일과_퀴즈.md#section-4)
+- [5. 복습](12-03_JavaScript_DOM_스타일과_퀴즈.md#section-5)
+- [추가로 알면 좋은 것](12-03_JavaScript_DOM_스타일과_퀴즈.md#section-6)
 
 <a id="section-1"></a>
 
@@ -277,6 +277,8 @@ if (Q4_query[i].textContent.trim() === '') {
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12-03_JavaScript_DOM_스타일과_퀴즈_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

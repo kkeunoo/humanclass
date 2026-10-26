@@ -6,13 +6,13 @@
 
 <!-- chapter-toc -->
 
-- [1. createElement만으로 화면에 나타나지는 않는다](#section-1)
-- [2. 자식 앞뒤와 형제 앞뒤](#section-2)
-- [3. tr 안에 td를 넣기](#section-3)
-- [4. rows 배열을 다섯 행으로 만들기](#section-4)
-- [5. 문자열을 앞에 붙이면 행 순서가 뒤집힌다](#section-5)
-- [6. 복습](#section-6)
-- [추가로 알면 좋은 것](#section-7)
+- [1. createElement만으로 화면에 나타나지는 않는다](12-02_JavaScript_DOM_요소생성과_삽입.md#section-1)
+- [2. 자식 앞뒤와 형제 앞뒤](12-02_JavaScript_DOM_요소생성과_삽입.md#section-2)
+- [3. tr 안에 td를 넣기](12-02_JavaScript_DOM_요소생성과_삽입.md#section-3)
+- [4. rows 배열을 다섯 행으로 만들기](12-02_JavaScript_DOM_요소생성과_삽입.md#section-4)
+- [5. 문자열을 앞에 붙이면 행 순서가 뒤집힌다](12-02_JavaScript_DOM_요소생성과_삽입.md#section-5)
+- [6. 복습](12-02_JavaScript_DOM_요소생성과_삽입.md#section-6)
+- [추가로 알면 좋은 것](12-02_JavaScript_DOM_요소생성과_삽입.md#section-7)
 
 <a id="section-1"></a>
 
@@ -344,6 +344,8 @@ rows는 `[['제목1','작성자1'], …, ['제목5','작성자5']]`이다. rows[
 </details>
 
 <a id="section-7"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12-02_JavaScript_DOM_요소생성과_삽입_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

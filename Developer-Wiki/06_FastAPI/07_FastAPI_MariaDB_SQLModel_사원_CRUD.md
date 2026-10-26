@@ -635,6 +635,8 @@ async def emp_delete(
 3. 강사님 `Emp3(SQLModel)`과 내 `Emp3(SQLModel, table=True)`는 무엇이 다른가?
 4. 내 상세 조회에서 사원 번호가 없으면 어떤 분기가 실행되는가?
 
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/07_FastAPI_MariaDB_SQLModel_사원_CRUD_연습문제.md)
+
 ## 추가로 알면 좋은 것
 
 연결 정보를 환경 변수로 분리하기, DB 연결 실패를 사용자 화면에 알리기, 트랜잭션 예외를 세밀하게 처리하기는 유용한 다음 학습이다. 기존 Wiki의 `response_model`·`request.headers` 설명은 사용자 확인상 배우지 않았고, 실제 이 수업 코드에도 없어 [추가편](추가편_기존자료_학습범위_분류.md)에만 둔다.

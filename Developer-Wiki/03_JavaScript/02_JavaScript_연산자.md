@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 자주 쓰는 기호](#section-1)
-- [2. 전위·후위: 무엇을 식에 전달하는가](#section-2)
-- [3. 비교·논리·삼항](#section-3)
-- [4. 실제 계산 문제 비교](#section-4)
-- [5. 짧은 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 자주 쓰는 기호](02_JavaScript_연산자.md#section-1)
+- [2. 전위·후위: 무엇을 식에 전달하는가](02_JavaScript_연산자.md#section-2)
+- [3. 비교·논리·삼항](02_JavaScript_연산자.md#section-3)
+- [4. 실제 계산 문제 비교](02_JavaScript_연산자.md#section-4)
+- [5. 짧은 복습](02_JavaScript_연산자.md#section-5)
+- [추가로 알면 좋은 것](02_JavaScript_연산자.md#section-6)
 
 <a id="section-1"></a>
 
@@ -290,6 +290,8 @@
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/02_JavaScript_연산자_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

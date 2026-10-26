@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 주문 정보와 배송 정보 복사](#section-1)
-- [2. 로그인 입력 확인](#section-2)
-- [3. 피자 선택과 총액](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 주문 정보와 배송 정보 복사](17-03_JavaScript_주문_로그인_피자실습.md#section-1)
+- [2. 로그인 입력 확인](17-03_JavaScript_주문_로그인_피자실습.md#section-2)
+- [3. 피자 선택과 총액](17-03_JavaScript_주문_로그인_피자실습.md#section-3)
+- [직접 확인할 질문](17-03_JavaScript_주문_로그인_피자실습.md#section-4)
+- [추가로 알면 좋은 것](17-03_JavaScript_주문_로그인_피자실습.md#section-5)
 
 <a id="section-1"></a>
 
@@ -281,6 +281,8 @@ HTML의 가격 예시:
 3. 피자에서 size와 topping 중 무엇이 총액에 더해지는지 HTML 속성과 코드를 연결해 보자.
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-03_JavaScript_주문_로그인_피자실습_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

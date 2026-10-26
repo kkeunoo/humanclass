@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. textContent·innerText·innerHTML](#section-1)
-- [2. 숫자처럼 보여도 읽은 값은 문자열이다](#section-2)
-- [3. 현재 시각은 반복할 때마다 다시 읽는다](#section-3)
-- [4. 복습](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. textContent·innerText·innerHTML](12_JavaScript_DOM_콘텐츠생성과_스타일조작.md#section-1)
+- [2. 숫자처럼 보여도 읽은 값은 문자열이다](12_JavaScript_DOM_콘텐츠생성과_스타일조작.md#section-2)
+- [3. 현재 시각은 반복할 때마다 다시 읽는다](12_JavaScript_DOM_콘텐츠생성과_스타일조작.md#section-3)
+- [4. 복습](12_JavaScript_DOM_콘텐츠생성과_스타일조작.md#section-4)
+- [추가로 알면 좋은 것](12_JavaScript_DOM_콘텐츠생성과_스타일조작.md#section-5)
 
 <a id="section-1"></a>
 
@@ -186,6 +186,8 @@ Number를 생략하면 '0' + 1은 '01'이다. setInterval은 지정 간격으로
 </details>
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12_JavaScript_DOM_콘텐츠생성과_스타일조작_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

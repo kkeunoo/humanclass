@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. if와 else if: 먼저 참이 된 갈래 하나](#section-1)
-- [2. switch: 값이 같은 case에서 시작하기](#section-2)
-- [3. 난수와 가위바위보 — 양쪽 모두 검토하기](#section-3)
-- [4. 실제 문제 풀이의 경계값 점검](#section-4)
-- [5. 교정 예제와 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. if와 else if: 먼저 참이 된 갈래 하나](03_JavaScript_조건문과_Switch.md#section-1)
+- [2. switch: 값이 같은 case에서 시작하기](03_JavaScript_조건문과_Switch.md#section-2)
+- [3. 난수와 가위바위보 — 양쪽 모두 검토하기](03_JavaScript_조건문과_Switch.md#section-3)
+- [4. 실제 문제 풀이의 경계값 점검](03_JavaScript_조건문과_Switch.md#section-4)
+- [5. 교정 예제와 복습](03_JavaScript_조건문과_Switch.md#section-5)
+- [추가로 알면 좋은 것](03_JavaScript_조건문과_Switch.md#section-6)
 
 <a id="section-1"></a>
 
@@ -291,6 +291,8 @@ console.log(`${hour}시 ${minute}분`);
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/03_JavaScript_조건문과_Switch_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

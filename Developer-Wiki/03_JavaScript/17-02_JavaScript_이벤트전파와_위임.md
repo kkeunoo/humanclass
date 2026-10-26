@@ -6,13 +6,13 @@
 
 <!-- chapter-toc -->
 
-- [1. 캡처링과 버블링 방향](#section-1)
-- [2. target과 currentTarget](#section-2)
-- [3. 자식1은 위로 전달하지 않는다](#section-3)
-- [4. 게시판에 이벤트를 위임한다](#section-4)
-- [5. 체크박스 클릭은 별도 처리한다](#section-5)
-- [6. 복습](#section-6)
-- [추가로 알면 좋은 것](#section-7)
+- [1. 캡처링과 버블링 방향](17-02_JavaScript_이벤트전파와_위임.md#section-1)
+- [2. target과 currentTarget](17-02_JavaScript_이벤트전파와_위임.md#section-2)
+- [3. 자식1은 위로 전달하지 않는다](17-02_JavaScript_이벤트전파와_위임.md#section-3)
+- [4. 게시판에 이벤트를 위임한다](17-02_JavaScript_이벤트전파와_위임.md#section-4)
+- [5. 체크박스 클릭은 별도 처리한다](17-02_JavaScript_이벤트전파와_위임.md#section-5)
+- [6. 복습](17-02_JavaScript_이벤트전파와_위임.md#section-6)
+- [추가로 알면 좋은 것](17-02_JavaScript_이벤트전파와_위임.md#section-7)
 
 <a id="section-1"></a>
 
@@ -302,6 +302,8 @@ parentNode 두 번은 이 HTML의 input → td → tr 구조에 맞춘 경로다
 </details>
 
 <a id="section-7"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-02_JavaScript_이벤트전파와_위임_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

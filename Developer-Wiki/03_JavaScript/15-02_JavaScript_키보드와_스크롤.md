@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. keydown과 keyup](#section-1)
-- [2. Enter로 포커스 이동과 클릭 실행](#section-2)
-- [3. 방향키로 위치를 10px 바꾸기](#section-3)
-- [4. 스크롤 위치와 맨 위로 이동](#section-4)
-- [5. 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. keydown과 keyup](15-02_JavaScript_키보드와_스크롤.md#section-1)
+- [2. Enter로 포커스 이동과 클릭 실행](15-02_JavaScript_키보드와_스크롤.md#section-2)
+- [3. 방향키로 위치를 10px 바꾸기](15-02_JavaScript_키보드와_스크롤.md#section-3)
+- [4. 스크롤 위치와 맨 위로 이동](15-02_JavaScript_키보드와_스크롤.md#section-4)
+- [5. 복습](15-02_JavaScript_키보드와_스크롤.md#section-5)
+- [추가로 알면 좋은 것](15-02_JavaScript_키보드와_스크롤.md#section-6)
 
 <a id="section-1"></a>
 
@@ -223,6 +223,8 @@ document.documentElement.scrollTop은 이 표준 모드 문서의 루트 스크�
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/15-02_JavaScript_키보드와_스크롤_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

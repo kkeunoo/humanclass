@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 우클릭 메뉴와 글자 선택](#section-1)
-- [2. 선택한 글자 뒤에 출처 문구 붙이기](#section-2)
-- [3. return과 preventDefault는 역할이 다르다](#section-3)
-- [4. 창 안쪽 크기를 읽는 resize](#section-4)
-- [5. 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 우클릭 메뉴와 글자 선택](16-02_JavaScript_선택과_복사이벤트.md#section-1)
+- [2. 선택한 글자 뒤에 출처 문구 붙이기](16-02_JavaScript_선택과_복사이벤트.md#section-2)
+- [3. return과 preventDefault는 역할이 다르다](16-02_JavaScript_선택과_복사이벤트.md#section-3)
+- [4. 창 안쪽 크기를 읽는 resize](16-02_JavaScript_선택과_복사이벤트.md#section-4)
+- [5. 복습](16-02_JavaScript_선택과_복사이벤트.md#section-5)
+- [추가로 알면 좋은 것](16-02_JavaScript_선택과_복사이벤트.md#section-6)
 
 <a id="section-1"></a>
 
@@ -191,6 +191,8 @@ innerWidth/innerHeight는 창 안쪽 뷰포트 크기이며, 표시되는 스크
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/16-02_JavaScript_선택과_복사이벤트_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

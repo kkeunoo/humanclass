@@ -6,10 +6,10 @@
 
 <!-- chapter-toc -->
 
-- [1. 표 전체와 필요한 열](#section-1)
-- [2. 중복값 제거와 결과 열 이름](#section-2)
-- [직접 확인할 질문](#section-3)
-- [추가로 알면 좋은 것](#section-4)
+- [1. 표 전체와 필요한 열](01_SQL_기초와_SELECT.md#section-1)
+- [2. 중복값 제거와 결과 열 이름](01_SQL_기초와_SELECT.md#section-2)
+- [직접 확인할 질문](01_SQL_기초와_SELECT.md#section-3)
+- [추가로 알면 좋은 것](01_SQL_기초와_SELECT.md#section-4)
 
 <a id="section-1"></a>
 
@@ -113,6 +113,8 @@ select sal, comm , sal + comm from emp;
 3. `comm`이 `NULL`인 사원의 `sal + comm` 결과는 무엇인가?
 
 <a id="section-4"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/01_SQL_기초와_SELECT_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

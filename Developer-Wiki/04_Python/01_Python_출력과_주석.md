@@ -60,8 +60,8 @@ print('hello world');
 
 <!-- chapter-toc -->
 
-- [직접 확인할 질문](#section-1)
-- [추가로 알면 좋은 것](#section-2)
+- [직접 확인할 질문](01_Python_출력과_주석.md#section-1)
+- [추가로 알면 좋은 것](01_Python_출력과_주석.md#section-2)
 
 <a id="section-1"></a>
 
@@ -72,6 +72,8 @@ print('hello world');
 3. 마지막 세미콜론을 지워도 출력 결과가 바뀔까?
 
 <a id="section-2"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/01_Python_출력과_주석_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

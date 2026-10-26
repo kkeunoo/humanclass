@@ -6,11 +6,11 @@
 
 ## 목차
 
-1. [표를 구성하는 요소](#parts)
-2. [병합 원본 비교](#merge)
-3. [caption·thead·tbody와 양쪽 오류](#groups)
-4. [크기와 닫기 태그](#correction)
-5. [복습](#practice)
+1. [표를 구성하는 요소](05_HTML_테이블.md#parts)
+2. [병합 원본 비교](05_HTML_테이블.md#merge)
+3. [caption·thead·tbody와 양쪽 오류](05_HTML_테이블.md#groups)
+4. [크기와 닫기 태그](05_HTML_테이블.md#correction)
+5. [복습](05_HTML_테이블.md#practice)
 
 <a id="parts"></a>
 
@@ -234,3 +234,27 @@
 ### 이전 색인 링크 안내
 
 이전 절 주소를 보존한 안내 위치다. 개편 전 절 번호와 현재 절 번호는 서로 다르다. [HTML 새 목차](README.md)에서 현재 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾을 수 있다.
+
+<!-- inlined-extra-2026 -->
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/05_HTML_테이블_연습문제.md)
+
+## 추가로 알면 좋은 것
+
+이하의 내용은 **수업 원본에서 확인된 필수 진도가 아닌 추가 학습**이다. 위의 기본 설명을 이해한 뒤 필요할 때 읽는다.
+
+<a id="extra-02-4"></a>
+
+### 4. 복잡한 표를 더 명확하게 만들기
+
+기본편의 `caption`·`th`·병합에서 출발해, 제목 셀의 범위를 `scope`로 나타내거나 복잡한 관계를 `headers`·`id`로 연결할 수 있다. 다음은 단순한 열 제목 예제다.
+
+```html
+<table>
+    <caption>학습 시간</caption>
+    <tr><th scope="col">과목</th><th scope="col">시간</th></tr>
+    <tr><td>HTML</td><td>2시간</td></tr>
+</table>
+```
+
+`scope`는 테두리·정렬을 바꾸기 위한 속성이 아니다. `colgroup` 등 열 묶음과 복잡한 표 접근성 설계도 기본 병합 문제와 구분한다. [HTML 표준 — 표](https://html.spec.whatwg.org/dev/tables.html)

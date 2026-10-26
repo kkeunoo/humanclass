@@ -6,7 +6,7 @@
 
 | 과목 | 최종 기록 | 기존 문서 연결 |
 | --- | --- | --- |
-| 00 메모리와 참조 | [00 검증 기록](00_개편_검증기록.md) | [00 목차](../00_%EB%A9%94%EB%AA%A8%EB%A6%AC%EC%99%80_%EC%B0%B8%EC%A1%B0%28Stack_Heap%29/README.md) |
+| 00 메모리와 참조 | [00 검증 기록](00_개편_검증기록.md) | [00 목차](../00_메모리와_참조%28Stack_Heap%29/README.md) |
 | 01 HTML | [01 최종 기록](01_HTML_최종_검증기록.md) | [HTML 목차](../01_HTML/README.md) |
 | 02 CSS | [02 최종 기록](02_CSS_최종_검증기록.md) | [CSS 목차](../02_CSS/README.md) |
 | 03 JavaScript | [03 최종 기록](03_JavaScript_최종_검증기록.md) | [BACKUP 대응표](03_JavaScript_BACKUP_대응표.md) |

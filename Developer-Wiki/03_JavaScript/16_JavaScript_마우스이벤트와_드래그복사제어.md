@@ -6,14 +6,14 @@
 
 <!-- chapter-toc -->
 
-- [1. 누르기·놓기·클릭을 구분한다](#section-1)
-- [2. 좌표 숫자보다 기준점을 먼저 본다](#section-2)
-- [3. 들어오고 나갈 때 배경 바꾸기](#section-3)
-- [4. 포인터를 따라오는 그림](#section-4)
-- [5. 눌렀을 때만 움직이는 드래그](#section-5)
-- [6. 요소 밖에서 놓는 경우의 한계](#section-6)
-- [7. 복습](#section-7)
-- [추가로 알면 좋은 것](#section-8)
+- [1. 누르기·놓기·클릭을 구분한다](16_JavaScript_마우스이벤트와_드래그복사제어.md#section-1)
+- [2. 좌표 숫자보다 기준점을 먼저 본다](16_JavaScript_마우스이벤트와_드래그복사제어.md#section-2)
+- [3. 들어오고 나갈 때 배경 바꾸기](16_JavaScript_마우스이벤트와_드래그복사제어.md#section-3)
+- [4. 포인터를 따라오는 그림](16_JavaScript_마우스이벤트와_드래그복사제어.md#section-4)
+- [5. 눌렀을 때만 움직이는 드래그](16_JavaScript_마우스이벤트와_드래그복사제어.md#section-5)
+- [6. 요소 밖에서 놓는 경우의 한계](16_JavaScript_마우스이벤트와_드래그복사제어.md#section-6)
+- [7. 복습](16_JavaScript_마우스이벤트와_드래그복사제어.md#section-7)
+- [추가로 알면 좋은 것](16_JavaScript_마우스이벤트와_드래그복사제어.md#section-8)
 
 <a id="section-1"></a>
 
@@ -324,6 +324,8 @@ window.addEventListener('mouseup', function () {
 </details>
 
 <a id="section-8"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/16_JavaScript_마우스이벤트와_드래그복사제어_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

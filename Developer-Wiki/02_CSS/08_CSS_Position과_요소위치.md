@@ -14,10 +14,10 @@ top:30px를 만나면 “무엇의 위에서 30px인가?”를 먼저 묻는다.
 
 <!-- chapter-toc -->
 
-- [1. absolute 원본 비교](#section-1)
-- [2. fixed·sticky·겹침](#section-2)
-- [3. calc와 CSS 변수도 실제 원본이다](#section-3)
-- [복습](#section-4)
+- [1. absolute 원본 비교](08_CSS_Position과_요소위치.md#section-1)
+- [2. fixed·sticky·겹침](08_CSS_Position과_요소위치.md#section-2)
+- [3. calc와 CSS 변수도 실제 원본이다](08_CSS_Position과_요소위치.md#section-3)
+- [복습](08_CSS_Position과_요소위치.md#section-4)
 
 <a id="section-1"></a>
 
@@ -184,3 +184,6 @@ absolute는 일반 흐름에서 빠지고 relative는 배치 자리를 유지한
 ### 이전 색인 링크 안내
 
 이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/08_CSS_Position과_요소위치_연습문제.md)
+

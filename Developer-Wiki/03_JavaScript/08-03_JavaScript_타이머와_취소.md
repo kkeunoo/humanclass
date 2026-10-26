@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 한 번 예약하고 취소하기](#section-1)
-- [2. 반복 예약과 종료](#section-2)
-- [3. 양쪽 재귀 예제의 오류](#section-3)
-- [4. 짧은 복습](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 한 번 예약하고 취소하기](08-03_JavaScript_타이머와_취소.md#section-1)
+- [2. 반복 예약과 종료](08-03_JavaScript_타이머와_취소.md#section-2)
+- [3. 양쪽 재귀 예제의 오류](08-03_JavaScript_타이머와_취소.md#section-3)
+- [4. 짧은 복습](08-03_JavaScript_타이머와_취소.md#section-4)
+- [추가로 알면 좋은 것](08-03_JavaScript_타이머와_취소.md#section-5)
 
 <a id="section-1"></a>
 
@@ -147,6 +147,8 @@ setTimeout(함수, 지연값)은 함수를 한 번 실행하도록 예약한다.
 </details>
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/08-03_JavaScript_타이머와_취소_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

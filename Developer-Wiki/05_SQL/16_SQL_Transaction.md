@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. `DELETE` 뒤의 `ROLLBACK`](#section-1)
-- [2. DDL과 DML의 경계](#section-2)
-- [3. 실제 확인 순서](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. `DELETE` 뒤의 `ROLLBACK`](16_SQL_Transaction.md#section-1)
+- [2. DDL과 DML의 경계](16_SQL_Transaction.md#section-2)
+- [3. 실제 확인 순서](16_SQL_Transaction.md#section-3)
+- [직접 확인할 질문](16_SQL_Transaction.md#section-4)
+- [추가로 알면 좋은 것](16_SQL_Transaction.md#section-5)
 
 <a id="section-1"></a>
 
@@ -120,6 +120,8 @@ truncate table emp_copy;
 3. `TRUNCATE TABLE`을 일반 `DELETE`와 같은 롤백 예제로 취급하면 왜 위험한가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/16_SQL_Transaction_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

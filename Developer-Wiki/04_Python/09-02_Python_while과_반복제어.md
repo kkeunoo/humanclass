@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 주사위 3이 나올 때까지](#section-1)
-- [2. `break`를 만나지 않았을 때의 `else`](#section-2)
-- [3. 강사님 원본의 추가 반복 예시](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 주사위 3이 나올 때까지](09-02_Python_while과_반복제어.md#section-1)
+- [2. `break`를 만나지 않았을 때의 `else`](09-02_Python_while과_반복제어.md#section-2)
+- [3. 강사님 원본의 추가 반복 예시](09-02_Python_while과_반복제어.md#section-3)
+- [직접 확인할 질문](09-02_Python_while과_반복제어.md#section-4)
+- [추가로 알면 좋은 것](09-02_Python_while과_반복제어.md#section-5)
 
 <a id="section-1"></a>
 
@@ -159,6 +159,8 @@ t.shape('turtle')
 3. 강사님 리스트 `a`에는 마지막에 몇 개의 값이 있을까?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/09-02_Python_while과_반복제어_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. XMLHttpRequest의 네 단계](#section-1)
-- [2. 로컬 HTML을 받아보며 실행 순서 관찰](#section-2)
-- [3. fetch와 Promise 연결](#section-3)
-- [4. 디버거 연습](#section-4)
-- [직접 확인할 질문](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. XMLHttpRequest의 네 단계](20_JavaScript_AJAX와_fetch.md#section-1)
+- [2. 로컬 HTML을 받아보며 실행 순서 관찰](20_JavaScript_AJAX와_fetch.md#section-2)
+- [3. fetch와 Promise 연결](20_JavaScript_AJAX와_fetch.md#section-3)
+- [4. 디버거 연습](20_JavaScript_AJAX와_fetch.md#section-4)
+- [직접 확인할 질문](20_JavaScript_AJAX와_fetch.md#section-5)
+- [추가로 알면 좋은 것](20_JavaScript_AJAX와_fetch.md#section-6)
 
 <a id="section-1"></a>
 
@@ -323,6 +323,8 @@ function debug() {
 3. `19_json.html`을 받아온 문자열을 바로 JSON으로 파싱하면 어떻게 될까?
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/20_JavaScript_AJAX와_fetch_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

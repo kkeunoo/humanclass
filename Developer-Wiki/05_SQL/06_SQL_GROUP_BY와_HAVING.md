@@ -6,10 +6,10 @@
 
 <!-- chapter-toc -->
 
-- [1. 부서별 집계와 두 열로 묶기](#section-1)
-- [2. `WHERE`는 행, `HAVING`은 그룹](#section-2)
-- [직접 확인할 질문](#section-3)
-- [추가로 알면 좋은 것](#section-4)
+- [1. 부서별 집계와 두 열로 묶기](06_SQL_GROUP_BY와_HAVING.md#section-1)
+- [2. `WHERE`는 행, `HAVING`은 그룹](06_SQL_GROUP_BY와_HAVING.md#section-2)
+- [직접 확인할 질문](06_SQL_GROUP_BY와_HAVING.md#section-3)
+- [추가로 알면 좋은 것](06_SQL_GROUP_BY와_HAVING.md#section-4)
 
 <a id="section-1"></a>
 
@@ -160,6 +160,8 @@ having count(*) >= 3
 3. `sal >= 1000`과 `COUNT(*) >= 3`은 각각 어디에 적는가?
 
 <a id="section-4"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/06_SQL_GROUP_BY와_HAVING_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

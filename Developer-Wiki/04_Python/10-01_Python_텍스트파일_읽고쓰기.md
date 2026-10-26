@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. `w`, `r`과 인코딩](#section-1)
-- [2. 일부만 읽고, 나눠 읽기](#section-2)
-- [3. 바이너리 모드와 `with`](#section-3)
-- [4. 뒤에 덧붙이기](#section-4)
-- [직접 확인할 질문](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. `w`, `r`과 인코딩](10-01_Python_텍스트파일_읽고쓰기.md#section-1)
+- [2. 일부만 읽고, 나눠 읽기](10-01_Python_텍스트파일_읽고쓰기.md#section-2)
+- [3. 바이너리 모드와 `with`](10-01_Python_텍스트파일_읽고쓰기.md#section-3)
+- [4. 뒤에 덧붙이기](10-01_Python_텍스트파일_읽고쓰기.md#section-4)
+- [직접 확인할 질문](10-01_Python_텍스트파일_읽고쓰기.md#section-5)
+- [추가로 알면 좋은 것](10-01_Python_텍스트파일_읽고쓰기.md#section-6)
 
 <a id="section-1"></a>
 
@@ -277,6 +277,8 @@ with open('hello.txt', 'a') as f : # 'a'는 이어 쓰기(append)
 3. `list(file.read())`가 원래 리스트를 복원하지 못하는 이유는?
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/10-01_Python_텍스트파일_읽고쓰기_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

@@ -6,9 +6,9 @@ hover는 상태 조건이고 transition은 값이 바뀌는 과정의 시간 설
 
 <!-- chapter-toc -->
 
-- [1. hover 안에 있는 transition](#section-1)
-- [2. 양방향 전환으로 교정하기](#section-2)
-- [복습](#section-3)
+- [1. hover 안에 있는 transition](12_CSS_Transition과_상태변화.md#section-1)
+- [2. 양방향 전환으로 교정하기](12_CSS_Transition과_상태변화.md#section-2)
+- [복습](12_CSS_Transition과_상태변화.md#section-3)
 
 <a id="section-1"></a>
 
@@ -95,3 +95,6 @@ box2에서 포인터를 빼면 곧바로 작아진다. 0.5s가 잘못된 단위�
 ### 이전 색인 링크 안내
 
 이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12_CSS_Transition과_상태변화_연습문제.md)
+

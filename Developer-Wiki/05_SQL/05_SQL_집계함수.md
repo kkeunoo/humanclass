@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. `COUNT(*)`와 `COUNT(열)`](#section-1)
-- [2. 최대·최소·합계·평균](#section-2)
-- [3. 요약값과 한 사원의 이름을 섞을 때](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. `COUNT(*)`와 `COUNT(열)`](05_SQL_집계함수.md#section-1)
+- [2. 최대·최소·합계·평균](05_SQL_집계함수.md#section-2)
+- [3. 요약값과 한 사원의 이름을 섞을 때](05_SQL_집계함수.md#section-3)
+- [직접 확인할 질문](05_SQL_집계함수.md#section-4)
+- [추가로 알면 좋은 것](05_SQL_집계함수.md#section-5)
 
 <a id="section-1"></a>
 
@@ -113,6 +113,8 @@ select count(*), ename from emp;
 3. `COUNT(*)` 옆에 `ename`을 아무 기준 없이 놓으면 왜 해석이 곤란한가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/05_SQL_집계함수_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

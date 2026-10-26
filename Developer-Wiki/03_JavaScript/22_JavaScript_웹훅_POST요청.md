@@ -6,10 +6,10 @@
 
 <!-- chapter-toc -->
 
-- [1. 클릭에서 요청 본문까지](#section-1)
-- [2. 앞 장과 연결하기](#section-2)
-- [직접 확인할 질문](#section-3)
-- [추가로 알면 좋은 것](#section-4)
+- [1. 클릭에서 요청 본문까지](22_JavaScript_웹훅_POST요청.md#section-1)
+- [2. 앞 장과 연결하기](22_JavaScript_웹훅_POST요청.md#section-2)
+- [직접 확인할 질문](22_JavaScript_웹훅_POST요청.md#section-3)
+- [추가로 알면 좋은 것](22_JavaScript_웹훅_POST요청.md#section-4)
 
 <a id="section-1"></a>
 
@@ -82,6 +82,8 @@
 3. 응답 본문을 콘솔에 찍는 것과 메시지 전송 성공을 확인하는 것은 같은 일일까?
 
 <a id="section-4"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/22_JavaScript_웹훅_POST요청_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 객체의 키와 값](#section-1)
-- [2. 읽기·변경·추가](#section-2)
-- [3. 객체 → JSON 문자열 → 다시 값](#section-3)
-- [4. 객체 배열과 속성 목록](#section-4)
-- [직접 확인할 질문](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 객체의 키와 값](19_JavaScript_객체와_JSON.md#section-1)
+- [2. 읽기·변경·추가](19_JavaScript_객체와_JSON.md#section-2)
+- [3. 객체 → JSON 문자열 → 다시 값](19_JavaScript_객체와_JSON.md#section-3)
+- [4. 객체 배열과 속성 목록](19_JavaScript_객체와_JSON.md#section-4)
+- [직접 확인할 질문](19_JavaScript_객체와_JSON.md#section-5)
+- [추가로 알면 좋은 것](19_JavaScript_객체와_JSON.md#section-6)
 
 <a id="section-1"></a>
 
@@ -264,6 +264,8 @@
 3. `for...of`의 `t`와 `for...in`의 `i`에는 각각 무엇이 들어갈까?
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/19_JavaScript_객체와_JSON_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

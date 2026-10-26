@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 선언·대입·출력을 구분하기](#section-1)
-- [2. 값이 없거나 계산이 안 될 때](#section-2)
-- [3. 문자열을 숫자로 바꾸기](#section-3)
-- [4. 입력·문자열 출력·수업 계산](#section-4)
-- [5. 짧은 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 선언·대입·출력을 구분하기](01_JavaScript_변수와_자료형.md#section-1)
+- [2. 값이 없거나 계산이 안 될 때](01_JavaScript_변수와_자료형.md#section-2)
+- [3. 문자열을 숫자로 바꾸기](01_JavaScript_변수와_자료형.md#section-3)
+- [4. 입력·문자열 출력·수업 계산](01_JavaScript_변수와_자료형.md#section-4)
+- [5. 짧은 복습](01_JavaScript_변수와_자료형.md#section-5)
+- [추가로 알면 좋은 것](01_JavaScript_변수와_자료형.md#section-6)
 
 <a id="section-1"></a>
 
@@ -214,6 +214,8 @@ parseInt는 입력 전체가 올바른 숫자인지 검사하는 함수가 아�
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/01_JavaScript_변수와_자료형_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

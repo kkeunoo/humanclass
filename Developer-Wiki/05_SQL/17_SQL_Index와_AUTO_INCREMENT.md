@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. `CREATE INDEX`와 강제 지정](#section-1)
-- [2. 자동 번호와 `MAX(id)+1`의 차이](#section-2)
-- [3. 문자열 길이 실험](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. `CREATE INDEX`와 강제 지정](17_SQL_Index와_AUTO_INCREMENT.md#section-1)
+- [2. 자동 번호와 `MAX(id)+1`의 차이](17_SQL_Index와_AUTO_INCREMENT.md#section-2)
+- [3. 문자열 길이 실험](17_SQL_Index와_AUTO_INCREMENT.md#section-3)
+- [직접 확인할 질문](17_SQL_Index와_AUTO_INCREMENT.md#section-4)
+- [추가로 알면 좋은 것](17_SQL_Index와_AUTO_INCREMENT.md#section-5)
 
 <a id="section-1"></a>
 
@@ -171,6 +171,8 @@ select char_length('한구');
 3. `LENGTH`와 `CHAR_LENGTH`의 단위는 각각 무엇인가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17_SQL_Index와_AUTO_INCREMENT_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

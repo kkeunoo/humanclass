@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 속성의 존재와 값을 구분하기](#section-1)
-- [2. data-name과 dataset.name](#section-2)
-- [3. classList의 상태를 한 줄씩 추적하기](#section-3)
-- [4. 클래스 제거와 요소 제거는 다르다](#section-4)
-- [5. 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 속성의 존재와 값을 구분하기](11-02_JavaScript_DOM_속성과_클래스.md#section-1)
+- [2. data-name과 dataset.name](11-02_JavaScript_DOM_속성과_클래스.md#section-2)
+- [3. classList의 상태를 한 줄씩 추적하기](11-02_JavaScript_DOM_속성과_클래스.md#section-3)
+- [4. 클래스 제거와 요소 제거는 다르다](11-02_JavaScript_DOM_속성과_클래스.md#section-4)
+- [5. 복습](11-02_JavaScript_DOM_속성과_클래스.md#section-5)
+- [추가로 알면 좋은 것](11-02_JavaScript_DOM_속성과_클래스.md#section-6)
 
 <a id="section-1"></a>
 
@@ -226,6 +226,8 @@ classList.remove('blue')는 클래스 하나를 제거한다. div2.remove()는 d
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/11-02_JavaScript_DOM_속성과_클래스_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

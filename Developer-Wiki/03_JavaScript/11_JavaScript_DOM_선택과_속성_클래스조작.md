@@ -6,13 +6,13 @@
 
 <!-- chapter-toc -->
 
-- [1. 무엇을 돌려받는가](#section-1)
-- [2. 하나 선택하기와 null](#section-2)
-- [3. 빈 목록도 조건식에서는 참이다](#section-3)
-- [4. 어디에서 찾는지에 따라 개수가 달라진다](#section-4)
-- [5. querySelector와 querySelectorAll 비교](#section-5)
-- [6. 복습](#section-6)
-- [추가로 알면 좋은 것](#section-7)
+- [1. 무엇을 돌려받는가](11_JavaScript_DOM_선택과_속성_클래스조작.md#section-1)
+- [2. 하나 선택하기와 null](11_JavaScript_DOM_선택과_속성_클래스조작.md#section-2)
+- [3. 빈 목록도 조건식에서는 참이다](11_JavaScript_DOM_선택과_속성_클래스조작.md#section-3)
+- [4. 어디에서 찾는지에 따라 개수가 달라진다](11_JavaScript_DOM_선택과_속성_클래스조작.md#section-4)
+- [5. querySelector와 querySelectorAll 비교](11_JavaScript_DOM_선택과_속성_클래스조작.md#section-5)
+- [6. 복습](11_JavaScript_DOM_선택과_속성_클래스조작.md#section-6)
+- [추가로 알면 좋은 것](11_JavaScript_DOM_선택과_속성_클래스조작.md#section-7)
 
 <a id="section-1"></a>
 
@@ -257,6 +257,8 @@ document에서 찾은 menu 클래스는 강사님 문서에 6개, 내 문서에 
 </details>
 
 <a id="section-7"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/11_JavaScript_DOM_선택과_속성_클래스조작_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

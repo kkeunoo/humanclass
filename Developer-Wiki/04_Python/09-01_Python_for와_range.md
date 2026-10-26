@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. `range(5)`와 `reversed`](#section-1)
-- [2. 두 겹 반복으로 구구단 만들기](#section-2)
-- [3. 별 피라미드 — 같은 모양을 만드는 다른 반복](#section-3)
-- [4. FizzBuzz — 반복 시작값부터 비교하기](#section-4)
-- [직접 확인할 질문](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. `range(5)`와 `reversed`](09-01_Python_for와_range.md#section-1)
+- [2. 두 겹 반복으로 구구단 만들기](09-01_Python_for와_range.md#section-2)
+- [3. 별 피라미드 — 같은 모양을 만드는 다른 반복](09-01_Python_for와_range.md#section-3)
+- [4. FizzBuzz — 반복 시작값부터 비교하기](09-01_Python_for와_range.md#section-4)
+- [직접 확인할 질문](09-01_Python_for와_range.md#section-5)
+- [추가로 알면 좋은 것](09-01_Python_for와_range.md#section-6)
 
 <a id="section-1"></a>
 
@@ -210,6 +210,8 @@ for i in range(100) :
 3. 별 피라미드 두 풀이의 첫 줄은 어떻게 다를까?
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/09-01_Python_for와_range_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

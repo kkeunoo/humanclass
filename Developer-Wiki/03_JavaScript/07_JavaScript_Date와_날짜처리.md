@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 날짜 객체와 값 읽기](#section-1)
-- [2. ISO 문자열을 잘랐을 때의 날짜](#section-2)
-- [3. 실행 전후 getTime 차이](#section-3)
-- [4. setHours는 시간대 표시 변환이 아니라 값 변경](#section-4)
-- [5. 짧은 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 날짜 객체와 값 읽기](07_JavaScript_Date와_날짜처리.md#section-1)
+- [2. ISO 문자열을 잘랐을 때의 날짜](07_JavaScript_Date와_날짜처리.md#section-2)
+- [3. 실행 전후 getTime 차이](07_JavaScript_Date와_날짜처리.md#section-3)
+- [4. setHours는 시간대 표시 변환이 아니라 값 변경](07_JavaScript_Date와_날짜처리.md#section-4)
+- [5. 짧은 복습](07_JavaScript_Date와_날짜처리.md#section-5)
+- [추가로 알면 좋은 것](07_JavaScript_Date와_날짜처리.md#section-6)
 
 <a id="section-1"></a>
 
@@ -188,6 +188,8 @@ new Date('2026-06-29')처럼 날짜만 있는 이 표준 형식은 UTC 자정으
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/07_JavaScript_Date와_날짜처리_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

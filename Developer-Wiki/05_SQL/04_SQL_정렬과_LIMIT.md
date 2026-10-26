@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 오름차순·내림차순과 여러 기준](#section-1)
-- [2. `LIMIT` 한 개와 두 개](#section-2)
-- [3. 조건과 정렬을 합친 문제](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 오름차순·내림차순과 여러 기준](04_SQL_정렬과_LIMIT.md#section-1)
+- [2. `LIMIT` 한 개와 두 개](04_SQL_정렬과_LIMIT.md#section-2)
+- [3. 조건과 정렬을 합친 문제](04_SQL_정렬과_LIMIT.md#section-3)
+- [직접 확인할 질문](04_SQL_정렬과_LIMIT.md#section-4)
+- [추가로 알면 좋은 것](04_SQL_정렬과_LIMIT.md#section-5)
 
 <a id="section-1"></a>
 
@@ -177,6 +177,8 @@ order by sal, ename desc;
 3. `WHERE`가 빠진 `LIMIT 3`과 현재 원본의 `LIMIT 3`은 대상 집합이 같은가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/04_SQL_정렬과_LIMIT_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

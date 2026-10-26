@@ -6,14 +6,14 @@
 
 <!-- chapter-toc -->
 
-- [1. 입력값을 읽는 순서도 결과에 영향을 준다](#section-1)
-- [2. 날짜 입력은 yyyy-mm-dd 문자열](#section-2)
-- [3. value와 checked는 다른 정보다](#section-3)
-- [4. 내 체크박스 조건의 [i] 누락](#section-4)
-- [5. select는 선택된 option의 value를 읽는다](#section-5)
-- [6. textarea의 줄바꿈을 화면에 출력하기](#section-6)
-- [7. 복습](#section-7)
-- [추가로 알면 좋은 것](#section-8)
+- [1. 입력값을 읽는 순서도 결과에 영향을 준다](13_JavaScript_DOM_폼요소와_입력값처리.md#section-1)
+- [2. 날짜 입력은 yyyy-mm-dd 문자열](13_JavaScript_DOM_폼요소와_입력값처리.md#section-2)
+- [3. value와 checked는 다른 정보다](13_JavaScript_DOM_폼요소와_입력값처리.md#section-3)
+- [4. 내 체크박스 조건의 [i] 누락](13_JavaScript_DOM_폼요소와_입력값처리.md#section-4)
+- [5. select는 선택된 option의 value를 읽는다](13_JavaScript_DOM_폼요소와_입력값처리.md#section-5)
+- [6. textarea의 줄바꿈을 화면에 출력하기](13_JavaScript_DOM_폼요소와_입력값처리.md#section-6)
+- [7. 복습](13_JavaScript_DOM_폼요소와_입력값처리.md#section-7)
+- [추가로 알면 좋은 것](13_JavaScript_DOM_폼요소와_입력값처리.md#section-8)
 
 <a id="section-1"></a>
 
@@ -320,6 +320,8 @@ view.innerText = textarea.value
 </details>
 
 <a id="section-8"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/13_JavaScript_DOM_폼요소와_입력값처리_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

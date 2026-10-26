@@ -2,7 +2,7 @@
 
 [HTML 목차](README.md) · [폼 전송 복습](07-02_HTML_폼_전송과_GET_POST.md)
 
-기존 10번의 교육 사이트 프로젝트에는 시맨틱 영역·ARIA·새 입력 속성 등이 섞여 있었다. 그 내용은 [추가 프로젝트](추가로_알면_좋은_것/04_교육과정_페이지_확장.md)로 분리했다. 이 장은 **양쪽 수업 코드에서 사용한 HTML을 조합하는 기본 복습**이다.
+기존 10번의 교육 사이트 프로젝트에는 시맨틱 영역·ARIA·새 입력 속성 등이 섞여 있었다. 그 내용은 [추가 프로젝트](10_HTML_종합실습.md#extra-04-1)로 분리했다. 이 장은 **양쪽 수업 코드에서 사용한 HTML을 조합하는 기본 복습**이다.
 
 아래 코드는 원본에 그대로 존재하는 시험 코드가 아니라 **수업 범위 안에서 만든 설명용 재구성**이다. CSS·JavaScript·FastAPI를 먼저 구현하지 않아도 문서와 GET 제출을 확인할 수 있다.
 
@@ -39,7 +39,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>학습 신청 연습</title>
+    <title>목록·표·폼 GET 제출 복습</title>
 </head>
 <body>
     <h1>HTML 복습 모임</h1>
@@ -99,7 +99,7 @@
 
 </details>
 
-같은 코드의 [실행용 HTML 파일](실습/학습신청.html)도 제공한다. GitHub에서는 HTML 소스로 보일 수 있으므로 내려받아 브라우저에서 연다. GET 요청은 현재 문서를 제공하는 로컬 HTTP 서버에서 확인한다. 이 예제에는 신청을 저장하는 서버가 없다. `border`는 기본편과 같은 격자 관찰용 표현이며 이후 CSS로 바꿀 대상이다.
+같은 코드의 [실행용 HTML 파일](실습/목록_표_폼_GET제출_복습.html)도 제공한다. GitHub에서는 HTML 소스로 보일 수 있으므로 내려받아 브라우저에서 연다. GET 요청은 현재 문서를 제공하는 로컬 HTTP 서버에서 확인한다. 이 예제에는 신청을 저장하는 서버가 없다. `border`는 기본편과 같은 격자 관찰용 표현이며 이후 CSS로 바꿀 대상이다.
 
 ## 3. 예상 결과와 실제 확인
 
@@ -159,4 +159,114 @@ learner=student&topic=table&topic=form&session=pm&memo=review
 
 ### 이전 색인 링크 안내
 
-이전 절 주소를 보존한 안내 위치다. 개편 전 절 번호와 현재 절 번호는 서로 다르다. 이전 확장 프로젝트는 [추가로 알면 좋은 것 — 교육과정 페이지](추가로_알면_좋은_것/04_교육과정_페이지_확장.md)로 옮겼다. 이 문서 위쪽은 배운 태그만으로 구성한 새 기본 복습이다.
+이전 절 주소를 보존한 안내 위치다. 개편 전 절 번호와 현재 절 번호는 서로 다르다. 이전 확장 프로젝트는 [추가로 알면 좋은 것 — 교육과정 페이지](10_HTML_종합실습.md#extra-04-1)로 옮겼다. 이 문서 위쪽은 배운 태그만으로 구성한 새 기본 복습이다.
+
+<!-- inlined-extra-2026 -->
+
+## 추가로 알면 좋은 것
+
+이하의 내용은 **수업 원본에서 확인된 필수 진도가 아닌 추가 학습**이다. 위의 기본 설명을 이해한 뒤 필요할 때 읽는다.
+
+<a id="extra-04-1"></a>
+
+### 1. 기본 복습과 달라지는 것
+
+| 기본편에서 배운 것 | 이 프로젝트의 추가 내용 |
+| --- | --- |
+| 제목·문단·목록 | header·nav·main·section·article·aside·footer로 역할 분리 |
+| label·입력·폼 전송 | fieldset·legend·email·required로 입력 구조·검증 확장 |
+| id·문서 내부 링크 | 탐색 영역 이름인 aria-label, 날짜의 time |
+
+CSS·JavaScript·이미지 파일·서버 API가 없이도 구조와 브라우저의 입력 검증을 확인하도록 범위를 줄였다. 신청 저장, 발송, 로그인, 상담 처리는 구현하지 않았다.
+
+<a id="extra-04-2"></a>
+
+### 2. 전체 예제
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학습 과정 안내 — 추가 실습</title>
+</head>
+<body>
+    <header>
+        <h1>학습 과정 안내</h1>
+        <nav aria-label="주요 메뉴">
+            <a href="#courses">과정</a>
+            <a href="#consultation">상담 연습</a>
+        </nav>
+    </header>
+    <main>
+        <section id="courses">
+            <h2>학습 과정</h2>
+            <article>
+                <h3>HTML 기초</h3>
+                <p>문서의 구조와 폼 전송을 공부합니다.</p>
+            </article>
+            <article>
+                <h3>CSS 기초</h3>
+                <p>색상·크기·배치를 공부합니다.</p>
+            </article>
+        </section>
+        <section id="consultation">
+            <h2>상담 연습</h2>
+            <p>실제 상담이 접수되지 않는 예제입니다. 연습용 값만 입력하세요.</p>
+            <form method="get">
+                <fieldset>
+                    <legend>연락 정보</legend>
+                    <p>
+                        <label for="name">이름</label>
+                        <input id="name" name="name" type="text" required>
+                    </p>
+                    <p>
+                        <label for="email">이메일</label>
+                        <input id="email" name="email" type="email" required>
+                    </p>
+                </fieldset>
+                <button type="submit">입력 형식 확인</button>
+            </form>
+        </section>
+    </main>
+    <aside>
+        <h2>먼저 확인할 내용</h2>
+        <p>기본편의 name과 value를 이해한 뒤 확장합니다.</p>
+    </aside>
+    <footer>
+        <p>작성일 <time datetime="2026-09-18">2026년 9월 18일</time></p>
+    </footer>
+</body>
+</html>
+```
+
+[실행용 HTML 파일](실습/교육과정_추가실습.html)을 저장해 확인할 수 있다. 실제 개인정보 대신 `student`, `student@example.com` 같은 연습용 값을 사용한다.
+
+<a id="extra-04-3"></a>
+
+### 3. 단계별 확인
+
+1. 메뉴를 눌러 같은 문서의 해당 구역으로 이동하는지 확인한다.
+2. 빈 폼으로 제출을 시도해 필수 입력 검증을 확인한다.
+3. 이메일 칸에 `not-an-email`을 넣고 형식 검증을 확인한다.
+4. 예시 값을 넣고 제출하면 현재 문서의 URL에 이름과 값이 구성되는지 확인한다.
+5. 이 결과와 실제 상담 저장·이메일 발송이 어떻게 다른지 설명한다.
+
+오류 안내의 문구와 모양은 브라우저·언어 설정마다 다를 수 있다. 이 예제는 브라우저의 기본 입력 검증을 확인하는 것이며, 서버 검증과 접근성 전체 검수를 대체하지 않는다.
+
+<a id="extra-04-4"></a>
+
+### 4. 기존 큰 프로젝트의 나머지 기능은 어디로 갔나?
+
+| 이전 코드의 구성 | 이번 개편에서의 처리 |
+| --- | --- |
+| 페이지 골격·독립 카드·메뉴 | 이 예제와 시맨틱 구조편으로 통합 |
+| 이미지·figure·자막·lazy | [확장 요소](06_HTML_이미지와_미디어.md#extra-02-2)에 역할·파일 전제 정리 |
+| 복잡한 표·scope | [표 확장](05_HTML_테이블.md#extra-02-4)으로 분리 |
+| 여러 입력 타입·검증 속성 | [폼 확장](07_HTML_폼과_입력요소.md#extra-02-3)으로 분리 |
+| time·abbr·address·다운로드 | 확장 요소편으로 분리 |
+| CSS·JS·실제 서버·여러 페이지의 경로 | 해당 과목과 프로젝트 구현 단계의 후속 과제로 남김 |
+| 메뉴 토글·다크 모드·aria-live·구조화 데이터 | [설계와 검수](09_HTML_실무_코딩스타일.md#extra-03-4)에 후속 학습으로 명시 |
+
+예전 예제의 `assets/css/style.css`, `classroom.webp`, 상세 페이지, `/newsletter` 같은 경로는 파일·서버를 따로 준비해야 했다. 그 큰 코드를 바로 실행 가능한 수업 완성본으로 제시하지 않는다. 원래 파일은 제공된 ZIP에 보존되어 있으며, 이번에는 중복을 줄이고 실행 전제가 분명한 작은 예제로 다시 구성했다.

@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 반복 전에 검사할까, 한 번 실행한 뒤 검사할까](#section-1)
-- [2. 메뉴를 다시 받는 위치](#section-2)
-- [3. 배운 문법으로 메뉴 교정하기](#section-3)
-- [4. 내가 작성한 입출금·주사위·업다운](#section-4)
-- [5. 짧은 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 반복 전에 검사할까, 한 번 실행한 뒤 검사할까](05_JavaScript_While과_DoWhile.md#section-1)
+- [2. 메뉴를 다시 받는 위치](05_JavaScript_While과_DoWhile.md#section-2)
+- [3. 배운 문법으로 메뉴 교정하기](05_JavaScript_While과_DoWhile.md#section-3)
+- [4. 내가 작성한 입출금·주사위·업다운](05_JavaScript_While과_DoWhile.md#section-4)
+- [5. 짧은 복습](05_JavaScript_While과_DoWhile.md#section-5)
+- [추가로 알면 좋은 것](05_JavaScript_While과_DoWhile.md#section-6)
 
 <a id="section-1"></a>
 
@@ -314,6 +314,8 @@ while (true) {
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/05_JavaScript_While과_DoWhile_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

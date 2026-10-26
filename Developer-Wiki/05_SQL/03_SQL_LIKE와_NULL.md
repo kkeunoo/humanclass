@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. `%`와 `_`의 차이](#section-1)
-- [2. 대소문자 실험을 읽는 법](#section-2)
-- [3. `= NULL` 대신 `IS NULL`](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. `%`와 `_`의 차이](03_SQL_LIKE와_NULL.md#section-1)
+- [2. 대소문자 실험을 읽는 법](03_SQL_LIKE와_NULL.md#section-2)
+- [3. `= NULL` 대신 `IS NULL`](03_SQL_LIKE와_NULL.md#section-3)
+- [직접 확인할 질문](03_SQL_LIKE와_NULL.md#section-4)
+- [추가로 알면 좋은 것](03_SQL_LIKE와_NULL.md#section-5)
 
 <a id="section-1"></a>
 
@@ -169,6 +169,8 @@ where comm is not null;
 3. 내 6번 문제에는 강사님 문제 문장에 없는 어떤 실제 풀이가 들어갔는가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/03_SQL_LIKE와_NULL_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

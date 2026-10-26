@@ -6,13 +6,13 @@
 
 <!-- chapter-toc -->
 
-- [1. `if`와 들여쓰기](#section-1)
-- [2. 값의 참·거짓 판정](#section-2)
-- [3. 네 점수의 범위와 평균 확인](#section-3)
-- [4. 여러 선택지: `if`·`elif`·`else`](#section-4)
-- [5. `match`·`case`와 한 줄 조건식](#section-5)
-- [직접 확인할 질문](#section-6)
-- [추가로 알면 좋은 것](#section-7)
+- [1. `if`와 들여쓰기](08_Python_조건문.md#section-1)
+- [2. 값의 참·거짓 판정](08_Python_조건문.md#section-2)
+- [3. 네 점수의 범위와 평균 확인](08_Python_조건문.md#section-3)
+- [4. 여러 선택지: `if`·`elif`·`else`](08_Python_조건문.md#section-4)
+- [5. `match`·`case`와 한 줄 조건식](08_Python_조건문.md#section-5)
+- [직접 확인할 질문](08_Python_조건문.md#section-6)
+- [추가로 알면 좋은 것](08_Python_조건문.md#section-7)
 
 <a id="section-1"></a>
 
@@ -276,6 +276,8 @@ print( 3 if 3 > 2 else 2)
 3. `a=7`일 때 두 파일의 `match`가 각각 출력하는 말은 무엇일까?
 
 <a id="section-7"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/08_Python_조건문_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

@@ -6,9 +6,9 @@
 
 <!-- chapter-toc -->
 
-- [1. 원본의 기본 비교](#section-1)
-- [2. 가로 항목 목록](#section-2)
-- [복습](#section-3)
+- [1. 원본의 기본 비교](09_CSS_Overflow와_스크롤.md#section-1)
+- [2. 가로 항목 목록](09_CSS_Overflow와_스크롤.md#section-2)
+- [복습](09_CSS_Overflow와_스크롤.md#section-3)
 
 <a id="section-1"></a>
 
@@ -99,3 +99,6 @@ inline-block이 공간에 따라 다음 줄로 내려갈 수 있다. 가로 스�
 ### 이전 색인 링크 안내
 
 이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/09_CSS_Overflow와_스크롤_연습문제.md)
+

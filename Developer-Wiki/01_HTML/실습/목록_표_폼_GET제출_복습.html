@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>목록·표·폼 GET 제출 복습</title>
+</head>
+<body>
+    <h1>HTML 복습 모임</h1>
+    <p>오늘 배운 목록·표·폼을 연결해 봅니다.</p>
+    <a href="#application">신청 입력으로 이동</a>
+
+    <h2>준비물</h2>
+    <ul>
+        <li>수업 코드</li>
+        <li>브라우저</li>
+    </ul>
+    <h2>진행 순서</h2>
+    <ol>
+        <li>원본 코드 읽기</li>
+        <li>결과 예상하기</li>
+        <li>브라우저에서 확인하기</li>
+    </ol>
+
+    <table border="1">
+        <caption>복습 일정</caption>
+        <thead>
+            <tr><th>과목</th><th>시간</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>목록과 표</td><td>30분</td></tr>
+            <tr><td>폼 전송</td><td>30분</td></tr>
+        </tbody>
+    </table>
+
+    <h2 id="application">신청 입력</h2>
+    <form method="get">
+        <p>
+            <label for="learner">이름</label>
+            <input id="learner" name="learner" type="text" value="student">
+        </p>
+        <p>
+            <label><input type="checkbox" name="topic" value="table" checked>표</label>
+            <label><input type="checkbox" name="topic" value="form">폼</label>
+        </p>
+        <p>
+            <label for="session">참여 시간</label>
+            <select id="session" name="session">
+                <option value="am" selected>오전</option>
+                <option value="pm">오후</option>
+            </select>
+        </p>
+        <p>
+            <label for="memo">메모</label>
+            <textarea id="memo" name="memo" rows="3" cols="30">review</textarea>
+        </p>
+        <button type="submit">신청 연습</button>
+        <input type="reset" value="처음 상태로">
+    </form>
+</body>
+</html>

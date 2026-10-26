@@ -6,14 +6,14 @@
 
 <!-- chapter-toc -->
 
-- [1. 배열과 const](#section-1)
-- [2. 인덱스·length·중첩 배열](#section-2)
-- [3. 추가·삭제·복사·정렬 표](#section-3)
-- [4. sort: 숫자 배열이라고 숫자 크기로 정렬되지는 않는다](#section-4)
-- [5. split으로 실제 query 값 찾기](#section-5)
-- [6. 실습 풀이에서 유지할 점과 고칠 점](#section-6)
-- [7. 짧은 복습](#section-7)
-- [추가로 알면 좋은 것](#section-8)
+- [1. 배열과 const](06_JavaScript_배열과_배열메서드.md#section-1)
+- [2. 인덱스·length·중첩 배열](06_JavaScript_배열과_배열메서드.md#section-2)
+- [3. 추가·삭제·복사·정렬 표](06_JavaScript_배열과_배열메서드.md#section-3)
+- [4. sort: 숫자 배열이라고 숫자 크기로 정렬되지는 않는다](06_JavaScript_배열과_배열메서드.md#section-4)
+- [5. split으로 실제 query 값 찾기](06_JavaScript_배열과_배열메서드.md#section-5)
+- [6. 실습 풀이에서 유지할 점과 고칠 점](06_JavaScript_배열과_배열메서드.md#section-6)
+- [7. 짧은 복습](06_JavaScript_배열과_배열메서드.md#section-7)
+- [추가로 알면 좋은 것](06_JavaScript_배열과_배열메서드.md#section-8)
 
 <a id="section-1"></a>
 
@@ -382,6 +382,8 @@ console.log(result_fail); // [3]
 </details>
 
 <a id="section-8"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/06_JavaScript_배열과_배열메서드_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

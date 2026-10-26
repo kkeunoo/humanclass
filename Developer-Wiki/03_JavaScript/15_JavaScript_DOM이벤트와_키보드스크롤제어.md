@@ -6,13 +6,13 @@
 
 <!-- chapter-toc -->
 
-- [1. 처음에는 null인데 로드 뒤에는 버튼인 이유](#section-1)
-- [2. onclick 대입과 addEventListener 등록](#section-2)
-- [3. 제거하려면 등록한 함수 참조를 사용한다](#section-3)
-- [4. 로그인 버튼은 입력 검사 실습이다](#section-4)
-- [5. log는 새 메시지를 맨 위에 붙인다](#section-5)
-- [6. 복습](#section-6)
-- [추가로 알면 좋은 것](#section-7)
+- [1. 처음에는 null인데 로드 뒤에는 버튼인 이유](15_JavaScript_DOM이벤트와_키보드스크롤제어.md#section-1)
+- [2. onclick 대입과 addEventListener 등록](15_JavaScript_DOM이벤트와_키보드스크롤제어.md#section-2)
+- [3. 제거하려면 등록한 함수 참조를 사용한다](15_JavaScript_DOM이벤트와_키보드스크롤제어.md#section-3)
+- [4. 로그인 버튼은 입력 검사 실습이다](15_JavaScript_DOM이벤트와_키보드스크롤제어.md#section-4)
+- [5. log는 새 메시지를 맨 위에 붙인다](15_JavaScript_DOM이벤트와_키보드스크롤제어.md#section-5)
+- [6. 복습](15_JavaScript_DOM이벤트와_키보드스크롤제어.md#section-6)
+- [추가로 알면 좋은 것](15_JavaScript_DOM이벤트와_키보드스크롤제어.md#section-7)
 
 <a id="section-1"></a>
 
@@ -304,6 +304,8 @@ function log(message) {
 </details>
 
 <a id="section-7"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/15_JavaScript_DOM이벤트와_키보드스크롤제어_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

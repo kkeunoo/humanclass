@@ -6,10 +6,10 @@ float는 요소를 한쪽으로 보내고 주변 인라인 내용이 돌아 흐�
 
 <!-- chapter-toc -->
 
-- [1. 원본의 왼쪽·오른쪽 상자](#section-1)
-- [2. 부모 높이와 clearfix](#section-2)
-- [3. 원본 헤더의 한계](#section-3)
-- [복습](#section-4)
+- [1. 원본의 왼쪽·오른쪽 상자](10_CSS_Float와_Clear.md#section-1)
+- [2. 부모 높이와 clearfix](10_CSS_Float와_Clear.md#section-2)
+- [3. 원본 헤더의 한계](10_CSS_Float와_Clear.md#section-3)
+- [복습](10_CSS_Float와_Clear.md#section-4)
 
 <a id="section-1"></a>
 
@@ -111,3 +111,24 @@ clearfix를 부모에 적용하면 자식의 float:left가 none으로 바뀔까?
 ### 이전 색인 링크 안내
 
 이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
+
+<!-- inlined-extra-2026 -->
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/10_CSS_Float와_Clear_연습문제.md)
+
+## 추가로 알면 좋은 것
+
+이하의 내용은 **수업 원본에서 확인된 필수 진도가 아닌 추가 학습**이다. 위의 기본 설명을 이해한 뒤 필요할 때 읽는다.
+
+<a id="extra-01-3"></a>
+
+### 3. float 이후의 flow-root
+
+```css
+/* 추가 예제: float 자식을 감싸는 부모 */
+.float-parent { display: flow-root; }
+```
+
+새 블록 서식 맥락을 만들어 float 자식을 감싸는 높이 계산에 사용할 수 있다. 기존 clearfix의 역할을 비교할 때 유용하지만, 수업에서 배운 가상 요소·clear를 설명하지 못한 채 이것만 정답으로 외우지는 않는다. [CSS display 표준](https://www.w3.org/TR/css-display-3/#valdef-display-flow-root)
+
+display:contents는 요소의 박스와 의미·접근성 영향을 따로 검토해야 한다. shape-outside·복잡한 겹침 맥락·isolation도 별도 심화다.

@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 메뉴 한 개 강조하기](#section-1)
-- [2. Todo 추가·삭제](#section-2)
-- [3. 전체 선택과 선택 삭제](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 메뉴 한 개 강조하기](17-04_JavaScript_메뉴와_Todo실습.md#section-1)
+- [2. Todo 추가·삭제](17-04_JavaScript_메뉴와_Todo실습.md#section-2)
+- [3. 전체 선택과 선택 삭제](17-04_JavaScript_메뉴와_Todo실습.md#section-3)
+- [직접 확인할 질문](17-04_JavaScript_메뉴와_Todo실습.md#section-4)
+- [추가로 알면 좋은 것](17-04_JavaScript_메뉴와_Todo실습.md#section-5)
 
 <a id="section-1"></a>
 
@@ -347,6 +347,8 @@ function q5(){
 3. 메뉴를 같은 항목에서 두 번 누르면 글씨 앞의 `✔`는 어떻게 될까?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-04_JavaScript_메뉴와_Todo실습_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

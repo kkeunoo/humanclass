@@ -6,13 +6,13 @@
 
 <!-- chapter-toc -->
 
-- [1. for 실행 순서와 누적](#section-1)
-- [2. 중첩 반복: 바깥은 묶음, 안쪽은 묶음 안의 항목](#section-2)
-- [3. break와 continue](#section-3)
-- [4. 배열을 순회할 때 받는 것](#section-4)
-- [5. 피라미드: 줄마다 문자열을 새로 쌓기](#section-5)
-- [6. 짧은 복습](#section-6)
-- [추가로 알면 좋은 것](#section-7)
+- [1. for 실행 순서와 누적](04_JavaScript_반복문과_배열순회.md#section-1)
+- [2. 중첩 반복: 바깥은 묶음, 안쪽은 묶음 안의 항목](04_JavaScript_반복문과_배열순회.md#section-2)
+- [3. break와 continue](04_JavaScript_반복문과_배열순회.md#section-3)
+- [4. 배열을 순회할 때 받는 것](04_JavaScript_반복문과_배열순회.md#section-4)
+- [5. 피라미드: 줄마다 문자열을 새로 쌓기](04_JavaScript_반복문과_배열순회.md#section-5)
+- [6. 짧은 복습](04_JavaScript_반복문과_배열순회.md#section-6)
+- [추가로 알면 좋은 것](04_JavaScript_반복문과_배열순회.md#section-7)
 
 <a id="section-1"></a>
 
@@ -234,6 +234,8 @@ movie.map은 제목을 제목 길이로 바꾼 새 배열을 만든다. filter�
 </details>
 
 <a id="section-7"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/04_JavaScript_반복문과_배열순회_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

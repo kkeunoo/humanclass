@@ -16,10 +16,10 @@ display는 요소의 박스를 어떻게 배치할지 정한다. HTML 태그의 
 
 <!-- chapter-toc -->
 
-- [1. inline-block과 공백](#section-1)
-- [2. inline의 padding은 가짜가 아니다](#section-2)
-- [3. 양쪽 원본에서 교정할 부분](#section-3)
-- [복습](#section-4)
+- [1. inline-block과 공백](04_CSS_Display와_요소배치.md#section-1)
+- [2. inline의 padding은 가짜가 아니다](04_CSS_Display와_요소배치.md#section-2)
+- [3. 양쪽 원본에서 교정할 부분](04_CSS_Display와_요소배치.md#section-3)
+- [복습](04_CSS_Display와_요소배치.md#section-4)
 
 <a id="section-1"></a>
 
@@ -133,3 +133,6 @@ width 100px, padding 50px, border 1px인 두 inline-block은 200px짜리 부모 
 ### 이전 색인 링크 안내
 
 이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/04_CSS_Display와_요소배치_연습문제.md)
+

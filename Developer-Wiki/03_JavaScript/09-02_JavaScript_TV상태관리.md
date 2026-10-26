@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 어떤 값을 기억하는가](#section-1)
-- [2. 채널: 범위를 넘으면 순환](#section-2)
-- [3. 볼륨과 음소거 — 경계에서 드러나는 차이](#section-3)
-- [4. 내 원버튼 전원의 장점](#section-4)
-- [5. 순서대로 확인할 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 어떤 값을 기억하는가](09-02_JavaScript_TV상태관리.md#section-1)
+- [2. 채널: 범위를 넘으면 순환](09-02_JavaScript_TV상태관리.md#section-2)
+- [3. 볼륨과 음소거 — 경계에서 드러나는 차이](09-02_JavaScript_TV상태관리.md#section-3)
+- [4. 내 원버튼 전원의 장점](09-02_JavaScript_TV상태관리.md#section-4)
+- [5. 순서대로 확인할 복습](09-02_JavaScript_TV상태관리.md#section-5)
+- [추가로 알면 좋은 것](09-02_JavaScript_TV상태관리.md#section-6)
 
 <a id="section-1"></a>
 
@@ -186,6 +186,8 @@ function volUp() {
 출력 문구뿐 아니라 변수 값도 확인해야 muteOn처럼 문구와 상태가 다른 오류를 잡을 수 있다. 테스트를 독립적으로 반복할 때는 시작 상태를 다시 설정한다.
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/09-02_JavaScript_TV상태관리_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

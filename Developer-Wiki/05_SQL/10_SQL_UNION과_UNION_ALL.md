@@ -6,10 +6,10 @@
 
 <!-- chapter-toc -->
 
-- [1. 중복을 지울까, 남길까](#section-1)
-- [2. 열 모양도 맞아야 한다](#section-2)
-- [직접 확인할 질문](#section-3)
-- [추가로 알면 좋은 것](#section-4)
+- [1. 중복을 지울까, 남길까](10_SQL_UNION과_UNION_ALL.md#section-1)
+- [2. 열 모양도 맞아야 한다](10_SQL_UNION과_UNION_ALL.md#section-2)
+- [직접 확인할 질문](10_SQL_UNION과_UNION_ALL.md#section-3)
+- [추가로 알면 좋은 것](10_SQL_UNION과_UNION_ALL.md#section-4)
 
 <a id="section-1"></a>
 
@@ -78,6 +78,8 @@ select ename, sal from emp where deptno = 10;
 3. 양쪽 조회의 열 개수가 달라도 붙일 수 있는가?
 
 <a id="section-4"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/10_SQL_UNION과_UNION_ALL_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

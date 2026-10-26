@@ -6,10 +6,10 @@
 
 <!-- chapter-toc -->
 
-- [1. UP/DOWN의 “몇 번째” 계산](#section-1)
-- [2. 100표 집계와 최다 득표자](#section-2)
-- [직접 확인할 질문](#section-3)
-- [추가로 알면 좋은 것](#section-4)
+- [1. UP/DOWN의 “몇 번째” 계산](실습-01b_Python_자료형_퀴즈_난수문제.md#section-1)
+- [2. 100표 집계와 최다 득표자](실습-01b_Python_자료형_퀴즈_난수문제.md#section-2)
+- [직접 확인할 질문](실습-01b_Python_자료형_퀴즈_난수문제.md#section-3)
+- [추가로 알면 좋은 것](실습-01b_Python_자료형_퀴즈_난수문제.md#section-4)
 
 <a id="section-1"></a>
 

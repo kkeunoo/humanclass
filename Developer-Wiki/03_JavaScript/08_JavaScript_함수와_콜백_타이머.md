@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 선언과 호출](#section-1)
-- [2. 안쪽 호출부터 결과 전달하기](#section-2)
-- [3. 범위와 가려짐](#section-3)
-- [4. 생략한 인수와 기본값](#section-4)
-- [5. 짧은 복습](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 선언과 호출](08_JavaScript_함수와_콜백_타이머.md#section-1)
+- [2. 안쪽 호출부터 결과 전달하기](08_JavaScript_함수와_콜백_타이머.md#section-2)
+- [3. 범위와 가려짐](08_JavaScript_함수와_콜백_타이머.md#section-3)
+- [4. 생략한 인수와 기본값](08_JavaScript_함수와_콜백_타이머.md#section-4)
+- [5. 짧은 복습](08_JavaScript_함수와_콜백_타이머.md#section-5)
+- [추가로 알면 좋은 것](08_JavaScript_함수와_콜백_타이머.md#section-6)
 
 <a id="section-1"></a>
 
@@ -176,6 +176,8 @@ console.log는 화면에 정보를 보여 주는 역할이고 return은 다음 �
 </details>
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/08_JavaScript_함수와_콜백_타이머_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

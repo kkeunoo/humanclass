@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 직업 값을 바로 비교하는 형식](#section-1)
-- [2. 조건식을 직접 적는 형식](#section-2)
-- [3. `NULL` 수당을 0으로 표시](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 직업 값을 바로 비교하는 형식](09_SQL_CASE_조건식.md#section-1)
+- [2. 조건식을 직접 적는 형식](09_SQL_CASE_조건식.md#section-2)
+- [3. `NULL` 수당을 0으로 표시](09_SQL_CASE_조건식.md#section-3)
+- [직접 확인할 질문](09_SQL_CASE_조건식.md#section-4)
+- [추가로 알면 좋은 것](09_SQL_CASE_조건식.md#section-5)
 
 <a id="section-1"></a>
 
@@ -131,6 +131,8 @@ from emp;
 3. `CASE`를 쓴 `SELECT`가 실제 급여를 바꾸는가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/09_SQL_CASE_조건식_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

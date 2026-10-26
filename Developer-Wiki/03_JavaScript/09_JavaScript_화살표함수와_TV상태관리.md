@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 기본형과 짧은 표현](#section-1)
-- [2. return a, b는 두 값 반환이 아니다](#section-2)
-- [3. 원본을 통째로 실행하면 중단되는 이유](#section-3)
-- [4. 짧은 복습](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 기본형과 짧은 표현](09_JavaScript_화살표함수와_TV상태관리.md#section-1)
+- [2. return a, b는 두 값 반환이 아니다](09_JavaScript_화살표함수와_TV상태관리.md#section-2)
+- [3. 원본을 통째로 실행하면 중단되는 이유](09_JavaScript_화살표함수와_TV상태관리.md#section-3)
+- [4. 짧은 복습](09_JavaScript_화살표함수와_TV상태관리.md#section-4)
+- [추가로 알면 좋은 것](09_JavaScript_화살표함수와_TV상태관리.md#section-5)
 
 <a id="section-1"></a>
 
@@ -128,6 +128,8 @@
 </details>
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/09_JavaScript_화살표함수와_TV상태관리_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

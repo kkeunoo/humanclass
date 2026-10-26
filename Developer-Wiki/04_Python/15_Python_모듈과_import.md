@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 가져올 파일에 정의한 함수와 클래스](#section-1)
-- [2. 모듈 전체 가져오기와 일부 이름 가져오기](#section-2)
-- [3. 원본 마지막의 웹페이지 읽기](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 가져올 파일에 정의한 함수와 클래스](15_Python_모듈과_import.md#section-1)
+- [2. 모듈 전체 가져오기와 일부 이름 가져오기](15_Python_모듈과_import.md#section-2)
+- [3. 원본 마지막의 웹페이지 읽기](15_Python_모듈과_import.md#section-3)
+- [직접 확인할 질문](15_Python_모듈과_import.md#section-4)
+- [추가로 알면 좋은 것](15_Python_모듈과_import.md#section-5)
 
 <a id="section-1"></a>
 
@@ -182,6 +182,8 @@ print(r.text)
 3. `Hero`를 가져온 뒤 공격 문장을 출력하려면 어떤 순서로 호출하는가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/15_Python_모듈과_import_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 숫자 반환값으로 상태 알리기](#section-1)
-- [2. `raise`로 오류를 발생시키기](#section-2)
-- [3. `traceback`으로 발생 위치 보기](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 숫자 반환값으로 상태 알리기](14-02_Python_예외발생과_오류추적.md#section-1)
+- [2. `raise`로 오류를 발생시키기](14-02_Python_예외발생과_오류추적.md#section-2)
+- [3. `traceback`으로 발생 위치 보기](14-02_Python_예외발생과_오류추적.md#section-3)
+- [직접 확인할 질문](14-02_Python_예외발생과_오류추적.md#section-4)
+- [추가로 알면 좋은 것](14-02_Python_예외발생과_오류추적.md#section-5)
 
 <a id="section-1"></a>
 
@@ -200,6 +200,8 @@ except Exception as e :
 3. `print_exc()`와 `format_exc()`는 결과를 각각 어떻게 사용하나?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/14-02_Python_예외발생과_오류추적_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

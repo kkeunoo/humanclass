@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 열을 모두 넣기와 일부 열만 넣기](#section-1)
-- [2. 제약조건이 막는 입력](#section-2)
-- [3. `UPDATE`와 `DELETE`의 대상 행](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 열을 모두 넣기와 일부 열만 넣기](15_SQL_DML.md#section-1)
+- [2. 제약조건이 막는 입력](15_SQL_DML.md#section-2)
+- [3. `UPDATE`와 `DELETE`의 대상 행](15_SQL_DML.md#section-3)
+- [직접 확인할 질문](15_SQL_DML.md#section-4)
+- [추가로 알면 좋은 것](15_SQL_DML.md#section-5)
 
 <a id="section-1"></a>
 
@@ -233,6 +233,8 @@ select * from emp2;
 3. 원본의 성공한 입력만 기준으로 `EMPNO=1002`가 있는가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/15_SQL_DML_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

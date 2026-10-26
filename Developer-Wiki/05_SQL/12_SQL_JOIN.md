@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 연결 조건 없는 두 표와 연결 조건 있는 두 표](#section-1)
-- [2. 같은 열 이름을 구분하기](#section-2)
-- [3. 급여와 등급의 범위 연결](#section-3)
-- [4. `JOIN ... ON`과 `USING`](#section-4)
-- [직접 확인할 질문](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 연결 조건 없는 두 표와 연결 조건 있는 두 표](12_SQL_JOIN.md#section-1)
+- [2. 같은 열 이름을 구분하기](12_SQL_JOIN.md#section-2)
+- [3. 급여와 등급의 범위 연결](12_SQL_JOIN.md#section-3)
+- [4. `JOIN ... ON`과 `USING`](12_SQL_JOIN.md#section-4)
+- [직접 확인할 질문](12_SQL_JOIN.md#section-5)
+- [추가로 알면 좋은 것](12_SQL_JOIN.md#section-6)
 
 <a id="section-1"></a>
 
@@ -187,6 +187,8 @@ from emp e join dept d using(deptno);
 3. 급여 등급 연결은 `=`와 범위 조건 중 무엇을 쓰는가?
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12_SQL_JOIN_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

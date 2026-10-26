@@ -6,9 +6,9 @@ transform으로 옮기거나 확대해도 주변 요소가 새 크기에 맞춰 
 
 <!-- chapter-toc -->
 
-- [1. 원본의 세 함수](#section-1)
-- [2. 크기를 모를 때 중앙에 놓기](#section-2)
-- [복습](#section-3)
+- [1. 원본의 세 함수](13_CSS_Transform과_요소변형.md#section-1)
+- [2. 크기를 모를 때 중앙에 놓기](13_CSS_Transform과_요소변형.md#section-2)
+- [복습](13_CSS_Transform과_요소변형.md#section-3)
 
 <a id="section-1"></a>
 
@@ -121,3 +121,6 @@ top:50%; left:50%만 남기고 transform을 지우면 무엇이 중앙에 올까
 ### 이전 색인 링크 안내
 
 이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/13_CSS_Transform과_요소변형_연습문제.md)
+

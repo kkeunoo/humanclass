@@ -6,12 +6,12 @@
 
 <!-- chapter-toc -->
 
-- [1. 표 만들기와 기본 제약](#section-1)
-- [2. 데이터까지 복사할까, 구조만 만들까](#section-2)
-- [3. 외래 키는 이미 있는 부모 키를 참조](#section-3)
-- [4. 열·표 이름 변경과 삭제](#section-4)
-- [직접 확인할 질문](#section-5)
-- [추가로 알면 좋은 것](#section-6)
+- [1. 표 만들기와 기본 제약](14_SQL_DDL과_제약조건.md#section-1)
+- [2. 데이터까지 복사할까, 구조만 만들까](14_SQL_DDL과_제약조건.md#section-2)
+- [3. 외래 키는 이미 있는 부모 키를 참조](14_SQL_DDL과_제약조건.md#section-3)
+- [4. 열·표 이름 변경과 삭제](14_SQL_DDL과_제약조건.md#section-4)
+- [직접 확인할 질문](14_SQL_DDL과_제약조건.md#section-5)
+- [추가로 알면 좋은 것](14_SQL_DDL과_제약조건.md#section-6)
 
 <a id="section-1"></a>
 
@@ -294,6 +294,8 @@ truncate table emp_copy;
 3. 내 코드에서 `DROP COLUMN gender` 이전에 열 이름은 어떻게 바뀌었는가?
 
 <a id="section-6"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/14_SQL_DDL과_제약조건_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

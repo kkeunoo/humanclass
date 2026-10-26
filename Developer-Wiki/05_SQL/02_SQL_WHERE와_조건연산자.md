@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 한 조건과 여러 조건](#section-1)
-- [2. 경계값과 `BETWEEN`](#section-2)
-- [3. 같은 열의 여러 값: `IN`](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 한 조건과 여러 조건](02_SQL_WHERE와_조건연산자.md#section-1)
+- [2. 경계값과 `BETWEEN`](02_SQL_WHERE와_조건연산자.md#section-2)
+- [3. 같은 열의 여러 값: `IN`](02_SQL_WHERE와_조건연산자.md#section-3)
+- [직접 확인할 질문](02_SQL_WHERE와_조건연산자.md#section-4)
+- [추가로 알면 좋은 것](02_SQL_WHERE와_조건연산자.md#section-5)
 
 <a id="section-1"></a>
 
@@ -164,6 +164,8 @@ where deptno not in (20, 30)
 3. 부서 20·30을 `OR`와 `IN`으로 각각 어떻게 쓸까?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/02_SQL_WHERE와_조건연산자_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

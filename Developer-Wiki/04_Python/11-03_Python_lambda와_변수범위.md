@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. `lambda`와 `map`](#section-1)
-- [2. 나이 출력과 정렬 기준 함수](#section-2)
-- [3. 지역 변수, 전역 변수, 바깥 함수의 변수](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. `lambda`와 `map`](11-03_Python_lambda와_변수범위.md#section-1)
+- [2. 나이 출력과 정렬 기준 함수](11-03_Python_lambda와_변수범위.md#section-2)
+- [3. 지역 변수, 전역 변수, 바깥 함수의 변수](11-03_Python_lambda와_변수범위.md#section-3)
+- [직접 확인할 질문](11-03_Python_lambda와_변수범위.md#section-4)
+- [추가로 알면 좋은 것](11-03_Python_lambda와_변수범위.md#section-5)
 
 <a id="section-1"></a>
 
@@ -314,6 +314,8 @@ A()
 3. `C()` 안에서 `nonlocal`로 찾아 읽는 `x`, `y`는 각각 어디에 있을까?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/11-03_Python_lambda와_변수범위_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

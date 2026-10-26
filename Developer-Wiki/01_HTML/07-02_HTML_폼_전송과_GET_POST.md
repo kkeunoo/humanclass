@@ -6,11 +6,11 @@
 
 ## 목차
 
-1. [GET 원본 비교](#get)
-2. [제출될 항목 고르기](#entries)
-3. [`action`과 검색 폼](#action)
-4. [POST와 서버 지원](#post)
-5. [복습](#practice)
+1. [GET 원본 비교](07-02_HTML_폼_전송과_GET_POST.md#get)
+2. [제출될 항목 고르기](07-02_HTML_폼_전송과_GET_POST.md#entries)
+3. [`action`과 검색 폼](07-02_HTML_폼_전송과_GET_POST.md#action)
+4. [POST와 서버 지원](07-02_HTML_폼_전송과_GET_POST.md#post)
+5. [복습](07-02_HTML_폼_전송과_GET_POST.md#practice)
 
 <a id="get"></a>
 
@@ -173,3 +173,6 @@ song=hello&fixed=A&coffee=1&coffee=2
 정확성 참고: [HTML 표준 — 폼 제출과 데이터 구성](https://html.spec.whatwg.org/dev/form-control-infrastructure.html).
 
 [다음: 기본 종합복습](10_HTML_종합실습.md) · [HTML 목차](README.md)
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/07-02_HTML_폼_전송과_GET_POST_연습문제.md)
+

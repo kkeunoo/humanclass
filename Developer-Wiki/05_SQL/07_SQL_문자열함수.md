@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 길이와 일부 추출](#section-1)
-- [2. 바꾸기·채우기·공백 지우기](#section-2)
-- [3. 붙이기와 별표 가리기 문제](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 길이와 일부 추출](07_SQL_문자열함수.md#section-1)
+- [2. 바꾸기·채우기·공백 지우기](07_SQL_문자열함수.md#section-2)
+- [3. 붙이기와 별표 가리기 문제](07_SQL_문자열함수.md#section-3)
+- [직접 확인할 질문](07_SQL_문자열함수.md#section-4)
+- [추가로 알면 좋은 것](07_SQL_문자열함수.md#section-5)
 
 <a id="section-1"></a>
 
@@ -166,6 +166,8 @@ select rpad(substr(ename, 1, 2), length(ename), '*'), ename from emp;
 3. `REPLACE`가 원본 표의 값을 바꾸는가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/07_SQL_문자열함수_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

@@ -6,14 +6,14 @@
 
 <!-- chapter-toc -->
 
-- [1. 원본 문장으로 결과 읽기](#section-1)
-- [2. replace는 새 문자열을 반환한다](#section-2)
-- [3. trim과 입력 검사](#section-3)
-- [4. 이메일 가리기 비교](#section-4)
-- [5. 내 추가 풀이의 범위](#section-5)
-- [6. 배운 메서드로 교정한 짧은 함수](#section-6)
-- [7. 짧은 복습](#section-7)
-- [추가로 알면 좋은 것](#section-8)
+- [1. 원본 문장으로 결과 읽기](10_JavaScript_문자열과_문자열메서드.md#section-1)
+- [2. replace는 새 문자열을 반환한다](10_JavaScript_문자열과_문자열메서드.md#section-2)
+- [3. trim과 입력 검사](10_JavaScript_문자열과_문자열메서드.md#section-3)
+- [4. 이메일 가리기 비교](10_JavaScript_문자열과_문자열메서드.md#section-4)
+- [5. 내 추가 풀이의 범위](10_JavaScript_문자열과_문자열메서드.md#section-5)
+- [6. 배운 메서드로 교정한 짧은 함수](10_JavaScript_문자열과_문자열메서드.md#section-6)
+- [7. 짧은 복습](10_JavaScript_문자열과_문자열메서드.md#section-7)
+- [추가로 알면 좋은 것](10_JavaScript_문자열과_문자열메서드.md#section-8)
 
 <a id="section-1"></a>
 
@@ -216,6 +216,8 @@ ID가 두 글자 이하면 이 조건에서는 가려질 글자가 없다. 더 �
 </details>
 
 <a id="section-8"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/10_JavaScript_문자열과_문자열메서드_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

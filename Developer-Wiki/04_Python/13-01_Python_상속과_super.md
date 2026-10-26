@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 부모의 메서드 사용하기](#section-1)
-- [2. 자식 생성자에서 부모 생성자 실행하기](#section-2)
-- [3. 부모 생성자에 필수 인자가 있을 때](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 부모의 메서드 사용하기](13-01_Python_상속과_super.md#section-1)
+- [2. 자식 생성자에서 부모 생성자 실행하기](13-01_Python_상속과_super.md#section-2)
+- [3. 부모 생성자에 필수 인자가 있을 때](13-01_Python_상속과_super.md#section-3)
+- [직접 확인할 질문](13-01_Python_상속과_super.md#section-4)
+- [추가로 알면 좋은 것](13-01_Python_상속과_super.md#section-5)
 
 <a id="section-1"></a>
 
@@ -197,6 +197,8 @@ print(s4.hello)
 3. `Student4`가 `super().__init__(None)`을 부르는 이유는?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/13-01_Python_상속과_super_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

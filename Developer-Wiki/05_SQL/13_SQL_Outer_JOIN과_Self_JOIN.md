@@ -6,11 +6,11 @@
 
 <!-- chapter-toc -->
 
-- [1. 같은 표를 두 역할로 사용](#section-1)
-- [2. `LEFT OUTER JOIN`이 남기는 쪽](#section-2)
-- [3. 사원이 없는 부서도 출력하는 문제](#section-3)
-- [직접 확인할 질문](#section-4)
-- [추가로 알면 좋은 것](#section-5)
+- [1. 같은 표를 두 역할로 사용](13_SQL_Outer_JOIN과_Self_JOIN.md#section-1)
+- [2. `LEFT OUTER JOIN`이 남기는 쪽](13_SQL_Outer_JOIN과_Self_JOIN.md#section-2)
+- [3. 사원이 없는 부서도 출력하는 문제](13_SQL_Outer_JOIN과_Self_JOIN.md#section-3)
+- [직접 확인할 질문](13_SQL_Outer_JOIN과_Self_JOIN.md#section-4)
+- [추가로 알면 좋은 것](13_SQL_Outer_JOIN과_Self_JOIN.md#section-5)
 
 <a id="section-1"></a>
 
@@ -163,6 +163,8 @@ order by deptno asc, ename asc;
 3. 사원이 없는 부서의 사원 이름 열에는 무엇이 표시되는가?
 
 <a id="section-5"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/13_SQL_Outer_JOIN과_Self_JOIN_연습문제.md)
 
 ## 추가로 알면 좋은 것
 

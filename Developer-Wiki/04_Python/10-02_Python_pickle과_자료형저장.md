@@ -6,9 +6,9 @@
 
 <!-- chapter-toc -->
 
-- [1. 여러 값을 쓰고 읽는 순서](#section-1)
-- [직접 확인할 질문](#section-2)
-- [추가로 알면 좋은 것](#section-3)
+- [1. 여러 값을 쓰고 읽는 순서](10-02_Python_pickle과_자료형저장.md#section-1)
+- [직접 확인할 질문](10-02_Python_pickle과_자료형저장.md#section-2)
+- [추가로 알면 좋은 것](10-02_Python_pickle과_자료형저장.md#section-3)
 
 <a id="section-1"></a>
 
@@ -110,6 +110,8 @@ with open('pickle.p', 'rb') as f :
 2. 다섯 번째 `load`의 결과는 어떤 자료형일까?
 
 <a id="section-3"></a>
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/10-02_Python_pickle과_자료형저장_연습문제.md)
 
 ## 추가로 알면 좋은 것
 
