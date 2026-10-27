@@ -10,6 +10,8 @@ from elasticsearch import helpers
 
 from collections import Counter
 
+import math
+
 router = APIRouter(tags=["엘라스틱서치"])
 
 @router.get("/read/head")
@@ -429,3 +431,91 @@ def cbf(list_movieId: list[int] = Query(...)):
     response = content_based_filtering(list_movieId)
 
     return response['hits']['hits']
+
+def split_train_test(test_size: float = 0.2):
+    '''
+        과거 평점을 학습시켜고, 미래 평점으로 평가하자
+        test_size : 미래 평점의 비율(평가, 테스트용 정답 데이터의 비율)
+
+        사용자 별로
+        최신 평점은 평가용
+        과거 평점은 학습용
+
+        평점이 한 건 뿐인 사용자는 학습 데이터에만 둔다
+        만약에 timestamp가 같다면 원본 행 순서로 정렬한다
+    '''
+
+    # 평점 파일 읽기
+    frame_ratings = util.load_csv('ratings.csv')
+
+    # 원본 유지를 위해 깊은복사하여 사용
+    data = frame_ratings.copy()
+
+    # 읽어 온 csv의 길이를 가져와서 원본의 순서대로 row num 생성
+    data['original_order'] = range( len(data) )
+
+    # timestamp를 숫자타입으로 변경
+    # errors='coerce' : 변경이 안 되는 것은 NaN으로 강제로 변경
+    # errors='ignore' : 변경 실패 시 원본 유지
+    # errors='raise' : ValueError 발생하고 즉시 중단
+    valid_data = pd.to_numeric( data['timestamp'], errors='coerce' )
+
+    # N/A가 아닌 것만 뽑아준다 
+    # data[ True or False] >>>> 참인 행(row, document)만 반환
+    valid_data = data[data['timestamp'].notna()].copy()
+
+    # 시간이 N/A 즉, 비어있는 것만 뽑아준다
+    no_time = data[data['timestamp'].isna()].copy()
+
+    test_indices = []
+
+    # userId가 같은 데이터끼리 group by 한다
+    # sort의 기본값은 True이고, userId로 정렬하지 않고 원래 등장 순서를 유지
+    # False로 하면서 userId로 다시 한 번 정렬하는 것
+    # 원래 id, value이나 id를 사용하지 않을 것이기 때문에 '_' 로 처리
+    for _, group in valid_data.groupby('userId', sort=False) :
+
+        # 평점을 하나만 준 사용자는 건너뛰기
+        # 하나만 있는 것은 학습과 정답 데이터로 나눌 수 없기 때문에 건너뜀
+        if len(group) <= 1 :
+            continue
+
+        # 과거와 미래를 나누기 위해서 timestamp 기준으로 정렬한다
+        # sort_values : 같은 게 있다면 original_order 기준으로 정렬해라
+        # kind='stable' : 그래도 같은게 있다면, 정렬 전 순서 유지
+        # kind에 사용할 수 있는 것
+        # quicksort(기본값), mergesort, heapsort, stable
+        # 오름차순
+        ordered = group.sort_values(['timestamp', 'original_order'], kind='stable')
+
+        # 전체 데이터 중 test_size 비율로 뽑았다
+        # 소수점으로 나올 수 있기 때문에 0.4등의 결과를 1로 ceil을 사용하여 올림 처리
+        # test_count = math.ceil(len(ordered) * test_size)
+        # if test_count < 1 :
+        #     test_count = 1
+
+        # if test_count > len(ordered) - 1 :
+        #     test_count = len(ordered) - 1
+
+        # max : 둘 중에 큰 값을 돌려준다
+        # 그걸 이용하여 최소값을 지정할 때 사용
+        # max(1, test_count)
+        # min : 둘 중에 작은 값을 돌려준다
+        # 그걸 이용하여 최대값을 지정할 때 사용
+        # min(test_count, len(ordered) - 1)
+
+        # 위에 있는 코드를 아래처럼 합칠 수 있다
+        test_count = min(len(ordered) - 1, max(1, math.ceil(len(ordered) * test_size)))
+
+        # 슬라이싱을 써도 되지만, tail로 사용
+        # tail : 끝에서 몇 개 (head와 반대, 기본값은 5)
+        # 미리 시간 오름차순으로 정렬해 두었기 때문에 최신 데이터는 끝에 있다
+        # .index : index만 모은다(dataframe이 가진 PK) 이후 원본에서 이걸 제외하면 train data
+        test_indices.extend(ordered.tail(test_count).index.tolist())
+
+    # 테스트 할 데이터의 index는 모아 둔 상태
+    
+    # 실제 테스트 데이터 추출
+    
+    # 학습 데이터 추출
+        
