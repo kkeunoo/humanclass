@@ -8,6 +8,8 @@ import os
 
 from elasticsearch import helpers
 
+from collections import Counter
+
 router = APIRouter(tags=["엘라스틱서치"])
 
 @router.get("/read/head")
@@ -331,3 +333,99 @@ def terms(ids:list = Query()):
     return {
         'msg' : util.formatter(response)
     }
+
+###################
+# 추천 시스템
+###################
+
+@router.get('/recommend/test/counter')
+def test_counter():
+    str = 'hello world'
+    print( Counter(str) )
+    # Counter({'l': 3, 'o': 2, 'h': 1, 'e': 1, ' ': 1, 'w': 1, 'r': 1, 'd': 1})
+
+    list_counter = ['hi', 'hey', 'hi', 'hello', 'hi', 'nihao', 'hey']
+    print( Counter(list_counter) )
+    # Counter({'hi': 3, 'hey': 2, 'hello': 1, 'nihao': 1})
+
+    food_counter = Counter()
+    list_food = ['김밥', '달빵', '마라탕', '김밥', '김밥', '달빵']
+    for food in list_food :
+        food_counter.update(food)
+    print(1, food_counter)
+    # Counter({'김': 3, '밥': 3, '달': 2, '빵': 2, '마': 1, '라': 1, '탕': 1})
+
+    food_counter2 = Counter()
+    for food in [list_food] :
+        food_counter2.update(food)
+    print(2, food_counter2)
+    # Counter({'김밥': 3, '달빵': 2, '마라탕': 1})
+
+    favorite_foods = [
+        ['밥', '치킨'],
+        ['산낙지', '육회', '광어회'],
+        ['밥', '라면', '짜장면'],
+        ['햄버거', '라면', '밥']
+    ]
+    food_counter3 = Counter()
+    for foods in favorite_foods :
+        food_counter3.update(foods)
+    print(3, food_counter3)
+    #Counter({'밥': 3, '라면': 2, '치킨': 1, '산낙지': 1, '육회': 1, '광어회': 1, '짜장면': 1, '햄버거': 1})
+
+# CBF(Content-Based Filtering) 콘텐츠 기반 필터링 추천
+# '내가 뭘 좋아했지?'
+def content_based_filtering(list_movieId: list):
+    selected = terms_movieId(list_movieId)
+
+    # return selected
+
+    genre_counter = Counter()
+    tag_counter = Counter()
+    for hit in selected['hits']['hits'] :
+        source = hit['_source']
+        print(source)
+        genre_counter.update( source.get('genres', []) )
+        tag_counter.update( source.get('tags', []) )
+
+    print('genre_counter : ', genre_counter)
+    print('tag_counter : ', tag_counter)
+
+    max = 5
+    # 장르와 태그를 각각 집계한 뒤 빈도가 높은 것 부터 검색어에 반영한다
+    # most_common() : 카운터에서 가장 일반적인 것 추출 (리턴은 내용, 숫자가 나옴)
+    # - most_common의 기본값은 None이며 '모두 다'
+    # terms_genre = [term for term, count in genre_counter.most_common(max)]
+    # terms_tag = [term for term, count in tag_counter.most_common(max)]
+    # 사용하지 않는 변수의 경우 보통 '_' 로 표기 함 (필수 리턴이나 사용하지 않기 때문에)
+    terms_genre = [term for term, _ in genre_counter.most_common(max)]
+    terms_tag = [term for term, _ in tag_counter.most_common(max)]
+
+    # 배열 더하기로 합칠 수 있지만 하나씩 더해 나갈 때마다 메모리를 차지한다
+    # terms = terms_genre + terms_tag
+
+    terms = []
+    terms.extend(terms_genre)
+    terms.extend(terms_tag)
+    # return terms
+
+    # 단점 : 중복 데이터가 있을 수 있다
+    # ' '.join(terms)
+    # 그래서 set에 넣어보자
+    # 단, set에 넣으면 순서를 보장하지 않게 된다
+    # ' '.join( set(terms) )
+    # 순서를 유지하면서 중복을 제거하고 싶을 때
+    # dict.fromkeys() 를 사용하면 된다
+    # [a,b,a] >>>> {a: None, b: None}
+    # 이렇게 중복 제거 한 것을 join 하면 key만 빼올 수 있다
+    query = ' '.join( dict.fromkeys(terms) )
+    response = search_movies(query)
+
+    return response
+
+
+@router.get('/recommend/cbf')
+def cbf(list_movieId: list[int] = Query(...)):
+    response = content_based_filtering(list_movieId)
+
+    return response['hits']['hits']
