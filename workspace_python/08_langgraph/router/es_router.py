@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 import traceback
 import util
 import pandas as pd
@@ -231,6 +231,11 @@ def bulk():
     actions = util.embedding_with_openai(target)
 
     # 1. 만약에 엘라스틱서치에 인덱스가 없다면 새로 만들기(있으면 기존 인덱스에 데이터 넣기)
+    # 있으면 삭제하기
+    # if util.es.indices.exists(index=os.getenv('ES_INDEX')) :
+    #     util.es.indices.delete(index=os.getenv('ES_INDEX'))
+
+    # 없으면 create index
     if not util.es.indices.exists(index=os.getenv('ES_INDEX')) :
         '''
         # 기본 Chunk 구조
@@ -250,9 +255,9 @@ def bulk():
             'properties': {
                 'index' : {'type' : 'integer'},
                 'movieId' : {'type' : 'integer'},
-                'title' : {'type' : 'keyword'}, # 제목은 완벽히 같은 단어검색 용으로 keyword 사용
+                'title' : {'type' : 'text'}, # 제목은 완벽히 같은 단어검색 용으로 keyword 사용
                 'genres' : {'type' : 'keyword'},
-                'tags' : {'type' : 'keyword'},
+                'tags' : {'type' : 'text'},
                 'content' : {'type' : 'text'},
                 'chunk_index' : {'type' : 'integer'},
                 'embedding' : {
@@ -288,7 +293,7 @@ def search_movies(keyword: str, size: int = 10):
             'multi_match' : {
                 'query' : keyword,
                 # 'fields' : ['title', 'genres', 'tags', 'content']
-                'fields' : ['title^3', 'genres^2', 'tags^2', 'content'] # ^Number 로 가중치를 줄 수 있음
+                'fields' : ['title^4', 'genres', 'tags^2', 'content^3'] # ^Number 로 가중치를 줄 수 있음
             }
         },
         size=size
@@ -299,6 +304,29 @@ def search_movies(keyword: str, size: int = 10):
 @router.get('/es/select/multi_match')
 def multi_match(keyword, size=10):
     response = search_movies(keyword, size)
+
+    return {
+        'msg' : util.formatter(response)
+    }
+
+def terms_movieId(ids: list):
+    # term은 keyword (where id = 1)
+    # terms는 list로 여러 개 검색 (where id in (1,2,3))
+    response = util.es.search(
+        index=os.getenv('ES_INDEX'),
+        query={
+            'terms' : {
+                'movieId' : ids,
+            }
+        },
+        size=len(ids)*5
+    )
+
+    return response
+
+@router.get('/es/select/terms')
+def terms(ids:list = Query()):
+    response = terms_movieId(ids)
 
     return {
         'msg' : util.formatter(response)
