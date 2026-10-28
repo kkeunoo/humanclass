@@ -6,12 +6,12 @@
 
 ## 문제
 
-SQLModel 사원 조회와 저장에서 데이터베이스 연결이 필요한 시점은 어디인가?
+`GET /emp/deptno?deptno=20`의 20을 SQL에 넣을 때 PyMySQL과 SQLModel은 각각 어떤 자리표시자와 값 전달 형태를 쓰는가? 변경을 저장할 때는 무엇을 확인해야 하는가?
 
 <details>
 <summary>정답과 확인할 점</summary>
 
-조회와 변경 작업을 수행하는 세션·연결이 필요하다. 메모리 리스트 CRUD와 다른 저장 위치임을 구분한다.
+PyMySQL 원본은 SQL의 `%s` 자리에 `(deptno,)`를 별도로 전달한다. SQLModel 원본은 `:deptno` 자리에 `{'deptno': deptno}`를 넘긴다. `INSERT`·`UPDATE`·`DELETE` 후에는 변경이 `commit()`으로 확정됐는지, 오류가 났다면 `rollback()` 경로를 탔는지 확인한다. 메모리 리스트 CRUD와 저장 위치도 다르다.
 
 입력→처리→결과의 실제 원본 사례는 [본문](../../07_FastAPI_MariaDB_SQLModel_사원_CRUD.md)에서 확인한다.
 

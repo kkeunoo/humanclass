@@ -6,12 +6,12 @@
 
 ## 문제
 
-SQLite INSERT 뒤 저장을 확정하려면 연결에 무엇을 호출하는가?
+SQLite INSERT 뒤 저장을 확정하려면 연결에 무엇을 호출하는가? 또 `with sqlite3.connect(...) as connect:` 블록을 벗어나기만 하면 연결의 `close()`도 자동으로 호출되는가?
 
 <details>
 <summary>정답과 확인할 점</summary>
 
-`commit()`으로 트랜잭션을 확정한다. 원본의 매개변수 자리와 전달 값도 함께 확인한다.
+`connect.commit()`으로 트랜잭션을 확정한다. `with sqlite3.connect(...) as connect:`는 정상 종료 때 미확정 변경을 커밋하고 예외가 나면 롤백하지만 **연결을 자동으로 닫지는 않는다**. 강사님·내 원본 주석에 적힌 자동 닫힘 설명을 그대로 외우지 않도록 구분한다. 원본의 `?` 자리와 `(20,)` 전달 값도 함께 확인하자.
 
 입력→처리→결과의 실제 원본 사례는 [본문](../../06_Python_SQLite와_Transaction.md)에서 확인한다.
 
