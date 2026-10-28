@@ -4,6 +4,8 @@
 
 float는 요소를 한쪽으로 보내고 주변 인라인 내용이 돌아 흐르게 한다. absolute처럼 모든 주변 내용과 무관하게 떠 있는 상자로 외우면 원본의 글 감싸기를 설명하기 어렵다.
 
+**설명용 예:** 작은 그림에 `float:right`를 주면 뒤따르는 문장의 글줄이 그림 왼쪽을 따라 흐를 수 있다. 다음 제목부터 그림 아래에서 시작해야 한다면 그 제목에 `clear:both`를 주어 비교한다. `clear`는 그림의 `float` 선언을 지우지 않는다. 실제 수업의 부모 높이 문제는 2절의 양쪽 원본으로 확인한다.
+
 <!-- chapter-toc -->
 
 - [1. 원본의 왼쪽·오른쪽 상자](10_CSS_Float와_Clear.md#section-1)
@@ -103,18 +105,8 @@ clearfix를 부모에 적용하면 자식의 float:left가 none으로 바뀔까?
 
 **추가로 알면 좋은 것:** flow-root·shape-outside·Grid 헤더 대체는 별도 학습이다. 배운 float 실험을 새 기술 예제로 통째로 바꾸지 않는다.
 
-<!-- legacy-migration -->
-
-<a id="css-4"></a>
-<a id="css-18"></a>
-
-### 이전 색인 링크 안내
-
-이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
-
 <!-- inlined-extra-2026 -->
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/10_CSS_Float와_Clear_연습문제.md)
 
 ## 추가로 알면 좋은 것
 
@@ -132,3 +124,16 @@ clearfix를 부모에 적용하면 자식의 float:left가 none으로 바뀔까?
 새 블록 서식 맥락을 만들어 float 자식을 감싸는 높이 계산에 사용할 수 있다. 기존 clearfix의 역할을 비교할 때 유용하지만, 수업에서 배운 가상 요소·clear를 설명하지 못한 채 이것만 정답으로 외우지는 않는다. [CSS display 표준](https://www.w3.org/TR/css-display-3/#valdef-display-flow-root)
 
 display:contents는 요소의 박스와 의미·접근성 영향을 따로 검토해야 한다. shape-outside·복잡한 겹침 맥락·isolation도 별도 심화다.
+
+<!-- legacy-migration -->
+
+<a id="css-4"></a>
+<a id="css-18"></a>
+
+### 이전 색인 링크 안내
+
+이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
+
+---
+
+[장별 연습문제 풀기](실습/연습문제/10_CSS_Float와_Clear_연습문제.md)

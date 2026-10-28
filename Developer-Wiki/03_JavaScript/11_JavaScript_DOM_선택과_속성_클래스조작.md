@@ -4,6 +4,20 @@
 
 기준은 양쪽 `11_dom.html`이다. DOM은 브라우저가 HTML을 읽어 만든 문서 객체 구조다. 화면을 바꾸려면 먼저 원하는 요소를 찾아 변수에 담는다. 이 장에서는 **찾은 결과가 요소 하나인지, 여러 요소의 목록인지**부터 구분한다.
 
+**요소 선택이란?** HTML에 있는 태그를 JavaScript가 다룰 수 있는 값으로 가져오는 일이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**이며, HTML을 만든 뒤 스크립트를 실행한다.
+
+```html
+<h1 id="title">안녕</h1>
+<p class="note">첫째</p>
+<p class="note">둘째</p>
+<script>
+  console.log(document.getElementById('title').textContent); // 안녕
+  console.log(document.querySelectorAll('.note').length);  // 2
+</script>
+```
+
+첫 줄은 요소 **하나**의 글자를 읽고, 둘째는 일치하는 요소 **목록**의 개수를 읽는다. 이제 원본에서 각 선택 함수가 무엇을 반환하는지 비교한다.
+
 <!-- chapter-toc -->
 
 - [1. 무엇을 돌려받는가](11_JavaScript_DOM_선택과_속성_클래스조작.md#section-1)
@@ -258,9 +272,9 @@ document에서 찾은 menu 클래스는 강사님 문서에 6개, 내 문서에 
 
 <a id="section-7"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/11_JavaScript_DOM_선택과_속성_클래스조작_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 Array.from으로 목록을 배열로 바꾸는 방법, defer 등 스크립트 로딩 전략의 상세는 추가 학습이다. 이 장의 기본 문제는 원본의 선택 함수와 for문만으로 해결한다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/11_JavaScript_DOM_선택과_속성_클래스조작_연습문제.md) → [다음: 속성과 클래스](11-02_JavaScript_DOM_속성과_클래스.md)
 

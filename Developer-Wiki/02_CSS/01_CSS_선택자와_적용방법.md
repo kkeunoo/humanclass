@@ -166,23 +166,8 @@ div 바로 아래 strong은 파란색·40px가 모두 적용된다. div 안의 a
 
 **추가로 알면 좋은 것:** `:focus-visible`, `:is()`, `:where()`, `:has()`와 BEM 설계는 원본 선택자 실습과 분리한다. 기본 문제에 요구하지 않는다.
 
-<!-- legacy-migration -->
-
-<a id="css-12"></a>
-<a id="css-48"></a>
-<a id="css-51"></a>
-<a id="index-section-94"></a>
-<a id="index-section-86"></a>
-<a id="index-section-87"></a>
-<a id="index-section-80"></a>
-
-### 이전 색인 링크 안내
-
-이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. 적용·선택자는 이 문서, 우선순위·상속은 [분리한 문서](01-02_CSS_우선순위와_상속.md), 새 선택자는 [추가편](01_CSS_선택자와_적용방법.md#extra-02-1)에서 읽는다.
-
 <!-- inlined-extra-2026 -->
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/01_CSS_선택자와_적용방법_연습문제.md)
 
 ## 추가로 알면 좋은 것
 
@@ -210,3 +195,21 @@ div 바로 아래 strong은 파란색·40px가 모두 적용된다. div 안의 a
 ```
 
 focus-visible을 “Tab을 눌렀을 때만”이라는 단일 조건으로 외우지 않는다. 기본 :focus와 목적을 비교한다. 포커스 표시를 제거하고 대체 표시도 주지 않는 방향으로 사용하지 않는다. [선택자 표준](https://www.w3.org/TR/selectors-4/#the-focus-visible-pseudo)
+
+<!-- legacy-migration -->
+
+<a id="css-12"></a>
+<a id="css-48"></a>
+<a id="css-51"></a>
+<a id="index-section-94"></a>
+<a id="index-section-86"></a>
+<a id="index-section-87"></a>
+<a id="index-section-80"></a>
+
+### 이전 색인 링크 안내
+
+이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. 적용·선택자는 이 문서, 우선순위·상속은 [분리한 문서](01-02_CSS_우선순위와_상속.md), 새 선택자는 [추가편](01_CSS_선택자와_적용방법.md#extra-02-1)에서 읽는다.
+
+---
+
+[장별 연습문제 풀기](실습/연습문제/01_CSS_선택자와_적용방법_연습문제.md)

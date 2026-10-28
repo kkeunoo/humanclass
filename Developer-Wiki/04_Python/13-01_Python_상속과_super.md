@@ -4,6 +4,27 @@
 
 양쪽 `13_상속.py`는 `Student(Person)`으로 부모의 메서드를 쓰고, 부모 생성자가 있을 때 `super().__init__()`을 호출하는 예를 연습한다.
 
+## 먼저: 상속은 무엇을 이어받는가?
+
+자식 클래스는 부모 클래스의 기능을 이용할 수 있다. 수업의 `Student(Person)`은 **학생도 Person의 기능을 가진다**는 관계로 읽는다. 부모가 생성자에서 필요한 값을 저장했다면 자식 생성자에서 `super().__init__(...)`을 호출해 그 준비를 이어받을 수 있다.
+
+```python
+# 수업 문법을 축약한 설명용 재구성
+class Person:
+    def __init__(self, name):
+        self.name = name
+
+class Student(Person):
+    def __init__(self, name, grade):
+        super().__init__(name)
+        self.grade = grade
+
+student = Student('민지', 3)
+print(student.name, student.grade)  # 민지 3
+```
+
+`super().__init__(name)`을 빼면 이 예제의 `self.name`은 준비되지 않는다. 양쪽 원본에서도 부모 생성자 호출 전후에 어떤 속성이 있는지 먼저 확인하자.
+
 <!-- chapter-toc -->
 
 - [1. 부모의 메서드 사용하기](13-01_Python_상속과_super.md#section-1)
@@ -198,9 +219,9 @@ print(s4.hello)
 
 <a id="section-5"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/13-01_Python_상속과_super_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 여러 부모 클래스를 함께 상속할 때 `super()`가 어느 클래스를 찾는지에 대한 상세 규칙은 두 원본의 범위를 넘는다. 여기서는 **한 부모 클래스**를 상속한 실제 호출 순서를 먼저 익힌다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/13-01_Python_상속과_super_연습문제.md) → [13-02. 재정의와 추상 클래스](13-02_Python_메서드재정의와_추상클래스.md)
 

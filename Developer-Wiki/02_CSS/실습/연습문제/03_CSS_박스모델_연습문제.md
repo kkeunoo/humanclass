@@ -8,13 +8,15 @@
 
 `width:200px; padding:10px; border:2px solid`인 content-box의 실제 너비를 구하자.
 
-**확인 기준:** 가로 전체는 224px이다.
+**확인 기준:** 콘텐츠, 좌우 안쪽 여백, 좌우 테두리 값을 따로 적고 합한다. 바깥 여백은 상자 자체의 너비에 포함하지 않는다.
 
 <details>
 <summary>해설 — 먼저 풀고 펼치기</summary>
 
-콘텐츠 200 + 좌우 padding 20 + 좌우 border 4로 계산한다. border-box면 지정한 200px 안에 포함된다.
+콘텐츠 200 + 좌우 padding 20 + 좌우 border 4 = **224px**이다. `margin`이 추가되면 주변에 필요한 공간은 달라지지만 상자 경계까지의 너비 224px과는 구별한다. `box-sizing: border-box`로 바꾸면 지정한 `width: 200px` 안에 padding과 border가 포함된다.
 
 </details>
 
-원본의 입력·구조·결과와 이 연습문제에서 바꾼 조건을 한 문장으로 비교해 보자.
+## 원본으로 돌아가기
+
+강사님·내 원본의 300px 상자도 `width`만 보고 실제 바깥 너비를 판단하면 틀린다. 이 문제의 200px을 원본의 300px로 바꾸고 같은 식을 다시 써 보자.

@@ -16,6 +16,15 @@
 
 ## 1. 제목은 `h1`부터 `h6`까지
 
+**제목 태그**는 문서의 주제와 그 아래 단계의 주제를 표시한다. 다음은 원본 발췌가 아닌 작은 설명용 예제다.
+
+```html
+<h1>HTML 공부</h1>
+<h2>기본 태그</h2>
+```
+
+브라우저의 기본 표시에서는 첫 줄이 더 크게 보일 수 있다. 중요한 결과는 `기본 태그`가 `HTML 공부` 아래의 제목으로 읽힌다는 점이다. 수업에서는 이 제목 수준을 어디까지 썼는지 양쪽 원본으로 확인한다.
+
 ### 강사님 코드 — 원본 발췌
 
 강사님 `workspace_html/02_tag.html` 11~17행
@@ -215,41 +224,8 @@
 
 정확성 참고: [제목 요소](https://html.spec.whatwg.org/dev/sections.html), [텍스트 의미](https://html.spec.whatwg.org/dev/text-level-semantics.html), [문단·pre](https://html.spec.whatwg.org/dev/grouping-content.html).
 
-[다음: 링크와 경로](03_HTML_링크와_경로.md)
-
-<!-- legacy-migration -->
-
-<a id="index-section-46"></a>
-<a id="html-16"></a>
-<a id="html-15"></a>
-<a id="index-section-33"></a>
-<a id="index-section-22"></a>
-<a id="index-section-43"></a>
-<a id="index-section-62"></a>
-<a id="index-section-36"></a>
-<a id="html-6"></a>
-<a id="index-section-34"></a>
-<a id="index-section-39"></a>
-<a id="index-section-29"></a>
-<a id="index-section-37"></a>
-<a id="index-section-69"></a>
-<a id="html-4"></a>
-<a id="html-7"></a>
-<a id="index-section-41"></a>
-<a id="index-section-26"></a>
-<a id="index-section-40"></a>
-<a id="index-section-42"></a>
-<a id="index-section-27"></a>
-<a id="index-section-21"></a>
-<a id="index-section-28"></a>
-
-### 이전 색인 링크 안내
-
-이전 절 주소를 보존한 안내 위치다. 개편 전 절 번호와 현재 절 번호는 서로 다르다. [HTML 새 목차](README.md)에서 현재 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾을 수 있다.
-
 <!-- inlined-extra-2026 -->
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/02_HTML_기본태그_연습문제.md)
 
 ## 추가로 알면 좋은 것
 
@@ -301,3 +277,37 @@
 ```
 
 GitHub 문서의 접힌 정답도 이 형식을 이용하지만, 편집용 기능을 썼다는 이유로 HTML 수업에서 이미 배웠다고 분류하지 않는다. [HTML 표준 — details와 summary](https://html.spec.whatwg.org/dev/interactive-elements.html)
+
+<!-- legacy-migration -->
+
+<a id="index-section-46"></a>
+<a id="html-16"></a>
+<a id="html-15"></a>
+<a id="index-section-33"></a>
+<a id="index-section-22"></a>
+<a id="index-section-43"></a>
+<a id="index-section-62"></a>
+<a id="index-section-36"></a>
+<a id="html-6"></a>
+<a id="index-section-34"></a>
+<a id="index-section-39"></a>
+<a id="index-section-29"></a>
+<a id="index-section-37"></a>
+<a id="index-section-69"></a>
+<a id="html-4"></a>
+<a id="html-7"></a>
+<a id="index-section-41"></a>
+<a id="index-section-26"></a>
+<a id="index-section-40"></a>
+<a id="index-section-42"></a>
+<a id="index-section-27"></a>
+<a id="index-section-21"></a>
+<a id="index-section-28"></a>
+
+### 이전 색인 링크 안내
+
+이전 절 주소를 보존한 안내 위치다. 개편 전 절 번호와 현재 절 번호는 서로 다르다. [HTML 새 목차](README.md)에서 현재 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾을 수 있다.
+
+---
+
+[장별 연습문제 풀기](실습/연습문제/02_HTML_기본태그_연습문제.md) · [다음: 링크와 경로](03_HTML_링크와_경로.md)

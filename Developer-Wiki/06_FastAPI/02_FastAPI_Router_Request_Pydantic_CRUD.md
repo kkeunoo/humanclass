@@ -4,6 +4,23 @@
 
 이번 수업 코드는 한 파일의 경로를 `APIRouter`로 분리하고, **쿼리 문자열·폼·경로값·JSON 본문**을 받는다. 내 별도 Todo CRUD는 리스트에 항목을 넣고 찾고 고치고 삭제한다. 배운 입력 통로를 먼저 구분한다.
 
+## 먼저: 입력은 어디에 적혀 오는가?
+
+주소 `/todo/param?id=3&item=공부`의 `?` 뒤는 **쿼리 문자열**이다. 양쪽 `todoParamGet`이 이 요청을 받으면 `id`를 정수 3으로, `item`을 문자열 `공부`로 받아 다음처럼 돌려준다. 이것은 아래 원본 코드의 **입력·결과를 풀어 쓴 설명용 예시**다.
+
+```json
+{"id": 3, "item": "공부"}
+```
+
+| 입력 위치 | 원본에서 읽는 자리 |
+| --- | --- |
+| URL의 `?id=3` | 함수 인자 `id` 또는 `req.query_params` |
+| HTML 폼의 `name="id"` | `Form()` 또는 `await req.form()` |
+| URL 경로 `/todo2/11` | `{todo_id}`와 `Path(...)` |
+| JSON 본문 | `BaseModel`의 필드 |
+
+**한 요청에 네 입력이 모두 들어간다는 뜻은 아니다.** 아래 각 원본이 어떤 위치를 실제로 읽는지 따로 확인하자.
+
 ## 1. `APIRouter`를 앱에 포함
 
 ### 강사님 코드
@@ -406,8 +423,8 @@ async def todoD(todoID : int) :
 3. 내 `Todo(value1, value2)` 모델과 `.id`를 읽는 코드의 필드 이름은 맞는가?
 4. 내 삭제 함수가 `todo_list[:]`를 쓰는 이유는 무엇인가?
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/02_FastAPI_Router_Request_Pydantic_CRUD_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 `request.headers`를 읽는 예제와 `response_model` 설정은 두 수업 코드에서 확인되지 않았고, 사용자가 배우지 않았다고 확인했다. [추가편](추가편_기존자료_학습범위_분류.md)에만 둔다. 이 장의 본문은 실제로 작성한 **쿼리·폼·경로·모델·리스트 CRUD**다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/02_FastAPI_Router_Request_Pydantic_CRUD_연습문제.md) → [03. Jinja 템플릿](03_FastAPI_Jinja2_템플릿.md)

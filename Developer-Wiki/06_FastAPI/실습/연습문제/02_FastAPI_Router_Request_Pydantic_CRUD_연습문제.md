@@ -6,12 +6,12 @@
 
 ## 문제
 
-내 Todo처럼 `await request.form()`에서 `id`와 `item`을 꺼내려면 어떤 이름을 조회하는가?
+내 `crud.py`의 Todo 생성 함수처럼 `await req.form()`에서 값을 꺼내려면 폼의 어떤 이름을 조회하는가? 강사님 `todoParam`과도 비교하자.
 
 <details>
 <summary>정답과 확인할 점</summary>
 
-`data = await request.form()` 다음 `data.get("id")`, `data.get("item")`을 읽는다. `request.headers`는 이 본문 연습의 대상이 아니다.
+내 `crud.py`는 `data = await req.form()` 다음 `data.get("todoID")`, `data.get("todoITEM")`을 읽는다. 반면 강사님 `todoParam`은 `data.get("id")`, `data.get("item")`을 읽는다. **폼의 `name`과 코드가 조회하는 키가 맞아야** 값이 들어온다. `request.headers`는 이 본문 연습의 대상이 아니다.
 
 입력→처리→결과의 실제 원본 사례는 [본문](../../02_FastAPI_Router_Request_Pydantic_CRUD.md)에서 확인한다.
 

@@ -4,6 +4,19 @@
 
 기준은 양쪽 `12_dom_content.html`이다. 원본이 길어 **콘텐츠와 타이머 → 요소 생성·표 만들기 → 스타일과 퀴즈**로 나누었다. 이 장은 같은 요소에 값을 읽고 쓰는 차이부터 확인한다.
 
+**콘텐츠 변경이란?** 선택한 요소 안의 글자나 HTML 내용을 읽고 다시 쓰는 일이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```html
+<p id="message">처음</p>
+<script>
+  const message = document.getElementById('message');
+  message.textContent = '<b>안녕</b>';
+  console.log(message.textContent); // <b>안녕</b> (태그 모양의 글자)
+</script>
+```
+
+화면에도 꺾쇠를 포함한 글자가 보인다. 같은 문자열을 `innerHTML`에 넣으면 `b` 요소가 만들어진다는 차이를 원본에서 확인한다.
+
 <!-- chapter-toc -->
 
 - [1. textContent·innerText·innerHTML](12_JavaScript_DOM_콘텐츠생성과_스타일조작.md#section-1)
@@ -187,9 +200,9 @@ Number를 생략하면 '0' + 1은 '01'이다. setInterval은 지정 간격으로
 
 <a id="section-5"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12_JavaScript_DOM_콘텐츠생성과_스타일조작_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 외부 HTML을 허용할 때 쓰는 정화 도구, 정밀한 타이머 보정, padStart로 시간 자릿수를 맞추는 확장은 이 장의 필수 학습에서 제외한다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12_JavaScript_DOM_콘텐츠생성과_스타일조작_연습문제.md) → [다음: 요소 생성과 삽입](12-02_JavaScript_DOM_요소생성과_삽입.md)
 

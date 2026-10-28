@@ -4,6 +4,21 @@
 
 강사님의 `퀴즈/이벤트.html`과 내 `17_event_form.html`·`asset/js/17_event_form.js`를 비교한다. 메뉴는 한 항목만 강조하고, Todo는 생성·개별 삭제·전체 선택·선택 삭제가 목표다. **실습 의도와 현재 실행 결과를 구분해 읽자.**
 
+**상태 관리란?** 지금 선택된 메뉴나 체크된 할 일을 화면과 변수에 일치시키는 일이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```html
+<ul id="menu"><li>인기순</li><li>최신순</li></ul>
+<script>
+  const items = document.querySelectorAll('#menu li');
+  items[0].classList.add('bold');
+  items[0].classList.remove('bold');
+  items[1].classList.add('bold');
+  // 최종 상태: 최신순에만 bold 클래스
+</script>
+```
+
+한 항목만 남기려면 이전 상태를 지운 뒤 새 항목에 표시해야 한다. 아래에서 강사님 코드는 이 순서를 사용하지만 내 메뉴 코드는 제거 단계가 빠졌다는 차이를 확인한다.
+
 <!-- chapter-toc -->
 
 - [1. 메뉴 한 개 강조하기](17-04_JavaScript_메뉴와_Todo실습.md#section-1)
@@ -348,9 +363,9 @@ function q5(){
 
 <a id="section-5"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-04_JavaScript_메뉴와_Todo실습_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 Todo 문장을 화면에 넣을 때 `textContent`로 글자를 넣으면 입력값을 HTML로 해석하지 않는다. 이 차이는 실제 서비스를 만들 때 중요하지만, 여기서는 먼저 수업에서 다룬 이벤트·요소 생성·상태 갱신의 흐름을 이해한다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-04_JavaScript_메뉴와_Todo실습_연습문제.md) → [다음: 브라우저 이동](18_JavaScript_브라우저이동과_지도우편번호.md)
 

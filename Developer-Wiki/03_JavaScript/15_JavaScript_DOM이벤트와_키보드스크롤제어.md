@@ -4,6 +4,20 @@
 
 기준은 양쪽 `15_event.html`과 `asset/js/15_event.js`다. 이벤트는 클릭·키 입력·페이지 로드처럼 브라우저에서 일어난 동작이나 상태 변화다. 이벤트가 발생했을 때 실행할 함수를 **미리 등록**한다. 이 장은 등록·제거와 로그인 입력 검사, 다음 장은 키보드·이동·스크롤을 다룬다.
 
+**이벤트 등록이란?** 클릭 같은 동작이 생겼을 때 실행할 함수를 버튼에 연결하는 일이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```html
+<button id="hello">인사</button>
+<script>
+  const button = document.getElementById('hello');
+  button.addEventListener('click', function () {
+    console.log('안녕');
+  });
+</script>
+```
+
+등록할 때는 출력되지 않고, 버튼을 한 번 클릭하면 `안녕`이 출력된다. 원본에서는 등록 방법에 따라 같은 버튼에 함수가 쌓이거나 교체되는 차이를 확인한다.
+
 <!-- chapter-toc -->
 
 - [1. 처음에는 null인데 로드 뒤에는 버튼인 이유](15_JavaScript_DOM이벤트와_키보드스크롤제어.md#section-1)
@@ -305,9 +319,9 @@ function log(message) {
 
 <a id="section-7"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/15_JavaScript_DOM이벤트와_키보드스크롤제어_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 defer·DOMContentLoaded를 이용한 별도 로딩 전략, AbortController로 여러 리스너 관리하기, 서버 인증 구현은 추가 학습이다. 이 장에서는 원본 load·onclick·addEventListener·removeEventListener와 배운 입력 검사까지만 기본 범위로 둔다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/15_JavaScript_DOM이벤트와_키보드스크롤제어_연습문제.md) → [다음: 키보드와 스크롤](15-02_JavaScript_키보드와_스크롤.md)
 

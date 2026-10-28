@@ -4,6 +4,20 @@
 
 양쪽 `asset/js/17_event_form.js`의 parent/child와 게시판 실습이다. 강사님과 내 코드에서 **실행 중인 리스너의 위치**를 비교한다. 주문·로그인·피자는 [17-03](17-03_JavaScript_주문_로그인_피자실습.md), 메뉴·Todo는 [17-04](17-04_JavaScript_메뉴와_Todo실습.md)에 정리했다.
 
+**이벤트 전파란?** 자식에서 일어난 클릭을 부모의 클릭 함수도 받을 수 있는 흐름이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```html
+<div id="parent"><button id="child">누르기</button></div>
+<script>
+  document.getElementById('parent').addEventListener('click', function (event) {
+    console.log(event.target.id);        // child
+    console.log(event.currentTarget.id); // parent
+  });
+</script>
+```
+
+버튼을 누르면 실제 클릭 대상은 `child`, 함수를 등록한 대상은 `parent`다. 원본에서는 이 차이로 자식 클릭을 처리하고, 필요할 때 부모까지 올라가는 흐름을 멈춘다.
+
 <!-- chapter-toc -->
 
 - [1. 캡처링과 버블링 방향](17-02_JavaScript_이벤트전파와_위임.md#section-1)
@@ -303,9 +317,9 @@ parentNode 두 번은 이 HTML의 input → td → tr 구조에 맞춘 경로다
 
 <a id="section-7"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-02_JavaScript_이벤트전파와_위임_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 closest를 이용한 대상 찾기, stopImmediatePropagation, 복잡한 동적 컴포넌트의 위임 설계는 추가편이다. 수업의 parentNode·classList·getAttribute와 전파 차이를 먼저 익힌다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-02_JavaScript_이벤트전파와_위임_연습문제.md) → [다음: 주문·로그인·피자](17-03_JavaScript_주문_로그인_피자실습.md)
 

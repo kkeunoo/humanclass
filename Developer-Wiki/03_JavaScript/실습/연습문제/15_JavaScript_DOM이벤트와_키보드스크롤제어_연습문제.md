@@ -6,15 +6,30 @@
 
 ## 문제
 
-버튼의 클릭 횟수를 표시하고, 누른 키가 Enter인지 확인하는 리스너를 각각 붙이자.
+버튼 하나에 클릭 리스너를 붙이고 클릭 횟수를 `#count`에 표시하자. `button.onclick`에 서로 다른 함수를 차례로 대입하는 경우와 `addEventListener`로 등록하는 경우도 구분하자.
 
-**확인 기준:** 버튼을 두 번 누르면 2, Enter를 누르면 키 상태가 표시된다.
+```html
+<button id="run">실행</button><span id="count">0</span>
+```
+
+**확인 기준:** 버튼을 누를 때마다 값이 한 번 증가하는지, 리스너 등록 방식이 결과에 어떤 영향을 주는지 확인한다.
 
 <details>
 <summary>해설 — 직접 해 본 뒤 펼치기</summary>
 
-각 이벤트에서 필요한 상태만 바꾸고 `event.target`과 리스너 대상의 차이를 확인한다.
+```javascript
+let clicks = 0;
+const button = document.querySelector('#run');
+const count = document.querySelector('#count');
+function recordClick() {
+  clicks += 1;
+  count.textContent = String(clicks);
+}
+button.addEventListener('click', recordClick);
+```
+
+두 번 누르면 1, 2로 바뀐다. `button.onclick = first; button.onclick = second;`처럼 같은 속성에 다시 대입하면 뒤의 `second`가 앞의 값을 대체한다. 별도 함수를 각각 `addEventListener('click', ...)`로 등록하면 둘 다 반응할 수 있다. 강사님·내 원본의 두 방식을 [본문 2절](../../15_JavaScript_DOM이벤트와_키보드스크롤제어.md)에서 대조하자.
 
 </details>
 
-원본 코드에서 같은 기능을 찾고, 입력값·반환값·화면 변화가 문제와 어디서 달라지는지 한 문장으로 적어 보자.
+키보드의 `event.key`는 [다음 15-02장](../../15-02_JavaScript_키보드와_스크롤.md)에서 연습한다. 이 장의 필수 문제는 클릭 리스너와 함수 참조다.

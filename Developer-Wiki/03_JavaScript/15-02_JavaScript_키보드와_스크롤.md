@@ -4,6 +4,16 @@
 
 양쪽 `asset/js/15_event.js` 후반과 `15_event.html`의 스타일을 함께 읽는다. 등록 방식은 앞 장에 두고 여기서는 **어떤 이벤트에서 어떤 값을 바꾸는지** 살핀다.
 
+**키보드·스크롤 이벤트란?** 키를 누르거나 화면을 움직일 때 브라우저가 함수에 그 상황을 알려 주는 것이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```javascript
+document.addEventListener('keydown', function (event) {
+    if (event.keyCode == 39) console.log('오른쪽');
+});
+```
+
+오른쪽 방향키를 누르면 `오른쪽`이 출력된다. 수업 원본도 `keyCode == 39`를 사용하고 실제 요소의 `left` 값을 10px 바꾼다. `event.key`는 원본 주석에만 나온 비교 방법으로 아래에서 따로 설명한다.
+
 <!-- chapter-toc -->
 
 - [1. keydown과 keyup](15-02_JavaScript_키보드와_스크롤.md#section-1)
@@ -224,9 +234,9 @@ document.documentElement.scrollTop은 이 표준 모드 문서의 루트 스크�
 
 <a id="section-6"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/15-02_JavaScript_키보드와_스크롤_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 requestAnimationFrame을 이용한 부드러운 이동, 키 누름 상태를 계속 관리하는 게임 루프, 화면 경계·입력 포커스까지 다루는 완성형 컨트롤러는 추가 학습이다. 원본의 한 번 입력에 10px 이동하는 코드와 구분한다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/15-02_JavaScript_키보드와_스크롤_연습문제.md) → [다음: 마우스 이벤트](16_JavaScript_마우스이벤트와_드래그복사제어.md)
 

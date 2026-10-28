@@ -4,6 +4,18 @@
 
 양쪽 `20_ajax.js`는 날씨 서비스 요청을 만들고, 응답의 `item` 배열에서 기온 `T1H`, 강수량 `RN1`, 습도 `REH`를 골라 화면에 표시한다. 원본에는 요청용 서비스 키가 들어 있어 **이 문서에 키와 전체 URL을 옮기지 않는다**. 키를 지운 코드 일부만 인용한다. 외부 요청을 실제로 재실행해 응답을 확인한 기록은 없다.
 
+**응답을 필터링한다는 것은?** 받은 항목 중 화면에 필요한 종류만 남기는 것이다. 아래는 실제 응답이 아닌 **설명용 작은 예제**이며 수업 원본의 `category` 이름을 사용한다.
+
+```javascript
+const items = [{category:'T1H', fcstValue:'25'}, {category:'LGT', fcstValue:'0'}, {category:'RN1', fcstValue:'1'}];
+const selected = items.filter(function (item) {
+  return item.category == 'T1H' || item.category == 'RN1';
+});
+console.log(selected.length); // 2: LGT 항목 제외
+```
+
+수업 원본은 `REH`까지 포함해 세 종류를 고른 뒤 행으로 표시한다. 필터 결과를 시각별로 다시 묶는 문제에서는 강사님 풀이와 내 시도의 결과가 달라지는 점을 따로 확인한다.
+
 <!-- chapter-toc -->
 
 - [1. 응답 배열에서 세 종류 고르기](20-02_JavaScript_날씨응답_필터와_표시.md#section-1)
@@ -338,9 +350,9 @@
 
 <a id="section-6"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/20-02_JavaScript_날씨응답_필터와_표시_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 실제 외부 API 사용 시 요청 실패, 응답 형식 변화, 키 관리가 필요하다. 이번 수업의 본문은 원본에서 다룬 `XMLHttpRequest`·JSON·`filter`·DOM 출력 흐름에 한정한다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/20-02_JavaScript_날씨응답_필터와_표시_연습문제.md) → [다음: 외부 AI 요청](21_JavaScript_외부AI_API요청과_대화기록.md)
 

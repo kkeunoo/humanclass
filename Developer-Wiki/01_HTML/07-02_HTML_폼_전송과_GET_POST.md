@@ -16,6 +16,8 @@
 
 ## 1. GET: 이름 있는 입력을 주소의 쿼리로 보낸다
 
+**폼 전송**은 사용자가 입력한 값을 요청으로 보내는 일이다. GET에서는 제출되는 이름과 값이 보통 주소의 `?` 뒤에 `name=value` 형태로 붙는다. 예를 들어 설명용 `<input name="song" value="hello">`가 있는 GET 폼을 제출하면 주소에서 `?song=hello`를 볼 수 있다. 화면에 적은 글자만으로 전송 여부를 판단하지 말고, 아래 실제 원본의 `name`을 확인한다.
+
 ### 강사님 코드 — 원본 발췌
 
 강사님 `workspace_html/07_form.html` 93~98행
@@ -172,7 +174,6 @@ song=hello&fixed=A&coffee=1&coffee=2
 
 정확성 참고: [HTML 표준 — 폼 제출과 데이터 구성](https://html.spec.whatwg.org/dev/form-control-infrastructure.html).
 
-[다음: 기본 종합복습](10_HTML_종합실습.md) · [HTML 목차](README.md)
+---
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/07-02_HTML_폼_전송과_GET_POST_연습문제.md)
-
+[장별 연습문제 풀기](실습/연습문제/07-02_HTML_폼_전송과_GET_POST_연습문제.md) · [다음: 기본 종합복습](10_HTML_종합실습.md) · [HTML 목차](README.md)

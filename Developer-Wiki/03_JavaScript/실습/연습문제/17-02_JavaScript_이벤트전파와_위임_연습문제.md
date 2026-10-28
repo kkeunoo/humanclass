@@ -8,13 +8,25 @@
 
 부모 `ul` 하나에 클릭 리스너를 달아 `data-name`이 있는 자식 버튼만 처리하자.
 
-**확인 기준:** 버튼을 누르면 해당 이름만 나오고 빈 공간을 누르면 아무 변화가 없다.
+```html
+<ul id="menu"><li><button data-name="불고기">선택</button></li></ul>
+```
+
+**확인 기준:** 클릭한 실제 대상(`target`)과 리스너를 붙인 대상(`currentTarget`)을 구분한다. 빈 공간 클릭에서는 버튼 처리로 들어가지 않는지 확인한다.
 
 <details>
 <summary>해설 — 직접 해 본 뒤 펼치기</summary>
 
-`event.target`의 버튼 여부를 확인하고 `dataset.name`을 읽는다. `currentTarget`은 `ul`이다.
+```javascript
+const menu = document.querySelector('#menu');
+menu.addEventListener('click', function(event) {
+  if (!event.target.hasAttribute('data-name')) return;
+  console.log(event.target.dataset.name);
+});
+```
+
+버튼을 직접 누르면 `target`은 그 버튼이고, 리스너를 붙인 `currentTarget`은 `ul`이다. 빈 공간을 누르면 조건을 통과하지 않아 출력하지 않는다. 이 예제는 **data-name이 버튼에만 있고 버튼 안에 다른 자식 요소가 없다는 조건**을 둔다. 원본에서 배운 `hasAttribute`로 대상을 검사하며 새 `matches` 문법을 필수로 요구하지 않는다.
 
 </details>
 
-원본 코드에서 같은 기능을 찾고, 입력값·반환값·화면 변화가 문제와 어디서 달라지는지 한 문장으로 적어 보자.
+`data-name`과 `dataset.name`은 [11-02장](../../11-02_JavaScript_DOM_속성과_클래스.md)에서 이미 배운 문법이다. 여기서는 그것을 부모 이벤트 위임과 연결한다.

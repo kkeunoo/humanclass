@@ -6,15 +6,30 @@
 
 ## 문제
 
-정답이 `"서울"`인 짧은 퀴즈에서 입력을 확인하고 결과 요소의 글과 색을 바꾸자.
+아래 요소들 중 정확히 `q2` 클래스가 있는 것만 찾아 글과 배경색을 바꾸자. 내 원본의 q2 퀴즈를 작은 예제로 다시 연습한다.
 
-**확인 기준:** 정답 입력은 성공 문구, 다른 입력은 다시 시도 문구다.
+```html
+<div class="quiz q2">대상</div>
+<div class="quiz q2-1">대상 아님</div>
+```
+
+**확인 기준:** `q2`와 `q2-1`을 서로 다른 클래스 이름으로 구분하고, 조건에 맞는 요소의 글과 배경색만 바뀌는지 확인한다.
 
 <details>
 <summary>해설 — 직접 해 본 뒤 펼치기</summary>
 
-입력값을 읽고 조건을 검사한 다음 `textContent`와 `style`을 바꾼다. 원본 퀴즈의 정답 표현과 DOM 변경을 분리해 본다.
+```javascript
+const items = document.querySelectorAll('div.quiz');
+for (let i = 0; i < items.length; i++) {
+  if (items[i].classList.contains('q2')) {
+    items[i].textContent = '찾음';
+    items[i].style.background = 'yellow';
+  }
+}
+```
+
+첫 번째 div만 `찾음`으로 바뀌고 노란 배경을 갖는다. 두 번째의 `q2-1`은 `q2` 클래스가 아니다. 내 원본의 실제 풀이와 강사님 원본의 문제 제시는 [본문 4절](../../12-03_JavaScript_DOM_스타일과_퀴즈.md)에서 구분한다.
 
 </details>
 
-원본 코드에서 같은 기능을 찾고, 입력값·반환값·화면 변화가 문제와 어디서 달라지는지 한 문장으로 적어 보자.
+폼 입력의 `value`와 버튼 클릭은 [13장 폼 입력](../../13_JavaScript_DOM_폼요소와_입력값처리.md)과 [15장 이벤트](../../15_JavaScript_DOM이벤트와_키보드스크롤제어.md)에서 배운 뒤 연습한다. 문자열인 `style.height`에 5를 더하는 실험은 본문의 단위 처리 절에서 따로 복습한다.

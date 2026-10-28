@@ -4,6 +4,20 @@
 
 기준은 양쪽 `11_dom.html`과 강사님 `퀴즈/이벤트.html`이다. **dataset은 실제로 배웠다고 확인한 내용이므로 본문**에 둔다. 선택 함수의 반환값은 앞 장에서 복습하고, 여기서는 선택한 요소를 어떻게 바꾸는지 본다.
 
+**속성과 클래스는 무엇인가?** 속성은 HTML 요소에 적힌 `src`, `data-name` 같은 정보이고, `class`는 그중 여러 이름을 가질 수 있는 속성이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```html
+<p id="notice" class="message" data-name="공지">안내</p>
+<script>
+  const notice = document.getElementById('notice');
+  console.log(notice.dataset.name); // 공지
+  notice.classList.add('active');
+  console.log(notice.classList.contains('active')); // true
+</script>
+```
+
+이제 원본에서 속성의 존재·값을 읽는 방법과 클래스를 순서대로 바꾼 결과를 살핀다.
+
 <!-- chapter-toc -->
 
 - [1. 속성의 존재와 값을 구분하기](11-02_JavaScript_DOM_속성과_클래스.md#section-1)
@@ -227,9 +241,9 @@ classList.remove('blue')는 클래스 하나를 제거한다. div2.remove()는 d
 
 <a id="section-6"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/11-02_JavaScript_DOM_속성과_클래스_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 dataset의 복잡한 이름 변환 규칙이나 속성 전체를 순회하는 도구는 확장 학습으로 둔다. 본문에서는 수업의 data-name 읽기와 data-minsu 쓰기까지 익힌다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/11-02_JavaScript_DOM_속성과_클래스_연습문제.md) → [다음: 내용과 요소 만들기](12_JavaScript_DOM_콘텐츠생성과_스타일조작.md)
 

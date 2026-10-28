@@ -6,15 +6,22 @@
 
 ## 문제
 
-`"  JavaScript Wiki  "`의 공백을 지우고 소문자로 만든 뒤 `"wiki"`가 있는지 확인하자.
+`"  JavaScript Wiki  "`의 양끝 공백을 지운 뒤 `"Wiki"`가 시작하는 위치를 찾아보자. `"Python"`을 찾으면 무엇이 나오는지도 예상하자.
 
-**확인 기준:** 정리한 값은 `"javascript wiki"`, 포함 여부는 `true`다.
+**확인 기준:** `trim()` 뒤 문자열과 `indexOf()`의 두 결과를 따로 적는다. 값이 없을 때의 결과를 0과 혼동하지 않는다.
 
 <details>
 <summary>해설 — 직접 해 본 뒤 펼치기</summary>
 
-`trim().toLowerCase().includes("wiki")`의 각 중간 결과를 출력해 보자.
+```javascript
+const text = '  JavaScript Wiki  '.trim();
+console.log(text);                  // 'JavaScript Wiki'
+console.log(text.indexOf('Wiki'));  // 11
+console.log(text.indexOf('Python')); // -1
+```
+
+`trim()`은 앞뒤 공백만 제거한다. `indexOf()`는 찾은 시작 위치를 돌려주고, 없으면 `-1`이다. 강사님·내 원본의 이메일에서 `@` 위치를 찾는 방법도 같은 원리다.
 
 </details>
 
-원본 코드에서 같은 기능을 찾고, 입력값·반환값·화면 변화가 문제와 어디서 달라지는지 한 문장으로 적어 보자.
+`toLowerCase()`와 `includes()`를 조합하는 방법은 이 장의 양쪽 원본에서 확인되지 않았다. **추가로 알면 좋은 것**으로만 보고, 기본 문제는 실제 배운 `trim()`·`indexOf()`로 푼다.

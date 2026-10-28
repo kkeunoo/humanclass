@@ -4,6 +4,19 @@
 
 기준은 양쪽 `16_event_mouse.html`과 `asset/js/16_event_mouse.js`다. 이벤트 등록과 log 함수는 [15장](15_JavaScript_DOM이벤트와_키보드스크롤제어.md)에 설명했다. 여기서는 같은 마우스 동작에서도 **좌표 기준과 현재 드래그 상태**에 따라 처리 결과가 달라지는 부분을 읽는다.
 
+**마우스 좌표와 상태란?** 마우스가 움직인 위치를 숫자로 읽고, 버튼을 누르고 있는지 변수에 기억해 동작을 나누는 것이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```javascript
+let isDrag = false;
+document.addEventListener('mousedown', function () { isDrag = true; });
+document.addEventListener('mouseup', function () { isDrag = false; });
+document.addEventListener('mousemove', function (event) {
+    if (isDrag) console.log(event.pageX);
+});
+```
+
+누르지 않고 움직일 때는 출력되지 않고, 누른 채 움직일 때 문서 기준 가로 좌표가 출력된다. 원본은 이 상태와 누른 지점의 차이까지 이용해 요소의 위치를 계산한다.
+
 <!-- chapter-toc -->
 
 - [1. 누르기·놓기·클릭을 구분한다](16_JavaScript_마우스이벤트와_드래그복사제어.md#section-1)
@@ -325,9 +338,9 @@ window.addEventListener('mouseup', function () {
 
 <a id="section-8"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/16_JavaScript_마우스이벤트와_드래그복사제어_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 Pointer Events, setPointerCapture, requestAnimationFrame 최적화와 터치까지 지원하는 드래그 구현은 추가편이다. 위 기본 문제를 풀기 위한 필수 기능으로 넣지 않는다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/16_JavaScript_마우스이벤트와_드래그복사제어_연습문제.md) → [다음: 선택과 복사](16-02_JavaScript_선택과_복사이벤트.md)
 

@@ -12,7 +12,6 @@
     #todo-list { padding-left: 1.5rem; }
     #todo-list li { margin: .5rem 0; }
     #todo-list li.done span { text-decoration: line-through; }
-    #todo-list li[hidden] { display: none; }
   </style>
 </head>
 <body>
@@ -26,7 +25,7 @@
   <p>현재 보기: <strong id="selected-name">전체</strong></p>
   <form id="todo-form">
     <label for="todo-input">할 일</label>
-    <input id="todo-input" name="todo" required>
+    <input id="todo-input" name="todo">
     <button type="submit">추가</button>
   </form>
   <p>전체 항목: <strong id="todo-count">0</strong></p>
@@ -42,17 +41,22 @@
 
     function refresh() {
       const items = list.querySelectorAll('li');
-      count.textContent = String(items.length);
+      count.textContent = items.length;
       items.forEach((item) => {
-        const done = item.querySelector('input[type="checkbox"]').checked;
-        item.classList.toggle('done', done);
-        item.hidden = currentView === 'active' && done || currentView === 'done' && !done;
+        const done = item.querySelector('.todo-check').checked;
+        if (done) item.classList.add('done');
+        else item.classList.remove('done');
+        if (currentView === 'active' && done || currentView === 'done' && !done) {
+          item.style.display = 'none';
+        } else {
+          item.style.display = '';
+        }
       });
     }
 
     menu.addEventListener('click', (event) => {
       const button = event.target;
-      if (!button.matches('button[data-name]')) return;
+      if (!button.hasAttribute('data-name')) return;
       menu.querySelectorAll('button').forEach((item) => item.classList.remove('selected'));
       button.classList.add('selected');
       currentView = button.dataset.name;
@@ -70,8 +74,10 @@
       const label = document.createElement('span');
       const removeButton = document.createElement('button');
       checkbox.type = 'checkbox';
+      checkbox.classList.add('todo-check');
       label.textContent = title;
       removeButton.type = 'button';
+      removeButton.classList.add('todo-delete');
       removeButton.textContent = '삭제';
       checkboxLabel.append(checkbox, ' ', label);
       item.append(checkboxLabel, ' ', removeButton);
@@ -81,10 +87,10 @@
     });
 
     list.addEventListener('change', (event) => {
-      if (event.target.matches('input[type="checkbox"]')) refresh();
+      if (event.target.classList.contains('todo-check')) refresh();
     });
     list.addEventListener('click', (event) => {
-      if (event.target.tagName !== 'BUTTON') return;
+      if (!event.target.classList.contains('todo-delete')) return;
       event.target.parentElement.remove();
       refresh();
     });

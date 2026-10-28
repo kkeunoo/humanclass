@@ -4,6 +4,20 @@
 
 양쪽 `17_event_form.html`과 `asset/js/17_event_form.js`를 기준으로 한다. 입력·제출의 기본 흐름을 이 장에서 읽고, 실제 수업 문제는 [주문·로그인·피자](17-03_JavaScript_주문_로그인_피자실습.md)와 [메뉴·Todo](17-04_JavaScript_메뉴와_Todo실습.md)에서 강사님·내 코드를 비교한다. 외부 전송 주소를 로컬 수신 페이지로 바꾼 검수본에서 양쪽 폼의 입력 길이 검사와 제출값을 확인했다.
 
+**폼 이벤트란?** 입력 칸에 초점이 오거나 글자가 바뀌고, 사용자가 제출을 시도할 때 발생하는 일이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```html
+<input id="query">
+<script>
+  const query = document.querySelector('#query');
+  query.addEventListener('input', function () {
+    console.log(query.value);
+  });
+</script>
+```
+
+사용자가 `가`를 입력하면 `가`, 이어 `나`를 입력하면 `가나`가 출력된다. 원본은 이 변화 기록에 더해 초점 변화와 제출 시 길이 검사를 다룬다.
+
 <!-- chapter-toc -->
 
 - [1. 어떤 시점에 실행할까](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md#section-1)
@@ -182,9 +196,9 @@ log(query.value)는 입력된 문자열을 원본 log 함수의 innerHTML에 넣
 
 <a id="section-6"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17_JavaScript_폼이벤트와_이벤트전파_실전문제_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 requestSubmit, validity API로 구성한 전체 검증 도구, 세밀한 유니코드 글자 수 계산은 추가 학습이다. 본문은 원본의 focus·blur·input·submit, trim·length 검사 범위에 둔다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17_JavaScript_폼이벤트와_이벤트전파_실전문제_연습문제.md) → [다음: 이벤트 전파와 위임](17-02_JavaScript_이벤트전파와_위임.md)
 

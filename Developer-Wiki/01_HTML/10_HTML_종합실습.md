@@ -2,7 +2,7 @@
 
 [HTML 목차](README.md) · [폼 전송 복습](07-02_HTML_폼_전송과_GET_POST.md)
 
-기존 10번의 교육 사이트 프로젝트에는 시맨틱 영역·ARIA·새 입력 속성 등이 섞여 있었다. 그 내용은 [추가 프로젝트](10_HTML_종합실습.md#extra-04-1)로 분리했다. 이 장은 **양쪽 수업 코드에서 사용한 HTML을 조합하는 기본 복습**이다.
+**종합실습**은 앞에서 따로 배운 문서 구조·목록·표·폼을 하나의 문서에 연결해 보는 연습이다. 이번에는 수업에서 실제 사용한 태그만으로 학습 신청 화면을 만들고, 제출 전 주소에 붙을 값을 예상한다. 화면이 보이는 것과 신청이 서버에 저장되는 것은 다른 일이다.
 
 아래 코드는 원본에 그대로 존재하는 시험 코드가 아니라 **수업 범위 안에서 만든 설명용 재구성**이다. CSS·JavaScript·FastAPI를 먼저 구현하지 않아도 문서와 GET 제출을 확인할 수 있다.
 
@@ -39,7 +39,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>목록·표·폼 GET 제출 복습</title>
+    <title>학습 신청 연습</title>
 </head>
 <body>
     <h1>HTML 복습 모임</h1>
@@ -119,6 +119,16 @@ learner=student&topic=table&topic=form&session=pm&memo=review
 
 ## 4. 원본으로 다시 설명해 보기
 
+예시 정답을 읽기 전에, 원본에서 어떤 차이를 배웠는지 다시 확인한다.
+
+| 수업 원본 비교 | 강사님 코드 | 내 코드 | 이 실습에 적용한 판단 |
+| --- | --- | --- | --- |
+| 표의 설명 | `caption` 아래 잘못 놓인 `summary` | 두 요소를 `hidden`으로 작성 | `caption`을 보이게 두고 잘못된 `summary`를 넣지 않음. [표 원본 비교](05_HTML_테이블.md#groups) |
+| 체크박스의 마지막 값 | `name="coffee"`만 있고 `value` 없음 | `value="5"`까지 지정 | 선택지를 구별하려는 이 실습에서는 `topic`마다 값을 지정. [폼 원본 비교](07_HTML_폼과_입력요소.md#choice) |
+| GET 전송 | `song`·`singer`에 이름 있음 | 같은 전송 항목, 마지막 `br`만 차이 | 화면 배치보다 `name`·선택 상태를 보고 쿼리 예상. [전송 원본 비교](07-02_HTML_폼_전송과_GET_POST.md#get) |
+
+표의 코드는 원본을 그대로 다시 붙인 것이 아니라 앞 장의 비교를 요약한 것이다. 아래 질문은 **새로 만든 종합실습**의 값으로 답한다.
+
 - 왜 이름에 `id`와 `name`을 둘 다 썼는가?
 - 표 체크박스의 `value`를 지우면 어떤 값이 제출되는가?
 - 신청 버튼을 `type="button"`으로 바꾸면 기본 제출이 일어나는가?
@@ -139,27 +149,6 @@ learner=student&topic=table&topic=form&session=pm&memo=review
 원본 `06_img.html`에서 이미지의 너비만 200으로 지정한 경우와 200×300을 모두 지정한 경우를 비교한다. 이 실습의 실제 이미지 경로와 내 문서 위치를 먼저 적는다. 깨진 경로를 고치는 것과 이미지 비율을 고치는 것을 구별한다.
 
 추가편의 `nav`·`article`·`fieldset`·`required`·ARIA를 몰라도 여기까지 설명할 수 있으면 이번 기본 복습을 마친 것이다.
-
-[HTML 목차로 돌아가기](README.md)
-
-<!-- legacy-migration -->
-
-<a id="index-section-68"></a>
-<a id="index-section-14"></a>
-<a id="html-29"></a>
-<a id="html-58"></a>
-<a id="html-7"></a>
-<a id="html-44"></a>
-<a id="html-39"></a>
-<a id="html-12"></a>
-<a id="html-24"></a>
-<a id="index-section-65"></a>
-<a id="index-section-66"></a>
-<a id="html-43"></a>
-
-### 이전 색인 링크 안내
-
-이전 절 주소를 보존한 안내 위치다. 개편 전 절 번호와 현재 절 번호는 서로 다르다. 이전 확장 프로젝트는 [추가로 알면 좋은 것 — 교육과정 페이지](10_HTML_종합실습.md#extra-04-1)로 옮겼다. 이 문서 위쪽은 배운 태그만으로 구성한 새 기본 복습이다.
 
 <!-- inlined-extra-2026 -->
 
@@ -270,3 +259,26 @@ CSS·JavaScript·이미지 파일·서버 API가 없이도 구조와 브라우�
 | 메뉴 토글·다크 모드·aria-live·구조화 데이터 | [설계와 검수](09_HTML_실무_코딩스타일.md#extra-03-4)에 후속 학습으로 명시 |
 
 예전 예제의 `assets/css/style.css`, `classroom.webp`, 상세 페이지, `/newsletter` 같은 경로는 파일·서버를 따로 준비해야 했다. 그 큰 코드를 바로 실행 가능한 수업 완성본으로 제시하지 않는다. 원래 파일은 제공된 ZIP에 보존되어 있으며, 이번에는 중복을 줄이고 실행 전제가 분명한 작은 예제로 다시 구성했다.
+
+<!-- legacy-migration -->
+
+<a id="index-section-68"></a>
+<a id="index-section-14"></a>
+<a id="html-29"></a>
+<a id="html-58"></a>
+<a id="html-7"></a>
+<a id="html-44"></a>
+<a id="html-39"></a>
+<a id="html-12"></a>
+<a id="html-24"></a>
+<a id="index-section-65"></a>
+<a id="index-section-66"></a>
+<a id="html-43"></a>
+
+### 이전 색인 링크 안내
+
+이전 절 주소를 보존한 안내 위치다. 개편 전 절 번호와 현재 절 번호는 서로 다르다. 이전 확장 프로젝트는 [추가로 알면 좋은 것 — 교육과정 페이지](10_HTML_종합실습.md#extra-04-1)로 옮겼다. 이 문서 위쪽은 배운 태그만으로 구성한 새 기본 복습이다.
+
+---
+
+[HTML 목차로 돌아가기](README.md)

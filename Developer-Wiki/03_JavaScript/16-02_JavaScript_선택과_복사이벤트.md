@@ -4,6 +4,17 @@
 
 양쪽 `asset/js/16_event_mouse.js`의 선택·복사 처리와 resize 예제다. 이벤트 발생을 관찰하는 것과 브라우저의 기본 동작을 바꾸는 것을 구분한다.
 
+**기본 동작이란?** 예를 들어 글자를 선택해 복사할 때 브라우저가 원래 수행하는 복사다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```javascript
+document.addEventListener('copy', function (event) {
+    console.log('복사 시도');
+    event.preventDefault();
+});
+```
+
+이 코드는 복사 시도를 출력한 뒤 기본 복사를 취소한다. 원본은 여기서 선택한 글자를 읽어 출처 문구를 붙인 **새 복사 데이터**까지 지정한다.
+
 <!-- chapter-toc -->
 
 - [1. 우클릭 메뉴와 글자 선택](16-02_JavaScript_선택과_복사이벤트.md#section-1)
@@ -192,9 +203,9 @@ innerWidth/innerHeight는 창 안쪽 뷰포트 크기이며, 표시되는 스크
 
 <a id="section-6"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/16-02_JavaScript_선택과_복사이벤트_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 navigator.clipboard의 읽기·쓰기와 권한 처리, 모바일 선택 UI까지 다루는 복사 도구는 추가 학습이다. 본문은 수업에서 쓴 copy 이벤트와 clipboardData 범위에 둔다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/16-02_JavaScript_선택과_복사이벤트_연습문제.md) → [다음: 폼 이벤트](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md)
 

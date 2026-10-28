@@ -17,6 +17,14 @@
 
 ## 1. `value`와 `placeholder`는 다르다
 
+**입력 요소**는 사용자가 값을 적거나 선택하는 자리다. `value`는 입력에 실제로 들어 있는 값이고, `placeholder`는 값이 비었을 때 보이는 안내다. 다음 한 줄은 **설명용 예제**다.
+
+```html
+<input type="text" name="student" value="근욱" placeholder="이름 입력">
+```
+
+처음에는 `근욱`이 입력값으로 보인다. 내용을 지우면 `이름 입력`이라는 힌트가 보이지만, 힌트 자체가 제출되는 값은 아니다. 아래 양쪽 수업 코드는 초기값을 어떻게 썼는지 확인하는 출발점이다.
+
 ### 강사님 코드 — 원본 발췌
 
 강사님 `workspace_html/07_form.html` 12~12행
@@ -229,7 +237,31 @@
 
 정확성 참고: [HTML 표준 — input](https://html.spec.whatwg.org/dev/input.html), [폼 컨트롤과 제출](https://html.spec.whatwg.org/dev/form-control-infrastructure.html).
 
-[다음: 폼 전송](07-02_HTML_폼_전송과_GET_POST.md)
+<!-- inlined-extra-2026 -->
+
+
+## 추가로 알면 좋은 것
+
+이하의 내용은 **수업 원본에서 확인된 필수 진도가 아닌 추가 학습**이다. 위의 기본 설명을 이해한 뒤 필요할 때 읽는다.
+
+<a id="extra-02-3"></a>
+
+### 3. 폼의 묶음과 추가 검증
+
+```html
+<form method="get">
+    <fieldset>
+        <legend>알림 신청</legend>
+        <label for="email">이메일</label>
+        <input id="email" name="email" type="email" required>
+    </fieldset>
+    <button type="submit">입력 확인</button>
+</form>
+```
+
+`fieldset`은 관련 입력을 묶고 `legend`는 그 묶음의 제목이다. `type="email"`과 `required`는 브라우저의 형식·필수 입력 검증에 관여한다. 위 기능은 이번 HTML 원본의 기본 실습 범위를 넘어간다. 서버 저장 기능이나 모든 상황의 유효성 검증을 완성한 예제는 아니다. [HTML 표준 — 폼](https://html.spec.whatwg.org/dev/forms.html)
+
+그 밖의 `pattern`, `minlength`, `maxlength`, `autocomplete`, 파일 업로드용 `enctype` 등의 상세 설계는 필요한 시점에 별도로 학습한다. 반면 **color·date·time·number·range는 실제 양쪽 원본에 있어 기본편에 남겼다.**
 
 <!-- legacy-migration -->
 
@@ -264,29 +296,6 @@
 
 이전 절 주소를 보존한 안내 위치다. 개편 전 절 번호와 현재 절 번호는 서로 다르다. 입력 상태는 이 문서, 제출되는 이름·값과 GET·POST는 [폼 전송](07-02_HTML_폼_전송과_GET_POST.md), 수업 밖 입력 기능은 [추가 입력 속성](07_HTML_폼과_입력요소.md#extra-02-3)에서 읽는다.
 
-<!-- inlined-extra-2026 -->
+---
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/07_HTML_폼과_입력요소_연습문제.md)
-
-## 추가로 알면 좋은 것
-
-이하의 내용은 **수업 원본에서 확인된 필수 진도가 아닌 추가 학습**이다. 위의 기본 설명을 이해한 뒤 필요할 때 읽는다.
-
-<a id="extra-02-3"></a>
-
-### 3. 폼의 묶음과 추가 검증
-
-```html
-<form method="get">
-    <fieldset>
-        <legend>알림 신청</legend>
-        <label for="email">이메일</label>
-        <input id="email" name="email" type="email" required>
-    </fieldset>
-    <button type="submit">입력 확인</button>
-</form>
-```
-
-`fieldset`은 관련 입력을 묶고 `legend`는 그 묶음의 제목이다. `type="email"`과 `required`는 브라우저의 형식·필수 입력 검증에 관여한다. 위 기능은 이번 HTML 원본의 기본 실습 범위를 넘어간다. 서버 저장 기능이나 모든 상황의 유효성 검증을 완성한 예제는 아니다. [HTML 표준 — 폼](https://html.spec.whatwg.org/dev/forms.html)
-
-그 밖의 `pattern`, `minlength`, `maxlength`, `autocomplete`, 파일 업로드용 `enctype` 등의 상세 설계는 필요한 시점에 별도로 학습한다. 반면 **color·date·time·number·range는 실제 양쪽 원본에 있어 기본편에 남겼다.**
+[장별 연습문제 풀기](실습/연습문제/07_HTML_폼과_입력요소_연습문제.md) · [다음: 폼 전송](07-02_HTML_폼_전송과_GET_POST.md)

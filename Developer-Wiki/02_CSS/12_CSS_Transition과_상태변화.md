@@ -4,6 +4,8 @@
 
 hover는 상태 조건이고 transition은 값이 바뀌는 과정의 시간 설정이다. transition만 적고 바뀔 값이 없으면 원본 같은 크기 변화가 시작되지 않는다.
 
+**설명용 예:** `.box { background-color: blue; transition: background-color .5s; } .box:hover { background-color: red; }`에서는 포인터가 들어갈 때 파랑에서 빨강으로, 나올 때 빨강에서 파랑으로 전환한다. 전환 선언이 기본 상태에 남아 있기 때문이다. 양쪽 수업 원본은 전환 선언을 hover 안에 두었으므로 돌아올 때 결과를 비교해야 한다.
+
 <!-- chapter-toc -->
 
 - [1. hover 안에 있는 transition](12_CSS_Transition과_상태변화.md#section-1)
@@ -96,5 +98,6 @@ box2에서 포인터를 빼면 곧바로 작아진다. 0.5s가 잘못된 단위�
 
 이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12_CSS_Transition과_상태변화_연습문제.md)
+---
 
+[장별 연습문제 풀기](실습/연습문제/12_CSS_Transition과_상태변화_연습문제.md)

@@ -4,6 +4,26 @@
 
 강사님의 `퀴즈/이벤트.html`과 내 `17_event_form.html`, `asset/js/17_event_form.js`에서 실제로 작성한 실습을 비교한다. 세 문제 모두 **클릭할 때 현재 입력 상태를 읽는다**. 아래 코드는 수업 원본을 그대로 옮겼다.
 
+**입력 상태를 읽는다는 것은?** 사용자가 값을 바꿀 수 있는 요소에서 클릭 순간의 `value`나 `checked`를 가져오는 것이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```html
+<input id="same" type="checkbox">
+<input id="orderName" value="민지">
+<input id="deliveryName">
+<script>
+  document.getElementById('same').addEventListener('click', function (event) {
+    const deliveryName = document.getElementById('deliveryName');
+    if (event.target.checked) {
+      deliveryName.value = document.getElementById('orderName').value;
+    } else {
+      deliveryName.value = '';
+    }
+  });
+</script>
+```
+
+체크하면 배송 이름에 `민지`가 들어가고, 해제하면 빈 값이 된다. 수업 원본은 같은 흐름으로 이름·주소를 함께 복사하고, 뒤이어 로그인 검사와 피자 가격 계산을 실습한다.
+
 <!-- chapter-toc -->
 
 - [1. 주문 정보와 배송 정보 복사](17-03_JavaScript_주문_로그인_피자실습.md#section-1)
@@ -282,9 +302,9 @@ HTML의 가격 예시:
 
 <a id="section-5"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-03_JavaScript_주문_로그인_피자실습_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 실제 서비스에서 사용자 입력을 HTML 문자열에 넣거나 서버로 보낼 때에는 별도의 출력 안전 처리와 서버 검사가 필요하다. 이 수업의 피자 실습은 브라우저 안에서 선택값을 읽고 계산하는 단계까지다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-03_JavaScript_주문_로그인_피자실습_연습문제.md) → [다음: 메뉴와 Todo](17-04_JavaScript_메뉴와_Todo실습.md)
 

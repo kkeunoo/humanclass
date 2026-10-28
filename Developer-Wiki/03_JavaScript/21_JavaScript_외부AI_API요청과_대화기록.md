@@ -4,6 +4,17 @@
 
 양쪽 `21_gemini.html`은 앞 장의 `fetch`를 이용해 **입력 글을 요청 본문에 넣어 보내고 결과를 읽는 구조**를 연습한다. 원본의 API 키는 빈 문자열이고, 실제 서비스 응답을 검증한 파일은 아니다. URL의 모델 이름이나 현재 사용 가능 여부를 학습 결론으로 삼지 않는다.
 
+**요청 본문과 대화 기록은 무엇인가?** 요청 본문은 보낼 데이터를 담은 값이고, 기록은 앞선 질문·답변을 배열에 순서대로 모은 값이다. 아래는 외부 서비스를 부르지 않는 **설명용 작은 예제**다.
+
+```javascript
+const list = { contents: [] };
+list.contents.push({ role: 'user', parts: [{ text: '안녕' }] });
+console.log(list.contents.length); // 1
+console.log(JSON.stringify(list)); // 보낼 수 있는 JSON 문자열
+```
+
+원본의 두 번째 버튼도 사용자 글을 `contents`에 넣은 뒤 `JSON.stringify(list)`를 요청 본문으로 보낸다. 이 예제의 출력은 요청 형식을 이해하기 위한 것이며 AI 응답을 받은 결과가 아니다.
+
 <!-- chapter-toc -->
 
 - [1. 한 번 질문 보내기](21_JavaScript_외부AI_API요청과_대화기록.md#section-1)
@@ -233,9 +244,9 @@
 
 <a id="section-5"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/21_JavaScript_외부AI_API요청과_대화기록_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 외부 API를 실제 서비스에 붙일 때는 키를 브라우저 문서에 직접 넣지 않고 서버 쪽에서 관리하는 구성을 검토한다. 이 수업 원본은 요청 형식과 Promise 흐름을 연습하는 수준이다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/21_JavaScript_외부AI_API요청과_대화기록_연습문제.md) → [다음: 웹훅 POST](22_JavaScript_웹훅_POST요청.md)
 

@@ -8,13 +8,21 @@
 
 `{name:"A", done:false}`를 JSON 문자열로 만들었다가 다시 객체로 읽고 `done`을 확인하자.
 
-**확인 기준:** 문자열을 거쳐 돌아온 객체의 `done`은 `false`다.
+**확인 기준:** 변환 전 객체, 중간 JSON 문자열, 다시 읽은 객체의 **자료형**을 구분한다.
 
 <details>
 <summary>해설 — 직접 해 본 뒤 펼치기</summary>
 
-`JSON.stringify`는 문자열을, `JSON.parse`는 객체를 반환한다. JSON의 키·문자열은 큰따옴표로 표현된다.
+```javascript
+const task = { name: 'A', done: false };
+const text = JSON.stringify(task);
+const parsed = JSON.parse(text);
+console.log(text);        // '{"name":"A","done":false}'
+console.log(parsed.done); // false
+```
+
+`JSON.stringify`는 객체를 **문자열**로 바꾸고 `JSON.parse`는 JSON 문자열을 다시 값으로 읽는다. JSON 텍스트의 키와 문자열 값은 큰따옴표를 사용한다. `false`는 따옴표가 없는 불리언이다.
 
 </details>
 
-원본 코드에서 같은 기능을 찾고, 입력값·반환값·화면 변화가 문제와 어디서 달라지는지 한 문장으로 적어 보자.
+강사님·내 원본의 객체 속성 읽기와 JSON 왕복을 같은 순서로 추적하자. 문자열을 화면에 표시한 것과 객체의 속성에 접근한 것은 다른 단계다.

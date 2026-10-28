@@ -6,15 +6,29 @@
 
 ## 문제
 
-상자에 마우스를 올리고 내릴 때 상태 문구를 바꾸고, 드래그 시작 이벤트도 기록하자.
+상자에서 마우스를 **누르기 → 움직이기 → 놓기** 순서로 조작할 때 `mousedown`, `mousemove`, `mouseup`이 언제 발생하는지 기록하자. 이동 중에는 누르고 있는지 나타내는 변수도 바꾼다.
 
-**확인 기준:** mouseenter, mouseleave, dragstart를 구별해 볼 수 있다.
+```html
+<div id="box" style="width:150px;height:100px;border:1px solid black">상자</div>
+```
+
+**확인 기준:** 누르기 전 이동과 누른 뒤 이동을 구별하고, 손을 놓으면 드래그 상태가 꺼지는지 확인한다.
 
 <details>
 <summary>해설 — 직접 해 본 뒤 펼치기</summary>
 
-각 이벤트를 같은 함수에 몰아넣기 전에 발생 시점과 대상 요소를 적는다.
+```javascript
+let dragging = false;
+const box = document.querySelector('#box');
+box.addEventListener('mousedown', () => { dragging = true; });
+box.addEventListener('mousemove', () => {
+  if (dragging) console.log('누른 채 이동');
+});
+box.addEventListener('mouseup', () => { dragging = false; });
+```
+
+이 코드는 상태만 기록하며 실제 위치 이동은 하지 않는다. 강사님·내 원본의 드래그는 좌표를 계산해 요소를 움직인다. **요소 밖에서 놓으면 `mouseup`을 놓칠 수 있다는 원본의 한계**도 [본문 6절](../../16_JavaScript_마우스이벤트와_드래그복사제어.md)에서 확인한다.
 
 </details>
 
-원본 코드에서 같은 기능을 찾고, 입력값·반환값·화면 변화가 문제와 어디서 달라지는지 한 문장으로 적어 보자.
+`dragstart`는 이 수업의 마우스 좌표 기반 드래그 원본에서 사용한 이벤트가 아니다. 따라서 기본 문제에 섞지 않는다.

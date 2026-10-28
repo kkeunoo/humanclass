@@ -4,6 +4,17 @@
 
 원본 파일 이름은 `19_json.html`이다. 하지만 첫 부분의 `json` 변수에는 **함수까지 들어간 JavaScript 객체**가 있다. `JSON.stringify`를 거쳐 나온 문자열이 JSON 형식이다. 객체와 JSON 문자열을 구별하면 뒤의 `parse`가 이해된다.
 
+**객체란?** 이름이 있는 값들을 한데 묶은 JavaScript 자료형이다. **JSON은?** 이 값을 정해진 형식의 글자로 표현한 것이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```javascript
+const person = { name: '민지', age: 20 };
+console.log(person.name); // 민지
+const text = JSON.stringify(person);
+console.log(text); // {"name":"민지","age":20} 형태의 문자열
+```
+
+`person`은 속성을 읽을 수 있는 객체이고 `text`는 문자열이다. 수업 원본에서는 함수가 든 객체를 문자열로 바꿀 때 어떤 값이 빠지는지도 확인한다.
+
 <!-- chapter-toc -->
 
 - [1. 객체의 키와 값](19_JavaScript_객체와_JSON.md#section-1)
@@ -265,9 +276,9 @@
 
 <a id="section-6"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/19_JavaScript_객체와_JSON_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 실제로 외부에서 받은 문자열은 JSON 형식이 아닐 수 있으므로 `JSON.parse` 오류 처리도 고려한다. 이 원본에는 오류를 잡는 코드가 없다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/19_JavaScript_객체와_JSON_연습문제.md) → [다음: AJAX와 fetch](20_JavaScript_AJAX와_fetch.md)
 

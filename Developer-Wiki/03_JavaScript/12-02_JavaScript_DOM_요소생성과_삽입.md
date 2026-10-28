@@ -4,6 +4,19 @@
 
 양쪽 `12_dom_content.html`의 createElement와 삽입 실습이다. **요소 생성 → 내용 설정 → 부모에 연결**을 하나씩 구분한다.
 
+**요소 생성이란?** 새 태그를 JavaScript로 만든 다음 문서의 원하는 위치에 붙이는 일이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```html
+<div id="log"></div>
+<script>
+  const p = document.createElement('p');
+  p.textContent = '새 문장';
+  document.getElementById('log').append(p);
+</script>
+```
+
+실행 후 `#log` 안에 `<p>새 문장</p>`이 생긴다. `createElement`만 실행한 단계에서는 아직 화면의 문서에 붙지 않는다는 점을 원본에서 확인한다.
+
 <!-- chapter-toc -->
 
 - [1. createElement만으로 화면에 나타나지는 않는다](12-02_JavaScript_DOM_요소생성과_삽입.md#section-1)
@@ -345,9 +358,9 @@ rows는 `[['제목1','작성자1'], …, ['제목5','작성자5']]`이다. rows[
 
 <a id="section-7"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12-02_JavaScript_DOM_요소생성과_삽입_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 DocumentFragment, cloneNode, replaceChildren은 원본 밖 확장 API다. 위 문제를 풀기 위해 새로 배우도록 요구하지 않는다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12-02_JavaScript_DOM_요소생성과_삽입_연습문제.md) → [다음: 스타일과 퀴즈](12-03_JavaScript_DOM_스타일과_퀴즈.md)
 

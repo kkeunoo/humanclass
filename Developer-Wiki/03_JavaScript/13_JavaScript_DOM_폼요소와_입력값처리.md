@@ -4,6 +4,19 @@
 
 기준은 양쪽 `13_dom_form.html`이다. input·select·textarea에서 **현재 값은 value, 라디오·체크박스의 체크 상태는 checked**로 다룬다. 모든 작업이 3초 지연 setTimeout 콜백 안에서 한 번 실행된다. 입력할 때마다 자동 갱신하는 이벤트 실습과 구분한다.
 
+**폼 요소란?** 사용자가 글자를 입력하거나 항목을 선택하는 HTML 요소다. `value`는 현재 입력값, `checked`는 선택 여부를 뜻한다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```html
+<input id="name" value="민지">
+<input id="agree" type="checkbox" checked>
+<script>
+  console.log(document.getElementById('name').value); // 민지
+  console.log(document.getElementById('agree').checked); // true
+</script>
+```
+
+원본은 이 값을 읽는 순서와 값을 다시 대입하는 시점에 따라 결과가 어떻게 달라지는지 보여 준다.
+
 <!-- chapter-toc -->
 
 - [1. 입력값을 읽는 순서도 결과에 영향을 준다](13_JavaScript_DOM_폼요소와_입력값처리.md#section-1)
@@ -321,9 +334,9 @@ view.innerText = textarea.value
 
 <a id="section-8"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/13_JavaScript_DOM_폼요소와_입력값처리_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 FormData, validity API, 새 입력 검증 도구, Array.from으로 입력 목록 변환하기는 추가 학습이다. 기본 복습은 value·checked·선택자·for문·배운 문자열 메서드로 해결한다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/13_JavaScript_DOM_폼요소와_입력값처리_연습문제.md) → [다음: 동기와 비동기](14_JavaScript_동기비동기와_이벤트루프.md)
 

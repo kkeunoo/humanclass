@@ -4,6 +4,16 @@
 
 이 장에서는 값을 저장하고 바꾸는 방법, 문자열과 숫자를 구분하는 방법을 익힌다. 원본 `01_var.html`은 `<script>` 안에서 실행하므로 화면 본문보다 개발자 도구의 Console에서 결과를 확인한다. 주석 처리한 줄은 실행되지 않는다.
 
+먼저 **설명용 예제**를 한 줄씩 읽어 보자.
+
+```javascript
+let score = 60;
+score = 65;
+console.log(score); // 65
+```
+
+첫 줄은 이름과 초기값을 만들고, 둘째 줄은 같은 이름에 새 값을 저장한다. 마지막 줄은 그때의 값을 보여 준다. 원본 코드에서는 이 세 동작에 `var`·`let`·`const`의 선언 규칙과 문자열 대입까지 더해 비교한다.
+
 <!-- chapter-toc -->
 
 - [1. 선언·대입·출력을 구분하기](01_JavaScript_변수와_자료형.md#section-1)
@@ -215,9 +225,11 @@ parseInt는 입력 전체가 올바른 숫자인지 검사하는 함수가 아�
 
 <a id="section-6"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/01_JavaScript_변수와_자료형_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 strict mode 상세, 호이스팅·초기화 전 접근의 내부 원리, Number.isNaN·Number.isInteger를 사용하는 별도 검증 체계는 이 장의 필수 학습에서 분리한다. 선언 규칙을 더 확인하려면 [MDN let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let)을 참고한다.
+
+---
+
+[장별 연습문제 풀기](실습/연습문제/01_JavaScript_변수와_자료형_연습문제.md) · [다음: 연산자](02_JavaScript_연산자.md)
 

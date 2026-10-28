@@ -4,6 +4,19 @@
 
 양쪽 `12_dom_content.html`의 후반부다. 앞에서 선택한 요소의 style을 바꾸고, 내 퀴즈 풀이로 선택·텍스트·클래스를 함께 복습한다.
 
+**스타일 조작이란?** 이미 선택한 요소의 CSS 값을 JavaScript로 바꾸는 일이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+
+```html
+<p id="clock">시계</p>
+<script>
+  const clock = document.getElementById('clock');
+  clock.style.color = 'red';
+  console.log(clock.style.color); // red
+</script>
+```
+
+화면의 글자는 빨간색이 된다. 원본은 여기서 더 나아가 문자열인 `px` 값을 숫자로 계산한 뒤 다시 단위를 붙인다.
+
 <!-- chapter-toc -->
 
 - [1. 직접 쓴 스타일과 계산된 스타일](12-03_JavaScript_DOM_스타일과_퀴즈.md#section-1)
@@ -278,9 +291,9 @@ if (Q4_query[i].textContent.trim() === '') {
 
 <a id="section-6"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12-03_JavaScript_DOM_스타일과_퀴즈_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 다양한 CSS 단위를 처리하는 범용 크기 조절기나 스타일 관리 도구는 별도 확장이다. 기본 학습은 원본의 정수 px 계산과 실제 퀴즈 풀이까지다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/12-03_JavaScript_DOM_스타일과_퀴즈_연습문제.md) → [다음: 폼 입력값](13_JavaScript_DOM_폼요소와_입력값처리.md)
 

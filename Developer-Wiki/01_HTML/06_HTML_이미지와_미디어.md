@@ -15,6 +15,8 @@
 
 ## 1. 같은 이미지를 200 × 300으로 표시하기
 
+`img`는 HTML 문서 안에 그림을 표시할 때 쓴다. `src`는 가져올 파일의 위치, `alt`는 그림을 대신할 텍스트다. 예를 들어 같은 폴더에 `photo.png`가 있다면 `<img src="photo.png" alt="수업 사진">`으로 적는다. 파일이 있으면 그림이 나타나고, 파일이 없거나 표시할 수 없을 때는 대체 텍스트가 그림의 정보를 전한다. 이 한 줄은 **설명용 예제**이며 아래 양쪽 원본의 파일명과 구분한다.
+
 ### 강사님 코드 — 원본 발췌
 
 강사님 `workspace_html/06_img.html` 11~15행
@@ -133,39 +135,8 @@
 
 정확성 참고: [HTML 표준 — 이미지](https://html.spec.whatwg.org/dev/embedded-content.html#the-img-element), [동영상과 미디어 속성](https://html.spec.whatwg.org/dev/media.html).
 
-[다음: 폼 입력요소](07_HTML_폼과_입력요소.md)
-
-<!-- legacy-migration -->
-
-<a id="index-section-70"></a>
-<a id="index-section-14"></a>
-<a id="html-16"></a>
-<a id="html-7"></a>
-<a id="html-17"></a>
-<a id="html-43"></a>
-<a id="index-section-42"></a>
-<a id="html-31"></a>
-<a id="html-36"></a>
-<a id="index-section-68"></a>
-<a id="html-18"></a>
-<a id="html-32"></a>
-<a id="html-4"></a>
-<a id="index-section-69"></a>
-<a id="html-20"></a>
-<a id="html-29"></a>
-<a id="html-27"></a>
-<a id="html-5"></a>
-<a id="html-22"></a>
-<a id="html-11"></a>
-<a id="html-25"></a>
-
-### 이전 색인 링크 안내
-
-이전 절 주소를 보존한 안내 위치다. 개편 전 절 번호와 현재 절 번호는 서로 다르다. 수업 이미지·동영상은 이 문서, 반응형 이미지·추가 미디어 요소는 [추가 미디어](06_HTML_이미지와_미디어.md#extra-02-2)에서 읽는다.
-
 <!-- inlined-extra-2026 -->
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/06_HTML_이미지와_미디어_연습문제.md)
 
 ## 추가로 알면 좋은 것
 
@@ -195,3 +166,35 @@
 이 조각을 실행하려면 같은 폴더에 `lesson.png`가 있어야 한다. `alt`는 이미지 대체 설명, `figcaption`은 보이는 캡션이므로 반드시 같은 문장을 두 번 적어야 하는 것은 아니다. [HTML 표준 — 이미지](https://html.spec.whatwg.org/dev/embedded-content.html), [figure](https://html.spec.whatwg.org/dev/grouping-content.html#the-figure-element)
 
 원본의 주석 처리된 YouTube iframe에서 여러 권한 속성을 보았다는 사실만으로 그 권한들의 세부 사용을 배웠다고 판단하지 않는다. 이 개편본은 외부 임베드·음원·자막을 자동으로 불러오는 확장 프로젝트를 기본 실습에 넣지 않는다.
+
+<!-- legacy-migration -->
+
+<a id="index-section-70"></a>
+<a id="index-section-14"></a>
+<a id="html-16"></a>
+<a id="html-7"></a>
+<a id="html-17"></a>
+<a id="html-43"></a>
+<a id="index-section-42"></a>
+<a id="html-31"></a>
+<a id="html-36"></a>
+<a id="index-section-68"></a>
+<a id="html-18"></a>
+<a id="html-32"></a>
+<a id="html-4"></a>
+<a id="index-section-69"></a>
+<a id="html-20"></a>
+<a id="html-29"></a>
+<a id="html-27"></a>
+<a id="html-5"></a>
+<a id="html-22"></a>
+<a id="html-11"></a>
+<a id="html-25"></a>
+
+### 이전 색인 링크 안내
+
+이전 절 주소를 보존한 안내 위치다. 개편 전 절 번호와 현재 절 번호는 서로 다르다. 수업 이미지·동영상은 이 문서, 반응형 이미지·추가 미디어 요소는 [추가 미디어](06_HTML_이미지와_미디어.md#extra-02-2)에서 읽는다.
+
+---
+
+[장별 연습문제 풀기](실습/연습문제/06_HTML_이미지와_미디어_연습문제.md) · [다음: 폼 입력요소](07_HTML_폼과_입력요소.md)

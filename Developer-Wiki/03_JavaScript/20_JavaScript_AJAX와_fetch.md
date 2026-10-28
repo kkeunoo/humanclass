@@ -4,6 +4,19 @@
 
 양쪽 `20_ajax.html`과 `asset/js/20_ajax.js`에서 실제 다룬 것은 `XMLHttpRequest`, 응답의 JSON 변환, `fetch`의 `then`·`catch`다. 네트워크 예제는 외부 사이트의 상태와 브라우저 실행 환경에 따라 결과가 바뀔 수 있다. 아래는 **코드 흐름**을 기준으로 설명한다.
 
+**AJAX란?** 지금 보고 있는 페이지를 통째로 이동하지 않고 데이터를 요청해, 도착한 뒤 결과를 처리하는 방식이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**이며, `19_json.html`이 같은 위치에 있는 웹 서버에서 실행한다.
+
+```javascript
+const xhr = new XMLHttpRequest();
+xhr.open('GET', '19_json.html');
+xhr.onload = function () {
+  console.log(xhr.responseText); // 응답이 도착하면 HTML 문자열 출력
+};
+xhr.send();
+```
+
+`send()` 다음 줄에서 응답이 이미 도착했다고 가정하지 않는다. 수업 원본도 `onload` 안에서 응답을 읽으며, 다른 예제에서는 JSON 문자열을 `JSON.parse`로 바꾼다.
+
 <!-- chapter-toc -->
 
 - [1. XMLHttpRequest의 네 단계](20_JavaScript_AJAX와_fetch.md#section-1)
@@ -324,9 +337,9 @@ function debug() {
 
 <a id="section-6"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/20_JavaScript_AJAX와_fetch_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 원본 예제에는 응답 상태 코드 검사와 요청 실패 시 사용자 화면 안내가 없다. 실제 서비스에서는 성공 응답인지 확인하고 실패를 화면에서도 설명해야 한다.
+
+**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/20_JavaScript_AJAX와_fetch_연습문제.md) → [다음: 날씨 응답](20-02_JavaScript_날씨응답_필터와_표시.md)
 

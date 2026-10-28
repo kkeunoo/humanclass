@@ -4,6 +4,17 @@
 
 기준은 양쪽 `06_array.html`이다. [04장](04_JavaScript_반복문과_배열순회.md)의 순회·map·filter를 익혔다면, 여기서는 **인덱스·원본 변경·반환값**을 중심으로 읽는다. 메서드는 객체에 속한 함수다. 예를 들어 arr.push(5)는 arr에 값을 추가하는 메서드 호출이다.
 
+**배열**은 여러 값을 순서대로 담고 0부터 시작하는 번호로 꺼내는 자료다. 먼저 **설명용 예제**를 보자.
+
+```javascript
+const numbers = [10, 20];
+console.log(numbers[0]);       // 10
+console.log(numbers.push(30)); // 3: 새 배열 길이
+console.log(numbers);          // [10, 20, 30]
+```
+
+`push`는 원본 배열을 바꾸지만 반환하는 값은 **추가한 30이 아니라 새 길이 3**이다. 아래 양쪽 코드에서도 메서드를 볼 때마다 원본 상태와 반환값을 따로 적는다.
+
 <!-- chapter-toc -->
 
 - [1. 배열과 const](06_JavaScript_배열과_배열메서드.md#section-1)
@@ -383,9 +394,11 @@ console.log(result_fail); // [3]
 
 <a id="section-8"></a>
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/06_JavaScript_배열과_배열메서드_연습문제.md)
-
 ## 추가로 알면 좋은 것
 
 Array.from·Set·URLSearchParams, 중복 이름까지 다루는 빈도표, 완성된 예약 앱, splice 삽입·교체 확장은 이 장의 기본 풀이와 분리한다. 실제 배열·반복·조건문으로 작성한 풀이를 먼저 이해한다.
+
+---
+
+[장별 연습문제 풀기](실습/연습문제/06_JavaScript_배열과_배열메서드_연습문제.md) · [다음: 날짜](07_JavaScript_Date와_날짜처리.md)
 

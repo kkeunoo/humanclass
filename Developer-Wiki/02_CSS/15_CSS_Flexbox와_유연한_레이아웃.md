@@ -4,6 +4,8 @@
 
 Flexbox는 부모에 display:flex를 지정하고, 직접 자식들을 한 축을 중심으로 배치한다. 부모의 정렬 속성과 자식의 크기·순서 속성을 구분한다.
 
+**설명용 예:** 부모에 `display:flex; justify-content:center`를 주고 자식 세 개의 전체 너비가 부모보다 작으면, 남은 주축 공간이 양쪽에 나뉘어 자식들이 가운데 모인다. `flex-direction:row`일 때 주축은 가로다. 이 예제는 원본 발췌가 아니며, 아래 실제 코드에서는 주석 처리된 정렬 실험과 현재 실행 중인 `order`를 따로 읽는다.
+
 <!-- chapter-toc -->
 
 - [1. 현재 실행 중인 상태](15_CSS_Flexbox와_유연한_레이아웃.md#section-1)
@@ -102,25 +104,8 @@ flex-direction을 확인한다. 현재 row에서 align-items는 세로 교차축
 
 **추가로 알면 좋은 것:** flex-basis·flex 축약의 상세 계산, Grid 비교, 원본 밖 컴포넌트 설계는 별도 확장이다.
 
-<!-- legacy-migration -->
-
-<a id="css-4"></a>
-<a id="css-47"></a>
-<a id="css-41"></a>
-<a id="css-60"></a>
-<a id="css-12"></a>
-<a id="css-52"></a>
-<a id="css-27"></a>
-<a id="css-15"></a>
-<a id="css-16"></a>
-
-### 이전 색인 링크 안내
-
-이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
-
 <!-- inlined-extra-2026 -->
 
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/15_CSS_Flexbox와_유연한_레이아웃_연습문제.md)
 
 ## 추가로 알면 좋은 것
 
@@ -190,3 +175,23 @@ Grid로 바꾼 뒤 두 열이 보이면 수업의 inline-block 계산을 이해�
 별개다. 기본 실습은 width·border-box·margin·공백·줄바꿈을 설명하는 연습이고, Grid는 새 배치 규칙을 학습하는 연습이다.
 
 </details>
+
+<!-- legacy-migration -->
+
+<a id="css-4"></a>
+<a id="css-47"></a>
+<a id="css-41"></a>
+<a id="css-60"></a>
+<a id="css-12"></a>
+<a id="css-52"></a>
+<a id="css-27"></a>
+<a id="css-15"></a>
+<a id="css-16"></a>
+
+### 이전 색인 링크 안내
+
+이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
+
+---
+
+[장별 연습문제 풀기](실습/연습문제/15_CSS_Flexbox와_유연한_레이아웃_연습문제.md)

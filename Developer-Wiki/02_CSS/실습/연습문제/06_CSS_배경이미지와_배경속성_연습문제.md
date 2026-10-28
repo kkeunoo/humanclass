@@ -8,13 +8,15 @@
 
 상자에 배경 이미지를 한 장만 넣고 가운데에 배치하며 상자를 채워 보자.
 
-**확인 기준:** `no-repeat`, `center`, `cover`의 역할을 각각 확인한다.
+**확인 기준:** 같은 배경에 대해 반복 횟수, 놓이는 위치, 이미지 크기 조정 방식을 **세 가지 다른 질문**으로 설명한다. 이미지가 잘릴 가능성도 예상한다.
 
 <details>
 <summary>해설 — 먼저 풀고 펼치기</summary>
 
-`background-repeat:no-repeat; background-position:center; background-size:cover`를 순서대로 시험한다. 일부 잘림은 가능하다.
+`background-repeat: no-repeat; background-position: center; background-size: cover;`로 시험한다. `no-repeat`은 반복을 막고, `center`는 배경을 가운데 놓고, `cover`는 상자를 덮도록 크기를 조절한다. 그림과 상자의 비율이 다르면 가장자리가 잘릴 수 있다.
 
 </details>
 
-원본의 입력·구조·결과와 이 연습문제에서 바꾼 조건을 한 문장으로 비교해 보자.
+## 조건 바꾸기
+
+그림 전체가 반드시 보여야 한다면 `cover` 대신 수업의 `contain`을 시험한다. 이때 상자에 빈 부분이 생길 수 있다. 강사님·내 원본의 `contain`·`cover` 비교를 **잘림과 빈 공간**의 관점에서 다시 읽자.

@@ -11,7 +11,7 @@
 <details>
 <summary>정답과 확인할 점</summary>
 
-경로 함수가 템플릿에 값을 전달하고 Jinja 문서가 전달받은 변수를 렌더링한다. `extends`·`include`·`macro`는 본문 원본에서 실제 사용한 범위로 확인한다.
+경로 함수가 `TemplateResponse(request, 'home.html', {'name': '민지'})`처럼 템플릿 이름과 값을 전달하고, 템플릿의 `{{ name }}`은 `민지`로 채워진다. 이것은 **새 복습 예시**이고, 실제 원본에는 `name` 대신 `ip`와 `msg`가 있다. `extends`·`include`·`macro`는 본문 원본에서 실제 사용한 범위로 확인한다.
 
 입력→처리→결과의 실제 원본 사례는 [본문](../../03_FastAPI_Jinja2_템플릿.md)에서 확인한다.
 
