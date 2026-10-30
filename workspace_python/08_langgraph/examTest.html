@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script>
+            console.log('문제풀이')
+
+            // parseInt(Math.random() * (max - min + 1)) + min
+            
+            // let names = ['규혁', '근욱', '영욱', '상우', '용준', '도영', '재성', '준석']
+
+            // 1. 랜덤으로 1명을 고른다
+            // 2. 1.의 행동을 100번 반복한다
+            // 3. 누가 몇표가 나왔는지 출력한다
+            // 4. 가장 많은 득표수는 누구, 몇표만 출력한다
+
+            // let names = ['규혁', '근욱', '영욱', '상우', '용준', '도영', '재성', '준석']
+            // console.log(names)
+            
+            // let result = {}
+            // for(let i=0; i<100; i++) {
+            //     // let randomName = parseInt(Math.random() * (names.length) ) +1 
+            //     let randomName = Math.floor(Math.random() * names.length)
+
+            //     // key가 있었다면, 1증가. 없다면 만들어서 1로
+            //     if(result[names[randomName]] == undefined) {
+            //         result[names[randomName]] = 1
+            //     } else {
+            //         result[names[randomName]]++
+            //     }
+            // }
+
+            // let maxVote = 0
+            // let winner = ''
+
+            // for (let name in result) {
+            //     if (result[name] > maxVote) {
+            //         maxVote = result[name]
+            //         winner = name
+            //     }
+            // }
+
+            // console.log(result)
+            // console.log(winner, maxVote + '표')
+
+
+            // let names1 = ['규혁', '근욱', '영욱', '상우', '용준', '도영', '재성', '준석']
+            
+            // result = {}
+            // for(let i=0; i<100; i++){
+            //     let idx = Math.floor(Math.random() * names1.length)
+
+            //     if(result[names1[idx]] == undefined) {
+            //         result[names1[idx]] = 1
+            //     } else {
+            //         result[names1[idx]]++
+            //     }
+            // }
+            // console.log(result)
+
+            // let keys = Object.keys(result)
+            // // console.log(keys)
+
+            // let maxVote = 0
+            // let nameVote = ''
+
+            // for(let j=0; j<keys.length; j++){
+            //     let name = keys[j]
+
+            //     if(result[name] > maxVote) {
+            //         maxVote = result[name]
+            //         nameVote = name
+            //     }
+            // }
+            // console.log(maxVote, nameVote)
+
+            let names = ['규혁', '근욱', '영욱', '상우', '용준', '도영', '재성', '준석']
+
+            result = {}
+            for(let i=0; i<100; i++) {
+                let idx = Math.floor(Math.random() * names.length)
+                
+                if(result[names[idx]] == undefined) {
+                    result[names[idx]] = 1
+                } else {
+                    result[names[idx]]++
+                }
+            }
+            console.log(result)
+
+            let maxVote = 0
+            let maxName = ''
+
+            for(let name in result) {
+                if(result[name] > maxVote) {
+                    maxVote = result[name]
+                    maxName = name
+                }
+            }
+            console.log(maxName, maxVote)
+
+
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>

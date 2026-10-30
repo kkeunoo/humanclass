@@ -12,6 +12,8 @@ from collections import Counter
 
 import math
 
+from surprise import Dataset, Reader, KNNWithMeans
+
 router = APIRouter(tags=["엘라스틱서치"])
 
 @router.get("/read/head")
@@ -513,9 +515,178 @@ def split_train_test(test_size: float = 0.2):
         # .index : index만 모은다(dataframe이 가진 PK) 이후 원본에서 이걸 제외하면 train data
         test_indices.extend(ordered.tail(test_count).index.tolist())
 
-    # 테스트 할 데이터의 index는 모아 둔 상태
-    
     # 실제 테스트 데이터 추출
+    # loc[]에 index를 주면 해당 index 자료만 뽑아 옴
+    test = valid_data.loc[test_indices].copy()
     
     # 학습 데이터 추출
-        
+    train = valid_data.drop(index=test_indices)
+
+    # 내가 활용하기 위해 추가한 row num으로 원래 순서대로 재정렬(복구) 후 컬럼 지우기
+    # 그러면 거의 원본에서 필요한 데이터만 추출한 결과를 만들 수 있다
+    test = test.sort_values('original_order', kind='stable').drop(columns='original_order')
+    train = train.sort_values('original_order', kind='stable').drop(columns='original_order')
+
+    # reset_index : pandas 내부 index를 재정리
+    # drop=True를 안 해주면, 132 라고하면 123이 아니라 1323이 되는것을 막기 위함 (새로 추가됨)
+    # → 엉망인 것은 버려라
+    return test.reset_index(drop=True), train.reset_index(drop=True)
+
+# CF(Collaborative Filtering) 협업 필터링 추천
+# '다른 사람들은 뭘 좋아했지?'
+def collaborative_filtering(userId, top_k=10):
+    test, train = split_train_test()
+
+    # 판다스에서 []안에 []를 넣으면 여러 컬럼을 지정할 수 있음 (보통 2차원 배열)
+    # 판다스에서 한 줄 : 시리즈 / 엑셀처럼 2차원 : 데이터프레임
+    # 아래에서 []를 하나 빼면 시리즈처럼 한 줄로 쭉 나오게 됨
+    data = train[['userId', 'movieId', 'rating']].copy()
+    if userId not in data['userId'] :
+        raise ValueError(f'{userId}을/를 찾을 수 없습니다. 일단 차가운 시선을 듣고 다시 시도해주세요.')
+
+    # Reader는 필수
+    # 평점 데이터를 해석할 수 있도록 해주는 것(기왕이면 범위도 알려줌)
+    # 만약 rating_scale을 아래와 같이 줬는데 0.3이라면 이상치로 판단하여 쳐냄
+    reader = Reader(rating_scale=(0.5, 5.0))
+
+    # pandas의 DataFrame을 Surprise의 데이터셋으로 변경한다
+    data_set = Dataset.load_from_df(
+        data[ ['userId', 'movieId', 'rating'] ],
+        reader
+    )
+
+    # 위에서 surprise가 알아듣게 바꾸고, 지금은 모델 학습에 사용할 자료 구조로 변환한다
+    train_set = data_set.build_full_trainset()
+
+    # 유클리드 거리
+    #   - 피타고라스 정리 같이 직선 거리를 뜻 함
+    # 코사인 거리
+    #   - 거리를 보지 않고 방향(각도)만 비교
+    #   - 100편 액션 영화를 좋아한 사람과, 1편의 액션을 좋아한 사람은 같은 취향(방향)
+    #   - 문서 길이나 단어의 빈도 수는 달라도 주제가 비슷한지 판단할 때 좋다
+
+    # sim_options의 name에 들어갈 수 있는 것들
+    # msd(거리) : 기본값(Mean Squared Difference), 빠르고 대용량 데이터에 좋음 (평균 제곱을 하면 더 극명해짐)
+    # cosine(방향) : 코사인 유사도(Cosine Similarity), 무난하고 취향 패턴 분석에 좋음
+    # pearson : 피어슨 상관계수(애매한 값들), 편향 완화가 필요할 때 좋음
+    # pearson_baseline : 피어슨 베이스라인, 조금 느리고 연산이 많아 데이터가 부족한데 정밀한 예측이 필요할 때 
+
+    # user_based : 사용자 기반인지 아이템 기반인지
+    #   - True : 내 취향과 평점 패턴이 비슷한 다른 사용자(이웃)이 이 아이템에 몇점을 주었는가?
+    #   - False : 이 아이템을 좋아하는 사람들이 좋아하는 다른 유사한 아이템은 무엇인가?
+    n_neighbors = 30
+    model = KNNWithMeans(
+        k=n_neighbors,
+        sim_options={
+            'name': 'cosine',
+            'user_based': True
+        },
+        verbose=False # 학습 과정 출력 여부
+    )
+
+    # 사용 할 모델에게 학습
+    model.fit(train_set)
+
+    # 내가 평가 한 목록을 구한다
+    # to_inner_uid : 사용자 id로 Surprise 내부 index를 변환한다
+    inner_user_id = train_set.to_inner_uid(userId)
+
+    # ur : user rating
+    #   - user1이 영화1에는 3점, 영화2에는 3.5점을 줬다고 할 때 사용자 중심의 정보
+    # ir : item rating
+    #   - 영화1은 user1에게 3점 user2에게 1.5점을 받았다고 할 때 아이템 중심의 정보
+    # Surprise용으로 바꿔놓은 train_set안에서 uid에 대한 movieId와 rating이 나옴
+    rated_movies = set()
+    for inner_movie_id, rating in train_set.ur[inner_user_id] :
+        # to_raw_iid : inner_movie_id를 원본의(raw) iid(item id)로 바꿔라
+        #   - 내부 영화 index를 원래 movieId로 바꿔주는 것
+        rated_movies.add(train_set.to_raw_iid(inner_movie_id))
+
+    # 학습 데이터 중 없는 목록을 구한다
+    candidate_movies = [ 
+        train_set.to_raw_iid(inner_movie_id)
+        for inner_movie_id in range(train_set.n_items) 
+        if train_set.to_raw_iid(inner_movie_id) not in rated_movies
+    ]
+    # n_items : length
+    # for inner_movie_id in range(train_set.n_items) :
+    #     if train_set.to_raw_iid(inner_movie_id) not in rated_movies :
+    #         candidate_movies.append(train_set.to_raw_iid(inner_movie_id))
+
+    # 그 목록의 예상 평점을 계산한다
+    # 너라면 이 영화에 평점을 얼마 줄 것 같다는 예측
+    recommend = []
+    for movieId in candidate_movies :
+        # 예상 평점 (학습한 모델을 쓰는 유일한 구간)
+        # est : estimated 예측/추정의 약자, 예측한 평점
+        # score = model.predict(userId, movieId).est : 예측의 추정치를 꺼냄
+        score = model.predict(userId, movieId).est
+        recommend.append({
+            'movieId' : movieId,
+            'score' : score
+        })
+
+    # 평점이 높은 순으로 정렬(내림차순 reverse=True)
+    recommend.sort(key=lambda x:x['score'], reverse=True)
+
+    return recommend[:top_k]
+
+@router.get('/es/recommend/cf/')
+def cf(userId:int, top_k:int = 10):
+    return collaborative_filtering(userId, top_k)
+
+# Recall@K
+# 전체 추천 개수 중에 정답 개수, 순위(순서)는 보지 않는다
+# 내 정답 개수 / 전체 정답 개수
+def recall_at_k(
+    userId:int, 
+    test:pd.DataFrame,   # 정답 데이터
+    recommend:list[dict], # 추천 목록
+    threshold: float = 4.0, # 경계선에 대한 범위
+    k:int=10
+):
+    # loc[]는 where조건처럼 사용할 수 있음
+    # 내가 평점을 threshold 이상을 준 정답만 뽑자
+    # 첫 번째 전달인자 : 조건
+    # 두 번째 전달인자 : 특정 컬럼만 가져오기
+    # relevant_movies  relevant(관련된)
+    # 나와 관련된 영화 목록
+    # pandas.Series 객체는 set으로 자동 형변환이 안된다
+    # 그래서 set()으로 명시적 형변환
+    relevant_movies = set(test.loc[ 
+        # 첫 번째
+        (test['userId'] == userId)
+        & (test['rating'] >= threshold),
+
+        # 두 번째
+        'movieId'
+    ])
+    # 정답 데이터에 조건이 맞는 영화가 없어서 Recall 계산할 수 없다
+    if len(relevant_movies) == 0 :
+        return -1.0
+
+    # 암시적, 묵시적 형변환
+    recommend_moives = {
+        item['movieId'] for item in recommend[:k]
+    }
+
+    # 추천 목록 중에서 내가 좋아하는 영화의 개수
+    # 추천 중 정답 개수
+    # & : 교집합
+    hit_count = len(relevant_movies & recommend_moives)
+
+    print('hit_count', hit_count)
+    print('len(relevant_movies)', len(relevant_movies))
+
+    # Recall@K = 맞힌 개수 / 전체 정답
+    result = hit_count / len(relevant_movies)
+    return result
+
+@router.get('/recommend/recall')
+def recall(userId:int):
+    test,_ = split_train_test()
+    recommend = collaborative_filtering(userId, 50)
+    threshold = 2.0
+    k = 50
+
+    return recall_at_k(userId, test, recommend, threshold, k)
