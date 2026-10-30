@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04. display — 같은 요소를 어떤 방식으로 배치할까</title>
+    <style>
+        .row { font-size: 0; border: 1px solid black; }
+        .item { display: inline-block; width: 100px; height: 50px; border: 1px solid red; vertical-align: top; font-size: 16px; }
+        .block { display: block; width: 100px; border: 1px solid blue; }
+    </style>
+</head>
+<body>
+    <h1>한 줄과 새 줄</h1>
+    <div class="row">
+        <div class="item">A</div>
+        <div class="item">B<br>둘째 줄</div>
+    </div>
+    <div class="block">C</div>
+    <div class="block">D</div>
+</body>
+</html>

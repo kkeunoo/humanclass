@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13. transform — 자기 기준으로 보이는 모양 바꾸기</title>
+    <style>
+        .parent { position: relative; width: 300px; height: 200px; border: 1px solid black; }
+        .child { position: absolute; top: 50%; left: 50%; width: 100px; height: 50px; border: 1px solid blue; transform: translate(-50%, -50%); }
+        .sample { width: 100px; border: 1px solid red; }
+        .sample:hover { transform: scaleX(1.5); }
+    </style>
+</head>
+<body>
+    <h1>부모와 자기 기준</h1>
+    <div class="parent"><div class="child">중앙</div></div>
+    <p class="sample">가로 확대</p>
+    <p>원래 배치 기준의 다음 문단</p>
+</body>
+</html>

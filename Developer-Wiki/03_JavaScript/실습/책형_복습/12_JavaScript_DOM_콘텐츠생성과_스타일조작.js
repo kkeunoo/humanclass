@@ -1,0 +1,11 @@
+const plain = document.getElementById('plain');
+const markup = document.getElementById('markup');
+plain.textContent = '<b>안녕</b>';
+markup.innerHTML = '<b>안녕</b>';
+console.log(plain.textContent);
+console.log(markup.textContent);
+console.log(markup.querySelector('b') !== null);
+const count = document.getElementById('count');
+console.log(count.textContent + 1);
+count.textContent = Number(count.textContent) + 1;
+console.log(count.textContent);

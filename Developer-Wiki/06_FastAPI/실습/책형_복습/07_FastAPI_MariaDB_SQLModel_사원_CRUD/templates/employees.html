@@ -1,0 +1,15 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>사원 복습</title></head><body>
+<h1>사원 목록</h1>
+{% if employees %}<ul>{% for emp in employees %}
+<li>{{ emp.empno }} {{ emp.ename }} / 부서{{ emp.deptno }} / 급여{{ emp.sal }} / 수당{{ emp.comm }}</li>
+{% endfor %}</ul>{% else %}<p>자료 없음</p>{% endif %}
+<form method="post" action="/emp/insert">
+<input name="empno" placeholder="사원번호" required>
+<input name="ename" placeholder="이름" required>
+<input name="deptno" placeholder="부서번호" required>
+<input name="sal" placeholder="급여" required>
+<input name="comm" placeholder="수당: 비워도 됨">
+<button type="submit">추가</button></form>
+<form method="post" action="/emp/update"><input name="empno" placeholder="번호" required><input name="ename" placeholder="새 이름" required><button>수정</button></form>
+<form method="post" action="/emp/delete"><input name="empno" placeholder="번호" required><button>삭제</button></form>
+</body></html>

@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% import 'macros.html' as cards %}
+{% block content %}
+<h1>{{ msg }}</h1>
+<p>별점 {{ star }}</p>
+{% if star %}<p>참으로 판단한 별점</p>{% endif %}
+{% if star > 3 %}<p>높음</p>
+{% elif star == 3 %}<p>중간</p>
+{% elif star >= 0 and star <= 2 %}<p>낮음</p>
+{% else %}<p>위 세 범위 외</p>{% endif %}
+<ul>{% for bookmark in bookmarks %}
+<li>{{ loop.index }}. {{ bookmark }} / 첫번째={{ loop.first }} / 마지막={{ loop.last }}</li>
+{% endfor %}</ul>
+<p>{{ amount | price }}원</p>
+<p>{{ missing | default('기본값') }}</p>
+{{ cards.card('카드 제목', '카드 내용') }}
+{% endblock %}

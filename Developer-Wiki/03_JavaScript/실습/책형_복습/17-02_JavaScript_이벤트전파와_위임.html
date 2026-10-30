@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>17-02. 이벤트 전파와 위임 — 자식 클릭을 부모가 처리하는 이유</title><style></style></head>
+<body>
+    <h1>17-02. 이벤트 전파와 위임 — 자식 클릭을 부모가 처리하는 이유</h1>
+    <p>개발자 도구의 Console을 열어 결과를 확인하세요. 새로고침하면 처음부터 실행합니다.</p>
+    <div id="parent">
+        <button id="child1" type="button">전파 중단</button>
+        <button id="child2" type="button">부모로 전달</button>
+    </div>
+    <table id="board"><tbody><tr>
+        <td><input class="chk" type="checkbox" value="1" aria-label="첫 글 선택"></td>
+        <td class="title">제목1</td><td writer="w1">작성자1</td>
+    </tr></tbody></table>
+    <script src="17-02_JavaScript_이벤트전파와_위임.js"></script>
+</body>
+</html>

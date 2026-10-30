@@ -2,7 +2,7 @@
 
 [Developer-Wiki 첫 화면](README.md)
 
-기억나지 않는 단어에서 **그 내용을 실제 수업 코드로 설명하는 문서**로 이동한다. 과목별 전체 순서는 각 README에 있다. 수업 밖 확장 개념은 색인의 메인 항목으로 늘리지 않았다.
+단어에서 **정의·작은 전체 예제·결과·실제 코드 풀이가 있는 본문**으로 이동한다. 본문 내부 목차의 개념·예제·연결·빠른 정리를 사용한다. 과목별 전체 순서는 각 README에 있다. 수업 밖 확장 개념은 색인의 메인 항목으로 늘리지 않았다.
 
 ## HTML·CSS
 
@@ -57,7 +57,7 @@
 | `UploadFile`·`FileResponse` | [파일 업로드·다운로드](06_FastAPI/08_FastAPI_파일업로드_다운로드.md) |
 | `Cookie()`·세션·미들웨어 | [쿠키·세션·로그인 검사](06_FastAPI/09_FastAPI_Cookie_Session_로그인.md) |
 
-`request.headers`와 `response_model` 같은 수업 밖 내용은 [FastAPI 추가편](06_FastAPI/추가편_기존자료_학습범위_분류.md)에 있다.
+request.headers 직접 읽기와 response_model은 수업 밖 TIP이다. 범위 분류 문서는 안내이며 실제 보충은 관련 본문 하단에서 읽는다.
 
 ## 데이터 분석·기초 머신러닝
 
@@ -84,4 +84,39 @@
 | --- | --- |
 | MovieLens·`movieId`·`read_csv` | [CSV 읽기와 검증](09_영화CSV_청크와_임베딩/01_CSV읽기와_검증.md) |
 | 장르·태그·`groupby`·겹치는 청크 | [영화 텍스트와 청크](09_영화CSV_청크와_임베딩/02_영화텍스트와_청크.md) |
-| Gemini·OpenAI 임베딩·action 목록 | [임베딩과 미완성 경계](09_영화CSV_청크와_임베딩/03_임베딩과_미완성경계.md) |
+| Gemini·OpenAI 임베딩·action 목록 | [임베딩과 벌크 적재](09_영화CSV_청크와_임베딩/03_임베딩과_미완성경계.md) |
+
+
+## 영화 추천·시간·평가
+
+| 찾는 말 | 설명 위치 |
+| --- | --- |
+| Counter·most_common·CBF | [특징으로 검색문 만들기](09_영화CSV_청크와_임베딩/04_영화검색과_콘텐츠기반추천.md) |
+| 사용자별 최신 평점·test/train | [시간 분할](09_영화CSV_청크와_임베딩/05_시간분할과_협업필터링.md#concepts) |
+| KNNWithMeans·cosine·raw/inner ID | [협업 필터링](09_영화CSV_청크와_임베딩/05_시간분할과_협업필터링.md) |
+| Recall@K·threshold·관련 영화 | [추천 평가](09_영화CSV_청크와_임베딩/06_Recall_at_K_추천평가.md) |
+| 복사한 후반부의 출처 | [영화 단원 목차](09_영화CSV_청크와_임베딩/README.md) |
+
+## 증상에서 다시 찾기
+
+| 막힌 지점 | 먼저 확인할 본문 |
+| --- | --- |
+| print와 return이 헷갈림 | [Python 반환값](04_Python/11-01_Python_함수와_반환값.md) |
+| 같은 리스트·dict가 같이 바뀜 | [참조](00_메모리와_참조%28Stack_Heap%29/README.md), [청크의 공유 참조](08_Elasticsearch와_RAG/03_청크와_임베딩.md) |
+| 수정 뒤 화면과 저장값이 다름 | [화면 Todo](06_FastAPI/05_FastAPI_Jinja_Todo_CRUD.md) |
+| F1·AUC가 다른 방향으로 변함 | [모델 평가](07_데이터분석과_머신러닝/03_평가와_교차검증.md), [실제 CSV 종합실습](07_데이터분석과_머신러닝/종합실습.md) |
+| 검색 결과 총수와 목록 길이가 다름 | [검색 응답](08_Elasticsearch와_RAG/02_검색과_CRUD.md), [RRF 후보 총수](08_Elasticsearch와_RAG/04_벡터와_하이브리드검색.md) |
+| 사용자가 있는데 없다고 나옴 | [Series 포함 검사](09_영화CSV_청크와_임베딩/05_시간분할과_협업필터링.md) |
+| Recall이 -1.0 | [평가할 관련 영화 없음](09_영화CSV_청크와_임베딩/06_Recall_at_K_추천평가.md) |
+
+확인되지 않은 그래프 실행·운영 서비스·고급 지표는 색인의 필수 진도로 늘리지 않았다. [전체 순서](README.md) · [첨부 메모 대응](편집기록/99_첨부메모_반영_및_이후첨부.md)
+
+<!-- 이전 목차 주소 보존 -->
+<a id="elasticsearchrag"></a>
+<a id="htmlcss"></a>
+<a id="javascript"></a>
+<a id="python메모리"></a>
+<a id="sqlfastapi"></a>
+<a id="데이터-분석기초-머신러닝"></a>
+<a id="영화-csv청크임베딩"></a>
+<a id="통합-용어색인"></a>

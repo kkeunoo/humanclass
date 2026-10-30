@@ -1,25 +1,39 @@
-# SQL 장별 연습문제
+# SQL 장별 연습문제 — 21개
 
-[실습 목차](../README.md) · [SQL 목차](../../README.md)
+[SQL 목차](../../README.md) · [실습 안내](../README.md)
 
-본문 19장에 하나씩 대응하는 **새 복습 문제**다. 강사님 실제 7문제와 내 풀이를 보려면 [원본 문제 비교](../../실습_SQL_원본문제_비교.md)로 이동한다.
+## 1. 목적
 
-1. [00 SQL 실습데이터와 스크립트 읽기](00_SQL_실습데이터와_스크립트_읽기_연습문제.md)
-2. [01 SQL 기초와 SELECT](01_SQL_기초와_SELECT_연습문제.md)
-3. [02 SQL WHERE와 조건연산자](02_SQL_WHERE와_조건연산자_연습문제.md)
-4. [03 SQL LIKE와 NULL](03_SQL_LIKE와_NULL_연습문제.md)
-5. [04 SQL 정렬과 LIMIT](04_SQL_정렬과_LIMIT_연습문제.md)
-6. [05 SQL 집계함수](05_SQL_집계함수_연습문제.md)
-7. [06 SQL GROUP BY와 HAVING](06_SQL_GROUP_BY와_HAVING_연습문제.md)
-8. [07 SQL 문자열함수](07_SQL_문자열함수_연습문제.md)
-9. [08 SQL 숫자 날짜 NULL함수](08_SQL_숫자_날짜_NULL함수_연습문제.md)
-10. [09 SQL CASE 조건식](09_SQL_CASE_조건식_연습문제.md)
-11. [10 SQL UNION과 UNION ALL](10_SQL_UNION과_UNION_ALL_연습문제.md)
-12. [11 SQL 서브쿼리](11_SQL_서브쿼리_연습문제.md)
-13. [12 SQL JOIN](12_SQL_JOIN_연습문제.md)
-14. [13 SQL Outer JOIN과 Self JOIN](13_SQL_Outer_JOIN과_Self_JOIN_연습문제.md)
-15. [14 SQL DDL과 제약조건](14_SQL_DDL과_제약조건_연습문제.md)
-16. [15 SQL DML](15_SQL_DML_연습문제.md)
-17. [16 SQL Transaction](16_SQL_Transaction_연습문제.md)
-18. [17 SQL Index와 AUTO INCREMENT](17_SQL_Index와_AUTO_INCREMENT_연습문제.md)
-19. [18 SQL Recursive CTE](18_SQL_Recursive_CTE_연습문제.md)
+실제 수업 구문으로 새로 구성한 문제다. 원래 강사님 퀴즈·내 풀이와 별개이며 결과 예상·이유 설명·한 가지 수정을 묻는다. 원본 데이터와 book_ 가상 자료를 구분한다.
+
+## 2. 준비와 풀이
+
+본문 3절의 같은 연결·전체 준비 SQL을 먼저 확인한다. 결과가0행인지, NULL 한 행인지, 숫자0 한 행인지 나눠 적는다. 접힌 풀이를 본 뒤에는 왜 그런 결과인지 자기 말로 설명한다.
+
+## 3. 목록
+
+- [00. SQL 실습 데이터 — 표의 행·열과 원본 기록 읽기](00_SQL_실습데이터와_스크립트_읽기_연습문제.md)
+- [01. SELECT — 원본 자료에서 결과의 열을 고르기](01_SQL_기초와_SELECT_연습문제.md)
+- [02. WHERE — 결과에 남길 행의 조건 정하기](02_SQL_WHERE와_조건연산자_연습문제.md)
+- [03. LIKE와 NULL — 글자 모양 검사와 알 수 없는 값 구분](03_SQL_LIKE와_NULL_연습문제.md)
+- [04. ORDER BY와 LIMIT — 순서를 정하고 필요한 구간 보기](04_SQL_정렬과_LIMIT_연습문제.md)
+- [05. 집계 함수 — 여러 행을 개수·합계·평균으로 요약하기](05_SQL_집계함수_연습문제.md)
+- [06. GROUP BY와 HAVING — 어떤 단위로 묶고 남길 것인가](06_SQL_GROUP_BY와_HAVING_연습문제.md)
+- [07. 문자열 함수 — 한 글자 위치·결과 길이·원본 변경 구별](07_SQL_문자열함수_연습문제.md)
+- [08. 숫자·날짜·NULL 함수 — 입력 값과 결과 형태 이해하기](08_SQL_숫자_날짜_NULL함수_연습문제.md)
+- [09. CASE — 조건에 맞는 값을 결과 열에 넣기](09_SQL_CASE_조건식_연습문제.md)
+- [10. UNION과 UNION ALL — 조회 결과를 세로로 이어 붙이기](10_SQL_UNION과_UNION_ALL_연습문제.md)
+- [11. 서브쿼리 — 안쪽 결과의 모양을 바깥에서 사용하기](11_SQL_서브쿼리_연습문제.md)
+- [12. JOIN — 같은 번호와 범위로 자료의 관계 연결하기](12_SQL_JOIN_연습문제.md)
+- [13. 외부 조인과 자기 조인 — 보존할 대상과 각 표의 역할](13_SQL_Outer_JOIN과_Self_JOIN_연습문제.md)
+- [14. DDL과 제약조건 — 자료를 넣기 전에 표의 규칙 만들기](14_SQL_DDL과_제약조건_연습문제.md)
+- [15. DML — 어떤 행을 넣고 바꾸고 지우는가](15_SQL_DML_연습문제.md)
+- [16. 트랜잭션 — 확정 전 변경과 확정 후 상태 나누기](16_SQL_Transaction_연습문제.md)
+- [17. 인덱스와 자동 번호 — 찾는 경로와 새 행 식별자 구분](17_SQL_Index와_AUTO_INCREMENT_연습문제.md)
+- [18. 재귀 CTE — 시작 행에서 다음 관계를 반복해 따라가기](18_SQL_Recursive_CTE_연습문제.md)
+- [SQL 실제 문제 — 요구 문장의 대상·범위·빈 그룹을 코드로 옮기기](실습_SQL_원본문제_비교_연습문제.md)
+- [19. SQL 실무 코딩스타일 — 요구·관계·집계 단위를 드러내기](19_SQL_실무_코딩스타일_연습문제.md)
+
+## 4. 복습
+
+TIP 선택 학습은 필수 조건이 아니다. 원본의 잘못된 주석은 그대로 외우지 말고 옆 풀이와 반례로 확인한다. [종합실습](../../20_SQL_종합실습.md)에서 여러 개념을 연결한다.

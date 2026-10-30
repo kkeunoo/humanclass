@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>17-04. 메뉴와 Todo — 한 번의 조작 뒤 화면 상태를 맞추기</title><style>.selected { font-weight: bold; } .selected::before { content: "✔ "; } .row { display: flex; gap: 8px; margin: 8px 0; } .done { text-decoration: line-through; }</style></head>
+<body>
+    <h1>17-04. 메뉴와 Todo — 한 번의 조작 뒤 화면 상태를 맞추기</h1>
+    <p>개발자 도구의 Console을 열어 결과를 확인하세요. 새로고침하면 처음부터 실행합니다.</p>
+    <ul id="menu"><li><button type="button">인기순</button></li><li><button type="button">최신순</button></li></ul>
+    <label>할 일 <input id="todo"></label><button id="add" type="button">추가</button>
+    <p id="warning"></p>
+    <label><input id="all" type="checkbox">전체 선택</label>
+    <button id="deleteSelected" type="button">선택 삭제</button>
+    <div id="list"></div>
+    <script src="17-04_JavaScript_메뉴와_Todo실습.js"></script>
+</body>
+</html>

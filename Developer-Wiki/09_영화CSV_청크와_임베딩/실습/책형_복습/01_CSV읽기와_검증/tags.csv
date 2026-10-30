@@ -1,0 +1,5 @@
+userId,movieId,tag,timestamp
+10,1,Fun,100
+11,1,fun,110
+12,9,unknown,120
+13,9,unknown,130

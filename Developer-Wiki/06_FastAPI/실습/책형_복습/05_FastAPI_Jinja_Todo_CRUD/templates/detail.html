@@ -1,0 +1,6 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>상세</title></head><body>
+{% if todo %}<h1>{{ todo.item }}</h1>
+<p>ID {{ todo.id }}</p><a href="/update/{{ todo.id }}">수정</a>
+<form method="post" action="/delete/{{ todo.id }}"><button type="submit">삭제</button></form>
+{% else %}<p>없는 ID입니다.</p>{% endif %}
+<a href="/read">목록</a></body></html>

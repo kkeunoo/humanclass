@@ -1,41 +1,75 @@
-# 12. transition — 바뀌는 값 사이에 시간을 주기
+# 12. transition — 상태 사이의 값에 시간을 주기
 
-[CSS 목차](README.md)
+[CSS 목차](README.md) · [읽기 안내](00_CSS_V3_동작_백과_읽기법.md)
 
-hover는 상태 조건이고 transition은 값이 바뀌는 과정의 시간 설정이다. transition만 적고 바뀔 값이 없으면 원본 같은 크기 변화가 시작되지 않는다.
+hover는 언제 규칙이 맞는지를 정하고 transition은 값이 바뀌는 과정에 시간을 준다. 두 기능을 구별하면 들어갈 때는 움직이지만 나올 때는 즉시 돌아가는 원본을 설명할 수 있다.
 
-**설명용 예:** `.box { background-color: blue; transition: background-color .5s; } .box:hover { background-color: red; }`에서는 포인터가 들어갈 때 파랑에서 빨강으로, 나올 때 빨강에서 파랑으로 전환한다. 전환 선언이 기본 상태에 남아 있기 때문이다. 양쪽 수업 원본은 전환 선언을 hover 안에 두었으므로 돌아올 때 결과를 비교해야 한다.
+<a id="chapter-toc"></a>
 
-<!-- chapter-toc -->
+**이 장의 목차:** [목표](#learn) · [개념](#concepts) · [작은 예제](#example) · [내 코드](#my-code) · [연결](#connections) · [평가](#review) · [비교](#teacher) · [결과·실험](#results) · [TIP·출처](#tips) · [복습](#practice)
 
-- [1. hover 안에 있는 transition](12_CSS_Transition과_상태변화.md#section-1)
-- [2. 양방향 전환으로 교정하기](12_CSS_Transition과_상태변화.md#section-2)
-- [복습](12_CSS_Transition과_상태변화.md#section-3)
+<a id="learn"></a>
 
-<a id="section-1"></a>
+## 1. 이 장에서 배울 것
 
-## 1. hover 안에 있는 transition
+기본값·hover값·전환 대상·시간을 나누어 읽는다. 전환 선언 위치에 따른 진입·복귀 차이를 설명한다.
 
-### 강사님 코드
+이번 장의 개념과 원본 기능은 수업 범위다. 원본에 없는 선택 기능은 9절 TIP으로 구분한다. 결과를 읽을 때는 선택된 요소·속성·기준값·실행 상태를 함께 적는다.
 
-`12_transition.html` 26~33행 — **원본 발췌**
+<a id="concepts"></a>
 
-```css
-        .box2:hover {
-            background-color: red;
-            border-radius: 50%;
-            width: 200px;
-            height: 200px;
+## 2. 무엇이며, 왜 필요한가
 
-            transition: all 0.5s;
-        }
+전환은 바뀌기 전 값과 바뀐 후 값 사이를 일정 시간에 걸쳐 표현하는 기능이다. transition만 적고 실제 값이 바뀌지 않으면 원본 같은 크기 변화가 시작되지 않는다. s는 초이며0.5s는 반 초다.
+
+기본 상태에 전환을 두면 포인터가 들어가 목표값으로 바뀔 때뿐 아니라 나와 원래 값으로 돌아갈 때도 전환할 수 있다. hover에만 두면 진입 후 상태에는 전환이 있지만 복귀 상태에는 없어 비대칭이 될 수 있다. 기본 .box는 전환을 가지고 hover는 바뀔 값만 적는 식으로 역할을 나누면 의도를 찾기 쉽다.
+
+| 선언 | 대상·시간 |
+| --- | --- |
+| transition:width 1s | 너비를1초동안 |
+| transition:all 0.5s | 전환가능한변경속성을넓게0.5초 |
+| :hover의width200px | 전환설정이아닌새목표값 |
+
+all도 모든 속성·모든 값이 반드시 부드럽게 변한다는 보장은 아니다. 실제 전환 가능한 속성과 전후 조건이 필요하다.
+
+> 📚 **출처 · 본문 설명 확인:** [W3C CSS transitions](https://www.w3.org/TR/css-transitions-1/). 설명과 비교 표는 수업 원본을 바탕으로 새로 풀어 썼다. 외부 원문을 직접 인용한 문장은 아니다. 확인일: 2026-10-28.
+
+<a id="example"></a>
+
+## 3. 작은 예제로 먼저 이해하기
+
+**새 설명 예제 · 전체 파일.** [실행 파일](실습/책형_복습/12_CSS_Transition과_상태변화.html)을 브라우저로 연다. 이 예제는 위 style 안에 CSS를 모두 넣어 외부 파일 연결이 필요 없다. 원본 CSS에 붙이면 다른 규칙이 섞일 수 있으므로 먼저 별도 파일로 확인한다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12. transition — 상태 사이의 값에 시간을 주기</title>
+    <style>
+        .box { width: 100px; height: 100px; background-color: green; transition: width 1s; }
+        .box:hover { width: 200px; background-color: red; }
+    </style>
+</head>
+<body>
+    <h1>바뀌는 값과 시간</h1>
+    <div class="box">포인터 올리기</div>
+</body>
+</html>
 ```
 
-기본 box는 초록 100×100px다. box2 위에 포인터를 올리면 빨강 200×200px, 둥근 모서리로 바뀌며 0.5초 전환을 사용한다.
+포인터 진입 시 너비100→200px는1초 동안 변하고 색은 즉시 빨강으로 바뀐다. 너비만 전환 대상으로 정했기 때문이다. 나올 때도 기본 규칙의 transition이 남아200→100px가 전환된다. 실제 중간 시점의 값은 진행 조건에 따라 달라지므로 시작·끝 값과 지속시간부터 읽는다.
 
-### 내 코드
+<a id="my-code"></a>
 
-`12_transition.html` 27~34행 — **원본 발췌**
+## 4. 내가 작성한 코드를 따라 읽기
+
+아래는 **내 원본 발췌**다. 주석의 표현도 원문대로 두었다. 설명에서 교정한 내용을 원본에 이미 수정한 것처럼 읽지 않는다.
+
+### 내 코드 — 원본 발췌
+
+출처: `D:/workspace/workspace_html/css/12_transition.html` 27–34행
 
 ```css
             .box2:hover {
@@ -48,56 +82,93 @@ hover는 상태 조건이고 transition은 값이 바뀌는 과정의 시간 설
             }
 ```
 
-background-color 대신 background를 쓴 차이가 있지만 이 예제에서는 같은 색 변화다. 내 주석처럼 transition이 hover 규칙에만 있어 **들어갈 때와 나올 때가 대칭적이지 않다.** 밖으로 나오면 기본 상태에 transition이 없어 즉시 돌아간다.
+**발췌 바로 풀이:** background-color 대신 background를 쓴 차이가 있지만 이 예제에서는 같은 색 변화다. 내 주석처럼 transition이 hover 규칙에만 있어 **들어갈 때와 나올 때가 대칭적이지 않다.** 밖으로 나오면 기본 상태에 transition이 없어 즉시 돌아간다.
 
-기본 `.box`의 transition 두 줄은 양쪽 모두 주석이다. 그래서 box1은 hover에 transition도 없어 즉시 바뀐다. 주석까지 실행 중이라고 가정하면 두 상자의 차이를 설명할 수 없다.
+내 box2 hover는 빨강·radius50%·200×200에 all0.5s를 함께 뒀다. 기본 box는초록100×100이며 전환 선언 두 줄이 주석이다. 따라서 들어갈 때는 hover전환이 생기지만 나올 때 기본값으로 즉시 돌아간다. box1은 hover에도 전환이 없으므로 같은 실험이라고 읽지 않는다.
 
-<a id="section-2"></a>
+<a id="connections"></a>
 
-## 2. 양방향 전환으로 교정하기
+## 5. 파일·요소·값이 연결되는 흐름
 
-```css
-/* 설명용 수정: 원본의 .box에 추가하고 :hover 안에서는 제거 */
-.box {
-    transition: all 0.5s;
-}
-```
+기본 규칙의100×100 → hover조건성립 →200×200값 → 새상태의전환설정 확인 순서다. 복귀도 새 상태를 다시 읽는다. 개선할 때는 transition을 기본 .box로 이동하고 hover에서는 목표값만 남긴다. 이는 원본에 적용한 수정이 아닌 설명용 개선안이다.
 
-기본 상태에도 전환이 있으면 들어갈 때뿐 아니라 원래 값으로 돌아갈 때도 전환할 수 있다. 원본의 주석 실험인 `transition:width 1s`를 대신 쓰면 너비만 1초 동안 바뀌고 나머지는 즉시 바뀌는 것을 비교할 수 있다.
+<a id="review"></a>
 
-all은 모든 속성이 반드시 부드럽게 변한다는 보장이 아니라 전환 대상을 넓게 지정하는 값이다. 실제로 전환 가능한 속성과 전·후 값이어야 한다. [transition 표준](https://www.w3.org/TR/css-transitions-1/)
+## 6. 잘한 점·아쉬운 점·개선 방향
 
-<a id="section-3"></a>
+**잘한 점:** 내 주석이 hover 안 전환의 비대칭을 짚었다. **설계 선택:** 진입만 전환하려는 의도라면 그 자체가 오류는 아니다. **개선 방향:** 양방향이 목표라면 기본에 전환을 둔다. all보다 바꿀 속성을 명시하면 나중에 다른 속성을 추가했을 때 의도치 않은 전환을 줄이는 데 도움이 된다.
 
-## 복습
+제안은 원본을 수정한 결과가 아니다. **실제 오류**, **관찰을 위한 수업용 단순화**, **목적에 따라 가능한 선택**을 구별한다. 단지 짧게 쓰거나 최신 기능을 쓴다고 더 좋은 코드는 아니다.
 
-box2에서 포인터를 빼면 곧바로 작아진다. 0.5s가 잘못된 단위일까?
+<a id="teacher"></a>
+
+## 7. 강사님 코드가 도움이 되는 비교
+
+
+
+강사님의 background-color와 내 background는 이번 단색 조건에서는 같은 색 변화지만 단축 선언의 전체 의미는 같지 않다. 핵심 배치·hover전환은 같아 중복 원문을 생략한다. 주석까지 실행 중이라고 가정하면 box1·box2차이를 놓친다.
+
+<a id="results"></a>
+
+## 8. 결과를 예상하고 한 가지 바꾸기
+
+아래는 **명시한 조건에서의 코드 기준 예상**이다. 이번 편집에서 실제 브라우저 렌더링을 재실행했다는 기록과 구별한다. 매 실험은 원래 예제로 돌아가 한 조건만 바꾼다.
+
+| 한 가지 변경 | 예상 | 판단 |
+| --- | --- | --- |
+| 작은예제transition대상만all | 색도전환대상 | 대상넓어짐 |
+| 원래지속시간만2s | 너비전환더길어짐 | 목표값같음 |
+| 원래전환을hover로이동 | 진입전환·복귀즉시 | 선언위치 |
+| 원래hoverwidth만100px | 너비변화없음 | 시간만있어도안움직임 |
+
+돌아올 때 즉시 작아진다면0.5s단위 오류부터 의심하기보다 기본 상태 전환을 본다. 포인터가 이동 중 상자를 벗어나면 hover조건도 바뀔 수 있어 충분한 관찰 시간을 둔다.
+
+<a id="tips"></a>
+
+## 9. 추가로 알면 좋은 것과 출처
+
+> 💡 **TIP · 수업 범위 밖:** 지연·진행속도함수상세·will-change·전환이벤트·reduced-motion은 추가 학습이다. 기본 상태와 변경값을 설명한 다음 확장한다.
+
+
+
+이 절의 확장은 기본 문제의 필수 조건이 아니다. 2절의 📚 출처는 배운 기능의 설명을 확인하는 근거이며, 출처가 있다는 이유로 모두 수업 밖 내용인 것은 아니다.
+
+<a id="practice"></a>
+
+## 10. 복습과 빠른 정리
+
+1. transition만있으면자동시작하는가?
+2. width만지정하면색도반드시전환하는가?
+3. 양방향전환은어디에두면되는가?
 
 <details>
-<summary>해설</summary>
+<summary>짧은 풀이 — 먼저 답한 뒤 확인</summary>
 
-아니다. s는 초이며 0.5초는 올바른 값이다. 기본 상태의 transition 선언 유무를 확인한다.
+값이 바뀌는 조건이 필요하다. width만 대상으로 지정하면 색은 그 전환 대상이 아니다. 이 예제는 기본 .box에 두어 진입·복귀 상태에 모두 유지한다.
 
 </details>
 
-**추가로 알면 좋은 것:** 지연·속도 함수의 상세 설계, will-change, transition 이벤트, reduced-motion 대응은 추가 학습으로 분리한다.
+| 질문 | 확인 |
+| --- | --- |
+| 언제변경 | hover등상태 |
+| 무엇이변경 | 전후값 |
+| 얼마동안 | 지속시간 |
+| 왜복귀가즉시 | 기본상태전환 |
 
-<!-- legacy-migration -->
+[장별 연습문제](실습/연습문제/12_CSS_Transition과_상태변화_연습문제.md)에서 예상·설명·수정을 이어 간다. 다음은 [transform](13_CSS_Transform과_요소변형.md)이다.
 
-<a id="css-4"></a>
+<!-- 이전 색인 이동 주소 보존 -->
+<a id="css-19"></a>
 <a id="css-28"></a>
 <a id="css-33"></a>
-<a id="css-19"></a>
+<a id="css-4"></a>
 <a id="css-43"></a>
+<a id="index-section-24"></a>
 <a id="index-section-25"></a>
 <a id="index-section-71"></a>
 <a id="index-section-77"></a>
-<a id="index-section-24"></a>
+<a id="section-1"></a>
+<a id="section-2"></a>
+<a id="section-3"></a>
 
-### 이전 색인 링크 안내
-
-이전 절 주소를 보존한 이동 안내다. 옛 절 번호와 현재 절은 같지 않다. [현재 CSS 목차](README.md)에서 수업 본문과 **추가로 알면 좋은 것**을 구분해 찾는다.
-
----
-
-[장별 연습문제 풀기](실습/연습문제/12_CSS_Transition과_상태변화_연습문제.md)
+이전 절 주소로 왔다면 [이 장의 목차](#chapter-toc)에서 현재 설명을 찾는다.

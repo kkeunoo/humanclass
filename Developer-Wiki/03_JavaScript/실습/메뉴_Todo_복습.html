@@ -28,6 +28,7 @@
     <input id="todo-input" name="todo">
     <button type="submit">추가</button>
   </form>
+  <p id="todo-warning"></p>
   <p>전체 항목: <strong id="todo-count">0</strong></p>
   <ul id="todo-list"></ul>
   <script>
@@ -67,7 +68,12 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const title = input.value.trim();
-      if (!title) return;
+      const warning = document.querySelector('#todo-warning');
+      if (!title) {
+        warning.textContent = '할 일을 입력하세요';
+        return;
+      }
+      warning.textContent = '';
       const item = document.createElement('li');
       const checkbox = document.createElement('input');
       const checkboxLabel = document.createElement('label');

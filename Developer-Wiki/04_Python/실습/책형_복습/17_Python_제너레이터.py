@@ -1,0 +1,6 @@
+numbers = (i for i in range(6) if i % 2 == 0)
+first = list(numbers)
+second = list(numbers)
+print(first)
+print(second)
+print([i for i in range(6) if i % 2 == 0])

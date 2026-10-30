@@ -1,0 +1,9 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>파일 복습</title></head><body>
+<form method="post" action="/upload" enctype="multipart/form-data">
+<label>제목 <input name="title" required></label>
+<textarea name="content"></textarea>
+<label>저장할 파일 <input type="file" name="file1" required></label>
+<label>이름만 볼 여러 파일 <input type="file" name="file2" multiple></label>
+<button type="submit">전송</button>
+</form><p>응답의 saved_name을 복사해 /download?file_name=저장된이름 으로 요청한다.</p>
+</body></html>

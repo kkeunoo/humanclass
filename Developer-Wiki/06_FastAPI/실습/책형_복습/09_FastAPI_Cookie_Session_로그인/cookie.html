@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>쿠키 팝업</title>
+<style>.hide { display: none; }</style></head><body>
+<section class="popup"><p>학습 팝업</p>
+<label><input type="checkbox" class="chk">10초간 보지 않기</label>
+<button class="close">닫기</button></section>
+<p>체크 없이 닫으면 새로고침 뒤 다시 보입니다.</p>
+<script>
+function getCookieValue(key) {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+        const parts = cookie.split('=');
+        if (parts[0] === key) return parts[1];
+    }
+    return null;
+}
+const popup = document.querySelector('.popup');
+if (getCookieValue('popup') === 'close') popup.classList.add('hide');
+document.querySelector('.close').addEventListener('click', () => {
+    popup.classList.add('hide');
+    if (document.querySelector('.chk').checked) {
+        document.cookie = 'popup=close; max-age=10';
+    }
+});
+</script></body></html>

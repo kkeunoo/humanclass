@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>09. overflow — 상자 크기와 넘친 내용을 나누기</title>
+    <style>
+        .window { width: 200px; height: 60px; overflow: auto; border: 1px solid black; }
+        .tall { height: 120px; background-color: lightblue; }
+        .row { width: 200px; white-space: nowrap; overflow: auto; border: 1px solid red; }
+        .item { display: inline-block; width: 100px; border: 1px solid blue; }
+    </style>
+</head>
+<body>
+    <h1>넘침의 두 축</h1>
+    <div class="window"><div class="tall">높이120px 내용</div></div>
+    <div class="row"><div class="item">A</div><div class="item">B</div><div class="item">C</div></div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03. 박스 모델 — width와 실제 상자 너비</title>
+    <style>
+        .box { width: 100px; padding: 10px; border: 1px solid red; margin: 10px; }
+        .included { box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <h1>상자 너비 계산</h1>
+    <div class="box">내용 기준</div>
+    <div class="box included">테두리 포함</div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10. float와 clear — 글 감싸기와 다음 흐름</title>
+    <style>
+        .parent { border: 1px solid black; }
+        .left { float: left; width: 100px; height: 60px; background-color: lightblue; }
+        .right { float: right; width: 100px; height: 80px; background-color: pink; }
+        .clearFix:after { content: ""; display: block; clear: both; }
+    </style>
+</head>
+<body>
+    <h1>부모가 감싸는 높이</h1>
+    <div class="parent clearFix">
+        <div class="left">왼쪽</div>
+        <div class="right">오른쪽</div>
+    </div>
+    <p>그다음 내용</p>
+</body>
+</html>

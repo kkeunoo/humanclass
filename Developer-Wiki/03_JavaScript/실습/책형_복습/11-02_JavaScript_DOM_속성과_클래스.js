@@ -1,0 +1,11 @@
+const notice = document.getElementById('notice');
+console.log(notice.hasAttribute('data-name'));
+console.log(notice.getAttribute('data-name'));
+console.log(notice.dataset.name);
+notice.classList.add('blue');
+notice.classList.add('blue');
+console.log(notice.classList.contains('blue'));
+notice.classList.toggle('blue');
+console.log(notice.classList.contains('blue'));
+notice.dataset.minsu = '학생';
+console.log(notice.getAttribute('data-minsu'));

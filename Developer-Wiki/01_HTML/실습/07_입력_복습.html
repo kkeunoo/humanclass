@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>입력 상태 복습</title>
+</head>
+<body>
+    <h1>입력과 선택</h1>
+    <form action="07_입력_복습.html" method="get">
+        <p><label for="student-name">이름</label>
+            <input id="student-name" type="text" name="student" value="학습자" placeholder="이름 입력"></p>
+        <p><label>읽기 전용 <input type="text" name="fixed" value="A" readonly></label></p>
+        <p><label>비활성 <input type="text" name="off" value="B" disabled></label></p>
+        <h2>여러 개 고르는 옵션</h2>
+        <p><label><input type="checkbox" name="coffee" value="1">샷추가</label>
+            <label><input type="checkbox" name="coffee" value="2" checked>펄추가</label>
+            <label><input type="checkbox" name="coffee" value="3" disabled>휘핑크림</label>
+            <label><input type="checkbox" name="coffee" value="5">얼음추가</label></p>
+        <h2>하나 고르는 방식</h2>
+        <p><label><input type="radio" name="mode" value="online" checked>온라인</label>
+            <label><input type="radio" name="mode" value="offline">오프라인</label></p>
+        <p><label>과목
+            <select name="course">
+                <option value="html" selected>HTML</option>
+                <option value="css">CSS</option>
+            </select></label></p>
+        <p><label>메모 <textarea name="memo" rows="3" cols="30">복습</textarea></label></p>
+        <p><label>날짜 <input type="date" name="day" value="2026-06-24"></label></p>
+        <p><label>시간 <input type="time" name="start" value="09:00"></label></p>
+        <p><label>숫자 <input type="number" name="count" value="2"></label></p>
+        <p><label>범위 <input type="range" name="hours" min="10" max="100" step="10" value="50"></label></p>
+        <p><label>색 <input type="color" name="theme" value="#336699"></label></p>
+        <button type="button">일반 버튼</button>
+        <button type="submit">전송</button>
+        <input type="reset" value="초기 상태로">
+    </form>
+</body>
+</html>

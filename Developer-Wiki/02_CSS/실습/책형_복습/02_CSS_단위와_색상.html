@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02. 단위와 색상 — 값의 기준을 먼저 찾기</title>
+    <style>
+        html { font-size: 16px; }
+        .base { font-size: 20px; }
+        .em { font-size: 1.5em; }
+        .rem { font-size: 1.5rem; }
+        .sample { color: #0f0; background-color: rgb(0, 0, 0); }
+    </style>
+</head>
+<body>
+    <h1>기준을 따라 계산</h1>
+    <div class="base">20px
+        <div class="em">30px <span class="em">45px</span></div>
+        <div class="rem">24px <span class="rem">24px</span></div>
+    </div>
+    <p class="sample">초록 글자</p>
+</body>
+</html>

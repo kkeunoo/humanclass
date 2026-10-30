@@ -1,75 +1,117 @@
-# 17-03. 주문·로그인·피자 — 입력값을 읽고 결과 만들기
+# 17-03. 주문·로그인·피자 — 입력 상태에서 결과를 만드는 세 단계
 
-[JavaScript 목차](README.md) · [이전: 이벤트 전파·위임](17-02_JavaScript_이벤트전파와_위임.md) · [다음: 메뉴·Todo](17-04_JavaScript_메뉴와_Todo실습.md)
+[JavaScript 목차](README.md) · [읽기 안내](00_JavaScript_V3_동작_백과_읽기법.md)
 
-강사님의 `퀴즈/이벤트.html`과 내 `17_event_form.html`, `asset/js/17_event_form.js`에서 실제로 작성한 실습을 비교한다. 세 문제 모두 **클릭할 때 현재 입력 상태를 읽는다**. 아래 코드는 수업 원본을 그대로 옮겼다.
+서로 다른 화면처럼 보여도 세 문제는 현재 값을 읽기 → 조건이나 계산 적용 → 결과 표시라는 흐름을 공유한다. 복사한 값이 계속 연결되는지, 경고가 왜 남는지, 문자열 가격이 왜 숫자로 바뀌어야 하는지를 한 단계씩 확인한다.
 
-**입력 상태를 읽는다는 것은?** 사용자가 값을 바꿀 수 있는 요소에서 클릭 순간의 `value`나 `checked`를 가져오는 것이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+<a id="chapter-toc"></a>
+
+**이 장의 목차:** [목표](#learn) · [개념](#concepts) · [예제](#example) · [내 코드](#my-code) · [연결](#connections) · [평가](#review) · [비교](#teacher) · [결과·실험](#results) · [TIP·출처](#tips) · [복습](#practice)
+
+<a id="learn"></a>
+
+## 1. 이 장에서 배울 것
+
+주문 정보 복사와 자동 동기화를 구별하고 로그인 입력 검사의 분기 순서를 읽는다. value 분해와 data 속성의 차이, 숫자 변환·합산·토핑 목록 표시를 설명한다.
+
+입력·현재 상태·실행 순서·결과를 분리해 설명한다. 실제 수업 원본은 아래에 표시하고, 원본에 없는 선택 학습은 9절 TIP에 둔다.
+
+<a id="concepts"></a>
+
+## 2. 무엇이며, 왜 필요한가
+
+주문 정보 복사는 값을 읽어 다른 입력 칸에 대입하는 작업이다. 체크한 순간의 문자열을 복사할 뿐, 두 입력 칸 사이에 영구적인 연결이 생기는 것은 아니다. 체크 뒤 원본 주문 주소를 바꾸면 다시 복사하기 전까지 배송 주소는 예전 값이다.
+
+로그인 실습은 입력 여부를 검사한다. if → else if → else는 먼저 맞은 한 갈래만 실행한다. 아이디와 비밀번호가 모두 비어 있으면 첫 경고가 우선이다. 둘 다 있으면 이전 경고를 비운다. 이 결과만으로 사용자가 서버에서 인증되었다고 할 수는 없다.
+
+| 읽은 값 | 실제 자료형 | 계산 전 작업 |
+| --- | --- | --- |
+| input.value | 문자열 | 필요하면 trim |
+| checkbox.checked | boolean | 조건에서 검사 |
+| value='small 18000' | 문자열 한 개 | split 뒤 가격 부분을 Number로 변환 |
+| data-price='18000' | 속성의 문자열 | dataset.price 또는 getAttribute 뒤 Number |
+
+dataset은 실제 배운 내용이므로 본문에 둔다. data-name은 dataset.name으로 읽고 data-price는 dataset.price로 읽는다. 속성에 숫자처럼 보이는 글자가 있어도 읽은 값은 문자열이다. 18000과 '2000'을 +로 연결하면 20000이라는 숫자 합계가 되지 않으므로 가격을 숫자로 변환한 뒤 더한다.
+
+> 📚 **출처 · 본문 설명 확인:** [MDN dataset](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset). 배운 기능의 뜻을 확인한 근거다. 예제·표·풀이 흐름은 수업 코드를 바탕으로 새로 작성했으며 외부 문장을 직접 인용하지 않았다. 확인일: 2026-10-28.
+
+<a id="example"></a>
+
+## 3. 작은 예제로 먼저 이해하기
+
+**새 설명 예제 · 전체 스크립트.** [HTML 실행 파일](실습/책형_복습/17-03_JavaScript_주문_로그인_피자실습.html)과 같은 폴더의 [JS 파일](실습/책형_복습/17-03_JavaScript_주문_로그인_피자실습.js)을 함께 내려받는다. HTML을 브라우저로 열고 Console에서 결과를 확인한다. script는 필요한 HTML 뒤에 연결한다. 콘솔 출력은 페이지 본문에 자동으로 쓰이지 않는다.
+
+**먼저 준비할 HTML · body 안:**
 
 ```html
-<input id="same" type="checkbox">
-<input id="orderName" value="민지">
-<input id="deliveryName">
-<script>
-  document.getElementById('same').addEventListener('click', function (event) {
-    const deliveryName = document.getElementById('deliveryName');
-    if (event.target.checked) {
-      deliveryName.value = document.getElementById('orderName').value;
-    } else {
-      deliveryName.value = '';
-    }
-  });
-</script>
+    <h2>주문 정보</h2>
+    <label>이름 <input id="orderName" value="민지"></label>
+    <label>주소 <input id="orderAddress" value="서울"></label>
+    <label><input id="same" type="checkbox">주문 정보와 같음</label>
+    <label>배송 이름 <input id="deliveryName"></label>
+    <label>배송 주소 <input id="deliveryAddress"></label>
+    <h2>입력 확인</h2>
+    <label>아이디 <input id="user"></label><label>비밀번호 <input id="pw" type="password"></label>
+    <button id="login" type="button">입력 검사</button><p id="warning"></p>
+    <h2>피자 계산</h2>
+    <select id="pizza" aria-label="종류"><option data-name="불고기">불고기</option><option data-name="치즈">치즈</option></select>
+    <label><input type="radio" name="size" data-price="18000" value="small" checked>small</label>
+    <label><input type="radio" name="size" data-price="22000" value="large">large</label>
+    <label><input class="topping" type="checkbox" data-price="2000" value="감자">감자</label>
+    <label><input class="topping" type="checkbox" data-price="2000" value="고구마">고구마</label>
+    <button id="pay" type="button">계산</button><p id="bill"></p>
 ```
-
-체크하면 배송 이름에 `민지`가 들어가고, 해제하면 빈 값이 된다. 수업 원본은 같은 흐름으로 이름·주소를 함께 복사하고, 뒤이어 로그인 검사와 피자 가격 계산을 실습한다.
-
-<!-- chapter-toc -->
-
-- [1. 주문 정보와 배송 정보 복사](17-03_JavaScript_주문_로그인_피자실습.md#section-1)
-- [2. 로그인 입력 확인](17-03_JavaScript_주문_로그인_피자실습.md#section-2)
-- [3. 피자 선택과 총액](17-03_JavaScript_주문_로그인_피자실습.md#section-3)
-- [직접 확인할 질문](17-03_JavaScript_주문_로그인_피자실습.md#section-4)
-- [추가로 알면 좋은 것](17-03_JavaScript_주문_로그인_피자실습.md#section-5)
-
-<a id="section-1"></a>
-
-## 1. 주문 정보와 배송 정보 복사
-
-체크박스를 켜면 주문 이름·주소의 `.value`를 배송 입력 칸에 넣고, 끄면 배송 칸을 비운다. 체크한 뒤 주문 정보를 다시 고쳐도 배송 칸은 자동 갱신되지 않는다. 복사는 체크박스를 누른 순간에만 일어난다.
-
-### 강사님 코드
-
-출처: `teacher/workspace_html/javascript/퀴즈/이벤트.html` 67~88행 · **원본 발췌**
 
 ```javascript
-function q1(){
-    
-    document.querySelector('#q1 .chk').addEventListener('click', function(event){
-        const order_name = document.querySelector('#q1 .order .name')
-        const order_addr = document.querySelector('#q1 .order .addr')
-
-        const delivery_name = document.querySelector('#q1 .delivery .name')
-        const delivery_addr = document.querySelector('#q1 .delivery .addr')
-
-        /*
-            event.target : 실제로 이벤트가 발생한 것
-            event.currentTarget : 이벤트가 적용되어 있는 것 (this)
-        */
-        if(event.target.checked){
-            delivery_name.value = order_name.value
-            delivery_addr.value = order_addr.value
-        } else {
-            delivery_name.value = ''
-            delivery_addr.value = ''
-        }
-    })
-}
+document.getElementById('same').addEventListener('click', function () {
+    document.getElementById('deliveryName').value = this.checked
+        ? document.getElementById('orderName').value : '';
+    document.getElementById('deliveryAddress').value = this.checked
+        ? document.getElementById('orderAddress').value : '';
+});
+document.getElementById('login').addEventListener('click', function () {
+    const user = document.getElementById('user');
+    const pw = document.getElementById('pw');
+    const warning = document.getElementById('warning');
+    if (user.value.trim() === '') warning.textContent = '아이디 필수';
+    else if (pw.value.trim() === '') warning.textContent = '비밀번호 필수';
+    else warning.textContent = '';
+});
+document.getElementById('pay').addEventListener('click', function () {
+    const pizza = document.getElementById('pizza');
+    const option = pizza.options[pizza.selectedIndex];
+    const size = document.querySelector('[name="size"]:checked');
+    const toppings = document.querySelectorAll('.topping:checked');
+    const names = [];
+    let total = Number(size.dataset.price);
+    for (const topping of toppings) {
+        names.push(topping.value);
+        total += Number(topping.dataset.price);
+    }
+    const result = option.dataset.name + ' / ' + size.value +
+        ' / ' + names.join(', ') + ' / ' + total + '원';
+    document.getElementById('bill').textContent = result;
+    console.log(result);
+});
 ```
 
-### 내 코드
+주문 정보와 같음을 체크하면 배송 주소는 서울이다. 주문 주소만 부산으로 고쳐도 배송 주소는 서울로 남는다. 입력 검사 버튼을 빈 상태·아이디만 있는 상태·둘 다 있는 상태에서 눌러 경고가 차례로 바뀌고 지워지는지 본다. 피자는 small과 토핑 두 개를 선택해 계산한다. 18000+2000+2000=22000이며 토핑 이름 사이에 쉼표와 공백이 들어간다. 새 예제는 배운 dataset·배열·join을 사용한 개선 예제다. 원본에 있는 도우 선택은 가격이 없어 이 최소 계산 예제에서는 생략했으며, 원본 전체 기능을 재현했다고 하지 않는다.
 
-출처: `me/workspace_html/javascript/asset/js/17_event_form.js` 159~182행 · **원본 발췌**
+**예상 출력 또는 관찰:**
+
+```text
+불고기 / small / 감자, 고구마 / 22000원
+```
+
+<a id="my-code"></a>
+
+## 4. 내가 작성한 코드를 따라 읽기
+
+아래는 원본의 일부다. 원본에 의존하는 앞 선언·HTML·함수는 다음 절의 연결까지 읽는다. 주석의 잘못된 표현도 원문대로 보존하고 설명에서 교정한다.
+
+### 내 코드 — 원본 발췌
+
+출처: `D:/workspace/workspace_html/javascript/asset/js/17_event_form.js` 159–182행
 
 ```javascript
 window.addEventListener('load', function() {
@@ -98,44 +140,11 @@ window.addEventListener('load', function() {
     })
 ```
 
-두 코드의 결과는 같다. 강사님은 `event.target.checked`로 이번에 클릭한 체크박스를 읽고, 나는 미리 선택한 `valueChk.checked`를 읽었다. 이 문제에서는 같은 요소다. 복사해야 하는 값은 입력 요소의 글자가 아니라 **`.value`**다.
+**발췌 바로 풀이:** 두 코드의 결과는 같다. 강사님은 `event.target.checked`로 이번에 클릭한 체크박스를 읽고, 나는 미리 선택한 `valueChk.checked`를 읽었다. 이 문제에서는 같은 요소다. 복사해야 하는 값은 입력 요소의 글자가 아니라 **`.value`**다.
 
-<a id="section-2"></a>
+### 내 코드 — 원본 발췌
 
-## 2. 로그인 입력 확인
-
-아이디가 비었으면 아이디 경고, 아이디는 있고 비밀번호가 비었으면 비밀번호 경고, 둘 다 있으면 이전 경고를 지운다. 양쪽 모두 `trim()`으로 앞뒤 공백만 있는 입력도 비어 있다고 판단한다.
-
-### 강사님 코드
-
-출처: `teacher/workspace_html/javascript/퀴즈/이벤트.html` 90~109행 · **원본 발췌**
-
-```javascript
-function q2(){
-    
-    // const login = document.querySelector('#q2 #login.do')
-    const login = document.querySelector('#q2 [id="login.do"]')
-    login.addEventListener('click', function(){
-        const id = document.querySelector('#q2 #id')
-        const pw = document.querySelector('#q2 #pw')
-        const warning = document.querySelector('#q2 #warning')
-
-        // if(id.value == ''){
-        console.log(id.value.trim().length, id.value.trim().length == 0)
-        if(id.value.trim().length == 0){
-            warning.innerText = '아이디는 필수입니다'
-        } else if(pw.value.trim().length == 0){
-            warning.textContent = '비밀번호는 필수입니다'
-        } else {
-            warning.textContent = ''
-        }
-    })
-}
-```
-
-### 내 코드
-
-출처: `me/workspace_html/javascript/asset/js/17_event_form.js` 184~209행 · **원본 발췌**
+출처: `D:/workspace/workspace_html/javascript/asset/js/17_event_form.js` 184–209행
 
 ```javascript
     /*
@@ -166,98 +175,11 @@ function q2(){
     })
 ```
 
-내 코드는 경고 글씨 색도 빨강으로 지정한다. 강사님 HTML에는 이미 `#warning`에 빨강 스타일이 있다. 둘 다 **로그인 성공이나 서버 인증을 구현한 것은 아니고** 입력 여부만 검사한다. `trim()`은 검사용 문자열을 반환하며 입력 칸의 원래 값을 바꾸지 않는다.
+**발췌 바로 풀이:** 내 코드는 경고 글씨 색도 빨강으로 지정한다. 강사님 HTML에는 이미 `#warning`에 빨강 스타일이 있다. 둘 다 **로그인 성공이나 서버 인증을 구현한 것은 아니고** 입력 여부만 검사한다. `trim()`은 검사용 문자열을 반환하며 입력 칸의 원래 값을 바꾸지 않는다.
 
-강사님 버튼 ID는 `login.do`라서 CSS 선택자 `#login.do`로 읽으면 `id=login`이면서 `class=do`인 요소를 찾게 된다. 수업 코드의 `[id="login.do"]`는 실제 ID를 정확히 찾는다. 내 버튼은 `id="login"`이므로 `#login`으로 선택한다.
+### 내 코드 — 원본 발췌
 
-<a id="section-3"></a>
-
-## 3. 피자 선택과 총액
-
-피자 종류는 `select`, 크기·도우는 선택된 `radio`, 토핑은 체크된 `checkbox`로 읽는다. **크기 가격과 선택 토핑 가격을 합산한다.** 도우 가격은 두 HTML에 없다.
-
-### 강사님 코드: 속성으로 가격 분리
-
-출처: `teacher/workspace_html/javascript/퀴즈/이벤트.html` 120~143행 · **원본 발췌**
-
-```javascript
-        const pizza = document.querySelector('#q3 .pizza')
-        console.log(pizza.value)
-        console.log(pizza.options)
-        console.log(pizza.selectedIndex)
-        const option = pizza.options[pizza.selectedIndex]
-        console.log(option.innerText)
-        console.log(option.getAttribute('data-name'))
-        console.log(option.dataset.name)
-        option.dataset.minsu = '강사'
-        종류 = option.getAttribute('data-name')
-
-        const size = document.querySelector('[name="size"]:checked')
-        크기 = size.getAttribute('data-size')
-        총액 += Number(size.getAttribute('data-price'))
-        console.log(총액)
-
-        const dough = document.querySelector('[name="dough"]:checked')
-        도우 = dough.getAttribute('data-dough')
-        
-        const aTopping = document.querySelectorAll('[type="checkbox"]:checked')
-        for( topping of aTopping ){
-            토핑.push(topping.getAttribute('topping'))
-            총액 += Number(topping.getAttribute('price'))
-        }
-```
-
-출처: `teacher/workspace_html/javascript/퀴즈/이벤트.html` 153~160행 · **원본 발췌**
-
-```javascript
-        document.querySelector('#q3 #bill').innerHTML = `
-            종류 : ${종류}<br>
-            크기 : ${크기}<br>
-            도우 : ${도우}<br>
-            토핑 : ${토핑.join()}<br>
-            <hr>
-            총액 : ${총액}<br>
-        `
-```
-
-HTML의 가격 예시:
-
-출처: `teacher/workspace_html/javascript/퀴즈/이벤트.html` 293~318행 · **원본 발췌**
-
-```javascript
-    <div id="q3">
-        <h2>quiz 3</h2>
-        종류 : 
-        <select class="pizza">
-            <option value="10" data-name="불고기">불고기</option>
-            <option value="20" data-name="페퍼로니">페퍼로니</option>
-            <option value="30" data-name="포테이토">포테이토</option>
-            <option value="40" data-name="치즈">치즈</option>
-            <option value="50" data-name="파인애플">파인애플</option>
-            <option value="60" data-name="고르곤졸라">고르곤졸라</option>
-        </select>
-        <br>
-        사이즈 : 
-        <input type="radio" name="size" value="10" data-size="small" data-price="18000" checked>small(18000)
-        <input type="radio" name="size" value="20" data-size="medium" data-price="20000">medium(20000)
-        <input type="radio" name="size" value="30" data-size="large" data-price="22000">large(22000)
-        <br>
-        도우 :
-        <input type="radio" name="dough" value="10" data-dough="씬" checked>씬
-        <input type="radio" name="dough" value="20" data-dough="고구마">고구마
-        <input type="radio" name="dough" value="30" data-dough="치즈">치즈
-        <input type="radio" name="dough" value="40" data-dough="소보로">소보로
-        <br>
-        토핑 :
-        <input type="checkbox" value="10" topping="감자" price="2000">감자(2000)
-        <input type="checkbox" value="20" topping="고구마" price="2000">고구마(2000)
-```
-
-강사님은 `data-name`, `data-size`, `data-price`로 이름과 가격을 구분한다. `option.dataset.name`을 읽는 법도 실제 배운 내용이므로 본문에 둔다. 다만 토핑의 `topping`, `price`는 `data-` 속성이 아닌 일반 사용자 정의 속성이라 `getAttribute()`로 읽고 있다. 새 코드를 작성한다면 `data-topping`, `data-price`로 통일하는 편이 의미가 분명하다.
-
-### 내 코드: value를 나누어 가격 계산
-
-출처: `me/workspace_html/javascript/asset/js/17_event_form.js` 228~253행 · **원본 발췌**
+출처: `D:/workspace/workspace_html/javascript/asset/js/17_event_form.js` 228–253행
 
 ```javascript
    // 최종정리본
@@ -288,23 +210,121 @@ HTML의 가격 예시:
     }) 
 ```
 
-내 HTML의 크기 `value="small 18000"` 같은 값을 공백으로 나눠 이름과 가격을 읽는다. 선택된 토핑도 같은 방식으로 합산한다. 예를 들어 기본 선택인 small 18,000원과 감자 2,000원은 20,000원이다. 다만 `topResult += 이름`은 토핑을 여러 개 고르면 구분자 없이 붙는다. 강사님 `토핑.join()`처럼 배열에 모아 출력하면 읽기 쉽다.
+**발췌 바로 풀이:** 내 HTML의 크기 `value="small 18000"` 같은 값을 공백으로 나눠 이름과 가격을 읽는다. 선택된 토핑도 같은 방식으로 합산한다. 예를 들어 기본 선택인 small 18,000원과 감자 2,000원은 20,000원이다. 다만 `topResult += 이름`은 토핑을 여러 개 고르면 구분자 없이 붙는다. 강사님 `토핑.join()`처럼 배열에 모아 출력하면 읽기 쉽다.
 
-강사님 코드는 피자 종류에서 `option.dataset.name`을 보여 주고 가격을 별도 속성으로 분리한 점이 읽기 쉽다. 내 코드는 HTML의 `value`만 사용해 계산 흐름을 추적하기 쉽지만, 값에 공백이 더 들어가면 `split(' ')[1]`에 의존하는 구조가 깨질 수 있다. **두 방식 모두 이번 수업 실습**이며 `dataset`은 추가편으로 밀지 않는다.
+내 복사는 체크박스의 checked를 직접 읽고 강사님은 event.target.checked를 읽는다. 현재 리스너에서는 같은 요소이므로 결과가 같다. 로그인 문제는 이전 15장의 기본 예제와 달리 성공 갈래에 경고 지우기가 있다. 내 주석의 id1.trim()은 요소에 문자열 메서드를 바로 호출하는 잘못된 예시다. 실제 활성 코드처럼 id1.value.trim()이어야 한다. 내 피자는 small 18000처럼 묶인 value를 공백으로 나눠 이름·가격을 읽고, 체크된 토핑의 가격을 Number로 더한다.
 
+<a id="connections"></a>
+
+## 5. 선언·호출·파일이 연결되는 흐름
+
+HTML의 선택 요소와 value 형식 → pay 클릭 → 현재 size·dough·topping 조회 → 체크 여부 검사 → split 또는 data 속성으로 가격 읽기 → Number 변환 → 합계·결과 표시 순서다. 새 예제에서 options[selectedIndex]는 현재 선택된 option이다. querySelectorAll은 토핑 목록이며 각 요소를 반복해야 한다. 클릭할 때 total과 names를 새로 준비하여 이전 계산값을 다시 더하지 않는다. 원본도 topPrice·priceResult를 콜백 안에서 초기화한다.
+
+<a id="review"></a>
+
+## 6. 잘한 점·아쉬운 점·개선 방향
+
+**잘한 점:** 내 피자는 합계 변수를 클릭마다 초기화하고, 선택된 토핑만 계산하며 입력 확인에서 과거 경고를 지운다. **아쉬운 점:** 토핑 이름을 문자열에 바로 더해 여러 이름이 구분 없이 붙는다. 배열에 push한 뒤 join하면 읽기 좋다. **구조 개선:** split의 두 번째 부분에 가격을 기대하는 방식은 이름의 공백이나 형식 변경에 약하다. 가격을 data-price로 나누면 의미가 분명하다. **범위:** 화면 계산은 주문 확정이나 서버 가격 검증이 아니다.
+
+개선안은 원본을 수정한 결과가 아니다. 실제 오류, 수업용 단순화, 목적에 따른 선택을 구별해 판단한다.
+
+<a id="teacher"></a>
+
+## 7. 강사님 코드가 도움이 되는 비교
+
+출처: `D:/workspace_teacher/workspace_html/javascript/퀴즈/이벤트.html` 120–143행
+
+```javascript
+        const pizza = document.querySelector('#q3 .pizza')
+        console.log(pizza.value)
+        console.log(pizza.options)
+        console.log(pizza.selectedIndex)
+        const option = pizza.options[pizza.selectedIndex]
+        console.log(option.innerText)
+        console.log(option.getAttribute('data-name'))
+        console.log(option.dataset.name)
+        option.dataset.minsu = '강사'
+        종류 = option.getAttribute('data-name')
+
+        const size = document.querySelector('[name="size"]:checked')
+        크기 = size.getAttribute('data-size')
+        총액 += Number(size.getAttribute('data-price'))
+        console.log(총액)
+
+        const dough = document.querySelector('[name="dough"]:checked')
+        도우 = dough.getAttribute('data-dough')
+        
+        const aTopping = document.querySelectorAll('[type="checkbox"]:checked')
+        for( topping of aTopping ){
+            토핑.push(topping.getAttribute('topping'))
+            총액 += Number(topping.getAttribute('price'))
+        }
+```
+
+강사님 발췌는 option의 data-name을 dataset으로 읽고 크기 가격을 별도 속성으로 구분하는 부분만 인용한다. 원본 토핑의 price·topping은 data 속성이 아니라 getAttribute로 읽는 사용자 정의 속성이다. 새 개선 예제는 data-price로 통일한 별도 작성이다. 강사님 버튼 ID login.do는 #login.do로 선택하면 ID와 클래스 조합으로 해석되므로 [id="login.do"]처럼 실제 ID를 정확히 선택한다. 내 ID는 login이라 #login으로 맞다.
+
+<a id="results"></a>
+
+## 8. 결과를 추적하고 한 가지 바꾸기
+
+| 계산·판단 | 입력 예 | 결과 |
+| --- | --- | --- |
+| 복사 | 체크 당시 주소 서울 | 배송 서울 |
+| 이후 원본만 수정 | 주문 부산 | 배송 서울 유지 |
+| 로그인 검사 | 아이디·비밀번호 모두 빈 값 | 아이디 경고 우선 |
+| 크기·토핑 | small + 감자 | 20000원 |
+| 크기·토핑 | small + 감자 + 고구마 | 22000원 |
+
+원본의 도우는 이름을 표시하지만 두 HTML에 도우 가격이 없으므로 임의 추가 요금을 원본 결과에 끼우지 않는다. 선택 radio는 원본 HTML의 기본 checked가 있어 찾을 수 있다. 기본 선택을 없앤 구조로 바꾸면 null 가능성을 따로 처리해야 한다.
+
+| 한 가지만 변경 | 예상 | 이유 |
+| --- | --- | --- |
+| 체크 해제 | 배송 두 칸이 비워짐 | else의 대입 |
+| large 선택 | 토핑 두 개면 26000원 | 기본 크기 가격 22000 |
+| join 구분자를 ' / '로 | 이름 사이 표시만 변경 | 계산값은 그대로 |
+| Number 제거 | 문자열 연결 가능 | DOM 가격은 문자열 |
+
+합계가 긴 숫자 문자열이면 Number 변환 위치를 본다. 토핑 이름이 붙으면 합산 오류가 아니라 표시용 구분자 문제인지 확인한다. 배송이 안 따라오면 체크 클릭 때만 복사하도록 등록한 현재 동작을 읽는다. trim 오류가 나면 요소 자체와 value 문자열을 혼동했는지 본다.
+
+<a id="tips"></a>
+
+## 9. 추가로 알면 좋은 것과 출처
+
+> 💡 **TIP · 수업 범위 밖:** 서버 인증·주문 저장·서버에서 가격 재검산·복잡한 주문 데이터 모델은 추가 학습이다. 이 장은 실제로 작성한 입력 검사와 브라우저 계산을 중심으로 한다.
+
+
+
+이 절의 확장은 기본 문제의 필수 조건이 아니다. 📚 출처가 있다는 것과 수업 밖 기능이라는 것은 다른 구분이다.
+
+<a id="practice"></a>
+
+## 10. 복습과 빠른 정리
+
+1. 체크 뒤 주문 주소를 바꾸면 배송도 자동 갱신되는가?
+2. 속성의 가격을 더하기 전에 변환하는 이유는?
+3. 도우 이름이 있다고 도우 요금도 더하는가?
+
+<details>
+<summary>짧은 풀이 — 먼저 답한 뒤 확인</summary>
+
+현재는 체크 클릭 때만 복사하여 자동 갱신되지 않는다. 가격 속성은 문자열이므로 숫자 덧셈을 위해 변환한다. 두 원본에는 도우 가격이 없으므로 임의로 더하지 않는다.
+
+</details>
+
+| 단계 | 관찰 |
+| --- | --- |
+| 읽기 | 현재 value·checked |
+| 변환 | 문자열에서 숫자로 |
+| 계산 | 클릭마다 초기화 |
+| 표시 | 이름 목록과 금액 구분 |
+
+[장별 연습문제](실습/연습문제/17-03_JavaScript_주문_로그인_피자실습_연습문제.md)에서 예상·설명·수정을 이어 간다. 다음은 [메뉴·Todo](17-04_JavaScript_메뉴와_Todo실습.md)다.
+
+<!-- 이전 색인 이동 주소 보존 -->
+<a id="section-1"></a>
+<a id="section-2"></a>
+<a id="section-3"></a>
 <a id="section-4"></a>
-
-## 직접 확인할 질문
-
-1. 주문 정보 체크 후 주문 주소를 바꾸면 배송 주소도 바뀔까? 어떤 이벤트가 등록됐는지 확인하자.
-2. 로그인 입력이 공백뿐일 때 `trim()` 뒤 길이는 얼마일까?
-3. 피자에서 size와 topping 중 무엇이 총액에 더해지는지 HTML 속성과 코드를 연결해 보자.
-
 <a id="section-5"></a>
 
-## 추가로 알면 좋은 것
-
-실제 서비스에서 사용자 입력을 HTML 문자열에 넣거나 서버로 보낼 때에는 별도의 출력 안전 처리와 서버 검사가 필요하다. 이 수업의 피자 실습은 브라우저 안에서 선택값을 읽고 계산하는 단계까지다.
-
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-03_JavaScript_주문_로그인_피자실습_연습문제.md) → [다음: 메뉴와 Todo](17-04_JavaScript_메뉴와_Todo실습.md)
-
+[이 장의 목차](#chapter-toc)에서 현재 설명을 찾는다.

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14. 미디어쿼리 — 조건이 맞을 때 규칙 더하기</title>
+    <style>
+        .item { display: inline-block; width: 100px; border: 1px solid black; box-sizing: border-box; }
+        .notice { display: none; }
+        @media screen and (max-width: 600px) {
+            .item { display: block; width: 100%; }
+            .notice { display: inline; }
+        }
+    </style>
+</head>
+<body>
+    <h1>600px 경계 관찰</h1>
+    <p class="notice">좁은 화면</p>
+    <div class="item">HTML</div>
+    <div class="item">CSS</div>
+</body>
+</html>

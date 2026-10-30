@@ -1,100 +1,76 @@
-# 10-03. 파일에서 조건에 맞는 단어 찾기
+# 10-03. 파일에서 단어 찾기 — 읽기·선택·정리·출력 나누기
 
-[Python 목차](README.md) · [이전: `pickle`](10-02_Python_pickle과_자료형저장.md)
+[Python 목차](README.md) · [읽기 안내](00-00_Python_V3_동작_백과_읽기법.md)
 
-두 원본은 `word.txt`를 읽고 **`c` 또는 `C`가 들어간 단어**를 찾은 다음 쉼표와 마침표를 지워 출력하는 문제를 푼다. 문자열의 `split`, `lower`, `in`, `replace`가 **파일에서 읽은 값**에 이어지는 것을 보는 장이다.
+파일 읽기와 문자열 메서드를 연결하면 짧은 검색 문제를 풀 수 있다. 다만 무엇으로 단어를 나누었는지, 소문자로 바꾼 값을 어디에 썼는지에 따라 결과가 달라진다. 처리 단계를 나누어 출력의 근거를 찾는다.
 
-## 먼저: 한 문장으로 처리 순서 보기
+**이 장의 목차:** [목표](#learn) · [개념](#concepts) · [예제](#example) · [내 코드](#my-code) · [연결](#connections) · [평가](#review) · [비교](#teacher) · [결과·실험](#results) · [TIP·출처](#tips) · [복습](#practice)
 
-긴 파일을 바로 읽기 전에 다음 짧은 문자열로 **나누기 → 대소문자 무시하고 검사 → 구두점 제거 → 출력** 순서를 따라가자. 아래는 원본을 그대로 복사한 코드가 아니라 수업에서 사용한 문자열 문법으로 만든 설명용 재구성이다.
+<a id="learn"></a>
 
-```python
-text = 'Cat, dog, clock.'
-for word in text.split(' '):
-    if 'c' in word.lower():
-        print(word.replace(',', '').replace('.', ''))
-# Cat
-# clock
-```
+## 1. 이 장에서 배울 것
 
-`Cat,`과 `clock.`이 조건을 통과한다. `lower()`는 **찾기 조건**에만 쓰고 출력은 원래 단어에서 쉼표와 마침표를 제거하므로 `Cat`의 대문자는 남는다. 원본 파일을 읽을 때도 이 네 단계를 한꺼번에 뭉치지 말고 구분하자.
+파일 내용에서 단어 후보를 나누고 대소문자를 무시해 c를 검사한다. 조건용 lower와 출력 원문의 차이, replace의 실제 제거 범위, split의 구분자를 설명한다.
 
-<!-- chapter-toc -->
+실제 원본·새 예제·개선안·선택 학습을 구분하고 입력·실행 순서·반환값·출력을 연결한다.
 
-- [1. 강사님 첫 풀이와 수정 풀이](10-03_Python_파일에서_단어찾기.md#section-1)
-- [2. 내가 작성한 실행 코드](10-03_Python_파일에서_단어찾기.md#section-2)
-- [3. 이 문제에서 조심해 읽을 부분](10-03_Python_파일에서_단어찾기.md#section-3)
-- [직접 확인할 질문](10-03_Python_파일에서_단어찾기.md#section-4)
-- [추가로 알면 좋은 것](10-03_Python_파일에서_단어찾기.md#section-5)
+<a id="concepts"></a>
 
-<a id="section-1"></a>
+## 2. 무엇이며, 왜 필요한가
 
-## 1. 강사님 첫 풀이와 수정 풀이
+이 문제의 작업은 파일 읽기 → 단어 후보 분리 → 조건 검사 → 구두점 제거 → 출력이다. 각 단계의 반환값이 다음 단계의 입력이다. lower로 검사했다고 출력도 모두 소문자가 되는 것은 아니다. 원래 word에서 별도로 치환하면 원문의 대문자는 남는다.
 
-### 강사님 코드 — 첫 풀이
+| 단계 | 입력 | 결과의 종류 |
+| --- | --- | --- |
+| read | 열린 텍스트 파일 | 문자열 |
+| split(' ') | 읽은 문자열 | 공백 기준 후보 리스트 |
+| lower·in | 후보 하나 | 소문자 문자열에서 포함 여부 |
+| replace | 원래 후보 | 쉼표·마침표 없는 새 문자열 |
+| print 또는 join | 선택된 결과 | 화면 표시 |
 
-출처: `teacher/workspace_python/_10_file.py` 133–152행 · **원본 발췌**
+split(' ')는 일반 공백 한 칸만 구분자로 쓴다. split()은 공백류를 묶어 나누는 다른 선택이다. 둘을 항상 같은 단어 분석이라고 생각하지 않는다. replace(',', '').replace('.', '')는 두 기호만 지우며 느낌표·플러스까지 자동 제거하지 않는다.
 
-```python
-with open('word.txt', 'r') as file :
-    txt = file.read()
-    print(txt)
-    
-    # txt = 'Fortunately, however, for the reputation of Asteroid B-612, a Turkish dictator made a law that his subjects, under pain of death, should change to European costume. So in 1920 the astronomer gave his demonstration all over again, dressed with impressive style and elegance. And this time everybody accepted his report.'
-    txt_list = txt.split(' ')
-    print(txt_list)
-    # for i in range(len(txt_list)) :
-    #     print(txt_list[i])
+> 📚 **출처 · 본문 설명 확인:** [Python 파일 읽기](https://docs.python.org/ko/3/tutorial/inputoutput.html#reading-and-writing-files), [문자열 메서드](https://docs.python.org/ko/3/library/stdtypes.html#string-methods). 실제 배운 문법의 의미를 확인한 근거다. 예제·표·풀이 자체는 수업 자료를 바탕으로 새로 구성했다. 외부 문장을 직접 인용하지 않았다. 이번 문법 확인 기간: 2026-10-28~29.
 
-    for word in txt_list :
-        # print(word)
-        tmp = word.split('c')
-        if len(tmp) > 1 :
-            a = word.split('.')
-            b = ''.join(a)
-            c = b.split(',')
-            d = ''.join(c)
-            print(d)
+<a id="example"></a>
 
-```
+## 3. 작은 예제로 먼저 이해하기
 
-### 강사님 코드 — 다시 쓴 풀이
+**새 설명 예제 · 전체 코드.** [실행 파일](실습/책형_복습/10-03_Python_파일에서_단어찾기.py)을 제공한다. 별도 복습 폴더에서 실행한다. 아래 예제가 book_words.txt를 쓰고 다시 읽으므로 추가 다운로드 파일이 필요하지 않다. 실제 원본 word.txt의 문장이나 검색 결과를 재현한 것은 아니다.
 
-출처: `teacher/workspace_python/_10_file.py` 154–177행 · **원본 발췌**
+
 
 ```python
-with open('word.txt', 'r') as file :
-    txt = file.read()
-    print(txt)
-    
-    # txt = 'Fortunately, however, for the reputation of Asteroid B-612, a Turkish dictator made a law that his subjects, under pain of death, should change to European costume. So in 1920 the astronomer gave his demonstration all over again, dressed with impressive style and elegance. And this time everybody accepted his report.'
-    txt_list = txt.split(' ')
-    print(txt_list)
-    # for i in range(len(txt_list)) :
-    #     print(txt_list[i])
-
-    for word in txt_list :
-        # if word.find('c') != -1 :
-        # if word.count('c') > 0 :
-        # if 'c' in word or 'C' in word :
-        if 'c'.lower() in word.lower() :
-            a = word.replace(',', '')
-            b = a.replace('.', '')
-            # b = word.replace(',', '').replace('.', '')
-            print(b)
-
-# print([1,2,3].find())
+with open('book_words.txt', 'w', encoding='utf-8') as file:
+    file.write('Cat, dog, clock. C++!')
+found = []
+with open('book_words.txt', 'r', encoding='utf-8') as file:
+    for word in file.read().split(' '):
+        if 'c' in word.lower():
+            cleaned = word.replace(',', '').replace('.', '')
+            found.append(cleaned)
+print(' | '.join(found))
+print('개수', len(found))
 ```
 
-첫 풀이는 `word.split('c')`의 결과가 둘 이상이면 소문자 `c`가 있다고 판단한다. 따라서 대문자 `C`만 있는 단어는 놓친다. 둘째 풀이는 `word.lower()`에서 `c`를 검사하므로 대소문자 구분을 없애고, `replace(',', '').replace('.', '')`와 같은 흐름으로 기호를 지운다. 양쪽 풀이가 **모두 실행되는 코드**라는 점도 중요하다. 첫 결과 뒤에 구분선을 출력하고 다시 `word.txt`를 읽는다.
+네 후보 중 Cat,·clock.·C++!가 c 검사에 통과한다. Cat의 대문자는 남고 쉼표·마침표만 사라진다. +와 !는 제거하지 않아 C++! 그대로다. 목록에 모은 뒤 join으로 보기 좋게 출력하는 것은 새 설명 예제의 표시 방식이다. 원본은 항목마다 print와 end로 출력한다.
 
-<a id="section-2"></a>
+**예상 출력 또는 관찰:**
 
-## 2. 내가 작성한 실행 코드
+```text
+Cat | clock | C++!
+개수 3
+```
 
-### 내 코드
+<a id="my-code"></a>
 
-출처: `me/workspace_python/10_file.py` 138–146행 · **원본 발췌**
+## 4. 내가 작성한 코드를 따라 읽기
+
+아래는 원본 발췌다. 주석의 잘못된 설명도 원문을 보존하고 풀이에서 교정한다. 필요한 선언·호출·다른 파일의 정의는 다음 절까지 연결해 읽는다.
+
+### 내 코드 — 원본 발췌
+
+출처: `D:/workspace/workspace_python/10_file.py` 138–146행
 
 ```python
 print('-'*30)
@@ -108,26 +84,90 @@ print()
 
 ```
 
-나는 `for word in file.read().split(' ')`로 단어를 하나씩 꺼내고, `'c' in word.lower()`로 검사한다. 맞는 단어만 `replace`로 쉼표와 마침표를 없애어 출력한다. 내 파일의 아래쪽 `find`를 사용하는 여러 시도와 `r+`, `w+`는 모두 **주석 처리된 비교 메모**다. 실행 경로에 포함되지 않으므로 완성된 파일 읽기 기능으로 설명하지 않는다.
+**발췌 바로 풀이:** 나는 `for word in file.read().split(' ')`로 단어를 하나씩 꺼내고, `'c' in word.lower()`로 검사한다. 맞는 단어만 `replace`로 쉼표와 마침표를 없애어 출력한다. 내 파일의 아래쪽 `find`를 사용하는 여러 시도와 `r+`, `w+`는 모두 **주석 처리된 비교 메모**다. 실행 경로에 포함되지 않으므로 완성된 파일 읽기 기능으로 설명하지 않는다.
 
+내 코드는 file.read().split 한 결과를 for로 받고 c in word.lower를 검사한 뒤 원래 word의 두 기호를 replace한다. 주석의 strip으로 제거라는 설명과 달리 활성 코드는 replace다. 뒤의 find 여러 시도와 r+·w+는 주석이므로 실제로 동시에 실행하지 않는다. 강사님은 첫 소문자 c 분리 풀이와 다시 쓴 lower 풀이가 둘 다 활성 상태다.
+
+<a id="connections"></a>
+
+## 5. 선언·호출·파일이 연결되는 흐름
+
+open → read 반환 문자열 → split 반환 후보 목록 → for의 현재 word → lower 반환값에서 포함 검사 → 원래 word의 replace 결과 → print 순서다. 메서드를 이어 썼다고 중간 값을 설명할 수 없는 것은 아니다. 긴 한 줄은 이 순서대로 임시 이름을 붙여 읽고, 결과가 같으면 다시 간결한 표현을 선택할 수 있다.
+
+<a id="review"></a>
+
+## 6. 잘한 점·아쉬운 점·개선 방향
+
+**잘한 점:** 내 코드는 대소문자 검사와 실제 출력 원문을 구별하여 요구한 원래 대문자를 유지한다. **주석 교정:** 사용하는 메서드는 strip이 아니라 replace다. **수업용 한계:** 공백 한 칸과 두 문장부호만 처리한다. 완성된 자연어 토큰화나 모든 기호 제거 기능이라고 소개하지 않는다. **개선:** 여러 공백을 허용할 목적이라면 배운 split()을 선택하되 원본과 달라지는 조건을 기록한다.
+
+개선안은 D 드라이브 원본을 수정한 결과가 아니다. 실제 오류·수업용 단순화·목적에 따른 선택을 구별한다.
+
+<a id="teacher"></a>
+
+## 7. 강사님 코드가 도움이 되는 비교
+
+
+
+강사님 첫 풀이는 word.split(c)의 결과 개수로 소문자 포함을 판단해 대문자 C만 있는 후보를 놓친다. 둘째 풀이는 lower로 보완하여 내 코드와 같은 선택 원리다. 그래서 필요한 차이를 표로 보여 주고 긴 원문 문장이 든 두 발췌를 반복하지 않는다.
+
+<a id="results"></a>
+
+## 8. 결과를 추적하고 한 가지 바꾸기
+
+| 후보 | lower로 검사한 값 | 통과 | 출력 값 |
+| --- | --- | --- | --- |
+| Cat, | cat, | 예 | Cat |
+| dog, | dog, | 아니오 | 출력 없음 |
+| clock. | clock. | 예 | clock |
+| C++! | c++! | 예 | C++! |
+
+줄바꿈이 낀 원본을 split(' ')로만 나누면 한 후보 안에 줄바꿈과 다음 단어가 함께 있을 수 있다. 화면에 줄이 늘었다고 반드시 후보 수가 그만큼 늘어난 것은 아니다. 실제 파일 문자열과 선택 결과를 따로 확인한다.
+
+| 한 가지만 변경 | 예상 | 이유 |
+| --- | --- | --- |
+| lower 제거 | Cat·C++! 놓침 | 소문자 c만 검사 |
+| 느낌표 replace 추가 | C++로 출력 | 제거 범위 확장 |
+| 후보 사이 공백을 줄바꿈으로 | split 방식에 따른 차이 | 구분자 조건 |
+| 출력에 word.lower 사용 | cat처럼 소문자 표시 | 검사와 출력 대상 변경 |
+
+원하는 단어가 안 나오면 대소문자와 읽은 파일을 먼저 확인한다. 기호가 남으면 replace 대상에 포함되어 있는지 본다. 공백·줄바꿈 이상은 split 인수를 확인한다. 파일 없음을 문자열 메서드의 실패로 혼동하지 않는다.
+
+<a id="tips"></a>
+
+## 9. 추가로 알면 좋은 것과 출처
+
+> 💡 **TIP · 수업 범위 밖:** 정규표현식 전체·다국어 토큰화·문장부호 분류와 검색 색인 설계는 추가 학습이다. 기본 목표는 실제 파일 읽기와 배운 문자열 메서드를 연결하는 것이다.
+
+TIP은 기본 문제의 필수 조건이 아니다. 배운 문법을 확인한 📚 출처와 선택 확장을 구별한다.
+
+<a id="practice"></a>
+
+## 10. 복습과 빠른 정리
+
+1. lower로 검사하면 원래 word도 소문자가 되는가?
+2. 내 원본에서 실제 제거 메서드는?
+3. C++!의 +·!도 현재 코드가 지우는가?
+4. split 한 칸은 줄바꿈도 항상 나누는가?
+
+<details>
+<summary>풀이 — 먼저 자신의 답을 적은 뒤 펼치기</summary>
+
+새 소문자 문자열을 조건에서 쓸 뿐 원래 word는 그대로다. replace다. 쉼표·마침표만 지정하여 +·!는 남는다. 지정 구분자는 일반 공백 한 칸이라 줄바꿈까지 모두 나누지 않는다.
+
+</details>
+
+| 단계 | 확인 |
+| --- | --- |
+| 읽기 | 파일·인코딩 |
+| 분리 | 구분자 |
+| 선택 | 검사할 새 문자열 |
+| 표시 | 원문과 제거 기호 |
+
+[장별 연습문제](실습/연습문제/10-03_Python_파일에서_단어찾기_연습문제.md) · 다음은 [함수와 반환값](11-01_Python_함수와_반환값.md)이다.
+
+<!-- 이전 명시 앵커 보존 -->
+<a id="section-1"></a>
+<a id="section-2"></a>
 <a id="section-3"></a>
-
-## 3. 이 문제에서 조심해 읽을 부분
-
-두 원본 모두 `split(' ')`으로 **일반 공백 한 칸**을 기준으로 나눈다. 줄바꿈이나 여러 공백까지 자연스럽게 “단어”로 나누는 완성된 분석기는 아니다. 또 요구사항은 쉼표와 마침표 제거이므로 다른 문장부호까지 지운다고 생각하지 말자. 이 장에서는 입력 파일의 실제 문장을 검사하고, 어떤 단어가 출력되는지 한 단계씩 따라가면 된다.
-
 <a id="section-4"></a>
-
-## 직접 확인할 질문
-
-1. 대문자 `C`만 포함된 단어는 강사님 첫 풀이와 둘째 풀이에서 각각 어떻게 될까?
-2. 내 코드는 `replace`를 검사 전과 검사 후 중 언제 적용할까?
-
 <a id="section-5"></a>
-
-## 추가로 알면 좋은 것
-
-여러 공백·줄바꿈·다양한 문장부호를 모두 다루는 토큰화는 이 원본에 구현되지 않았다. 이 문제의 학습 목표는 **파일 읽기와 이미 배운 문자열 메서드를 연결하는 것**이다.
-
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/10-03_Python_파일에서_단어찾기_연습문제.md) → [11-01. 함수와 반환값](11-01_Python_함수와_반환값.md)
-

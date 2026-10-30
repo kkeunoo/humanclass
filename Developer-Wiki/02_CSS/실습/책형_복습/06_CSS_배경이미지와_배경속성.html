@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>06. 배경 — 이미지의 크기·반복·위치를 나누기</title>
+    <style>
+        .picture { width: 200px; height: 200px; border: 1px solid black; background: lightgray url("assets/lesson-character.png") no-repeat center; background-size: contain; }
+        .cover { background-size: cover; }
+    </style>
+</head>
+<body>
+    <h1>같은 이미지를 다른 기준으로</h1>
+    <p>contain</p><div class="picture"></div>
+    <p>cover</p><div class="picture cover"></div>
+</body>
+</html>

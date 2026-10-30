@@ -1,3 +1,5 @@
+> **이전 개편 이력:** 당시 판단·수치를 보존한 기록이다. 현재 책형 상태는 [최신 기록](책형_개편_진행기록.md)을 따른다.
+
 # 06 FastAPI 기존 문서 대응표
 
 기존 `Developer-Wiki/06_FastAPI`의 Markdown 12개를 양쪽 `workspace_python` 원본과 대조했다. 기존 BACKUP에는 별도의 FastAPI Markdown이 없다. 같은 이름의 01–07과 README는 본문을 새로 썼고, 바뀐 이름은 아래 안내 파일로 연결했다.

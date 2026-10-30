@@ -1,0 +1,7 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>수정</title></head><body>
+{% if todo %}<form method="post" action="/update">
+<input type="hidden" name="todo_id" value="{{ todo.id }}">
+<label>내용 <input name="item" value="{{ todo.item }}" required></label>
+<button type="submit">수정 완료</button></form>
+{% else %}<p>없는 ID입니다.</p>{% endif %}
+<a href="/read">목록</a></body></html>

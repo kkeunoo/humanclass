@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>08. position — 이동의 기준과 원래 자리</title>
+    <style>
+        :root { --box-color: brown; }
+        .parent { position: relative; width: 300px; height: 200px; border: 1px solid black; }
+        .child { position: absolute; width: 100px; height: 50px; top: 30px; left: calc(50% - 50px); background-color: var(--box-color); }
+        .relative { position: relative; top: 10px; background-color: lightblue; }
+    </style>
+</head>
+<body>
+    <h1>기준과 자리</h1>
+    <div class="parent"><div class="child">absolute</div><p>일반 내용</p></div>
+    <div class="relative">아래로10px 보임</div>
+    <p>이 문단의 자리는 relative 이동만으로 당겨지지 않음</p>
+</body>
+</html>

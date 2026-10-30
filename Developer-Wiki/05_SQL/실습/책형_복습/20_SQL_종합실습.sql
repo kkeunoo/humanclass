@@ -1,0 +1,25 @@
+DROP TEMPORARY TABLE IF EXISTS book_emp;
+CREATE TEMPORARY TABLE book_emp (
+    empno INT PRIMARY KEY, ename VARCHAR(20), job VARCHAR(20),
+    mgr INT, sal DECIMAL(8,2), comm DECIMAL(8,2), deptno INT
+);
+INSERT INTO book_emp VALUES
+(1,'ADA','CLERK',3,1000,NULL,20),
+(2,'BEN','SALESMAN',3,1600,300,30),
+(3,'CARA','MANAGER',NULL,3000,NULL,20),
+(4,'DAN','CLERK',3,1300,0,10),
+(5,'ELLA','ANALYST',3,3000,NULL,20),
+(6,'FINN','SALESMAN',3,1500,0,30);
+DROP TEMPORARY TABLE IF EXISTS book_dept;
+CREATE TEMPORARY TABLE book_dept (deptno INT PRIMARY KEY, dname VARCHAR(20));
+INSERT INTO book_dept VALUES (10,'ALPHA'),(20,'BETA'),(30,'GAMMA'),(40,'EMPTY');
+
+SELECT
+    d.deptno,
+    d.dname,
+    COUNT(e.empno) AS people,
+    MAX(e.sal) - MIN(e.sal) AS sal_gap
+FROM book_dept d
+LEFT JOIN book_emp e ON e.deptno = d.deptno
+GROUP BY d.deptno, d.dname
+ORDER BY d.deptno;

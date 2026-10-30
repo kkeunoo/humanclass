@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>GET과 POST 복습</title>
+</head>
+<body>
+    <h1>제출 항목 확인</h1>
+    <form action="07-02_전송_복습.html" method="get">
+        <p><label>노래 <input type="text" name="song" value="hello"></label></p>
+        <p><label>이름 없는 입력 <input type="text" value="ignored"></label></p>
+        <p><label>읽기 전용 <input type="text" name="fixed" value="A" readonly></label></p>
+        <p><label>비활성 <input type="text" name="off" value="B" disabled></label></p>
+        <p><label><input type="checkbox" name="coffee" value="1" checked>샷추가</label>
+            <label><input type="checkbox" name="coffee" value="2" checked>펄추가</label>
+            <label><input type="checkbox" name="coffee" value="5">얼음추가</label></p>
+        <p><label>종류 <select name="course">
+            <option value="1">한식</option>
+            <option value="4" selected>분식</option>
+        </select></label></p>
+        <p><label>메모 <textarea name="memo">note</textarea></label></p>
+        <button type="submit">GET 전송</button>
+    </form>
+    <h2>POST는 받는 서버의 지원도 필요</h2>
+    <form action="07-02_전송_복습.html" method="post">
+        <label>검색어 <input type="text" name="query" value="hello"></label>
+        <button type="submit">POST 전송</button>
+    </form>
+</body>
+</html>

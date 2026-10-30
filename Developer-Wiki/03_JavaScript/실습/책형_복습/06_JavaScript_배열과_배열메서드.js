@@ -1,0 +1,11 @@
+const numbers = [10, 20];
+const length = numbers.push(30);
+console.log(length);
+console.log(numbers.join(','));
+const removed = numbers.pop();
+console.log(removed);
+console.log(numbers.join(','));
+const copied = numbers.slice(0, 1);
+copied[0] = 99;
+console.log(copied.join(','));
+console.log(numbers.join(','));

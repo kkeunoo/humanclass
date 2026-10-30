@@ -1,0 +1,16 @@
+const learner = document.getElementById('learner');
+console.log(learner.value);
+const topics = document.querySelectorAll('.topic');
+console.log(topics[0].checked);
+console.log(document.querySelectorAll('.topic:checked').length);
+console.log(document.querySelector('[name=group]:checked').value);
+const radios = document.querySelectorAll('[name=group]');
+radios[1].checked = true;
+console.log(document.querySelector('[name=group]:checked').value);
+const lang = document.getElementById('lang');
+console.log(lang.value);
+lang.value = 'java';
+console.log(lang.value);
+const memo = document.getElementById('memo');
+console.log(memo.value.indexOf('\n'));
+document.getElementById('view').innerText = memo.value;

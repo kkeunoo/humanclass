@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01. CSS 선택자와 적용 — 어떤 요소를 어떻게 바꿀까</title>
+    <style>
+        div strong { color: blue; }
+        div > strong { font-size: 24px; }
+        input[type=checkbox]:checked + span { text-decoration: line-through; }
+    </style>
+</head>
+<body>
+    <h1>선택 조건 관찰</h1>
+    <div>
+        <strong>바로 아래</strong>
+        <p><strong>한 단계 더 안쪽</strong></p>
+    </div>
+    <label><input type="checkbox"><span>복습 완료</span></label>
+</body>
+</html>

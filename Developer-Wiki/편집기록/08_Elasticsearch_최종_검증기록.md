@@ -1,3 +1,5 @@
+> **이전 개편 이력:** 당시 판단·수치를 보존한 기록이다. 현재 책형 상태는 [최신 기록](책형_개편_진행기록.md)을 따른다.
+
 # 08 Elasticsearch·RAG 검증 기록
 
 [08 단원 목차](../08_Elasticsearch와_RAG/README.md) · [편집기록 목차](README.md)

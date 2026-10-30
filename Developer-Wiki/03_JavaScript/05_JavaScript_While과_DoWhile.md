@@ -1,46 +1,78 @@
-# 05. while과 do-while — 다시 입력받고, 조건에 맞으면 끝내기
+# 05. while과 do-while — 검사·처리·다음 입력·종료
 
-[JavaScript 목차](README.md) · [이전: for와 배열 순회](04_JavaScript_반복문과_배열순회.md) · [다음: 배열](06_JavaScript_배열과_배열메서드.md)
+[JavaScript 목차](README.md) · [읽기 안내](00_JavaScript_V3_동작_백과_읽기법.md)
 
-기준은 양쪽 `05_while.html`이다. 강사님 파일은 메뉴 반복을 실행하지만 **내 파일의 JavaScript는 모두 주석 처리**되어 있다. 아래 주석 원본은 학습 기록이며 파일을 열기만 하면 실행되는 코드가 아니다. 개선 예제는 별도 표시한다.
+반복 횟수보다 ‘계속할 조건’이 중요한 경우가 있다. 메뉴를 다시 입력받거나 정답을 맞힐 때까지 시도하는 코드에서는 조건을 언제 검사하고 어떤 값을 다음에 바꾸는지 읽어야 한다.
 
-`while`은 **본문 전에** 조건을 확인하고, `do...while`은 **본문을 한 번 실행한 뒤** 확인한다. 작은 **설명용 예제** `let n = 0; while (n > 0) { console.log(n); }`는 처음부터 거짓이므로 아무것도 출력하지 않는다. 같은 본문을 `do { console.log(n); } while (n > 0);`로 쓰면 `0`을 한 번 출력한다. 아래 원본에서는 이 차이가 메뉴의 종료 문구에 어떤 영향을 주는지 확인한다.
+<a id="chapter-toc"></a>
 
-<!-- chapter-toc -->
+**이 장의 목차:** [목표](#learn) · [개념](#concepts) · [예제](#example) · [내 코드](#my-code) · [연결](#connections) · [평가](#review) · [비교](#teacher) · [결과·실험](#results) · [TIP·출처](#tips) · [복습](#practice)
 
-- [1. 반복 전에 검사할까, 한 번 실행한 뒤 검사할까](05_JavaScript_While과_DoWhile.md#section-1)
-- [2. 메뉴를 다시 받는 위치](05_JavaScript_While과_DoWhile.md#section-2)
-- [3. 배운 문법으로 메뉴 교정하기](05_JavaScript_While과_DoWhile.md#section-3)
-- [4. 내가 작성한 입출금·주사위·업다운](05_JavaScript_While과_DoWhile.md#section-4)
-- [5. 짧은 복습](05_JavaScript_While과_DoWhile.md#section-5)
-- [추가로 알면 좋은 것](05_JavaScript_While과_DoWhile.md#section-6)
+<a id="learn"></a>
 
-<a id="section-1"></a>
+## 1. 이 장에서 배울 것
 
-## 1. 반복 전에 검사할까, 한 번 실행한 뒤 검사할까
+while의 사전 검사와 do-while의 사후 검사를 구분한다. 원본의 주석 상태·도달하지 못하는 종료 문구·숫자 변환과 횟수 증가 위치를 설명한다.
 
-| 문법 | 조건 확인 시점 | 본문 실행 횟수 |
-| --- | --- | --- |
-| while (조건) { 본문 } | 실행 전 | 처음부터 거짓이면 0회 |
-| do { 본문 } while (조건); | 실행 후 | 해당 문장에 도달하면 최소 1회 |
+입력·현재 상태·실행 순서·결과를 분리해 설명한다. 실제 수업 원본은 아래에 표시하고, 원본에 없는 선택 학습은 9절 TIP에 둔다.
 
-횟수가 정해진 반복은 for, 입력을 받을 때까지 계속하는 반복은 while로 표현하면 읽기 쉬운 경우가 많다. 기능의 절대적인 구분은 아니다. ‘for로 쓰면 비효율적’이라는 내 주석을 실행 성능의 일반 법칙으로 외우지 않는다. do-while의 조건 확인 순서는 [MDN do...while](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/do...while)과 같다.
+<a id="concepts"></a>
 
-### 강사님: 1부터 10까지
+## 2. 무엇이며, 왜 필요한가
 
-출처: `teacher/workspace_html/javascript/05_while.html` 8–12행 · **원본 발췌**
+while은 본문 실행 전에 조건을 검사하므로 처음부터 거짓이면0회다. do-while은 본문 뒤에서 검사하므로 그 문장에 도달하면 최소1회 실행한다. 횟수를 알면 for, 조건 중심이면 while이 읽기 좋은 경우가 많지만 절대적인 기능·성능 구분은 아니다.
 
-```javascript
-    let i = 1
-    while(i <= 10){
-        console.log(i)
-        i++
-    }
+```text
+while:    조건 → 본문 → 조건 → …
+do-while: 본문 → 조건 → 본문 → …
 ```
 
-### 내 기록
+끝나려면 조건에 영향을 주는 입력·변수 변경이나 break가 있어야 한다. i<=10인데 i를 계속1로 두면 같은 조건을 반복한다. 브라우저의 끝나지 않는 동기 반복은 다른 화면 작업을 막을 수 있으므로 웹페이지를 계속 운영하는 일반 해법으로 소개하지 않는다.
 
-출처: `me/workspace_html/javascript/05_while.html` 10–14행 · **원본 발췌**
+입력을 반복할 때는 입력 → 취소·빈값 확인 → 숫자 변환 → 범위·정수 조건 → 처리 → 다음 입력 순서를 생각한다. prompt 취소는null, 빈 입력은''이다. Number 변환 후에는 둘 다0이어서 원래 상태를 잃을 수 있다. `값>=0`은 음수가 아닌지 묻는 조건이며 정수 검사가 아니다.
+
+> 📚 **출처 · 본문 설명 확인:** [MDN while](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/while), [do...while](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/do...while), [prompt](https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt). 배운 기능의 뜻을 확인한 근거다. 예제·표·풀이 흐름은 수업 코드를 바탕으로 새로 작성했으며 외부 문장을 직접 인용하지 않았다. 확인일: 2026-10-28.
+
+<a id="example"></a>
+
+## 3. 작은 예제로 먼저 이해하기
+
+**새 설명 예제 · 전체 스크립트.** [HTML 실행 파일](실습/책형_복습/05_JavaScript_While과_DoWhile.html)과 같은 폴더의 [JS 파일](실습/책형_복습/05_JavaScript_While과_DoWhile.js)을 함께 내려받는다. HTML을 브라우저로 열고 Console에서 결과를 확인한다. script는 필요한 HTML 뒤에 연결한다. 콘솔 출력은 페이지 본문에 자동으로 쓰이지 않는다.
+
+```javascript
+let first = 0;
+while (first > 0) {
+    console.log('while 본문');
+    first--;
+}
+console.log('while 끝', first);
+let second = 0;
+do {
+    console.log('do 본문', second);
+    second--;
+} while (second > 0);
+console.log('do 끝', second);
+```
+
+첫 조건0>0은 거짓이어서 while 본문은 건너뛴다. do는0을 출력하고 second를-1로 바꾼 뒤 조건을 검사해 끝난다. 실행 횟수의 차이를 보기 위해 입력 창과 난수를 제거한 새 예제다. 실제 메뉴 원본에 이 출력이 있었다는 뜻은 아니다.
+
+**예상 출력 또는 관찰:**
+
+```text
+while 끝 0
+do 본문 0
+do 끝 -1
+```
+
+<a id="my-code"></a>
+
+## 4. 내가 작성한 코드를 따라 읽기
+
+아래는 원본의 일부다. 원본에 의존하는 앞 선언·HTML·함수는 다음 절의 연결까지 읽는다. 주석의 잘못된 표현도 원문대로 보존하고 설명에서 교정한다.
+
+### 내 코드 — 원본 발췌
+
+출처: `D:/workspace/workspace_html/javascript/05_while.html` 10–14행
 
 ```javascript
             // let i=1;
@@ -50,41 +82,11 @@
             // }
 ```
 
-주석을 해제하면 같은 흐름이다. i=1에서 시작해 조건 확인 → 출력 → i 증가를 반복한다. 10을 출력한 뒤 i가 11이 되어 끝난다. i++를 없애면 i가 계속 1이므로 종료 조건에 도달하지 못한다.
+**발췌 바로 풀이:** 주석을 해제하면 같은 흐름이다. i=1에서 시작해 조건 확인 → 출력 → i 증가를 반복한다. 10을 출력한 뒤 i가 11이 되어 끝난다. i++를 없애면 i가 계속 1이므로 종료 조건에 도달하지 못한다.
 
-<a id="section-2"></a>
+### 내 코드 — 원본 발췌
 
-## 2. 메뉴를 다시 받는 위치
-
-### 강사님 코드
-
-출처: `teacher/workspace_html/javascript/05_while.html` 28–46행 · **원본 발췌**
-
-```javascript
-    menu = prompt('1:커피, 2:홍차, 0:종료')
-    while(menu != 0){
-    // while(true){
-            
-        // menu = prompt('1:커피, 2:홍차, 0:종료')
-
-        if(menu == 1){
-            console.log('커피 드릴께요')
-        } else if(menu == 2){
-            console.log('홍차 드릴께요')
-        } else if(menu == 0){
-            console.log('종료합니다')
-            break
-        } else {
-            console.log('정확히 입력해 주세요')
-        }
-
-        menu = prompt('1:커피, 2:홍차, 0:종료')
-    }
-```
-
-### 내 기록
-
-출처: `me/workspace_html/javascript/05_while.html` 34–50행 · **원본 발췌**
+출처: `D:/workspace/workspace_html/javascript/05_while.html` 34–50행
 
 ```javascript
             // menu = prompt('1:커피, 2:홍차, 0:종료')
@@ -106,34 +108,11 @@
             // }
 ```
 
-핵심 구조는 같다. 첫 입력은 while 바깥, 다음 입력은 본문 마지막에서 받는다. 첫 입력 '1'이면 커피 문구를 출력하고 다시 입력받는다. **'0'이면 while 조건이 거짓이라 본문에 들어가지 않는다.** 따라서 이 구조의 `else if(menu == 0)` 안 종료 문구는 실행되지 않는다. 종료 문구를 while 뒤에 두면 정상 종료 때 한 번 보여 줄 수 있다.
+**발췌 바로 풀이:** 핵심 구조는 같다. 첫 입력은 while 바깥, 다음 입력은 본문 마지막에서 받는다. 첫 입력 '1'이면 커피 문구를 출력하고 다시 입력받는다. **'0'이면 while 조건이 거짓이라 본문에 들어가지 않는다.** 따라서 이 구조의 `else if(menu == 0)` 안 종료 문구는 실행되지 않는다. 종료 문구를 while 뒤에 두면 정상 종료 때 한 번 보여 줄 수 있다.
 
-prompt 취소의 결과는 null, 빈칸으로 확인하면 빈 문자열이다. null은 느슨한 비교로 0과 같지 않아 이 원본에서 취소해도 다시 입력받는다. 빈 문자열은 0과 동등 비교되므로 반복을 끝낸다. 이 차이는 메뉴 의도와 별개로 실제 코드가 만드는 결과다. [MDN prompt](https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt)
+### 내 코드 — 원본 발췌
 
-### 강사님 do-while 코드
-
-출처: `teacher/workspace_html/javascript/05_while.html` 49–62행 · **원본 발췌**
-
-```javascript
-    do {
-        menu = prompt('1:커피, 2:홍차, 0:종료')
-        
-        if(menu == 1){
-            console.log('커피 드릴께요')
-        } else if(menu == 2){
-            console.log('홍차 드릴께요')
-        } else if(menu == 0){
-            console.log('종료합니다')
-            break
-        } else {
-            console.log('정확히 입력해 주세요')
-        }
-    } while(menu != 0)
-```
-
-### 내 기록
-
-출처: `me/workspace_html/javascript/05_while.html` 55–68행 · **원본 발췌**
+출처: `D:/workspace/workspace_html/javascript/05_while.html` 55–68행
 
 ```javascript
             // do-while은 while과 다르게 우선 1회 진행하고나서 조건에 맞았을 때 추가 진행여부 확인
@@ -152,47 +131,11 @@ prompt 취소의 결과는 null, 빈칸으로 확인하면 빈 문자열이다. 
             // } while(menu != 0)
 ```
 
-입력이 본문 첫 줄에 있어 입력 코드를 한 번만 쓴다. 이번에는 '0'을 받은 뒤에도 현재 본문의 조건문이 실행되어 종료 문구를 출력하고 break한다. 다만 취소·빈 입력 문제는 그대로다. while(true)가 웹페이지나 서버를 계속 운영하는 일반적인 방법이라는 내 주석은 적절하지 않다. 브라우저에서 종료되지 않는 동기 반복은 다른 화면 작업을 막을 수 있다.
+**발췌 바로 풀이:** 입력이 본문 첫 줄에 있어 입력 코드를 한 번만 쓴다. 이번에는 '0'을 받은 뒤에도 현재 본문의 조건문이 실행되어 종료 문구를 출력하고 break한다. 다만 취소·빈 입력 문제는 그대로다. while(true)가 웹페이지나 서버를 계속 운영하는 일반적인 방법이라는 내 주석은 적절하지 않다. 브라우저에서 종료되지 않는 동기 반복은 다른 화면 작업을 막을 수 있다.
 
-<a id="section-3"></a>
+### 내 코드 — 원본 발췌
 
-## 3. 배운 문법으로 메뉴 교정하기
-
-다음은 **원본의 종료·취소 처리를 수정한 독립 실행 예제**다. 입력을 숫자로 바꾸지 않고 '1'·'2'·'0'과 비교한다.
-
-```javascript
-while (true) {
-    let menu = prompt('1:커피, 2:홍차, 0:종료');
-    if (menu === null || menu === '0') {
-        console.log('종료합니다');
-        break;
-    }
-    if (menu === '1') {
-        console.log('커피 드릴게요');
-    } else if (menu === '2') {
-        console.log('홍차 드릴게요');
-    } else {
-        console.log('정확히 입력해 주세요');
-    }
-}
-```
-
-| 입력 | 교정 예제 결과 |
-| --- | --- |
-| '1' → '2' → '0' | 커피 → 홍차 → 종료 |
-| 취소 | 종료 |
-| 빈 문자열 | 안내 후 다시 입력 |
-| '3' | 안내 후 다시 입력 |
-
-<a id="section-4"></a>
-
-## 4. 내가 작성한 입출금·주사위·업다운
-
-강사님 파일 68–87행에는 정사각형 테두리와 업다운 문제 조건이 있다. 입출금과 주사위의 직접 대응 풀이는 이 강사님 파일에서 확인되지 않는다. 학생 파일의 실습으로 소개하며 강사님 완성 답이라고 붙이지 않는다.
-
-### 입출금: 금액 범위와 정수 여부는 다르다
-
-출처: `me/workspace_html/javascript/05_while.html` 84–92행 · **원본 발췌**
+출처: `D:/workspace/workspace_html/javascript/05_while.html` 84–92행
 
 ```javascript
             //         let input = prompt('얼마를 입금하시겠습니까?')
@@ -206,27 +149,11 @@ while (true) {
             //         }
 ```
 
-bank_input >= 0은 음수가 아닌지 확인한다. 주석처럼 정수인지 확인하는 조건은 아니므로 1.5도 통과한다. Number 변환 전에 취소·빈 입력을 확인하지 않으면 둘 다 0으로 처리된다. 출금의 `bank_output <= bank_money && bank_output >= 0`은 잔액 초과를 막는 장점이 있다. 메뉴에서 4를 입력하면 끝나지만 null을 종료로 처리하는 조건은 없다. 이 실습을 완전한 금액 검증 도구로 소개하지 않는다.
+**발췌 바로 풀이:** bank_input >= 0은 음수가 아닌지 확인한다. 주석처럼 정수인지 확인하는 조건은 아니므로 1.5도 통과한다. Number 변환 전에 취소·빈 입력을 확인하지 않으면 둘 다 0으로 처리된다. 출금의 `bank_output <= bank_money && bank_output >= 0`은 잔액 초과를 막는 장점이 있다. 메뉴에서 4를 입력하면 끝나지만 null을 종료로 처리하는 조건은 없다. 이 실습을 완전한 금액 검증 도구로 소개하지 않는다.
 
-### 주사위: 횟수 증가 위치
+### 내 코드 — 원본 발췌
 
-내 123–143행은 주사위를 던질 때마다 cnt를 증가시키고 3이면 break한다. 3이 나온 시도도 횟수에 포함한다. 주사위 값을 while 밖에서 한 번만 뽑으면 같은 값만 검사하므로, 이 문제에서는 난수 생성이 안쪽에 있어야 한다.
-
-### 강사님 업다운 문제
-
-출처: `teacher/workspace_html/javascript/05_while.html` 83–87행 · **원본 발췌**
-
-```javascript
-    // 업다운 게임
-    // 1~100까지 임의의 정답이 있을 때
-    // 정답보다 낮은 숫자 : "UP"
-    // 정답보다 높은 숫자 : "DOWN"
-    // 정답까지 걸린 시도 횟수 출력
-```
-
-### 내 업다운 풀이의 핵심
-
-출처: `me/workspace_html/javascript/05_while.html` 157–182행 · **원본 발췌**
+출처: `D:/workspace/workspace_html/javascript/05_while.html` 157–182행
 
 ```javascript
             // // prompt로 받을 값을 저장할 변수와, 몇 번 시도했는지 count하기 위한 변수 설정
@@ -257,71 +184,97 @@ bank_input >= 0은 음수가 아닌지 확인한다. 주석처럼 정수인지 �
             //             console.log(`${result} 거의 다 왔어요! DOWN!`)
 ```
 
-정답을 반복문 밖에서 한 번 정한 점이 좋다. 숫자 비교 때마다 정답이 바뀌면 같은 문제를 풀 수 없기 때문이다. 다음 네 부분은 설명을 고친다.
+**발췌 바로 풀이:** 정답을 반복문 밖에서 한 번 정한 점이 좋다. 숫자 비교 때마다 정답이 바뀌면 같은 문제를 풀 수 없기 때문이다.
 
-1. parseInt로 만든 정답은 이미 숫자이므로 Number로 다시 변환할 필요가 없다.
-2. value를 Number로 바꾼 result는 취소 시 null이 아니라 0이다. result==null은 취소를 잡지 못하고 뒤의 result==0이 종료시킨다. 빈 입력도 같은 이유로 종료된다.
-3. updown_cnt는 유효한 입력인지 확인하기 전에 증가하여 잘못된 입력도 센다.
-4. 정답 문구의 updown_cnt++는 현재 횟수를 출력한 뒤 한 번 더 증가시킨다. 표시된 숫자가 반드시 1 크게 나오는 것은 아니다. 다만 저장된 횟수는 불필요하게 늘어난다.
+내 파일의 JavaScript는 모두 주석 처리되어 있다. 아래 발췌도 실행 결과가 아닌 학습 기록이다. 1~10 반복은 i가11이 된 뒤 종료한다. 메뉴 while은 첫 입력을 밖에서 받고 본문 끝에서 다시 받는다. menu가'0'이면 조건이 거짓이라 본문에 들어가지 않아 안쪽 종료 문구는 실행되지 않는다. do-while은 입력 뒤 현재 본문의 조건문까지 실행하므로'0'에서 종료 문구를 보여 줄 수 있다.
 
-### 업다운 교정 예제
+입출금의 bank_input>=0은1.5도 통과한다. 출금에서 잔액 이하·0이상 검사한 점은 좋지만 취소·빈입력·정수 검증은 별도다. 이 사례에는 같은 강사님 완성 풀이가 없어 학생의 실습으로 소개한다.
 
-다음은 **배운 while·조건·변환·나머지로 재작성한 복습 예제**다. 유효한 1–100 정수 추측만 횟수로 센다. 원본에서 사용한 전역 isNaN은 숫자 변환을 포함해 검사한다. Number.isNaN과 다른 함수이며 새로 배운 API인 것처럼 바꾸지 않는다. [MDN isNaN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN)
+주사위는 매 시도 난수를 안에서 새로 뽑고 횟수를 올린다. 반대로 업다운 정답은 밖에서 한 번 정해야 같은 문제를 계속 맞힐 수 있다. 내 업다운은 입력 검증 전에 횟수를 올리고 정답 출력에도 cnt++가 있어 저장 횟수가 한 번 더 늘어날 수 있다. 후위는 현재 횟수를 출력하므로 화면 숫자가 반드시1큰 것은 아니다.
 
-```javascript
-let answer = parseInt(Math.random() * 100) + 1;
-let count = 0;
-while (true) {
-    let input = prompt('1~100 정수 입력, 0 또는 취소로 종료');
-    if (input === null) break;
-    if (input === '') {
-        console.log('숫자를 입력하세요');
-        continue;
-    }
-    let guess = Number(input);
-    if (guess === 0) break;
-    if (isNaN(guess) || guess < 1 || guess > 100 || guess % 1 !== 0) {
-        console.log('1~100 정수를 입력하세요');
-        continue;
-    }
-    count++;
-    if (guess === answer) {
-        console.log(`정답! ${count}번 만에 맞췄습니다`);
-        break;
-    } else if (guess < answer) {
-        console.log('UP');
-    } else {
-        console.log('DOWN');
-    }
-}
-```
+<a id="connections"></a>
 
-빈 문자열은 재입력하지만 공백만 입력하면 Number가 0으로 바꾸어 종료한다. 이 예제의 범위를 명시한 것이며, 공백 정리는 뒤 문자열 장의 trim을 배운 뒤 적용할 수 있다. 취소를 숫자 변환보다 먼저 확인하는 순서는 여기서 기억한다.
+## 5. 선언·호출·파일이 연결되는 흐름
 
-<a id="section-5"></a>
+원본 menu·bank_money·updown_result는 앞에서 준비한 상태다. 발췌만 읽을 때도 그 초기값을 찾아야 한다. 업다운에서 prompt의 value를 Number로 바꾼 result는 취소 시null이 아니라0이다. result==null보다 뒤 result==0이 종료시킨다. 정답 parseInt 결과는 이미 숫자라 다시 Number로 변환할 필요가 없다. 호출·변환·상태 변경의 순서를 한 줄씩 적는다.
 
-## 5. 짧은 복습
+<a id="review"></a>
 
-1. while과 do-while에서 첫 조건이 거짓이면 본문 실행 횟수는?
-2. 위 교정 업다운에서 정답 50, 입력 'abc' → '30' → '50'이면 결과와 횟수는?
-3. 원본 정사각형 테두리 문제에서 한 칸이 테두리인 조건은?
+## 6. 잘한 점·아쉬운 점·개선 방향
+
+**잘한 점:** 업다운 정답을 반복 밖에 두고 출금에 잔액 제한을 썼다. **교정:** 범위 검사를 정수 검사라고 부르지 않는다. while의 안쪽 종료 갈래는 도달 가능한지 확인한다. **개선 방향:** 취소를 변환 전 확인하고, 유효한 추측만 count++한다. 원본이 주석이라 조용히 열린다는 사실과 주석을 해제했을 때 올바른 동작인지는 다른 판단이다.
+
+개선안은 원본을 수정한 결과가 아니다. 실제 오류, 수업용 단순화, 목적에 따른 선택을 구별해 판단한다.
+
+<a id="teacher"></a>
+
+## 7. 강사님 코드가 도움이 되는 비교
+
+
+
+강사님 파일은 메뉴를 실행하지만 내 파일은 주석 기록이다. 주석을 해제한 같은 부분의 핵심 흐름은 같아 중복 인용하지 않는다. 강사님 업다운은 문제 조건만 제시하므로 내 풀이를 강사님 완성 답으로 붙이지 않는다. 정사각형 테두리도 행·열이 처음 또는 마지막이라는 조건을 푸는 별도 문제다.
+
+<a id="results"></a>
+
+## 8. 결과를 추적하고 한 가지 바꾸기
+
+| 원본 while 메뉴 입력 | 결과 | 이유 |
+| --- | --- | --- |
+| '1' |커피 후 다음 입력 |본문 실행 |
+| '0' |본문 진입 안 함 |느슨한 비교로0과 같음 |
+| 취소null |안내 후 재입력 가능 |null은0과 동등하지 않음 |
+| 빈문자열 |종료 조건으로 빠짐 |빈문자열과0의 느슨한 비교 |
+
+**새 개선 흐름:** menu를문자열로 두고 null 또는'0'을 먼저 종료 처리하면 취소와 빈값을 구별할 수 있다. 업다운에서는 변환 전null·''확인 → Number →0종료 → isNaN·1~100·나머지%1로정수검사 →count++ →정답/UP/DOWN 순서다. 정답50에'abc'→'30'→'50'이면 안내→UP→정답2회다. 공백만 입력한 경우를 다루려면 뒤 문자열 장의 trim을 배운 뒤 별도 정책을 정한다.
+
+| 한 가지 변경 | 예상 | 이유 |
+| --- | --- | --- |
+| first만1로 |while 본문1회 |감소 후0 |
+| 원래second만2로 |do 본문2·1 출력 |두번 실행 |
+| 원래while 조건만first>=0으로 |본문0에서1회 |감소해-1로종료 |
+
+화면이 멈춘다면 종료 조건에 도달하는 값 변경이 있는지 본다. 무한 반복을 시험하려고 안전한 예제의 증감식을 무턱대고 지우지 않는다. 메뉴가 종료 문구 없이 끝났다면 본문 전 검사인지부터 확인한다. 입력 유효성·성공 횟수·반복 종료는 서로 다른 조건이다.
+
+<a id="tips"></a>
+
+## 9. 추가로 알면 좋은 것과 출처
+
+> 💡 **TIP · 수업 범위 밖:** Number.isInteger 등 별도 검증 API·비동기 입력 UI·저장 가능한 은행 앱은 추가 학습이다. 원본의 전역 isNaN과 Number.isNaN은 서로 다른 함수다.
+
+
+
+이 절의 확장은 기본 문제의 필수 조건이 아니다. 📚 출처가 있다는 것과 수업 밖 기능이라는 것은 다른 구분이다.
+
+<a id="practice"></a>
+
+## 10. 복습과 빠른 정리
+
+1. 처음 조건이 거짓이면 두 반복은 몇 번 실행하는가?
+2. 0이상 검사는 정수 검사인가?
+3. 업다운 정답은 반복 안에서 계속 바꾸는가?
 
 <details>
-<summary>정답 확인</summary>
+<summary>짧은 풀이 — 먼저 답한 뒤 확인</summary>
 
-1. while은 0회, do-while은 한 번 실행한 뒤 검사한다.
-2. 재입력 안내 → UP → 정답 2회다.
-3. 행이 첫째/마지막이거나 열이 첫째/마지막이면 테두리다. 이 조건을 중첩 반복과 ||로 표현할 수 있다. 강사님 파일은 문제만 제시하므로 원본 완성 풀이와 혼동하지 않는다.
+while은0회, do-while은 최소1회다.0이상은 소수도 통과한다. 업다운은 같은 문제를 맞혀야 하므로 정답을 밖에서 한 번 정한다.
 
 </details>
 
+| 질문 | 확인 |
+| --- | --- |
+| 먼저/나중 검사 | while/do-while |
+| 끝날 수 있나 | 입력·증감·break |
+| 취소는 어디서 | Number변환전 |
+| 횟수는 언제 | 유효입력후 |
+
+[장별 연습문제](실습/연습문제/05_JavaScript_While과_DoWhile_연습문제.md)에서 예상·설명·수정을 이어 간다. 다음은 [배열](06_JavaScript_배열과_배열메서드.md)이다.
+
+<!-- 이전 색인 이동 주소 보존 -->
+<a id="section-1"></a>
+<a id="section-2"></a>
+<a id="section-3"></a>
+<a id="section-4"></a>
+<a id="section-5"></a>
 <a id="section-6"></a>
 
-## 추가로 알면 좋은 것
-
-Number.isInteger 등 별도 검증 API, 비동기 입력 UI, 저장 가능한 은행·재고 앱은 확장으로 분리한다. 이 장의 목표는 입력 → 검사 → 처리 → 다음 입력·종료의 순서를 읽는 것이다.
-
----
-
-[장별 연습문제 풀기](실습/연습문제/05_JavaScript_While과_DoWhile_연습문제.md) · [다음: 배열](06_JavaScript_배열과_배열메서드.md)
-
+[이 장의 목차](#chapter-toc)에서 현재 설명을 찾는다.

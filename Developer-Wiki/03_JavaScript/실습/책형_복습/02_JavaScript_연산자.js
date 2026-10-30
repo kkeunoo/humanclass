@@ -1,0 +1,10 @@
+let k = 10;
+let before = k++;
+console.log(before, k);
+k = 10;
+let after = ++k;
+console.log(after, k);
+console.log(3 == '3', 3 === '3');
+let num = 7;
+let result = num % 2 === 0 ? '짝수' : '홀수';
+console.log(result);

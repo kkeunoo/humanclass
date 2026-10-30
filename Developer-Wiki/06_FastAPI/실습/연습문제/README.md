@@ -1,16 +1,29 @@
-# FastAPI 장별 연습문제
+# FastAPI 장별 연습문제 —11개
 
-[실습 목차](../README.md) · [단원 목차](../../README.md)
+[FastAPI 목차](../../README.md) · [실습 안내](../README.md)
 
-본문 10장에 하나씩 대응하는 **새 복습 문제**다. 강사님·내 원본 코드는 각 본문에 두었다.
+## 1. 시작 조건
 
-1. [01 FastAPI 가상환경과 웹 API 기초](01_FastAPI_가상환경과_웹_API_기초_연습문제.md)
-2. [02 FastAPI Router Request Pydantic CRUD](02_FastAPI_Router_Request_Pydantic_CRUD_연습문제.md)
-3. [03 FastAPI Jinja2 템플릿](03_FastAPI_Jinja2_템플릿_연습문제.md)
-4. [04 FastAPI Response Redirect 의존성주입](04_FastAPI_Response_Redirect_의존성주입_연습문제.md)
-5. [05 FastAPI Jinja Todo CRUD](05_FastAPI_Jinja_Todo_CRUD_연습문제.md)
-6. [06 Python SQLite와 Transaction](06_Python_SQLite와_Transaction_연습문제.md)
-7. [07 FastAPI MariaDB SQLModel 사원 CRUD](07_FastAPI_MariaDB_SQLModel_사원_CRUD_연습문제.md)
-8. [07-02 비밀번호 해시 실습](07-02_비밀번호_해시_실습_연습문제.md)
-9. [08 FastAPI 파일업로드 다운로드](08_FastAPI_파일업로드_다운로드_연습문제.md)
-10. [09 FastAPI Cookie Session 로그인](09_FastAPI_Cookie_Session_로그인_연습문제.md)
+수업 내용으로 새로 구성한 연습문제다. 실제 내 퀴즈·당시 작성 코드와 구별한다. 본문3절의 전체 파일·설치·입력·작업폴더를 먼저 확인한다.
+
+## 2. 풀기 순서
+
+예상 → 이유 설명 → 한 가지 변경 순서다. 상태·본문·터미널·저장값·다음 요청을 나눠 적는다. SQLite와해시는 독립 실행이다. 접힌 풀이를 펼치기 전에 자신의 답을 남긴다.
+
+## 3. 목록
+
+- [01. 첫 FastAPI — 주소와 방식이 Python 함수에 도착하기까지](01_FastAPI_가상환경과_웹_API_기초_연습문제.md)
+- [02. 라우터와 입력·CRUD — 받은 값이 목록의 항목이 되기까지](02_FastAPI_Router_Request_Pydantic_CRUD_연습문제.md)
+- [03. Jinja 템플릿 — Python 값이 여러 HTML 파일을 거쳐 화면이 되기까지](03_FastAPI_Jinja2_템플릿_연습문제.md)
+- [04. 함수 호출과 리다이렉트 — 같은 실행과 새로운 요청 구분](04_FastAPI_Response_Redirect_의존성주입_연습문제.md)
+- [05. 화면 Todo CRUD — 폼의 값이 목록·상세·수정 화면으로 이어지는 길](05_FastAPI_Jinja_Todo_CRUD_연습문제.md)
+- [06. Python SQLite — 연결·SQL·행 자료·확정과 닫기를 끝까지 연결하기](06_Python_SQLite와_Transaction_연습문제.md)
+- [07. 사원 DB CRUD — 입력 모델·세션·매개변수·화면·커밋 연결하기](07_FastAPI_MariaDB_SQLModel_사원_CRUD_연습문제.md)
+- [07-02. 해시 실습 — 저장한 글자를 복원하지 않고 입력 일치 확인하기](07-02_비밀번호_해시_실습_연습문제.md)
+- [08. 파일 업로드·다운로드 — 폼의 파일 객체에서 디스크와 응답까지](08_FastAPI_파일업로드_다운로드_연습문제.md)
+- [09. 쿠키·세션·미들웨어 — 다음 요청이 이전 상태를 알아보는 과정](09_FastAPI_Cookie_Session_로그인_연습문제.md)
+- [FastAPI 실무 스타일 — 경로·처리·응답의 책임을 읽기 쉽게 나누기](실무_코딩스타일_연습문제.md)
+
+## 4. 채점과 연결
+
+정상 동작뿐 아니라 누락·경계·없음·실패를 설명한다. 외부DB상태와 새 예제 결과를 혼동하지 않는다. TIP은 기본 정답 조건이 아니다. [종합실습](../../종합실습.md)에서 화면·함수·DB를 연결한다.

@@ -1,77 +1,109 @@
-# 17-02. 이벤트 전파·위임 — 자식을 눌렀는데 부모가 반응하는 이유
+# 17-02. 이벤트 전파와 위임 — 자식 클릭을 부모가 처리하는 이유
 
-[JavaScript 목차](README.md) · [이전: 폼 이벤트](17_JavaScript_폼이벤트와_이벤트전파_실전문제.md)
+[JavaScript 목차](README.md) · [읽기 안내](00_JavaScript_V3_동작_백과_읽기법.md)
 
-양쪽 `asset/js/17_event_form.js`의 parent/child와 게시판 실습이다. 강사님과 내 코드에서 **실행 중인 리스너의 위치**를 비교한다. 주문·로그인·피자는 [17-03](17-03_JavaScript_주문_로그인_피자실습.md), 메뉴·Todo는 [17-04](17-04_JavaScript_메뉴와_Todo실습.md)에 정리했다.
+버튼은 한 번 눌렀는데 같은 제목이 두 번 출력된다면 클릭 횟수부터 의심할 필요는 없다. 클릭이 지나가는 경로와 그 경로에 등록된 함수를 보면 한 사건이 여러 처리로 이어지는 이유를 찾을 수 있다.
 
-**이벤트 전파란?** 자식에서 일어난 클릭을 부모의 클릭 함수도 받을 수 있는 흐름이다. 아래는 원본 발췌가 아닌 **설명용 작은 예제**다.
+<a id="chapter-toc"></a>
 
-```html
-<div id="parent"><button id="child">누르기</button></div>
-<script>
-  document.getElementById('parent').addEventListener('click', function (event) {
-    console.log(event.target.id);        // child
-    console.log(event.currentTarget.id); // parent
-  });
-</script>
-```
+**이 장의 목차:** [목표](#learn) · [개념](#concepts) · [예제](#example) · [내 코드](#my-code) · [연결](#connections) · [평가](#review) · [비교](#teacher) · [결과·실험](#results) · [TIP·출처](#tips) · [복습](#practice)
 
-버튼을 누르면 실제 클릭 대상은 `child`, 함수를 등록한 대상은 `parent`다. 원본에서는 이 차이로 자식 클릭을 처리하고, 필요할 때 부모까지 올라가는 흐름을 멈춘다.
+<a id="learn"></a>
 
-<!-- chapter-toc -->
+## 1. 이 장에서 배울 것
 
-- [1. 캡처링과 버블링 방향](17-02_JavaScript_이벤트전파와_위임.md#section-1)
-- [2. target과 currentTarget](17-02_JavaScript_이벤트전파와_위임.md#section-2)
-- [3. 자식1은 위로 전달하지 않는다](17-02_JavaScript_이벤트전파와_위임.md#section-3)
-- [4. 게시판에 이벤트를 위임한다](17-02_JavaScript_이벤트전파와_위임.md#section-4)
-- [5. 체크박스 클릭은 별도 처리한다](17-02_JavaScript_이벤트전파와_위임.md#section-5)
-- [6. 복습](17-02_JavaScript_이벤트전파와_위임.md#section-6)
-- [추가로 알면 좋은 것](17-02_JavaScript_이벤트전파와_위임.md#section-7)
+target·currentTarget을 구별하고 버블링 경로를 설명한다. 전파 중단과 기본 동작 취소를 나누며, 표와 행의 중복 처리·체크박스의 독립 처리를 추적한다.
 
-<a id="section-1"></a>
+입력·현재 상태·실행 순서·결과를 분리해 설명한다. 실제 수업 원본은 아래에 표시하고, 원본에 없는 선택 학습은 9절 TIP에 둔다.
 
-## 1. 캡처링과 버블링 방향
+<a id="concepts"></a>
+
+## 2. 무엇이며, 왜 필요한가
+
+클릭이 자식에서 발생하면 일반적인 버블링 리스너는 자식에서 상위 요소 쪽으로 처리될 수 있다. 반대로 캡처링은 상위에서 대상 쪽으로 내려오는 단계다. 내 원본 주석은 두 이름을 반대로 적었으므로 교정한다. 모든 이벤트가 같은 방식으로 버블링한다고 확대하지 않는다.
 
 ```text
-상위에서 대상 쪽으로 내려오는 단계: 캡처링
-대상에서 이벤트 처리
-대상에서 상위 쪽으로 올라가는 단계: 버블링
+상위 → 대상: 캡처링
+대상에서 처리
+대상 → 상위: 버블링
 ```
 
-내 원본 주석은 두 이름을 반대로 적었다. 기본 addEventListener('click', 함수)는 별도 캡처 옵션을 주지 않았으므로, 자식에서 발생한 click이 올라올 때 부모 리스너가 반응하는 예제다. 모든 이벤트가 똑같이 버블링한다고 확대하지 않는다. [MDN 이벤트 버블링](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Event_bubbling)
+| 정보·호출 | 의미 | 자식 버튼을 누른 부모 리스너의 예 |
+| --- | --- | --- |
+| target | 실제 사건의 대상 | 자식 버튼 |
+| currentTarget | 현재 실행 중인 리스너의 등록 대상 | 부모 |
+| stopPropagation | 경로의 추가 전파 중단 | 부모로 올라가는 처리를 막음 |
+| preventDefault | 기본 동작 취소 | 체크 전환·링크 이동 등과 관련 |
 
-<a id="section-2"></a>
+이벤트 위임은 부모에 처리 함수를 두고 target을 검사하여 자식의 일을 판단하는 방식이다. 자식마다 같은 리스너를 붙이는 대신 등록 지점을 모을 수 있다. 그러나 행에도 표에도 같은 처리를 남기면 클릭이 두 등록 지점을 지나 중복 결과가 생긴다.
 
-## 2. target과 currentTarget
+> 📚 **출처 · 본문 설명 확인:** [MDN 이벤트 버블링](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Event_bubbling), [addEventListener의 this](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener). 배운 기능의 뜻을 확인한 근거다. 예제·표·풀이 흐름은 수업 코드를 바탕으로 새로 작성했으며 외부 문장을 직접 인용하지 않았다. 확인일: 2026-10-28.
 
-### 강사님 코드
+<a id="example"></a>
 
-출처: `teacher/workspace_html/javascript/asset/js/17_event_form.js` 46–63행 · **원본 발췌**
+## 3. 작은 예제로 먼저 이해하기
+
+**새 설명 예제 · 전체 스크립트.** [HTML 실행 파일](실습/책형_복습/17-02_JavaScript_이벤트전파와_위임.html)과 같은 폴더의 [JS 파일](실습/책형_복습/17-02_JavaScript_이벤트전파와_위임.js)을 함께 내려받는다. HTML을 브라우저로 열고 Console에서 결과를 확인한다. script는 필요한 HTML 뒤에 연결한다. 콘솔 출력은 페이지 본문에 자동으로 쓰이지 않는다.
+
+**먼저 준비할 HTML · body 안:**
+
+```html
+    <div id="parent">
+        <button id="child1" type="button">전파 중단</button>
+        <button id="child2" type="button">부모로 전달</button>
+    </div>
+    <table id="board"><tbody><tr>
+        <td><input class="chk" type="checkbox" value="1" aria-label="첫 글 선택"></td>
+        <td class="title">제목1</td><td writer="w1">작성자1</td>
+    </tr></tbody></table>
+```
 
 ```javascript
-    const parent = document.querySelector('#parent')
-    parent.addEventListener('click', function(event){
-        log('부모 클릭')
-
-        // target : 실제 이벤트가 발생한 DOM
-        console.log('event.target', event.target)
-
-        // currentTarget : 이벤트가 적용되어 있는 DOM
-        console.log('event.currentTarget', event.currentTarget)
-        
-        // this
-        //      addEventListener 안에서는 event.currentTarget
-        //      대부분의 경우 window를 가지고 있다
-        //      그래서 현재 this에 어떤 값이 있는지 알고 있을 때만 쓴다
-        //      arrow 함수의 경우 this === window
-        console.log('this', this)
-        console.log(  this === event.currentTarget  )
-    })
+document.getElementById('parent').addEventListener('click', function (event) {
+    console.log('부모', event.target.id, event.currentTarget.id);
+});
+document.getElementById('child1').addEventListener('click', function (event) {
+    event.stopPropagation();
+    console.log('자식1');
+});
+const board = document.getElementById('board');
+board.addEventListener('click', function (event) {
+    if (event.target.classList.contains('title')) {
+        console.log('제목', event.target.textContent);
+    }
+    if (event.target.hasAttribute('writer')) {
+        console.log('작성자', event.target.getAttribute('writer'));
+    }
+});
+board.querySelector('input.chk').addEventListener('click', function (event) {
+    event.stopPropagation();
+    const row = this.parentNode.parentNode;
+    console.log('체크', this.checked, row.querySelector('.title').textContent);
+});
 ```
 
-### 내 코드
+전파 중단 버튼, 부모로 전달 버튼, 제목, 작성자를 차례로 누르고 체크박스를 두 번 누른다. 자식1은 부모 출력을 만들지 않는다. 자식2의 클릭은 부모가 받지만 target은 child2이고 currentTarget은 parent다. 체크박스의 전파만 막았으므로 체크와 해제는 계속 일어나며 두 번 모두 제목을 출력한다. 새 예제는 표 한 곳에 위임을 모으고 checked 관찰을 추가한 설명 예제다. 원본의 이중 등록을 그대로 둔 결과와 다르다.
 
-출처: `me/workspace_html/javascript/asset/js/17_event_form.js` 54–72행 · **원본 발췌**
+**예상 출력 또는 관찰:**
+
+```text
+자식1
+부모 child2 parent
+제목 제목1
+작성자 w1
+체크 true 제목1
+체크 false 제목1
+```
+
+<a id="my-code"></a>
+
+## 4. 내가 작성한 코드를 따라 읽기
+
+아래는 원본의 일부다. 원본에 의존하는 앞 선언·HTML·함수는 다음 절의 연결까지 읽는다. 주석의 잘못된 표현도 원문대로 보존하고 설명에서 교정한다.
+
+### 내 코드 — 원본 발췌
+
+출처: `D:/workspace/workspace_html/javascript/asset/js/17_event_form.js` 54–72행
 
 ```javascript
     const parent = document.querySelector('#parent')
@@ -95,38 +127,9 @@
     })
 ```
 
-| 부모 리스너에서 확인 | 부모 자체 클릭 | 자식2 클릭 |
-| --- | --- | --- |
-| event.target | parent | child2 |
-| event.currentTarget | parent | parent |
-| 일반 function의 this | parent | parent |
+### 내 코드 — 원본 발췌
 
-target은 이벤트가 발생한 대상이고 currentTarget은 **지금 실행 중인 리스너가 등록된 대상**이다. 자식2를 클릭해도 currentTarget이 자식2가 되는 것이 아니다. 양쪽의 일반 function에서는 this === event.currentTarget이 true다.
-
-화살표 함수는 주변의 this를 사용한다. 양쪽 주석의 ‘화살표 함수는 무조건 window’나 ‘arrow 불가’는 일반 규칙이 아니다. 이 예제를 둘러싼 일반 load 함수의 this는 Window라, 그 안에서 화살표 리스너로 바꾸면 이 경우에는 Window를 이어받는다. 원본처럼 리스너 등록 대상을 명확히 읽으려면 event.currentTarget을 확인하면 된다. [MDN addEventListener의 this](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
-
-<a id="section-3"></a>
-
-## 3. 자식1은 위로 전달하지 않는다
-
-### 강사님 코드
-
-출처: `teacher/workspace_html/javascript/asset/js/17_event_form.js` 65–72행 · **원본 발췌**
-
-```javascript
-    const child1 = document.querySelector('#child1')
-    child1.addEventListener('click', function(event){
-        // 전달 방지
-        // 부모로 전달되는 이벤트 중지
-        event.stopPropagation()
-
-        log('자식1 클릭')
-    })
-```
-
-### 내 코드
-
-출처: `me/workspace_html/javascript/asset/js/17_event_form.js` 74–82행 · **원본 발췌**
+출처: `D:/workspace/workspace_html/javascript/asset/js/17_event_form.js` 74–82행
 
 ```javascript
     const child1 = document.querySelector('#child1')
@@ -140,48 +143,11 @@ target은 이벤트가 발생한 대상이고 currentTarget은 **지금 실행 �
     })
 ```
 
-자식1을 클릭하면 '자식1 클릭'이 기록되고, 원본 parent의 click 함수로 올라가지 않는다. 자식2에는 이 중단 코드가 없으므로 '부모 클릭'이 기록된다.
+**발췌 바로 풀이:** 자식1을 클릭하면 '자식1 클릭'이 기록되고, 원본 parent의 click 함수로 올라가지 않는다. 자식2에는 이 중단 코드가 없으므로 '부모 클릭'이 기록된다.
 
-| 호출 | 목적 | 원본 사례 |
-| --- | --- | --- |
-| preventDefault() | 기본 동작 취소 | 검색 제출을 먼저 멈춤 |
-| stopPropagation() | 이벤트 경로의 전파 중단 | 자식 click이 부모 리스너로 올라가는 것 중단 |
+### 내 코드 — 원본 발췌
 
-stopPropagation이 target을 '나'로 바꾸는 것은 아니다. target은 원래 발생 대상이고 이 메서드는 전파를 제어한다. 이미 실행된 상위 캡처 리스너를 되돌리는 것도 아니다. 같은 요소의 다른 리스너를 모두 지우는 기능과도 구분한다.
-
-<a id="section-4"></a>
-
-## 4. 게시판에 이벤트를 위임한다
-
-각 셀마다 같은 함수를 붙이는 대신 행 또는 표에 click 함수를 두고 event.target을 검사한다. 제목 셀이면 글자를, writer 속성이 있으면 그 값을 출력한다. 이것이 이 원본의 이벤트 위임이다.
-
-### 강사님 코드 — 행에 등록
-
-출처: `teacher/workspace_html/javascript/asset/js/17_event_form.js` 98–114행 · **원본 발췌**
-
-```javascript
-    const trs = document.querySelectorAll('#board tr')
-    for( let tr of trs ){
-        tr.addEventListener('click', function(event){
-            console.log(event.target)
-    
-            if(event.target.classList.contains('chk')){
-                log(event.target.value)
-            }
-    
-            if(event.target.classList.contains('title')){
-                log(event.target.textContent)
-            }
-    
-            if(event.target.hasAttribute('writer')){
-                log(event.target.getAttribute('writer'))
-            }
-        })
-```
-
-### 내 코드 — 표에도 등록
-
-출처: `me/workspace_html/javascript/asset/js/17_event_form.js` 90–109행 · **원본 발췌**
+출처: `D:/workspace/workspace_html/javascript/asset/js/17_event_form.js` 90–109행
 
 ```javascript
     const board = document.querySelector('#board')
@@ -206,9 +172,9 @@ stopPropagation이 target을 '나'로 바꾸는 것은 아니다. target은 원�
     })
 ```
 
-### 내 코드 — 행 등록도 활성 상태
+### 내 코드 — 원본 발췌
 
-출처: `me/workspace_html/javascript/asset/js/17_event_form.js` 112–137행 · **원본 발췌**
+출처: `D:/workspace/workspace_html/javascript/asset/js/17_event_form.js` 112–137행
 
 ```javascript
     const trs = document.querySelectorAll('#board tr')
@@ -239,33 +205,11 @@ stopPropagation이 target을 '나'로 바꾸는 것은 아니다. target은 원�
         })
 ```
 
-강사님은 표 등록을 주석 처리하고 행 등록만 남겼다. 나는 **표와 행 두 곳 모두 활성 상태**다. 제목1을 한 번 누르면 내 코드에서는 행에서 한 번, 표에서 한 번 실행되어 같은 제목이 두 번 기록된다. 작성자1을 눌러도 w1이 두 번 기록된다. 같은 함수가 자동 중복 등록된 문제가 아니라, 경로상의 서로 다른 두 요소에 처리 코드를 둔 결과다.
+**발췌 바로 풀이:** 강사님은 표 등록을 주석 처리하고 행 등록만 남겼다. 나는 **표와 행 두 곳 모두 활성 상태**다. 제목1을 한 번 누르면 내 코드에서는 행에서 한 번, 표에서 한 번 실행되어 같은 제목이 두 번 기록된다. 작성자1을 눌러도 w1이 두 번 기록된다. 같은 함수가 자동 중복 등록된 문제가 아니라, 경로상의 서로 다른 두 요소에 처리 코드를 둔 결과다.
 
-이 실습의 요구처럼 행 위임으로 정리하려면 내 90–109행의 표 등록 부분을 제거하거나 주석 처리하고 행 등록을 유지한다. 강사님 코드의 이 구분이 더 명확하다. closest 같은 새로운 API로 원본 전체를 다시 설계할 필요는 없다.
+### 내 코드 — 원본 발췌
 
-<a id="section-5"></a>
-
-## 5. 체크박스 클릭은 별도 처리한다
-
-### 강사님 코드
-
-출처: `teacher/workspace_html/javascript/asset/js/17_event_form.js` 116–124행 · **원본 발췌**
-
-```javascript
-        tr.querySelector('input.chk').addEventListener('click', function(event){
-            event.stopPropagation()
-
-            // console.log(this.parentNode)
-
-            console.log(
-                this.parentNode.parentNode.querySelector('.title').innerText
-            )
-        })
-```
-
-### 내 코드
-
-출처: `me/workspace_html/javascript/asset/js/17_event_form.js` 139–151행 · **원본 발췌**
+출처: `D:/workspace/workspace_html/javascript/asset/js/17_event_form.js` 139–151행
 
 ```javascript
         // input 태그이고 chk라는 class를 가진 것을 가져온 뒤 click 이벤트 설정
@@ -283,43 +227,126 @@ stopPropagation이 target을 '나'로 바꾸는 것은 아니다. target은 원�
         })
 ```
 
-```text
-this: input.chk
-  → parentNode: td
-  → parentNode: tr
-  → querySelector('.title'): 같은 행의 제목 셀
+### 내 코드 — 원본 발췌
+
+출처: `D:/workspace/workspace_html/javascript/asset/js/17_event_form.js` 1–7행
+
+```javascript
+function log(message) {
+    const div = document.createElement('div')
+    div.classList.add('log')
+    div.innerHTML = message
+    const view = document.querySelector('#view')
+    view.prepend(div)
+}
 ```
 
-양쪽은 같은 동작이다. 체크박스에서 전파를 멈추므로 위 행·표의 value 출력 분기는 이 클릭에서 실행되지 않고 **console에 제목**을 출력한다. #view의 log에 제목을 넣는 것과 혼동하지 않는다. stopPropagation만 호출했으므로 체크 자체의 기본 동작은 그대로다.
+내 parent 리스너는 자식2 클릭도 받아 target과 currentTarget을 출력한다. child1은 stopPropagation 뒤 자기 메시지만 출력한다. 게시판에서는 내 table과 각 tr에 처리 리스너가 모두 활성 상태다. 제목을 한 번 누르면 tr에서 한 번, table에서 한 번 같은 제목을 기록한다. 체크박스는 자체 리스너에서 전파를 중단하므로 위 행·표의 분기로 올라가지 않고 Console에 같은 행의 제목을 출력한다. checked 조건이 없어 해제할 때도 출력한다.
 
-또한 원본은 checked를 검사하지 않는다. 체크할 때뿐 아니라 **체크 해제할 때도** 제목을 출력한다. 문제 주석의 ‘체크하면’만 보고 활성 코드를 선택 시에만 실행되는 것으로 해석하지 않는다. 체크된 때만 출력하려면 같은 콜백 안에서 이미 배운 this.checked 조건을 추가하는 별도 교정으로 표시한다.
+<a id="connections"></a>
 
-parentNode 두 번은 이 HTML의 input → td → tr 구조에 맞춘 경로다. 중간에 다른 요소를 끼우면 달라질 수 있다. 행 안에 제목 자식 태그를 추가했을 때도 target의 class가 title인지 직접 검사하는 원본 분기는 원하는 대로 작동하지 않을 수 있다. 현재 단순 표 구조의 학습 범위를 분명히 한다.
+## 5. 선언·호출·파일이 연결되는 흐름
 
-<a id="section-6"></a>
+input.chk의 this → parentNode로 td → 다시 parentNode로 tr → querySelector로 같은 행의 title을 찾는다. 이 경로는 현재 HTML 구조에 의존한다. 중간 래퍼를 끼우면 부모 두 번의 도착점도 달라진다. 원본 log(message)는 아래 정의대로 화면에 메시지를 쌓고, 체크박스 분기의 console.log는 개발자 도구로 보낸다. 출력 위치가 다르므로 화면 로그에 없다는 이유로 함수가 실행되지 않았다고 판단하지 않는다.
 
-## 6. 복습
+<a id="review"></a>
 
-1. 자식2를 클릭할 때 부모 리스너의 target/currentTarget은?
-2. 내 제목 셀 클릭이 두 번 출력되는 이유는?
-3. 체크박스 클릭의 stopPropagation이 체크 전환도 막는가?
-4. 원본은 체크를 해제할 때도 console에 제목을 출력하는가?
+## 6. 잘한 점·아쉬운 점·개선 방향
+
+**잘한 점:** target과 currentTarget을 함께 관찰하고 체크박스 처리를 나눠 위임을 실험했다. **실제 중복 처리:** 내 표·행 리스너가 함께 활성이라 한 클릭을 두 곳에서 처리한다. 한 위임 지점만 남기는 개선이 필요하다. **주석 교정:** stopPropagation이 target을 자기 자신으로 바꾸는 것은 아니다. 일반 function 리스너의 this는 여기서 currentTarget과 같지만, 화살표 함수는 주변 this를 이어받는다. 무조건 window이거나 사용할 수 없다는 일반 규칙으로 외우지 않는다.
+
+개선안은 원본을 수정한 결과가 아니다. 실제 오류, 수업용 단순화, 목적에 따른 선택을 구별해 판단한다.
+
+<a id="teacher"></a>
+
+## 7. 강사님 코드가 도움이 되는 비교
+
+출처: `D:/workspace_teacher/workspace_html/javascript/asset/js/17_event_form.js` 98–114행
+
+```javascript
+    const trs = document.querySelectorAll('#board tr')
+    for( let tr of trs ){
+        tr.addEventListener('click', function(event){
+            console.log(event.target)
+    
+            if(event.target.classList.contains('chk')){
+                log(event.target.value)
+            }
+    
+            if(event.target.classList.contains('title')){
+                log(event.target.textContent)
+            }
+    
+            if(event.target.hasAttribute('writer')){
+                log(event.target.getAttribute('writer'))
+            }
+        })
+```
+
+강사님은 표 등록을 주석 처리하고 행 등록만 남겨 중복 처리가 없다. 아래 강사님 발췌는 이 차이를 판단할 때 필요하여 인용한다. 다만 행마다 등록하는 방식과 표에 한 번 등록하는 방식 중 어느 쪽이 언제나 우수하다고 결론 내리지 않는다. 현재 개선의 핵심은 같은 일을 중복하는 등록을 정리하는 것이다.
+
+<a id="results"></a>
+
+## 8. 결과를 추적하고 한 가지 바꾸기
+
+| 클릭 | 내 원본에서 실행 | 구별할 것 |
+| --- | --- | --- |
+| 자식1 | 자식1 리스너 | 부모로 전파 중단 |
+| 자식2 | 부모 리스너 | target은 자식2로 유지 |
+| 제목 | 행 → 표 | 같은 제목이 두 번 기록 |
+| 체크박스 | 체크박스 리스너 | 기본 체크 전환은 유지 |
+
+전파 중단은 이미 실행한 상위 캡처 리스너의 일을 되돌리지 않는다. 같은 요소의 다른 리스너를 모두 지우는 호출도 아니다. title 안에 별도 자식 태그가 생기면 실제 target의 클래스가 title이 아닐 수 있으므로 단순한 현재 표에서 관찰한 결과를 복잡한 구조까지 확대하지 않는다.
+
+| 한 가지만 변경 | 예상 | 이유 |
+| --- | --- | --- |
+| 자식1의 stopPropagation 제거 | 자식1 다음 부모 출력 | 버블링 경로 유지 |
+| 원본 table 등록만 제거 | 제목 중복이 한 번으로 줄음 | tr 등록은 남아 있음 |
+| 체크 콜백에 this.checked 조건 추가 | 체크할 때만 제목 출력 | 해제 상태를 제외 |
+
+한 번 눌렀는데 두 번 나오면 경로의 등록 대상을 확인한다. 제목이 안 잡히면 target이 실제로 어떤 요소인지 본다. this가 기대와 다르면 일반 함수인지 화살표 함수인지와 주변 this를 확인한다. 체크가 계속 바뀌는 것은 stopPropagation의 실패가 아니라 기본 동작을 취소하지 않은 결과다.
+
+<a id="tips"></a>
+
+## 9. 추가로 알면 좋은 것과 출처
+
+> 💡 **TIP · 수업 범위 밖:** closest로 대상 찾기, stopImmediatePropagation, 복잡한 동적 컴포넌트의 위임 설계는 추가 학습이다. 먼저 배운 parentNode·classList·getAttribute와 전파의 역할을 연결한다.
+
+
+
+이 절의 확장은 기본 문제의 필수 조건이 아니다. 📚 출처가 있다는 것과 수업 밖 기능이라는 것은 다른 구분이다.
+
+<a id="practice"></a>
+
+## 10. 복습과 빠른 정리
+
+1. 자식2를 누른 부모 리스너의 target과 currentTarget은?
+2. 내 원본에서 제목이 두 번 출력되는 이유는?
+3. 체크박스의 전파 중단은 체크 전환도 막는가?
 
 <details>
-<summary>정답</summary>
+<summary>짧은 풀이 — 먼저 답한 뒤 확인</summary>
 
-1. child2 / parent다.
-2. tr과 table 양쪽에서 같은 종류의 click을 처리한다.
-3. 아니다. 원본은 기본 체크 동작을 취소하지 않았다.
-4. 그렇다. checked를 검사하는 조건이 없다.
+child2와 parent다. tr과 table의 두 리스너가 같은 클릭 경로에서 처리하기 때문이다. stopPropagation은 기본 체크 전환을 취소하지 않는다.
 
 </details>
 
+| 질문 | 먼저 볼 것 |
+| --- | --- |
+| 어디서 발생했나? | target |
+| 누가 처리하나? | currentTarget |
+| 왜 두 번인가? | 경로의 등록 지점 |
+| 무엇을 막나? | 기본 동작과 전파 구별 |
+
+[장별 연습문제](실습/연습문제/17-02_JavaScript_이벤트전파와_위임_연습문제.md)에서 예상·설명·수정을 이어 간다. 다음은 [주문·로그인·피자 실습](17-03_JavaScript_주문_로그인_피자실습.md)이다.
+
+<!-- 이전 색인 이동 주소 보존 -->
+<a id="section-1"></a>
+<a id="section-2"></a>
+<a id="section-3"></a>
+<a id="section-4"></a>
+<a id="section-5"></a>
+<a id="section-6"></a>
 <a id="section-7"></a>
 
-## 추가로 알면 좋은 것
-
-closest를 이용한 대상 찾기, stopImmediatePropagation, 복잡한 동적 컴포넌트의 위임 설계는 추가편이다. 수업의 parentNode·classList·getAttribute와 전파 차이를 먼저 익힌다.
-
-**이 장을 읽은 뒤:** [장별 연습문제 풀기](실습/연습문제/17-02_JavaScript_이벤트전파와_위임_연습문제.md) → [다음: 주문·로그인·피자](17-03_JavaScript_주문_로그인_피자실습.md)
-
+[이 장의 목차](#chapter-toc)에서 현재 설명을 찾는다.
