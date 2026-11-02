@@ -358,7 +358,7 @@ def multi_match(keyword, size=10):
         'msg' : util.formatter(response)
     }
 
-def terms_movieId(ids: list):
+def term_movieId(ids: list):
     # term은 keyword (where id = 1)
     # terms는 list로 여러 개 검색 (where id in (1,2,3))
     response = util.es.search(
@@ -375,7 +375,7 @@ def terms_movieId(ids: list):
 
 @router.get('/es/select/terms')
 def terms(ids:list = Query()):
-    response = terms_movieId(ids)
+    response = term_movieId(ids)
 
     return {
         'msg' : util.formatter(response)
@@ -423,7 +423,7 @@ def test_counter():
 # CBF(Content-Based Filtering) 콘텐츠 기반 필터링 추천
 # '내가 뭘 좋아했지?'
 def content_based_filtering(list_movieId: list, top_k:int = 10):
-    selected = terms_movieId(list_movieId)
+    selected = term_movieId(list_movieId)
 
     # return selected
 
@@ -680,7 +680,7 @@ def collaborative_filtering(userId, top_k:int=10):
 
     return recommend[:top_k]
 
-@router.get('/es/recommend/cf/')
+@router.get('/es/recommend/cf')
 def cf(userId:int, top_k:int = 10):
     return collaborative_filtering(userId, top_k)
 
