@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from router.es_router import router as es_router
+from router.langchain_router import router as langchain_router
 
 app = FastAPI()
 app.include_router(es_router)
+app.include_router(langchain_router)
 
 @app.get('/')
 def home():
