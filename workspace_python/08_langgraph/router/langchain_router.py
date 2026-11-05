@@ -342,22 +342,20 @@ def chain_with_structured_output(dish:str):
     })
 
 # import es_router
+# 최상위 기준 절대경로이기 때문에 현재 폴더 기준으로 쓰려면 from .es_router로 해야 함
 from router import es_router
 
 # class hybrid_model(BaseModel):
 #     # movies: dict[str, dict[str, str | float]]
-#     str
-#     title: str
-#     score: float
 
-# chain을 이용하여 CBF, CF를 llm을 사용해 답변 받아보기
-@router.get('/langchain/recommend/hybrid')
+# chain을 이용하여 CBF, CF를 llm을 사용해 답변 받아보기 (직접풀기)
+@router.get('/langchain/recommend/hybrid/personal')
 def recommend_hybrid(
-    userId: int,                # CF에서 사용 할 사용자 id
-    provider: Literal['gemini', 'gpt'] = 'gpt',
-    top_k:int = 10,             # 결과 개수
-    candidate_size:int = 50,     # 각각의 추천에의 후보 수
-    list_movieId: list[int] = Query(...)    # CBF에서 사용 할 영화 목록
+    userId: int,                                # CF에서 사용 할 사용자 id
+    provider: Literal['gemini', 'gpt'] = 'gpt', # 검색에 사용 할 LLM 선택
+    top_k:int = 10,                             # 결과 개수
+    candidate_size:int = 50,                    # 각각의 추천에의 후보 수
+    list_movieId: list[int] = Query(...)        # CBF에서 사용 할 영화 목록
 ):
     '''
     def hybrid(
@@ -396,6 +394,7 @@ def recommend_hybrid(
             '이 중에서 가장 추천하고 싶은 영화가 무엇인지 생각해.'
             '그 영화의 줄거리, 등장인물 등 주된 부분을 간략히 요약해서 알려줘.'
             '추가로 이 외에 2가지정도를 한 줄 정도로 더 추천해.'
+            '최종은 HTML형태로 줘. MD형식이 아니라.'
         ),
         ('human', '{hybrid}')
     ])
@@ -423,3 +422,63 @@ def recommend_hybrid(
     print('-'*50)
     print(result)
     return result
+
+# 강사님과 같이 풀이
+@router.get('/langchain/recommend/hybrid')
+def recommend_hybrid(
+    userId: int,                # CF에서 사용 할 사용자 id
+    provider: Literal['gemini', 'gpt'] = 'gpt',
+    top_k:int = 10,             # 결과 개수
+    candidate_size:int = 50,     # 각각의 추천에의 후보 수
+    list_movieId: list[int] = Query(...)    # CBF에서 사용 할 영화 목록
+):
+    '''
+    def hybrid(
+        userId: int,                # CF에서 사용 할 사용자 id
+        top_k:int = 10,             # 결과 개수
+        candidate_size:int = 50,     # 각각의 추천에의 후보 수
+        list_movieId: list[int] = Query(...)    # CBF에서 사용 할 영화 목록
+    ):  
+    '''
+    # 예전에 만들어 뒀던 hybrid 추천 결과를 그대로 가져와서
+    # langchain으로 LLM에게 예쁘게 포장해달라고 해서 그 결과를 출력한다
+    # 단, 사용자가 gpt와 gemini를 선택할 수 있게 하자
+
+    prompt = ChatPromptTemplate.from_messages([
+        (
+            'system',
+            '너는 영화 추천 서비스의 설명 도우미야.'
+            '필요하다면 인터넷 검색을 해서 알아봐.'
+            '입력 받은 추천 결과만 사용해서 설명해야돼.'
+            '결과는 구조적인 JSON으로 알려줘.'
+        ),
+        ('human', 
+            'CBF, CF의 Hybrid추천 결과물 : {hybrid}'
+            '제목을 한국(한글) 제목으로 변경해서도 알려줘. 단, 제목을 추측하지마.'
+            '영화 줄거리도 알려줘. 단, 줄거리를 추측하지마.'
+            '순위를 보고 3개 정도만 정리해주면 돼.'
+        )
+    ])
+
+    hybrid = es_router.hybrid(userId, top_k, candidate_size, list_movieId)
+
+    if provider == 'gemini':
+        model = ChatGoogleGenerativeAI(
+            model='gemini-3.8-flash',
+            temperature=0,
+            api_key=os.getenv("GEMINI_API_KEY")
+        )
+
+    else :
+        model = ChatOpenAI(
+            model='gpt-5.5',
+            temperature=0,
+            api_key=os.getenv("OPENAI_API_KEY")
+        )
+
+    chain = prompt | model | StrOutputParser()
+
+    return chain.invoke({
+        'hybrid' : hybrid
+    })
+
