@@ -97,6 +97,17 @@ request.headers 직접 읽기와 response_model은 수업 밖 TIP이다. 범위 
 | Recall@K·threshold·관련 영화 | [추천 평가](09_영화CSV_청크와_임베딩/06_Recall_at_K_추천평가.md) |
 | 복사한 후반부의 출처 | [영화 단원 목차](09_영화CSV_청크와_임베딩/README.md) |
 
+## LangChain과 LangGraph
+
+| 찾을 말 | 읽을 곳 |
+| --- | --- |
+| CBF·CF 추천 결합과 순위 RRF | [09 하이브리드 추천](09_영화CSV_청크와_임베딩/07_CBF_CF와_RRF_하이브리드추천.md) |
+| 메시지와 MessagesPlaceholder | [모델 호출과 메시지](10_LangChain과_LangGraph/01_모델호출과_메시지.md) |
+| LCEL·Runnable·partial·bind·출력 파서 | [출력 파서와 구조화 출력](10_LangChain과_LangGraph/02_출력파서와_구조화출력.md) |
+| 추천 후보와 모델 설명 | [추천 설명 체인](10_LangChain과_LangGraph/03_영화추천결과_설명체인.md) |
+| StateGraph·노드·조건 간선 | [StateGraph와 조건 분기](10_LangChain과_LangGraph/04_StateGraph와_조건분기.md) |
+| 추천 상태와 검색 점수 | [추천 노드와 최종 상태](10_LangChain과_LangGraph/05_추천노드와_최종상태.md) |
+
 ## 증상에서 다시 찾기
 
 | 막힌 지점 | 먼저 확인할 본문 |

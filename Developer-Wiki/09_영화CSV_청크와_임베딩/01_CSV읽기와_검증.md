@@ -209,9 +209,9 @@ def read(fileName : Literal['movies.csv', 'tags.csv', 'ratings.csv'] = 'movies.c
     return preview
 ```
 
-**발췌 바로 풀이:** read는 로딩 결과가 None이면 안내를 먼저 반환하고, 성공하면 앞 다섯 행을 object 변환 뒤 records 목록으로 만든다. Literal 이름은 import가 빠져 있다. 현재 Python 3.14 검사에서는 지연된 주석을 실제로 평가할 때 NameError가 났다. 모든 버전에서 함수 정의 즉시 실패한다고 단정하지 않는다.
+**발췌 바로 풀이:** `read`는 로딩 결과가 `None`이면 안내를 반환하고 성공하면 앞 다섯 행을 레코드 목록으로 만든다. 발췌 시점에는 내 `Literal` import가 누락되어 있었으나 현재 내 원본은 `from typing import Any, Literal`로 가져온다.
 
-현재 read는 load_csv의 반환이 None이면 오류 안내를 먼저 반환한다. 반면 valid는 세 표를 바로 사용하므로 같은 실패 보호가 있는 것은 아니다. read의 타입 주석에는 여전히 Literal을 사용하지만 import에는 Any만 있다. Python 버전과 주석 평가 방식에 따라 함수 정의 또는 FastAPI의 경로 등록·타입 해석 시 이름 해석 문제가 생길 수 있다. from typing import Any, Literal을 추가하는 것은 원본에 적용하지 않은 개선안이다. 검증에서는 라우터 전체를 몰래 고쳐 실행하지 않고 필요한 정의와 타입 문제를 따로 확인한다.
+현재 `read`는 읽기 실패를 먼저 처리한다. `valid`는 세 표를 바로 사용하므로 별도의 입력 실패 확인이 필요하다. 최신 내 라우터에는 `Literal` import가 들어 있다.
 
 <a id="connections"></a>
 
@@ -233,7 +233,7 @@ def read(fileName : Literal['movies.csv', 'tags.csv', 'ratings.csv'] = 'movies.c
 
 
 
-load_csv와 valid의 핵심 알고리즘은 양쪽이 같아 중복 인용을 줄였다. read의 None 확인과 Literal 이름 해석도 양쪽에 같은 기준을 적용한다. 주석이 더 길다는 이유가 아니라 반환 계약과 실제 입력 조건을 기준으로 비교한다.
+load_csv와 valid의 핵심 알고리즘은 양쪽이 같아 중복 인용을 줄였다. 현재 내 원본은 `Literal`을 import한다. 비교한 강사님 파일의 import에는 `Any`만 있으므로 타입 주석 해석 시 이름을 확인해야 한다. 주석이 더 길다는 이유가 아니라 반환 계약과 실제 입력 조건을 기준으로 비교한다.
 
 <a id="results"></a>
 
